@@ -4,11 +4,14 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { site } from "@/content/site";
+import { basisUrl, tillatIndeksering } from "@/lib/miljo";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(site.domene),
+  metadataBase: new URL(basisUrl()),
+  // Sperre mot at den nye siden indekseres før DNS peker hit.
+  robots: tillatIndeksering() ? undefined : { index: false, follow: false },
   title: {
     default: `${site.navn} – ${site.tagline.toLowerCase()}`,
     template: `%s | ${site.navn}`,

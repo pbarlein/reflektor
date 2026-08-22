@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
-import { site, alleLandingssider, caser, bloggSlugs } from "@/content/site";
+import { alleLandingssider, caser, bloggSlugs } from "@/content/site";
+import { basisUrl } from "@/lib/miljo";
 
 /** /takk er bevisst utelatt – kvitteringssiden skal ikke indekseres. */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const url = (sti: string) => `${site.domene}${sti}`;
+  const url = (sti: string) => `${basisUrl()}${sti}`;
 
   return [
     { url: url("/"), priority: 1 },

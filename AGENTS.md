@@ -51,3 +51,16 @@ verdi. Bruk Ahrefs til å finne URL-er med lenker som må redirigeres – ikke t
 - Redirect-kartet ligger i `next.config.ts`.
 - `docs/snapshot/` (HTML fra dagens side) må lages på en maskin med tilgang til
   reflektor.no – nettverkspolicyen her blokkerer domenet.
+
+## Ingenting skal gå live
+
+Den nye siden bygges parallelt med at reflektor.no kjører videre på
+Squarespace. Se `docs/forhandsvisning.md`.
+
+- **Rør aldri DNS eller Squarespace.** Det er den eneste bryteren som faktisk
+  flytter reflektor.no.
+- **Indeksering er avslått som standard** (`src/lib/miljo.ts`). Alle sider
+  serverer `Disallow: /` og `noindex`. Sperren åpnes kun ved å sette
+  `NEXT_PUBLIC_TILLAT_INDEKSERING=true`, og først når DNS peker hit. Ikke fjern
+  sperren for å «teste at SEO virker».
+- **Arbeid på branch**, ikke `main`. Push til `main` utløser produksjonsdeploy.

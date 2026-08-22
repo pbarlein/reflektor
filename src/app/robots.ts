@@ -1,9 +1,14 @@
 import type { MetadataRoute } from "next";
-import { site } from "@/content/site";
+import { basisUrl, tillatIndeksering } from "@/lib/miljo";
 
 export default function robots(): MetadataRoute.Robots {
+  // Standard: steng alt. Se src/lib/miljo.ts for hvorfor.
+  if (!tillatIndeksering()) {
+    return { rules: { userAgent: "*", disallow: "/" } };
+  }
+
   return {
     rules: { userAgent: "*", allow: "/" },
-    sitemap: `${site.domene}/sitemap.xml`,
+    sitemap: `${basisUrl()}/sitemap.xml`,
   };
 }
