@@ -1,6 +1,7 @@
 # Hvor bilder og video skal ligge
 
-Kort svar: **bilder i repoet, video utenfor.**
+Kort svar: **bilder i `public/bilder/`, video i `public/video/`.**
+Store videofiler er eneste unntak – de går til Vercel Blob.
 
 ## Bilder → `public/bilder/`
 
@@ -24,15 +25,15 @@ import Image from "next/image";
 Alt-tekst er påkrevd. Skriv den som en beskrivelse av bildet, ikke som en
 plassholder.
 
-## Video → ikke i repoet
+## Video → `public/video/`
 
-Video hører ikke hjemme i git. Én produksjonsmåned hos Reflektor er 8–10
-filmer; legges de i repoet vokser det seg tregt å klone i løpet av kort tid, og
-hver endring lagres som en ny kopi i historikken for alltid.
+Web-optimaliserte klipp under ~25 MB legges rett i `public/video/`.
 
-Tre alternativer, i prioritert rekkefølge:
+Grensen er ikke vilkårlig: GitHub avviser filer over 100 MB, og git lagrer
+hver versjon av en binærfil for alltid – også slettede. Korte klipp er
+uproblematiske, ferdige kundefilmer er det ikke.
 
-### 1. Vercel Blob (anbefalt)
+### Store filer → Vercel Blob
 
 Dere har Vercel Pro, så dette er allerede betalt for. Filene ligger utenfor
 git, men serveres fra samme CDN som siden.
@@ -44,7 +45,7 @@ npx vercel blob put video/egon-case.mp4
 Kommandoen returnerer en URL du limer inn i `src/content/`. Filer kan settes
 private om innholdet ikke skal være åpent tilgjengelig.
 
-### 2. Video-hosting med streaming
+### Mange eller lange filmer → streaming
 
 For lengre filmer eller mange av dem er en ekte videotjeneste bedre enn en
 MP4-fil. Mux, Cloudflare Stream eller Vimeo gir adaptiv bitrate – seeren får
@@ -52,7 +53,7 @@ en kvalitet som matcher forbindelsen, i stedet for å laste ned hele filen.
 
 Merkbar forskjell på mobil, som er der mesteparten av trafikken er.
 
-### 3. Behold der de ligger nå
+### Allerede innebygd et sted?
 
 Videoene på dagens side ligger allerede et sted. Er de innebygd fra en
 tjeneste, kan de samme innbyggingene gjenbrukes direkte.

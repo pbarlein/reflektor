@@ -20,10 +20,4 @@ bygg – du trenger ikke lage flere størrelser selv.
   rikelig. Ikke komprimer på forhånd; det gjør byggeprosessen bedre enn deg.
 - **Navngiving:** små bokstaver, bindestrek, ingen æøå eller mellomrom.
   `pal-barlein.jpg`, ikke `Pål Barlein (1).JPG`.
-- **Ikke legg video her.** Se `docs/media.md`.
-
-## Merk: repoet er offentlig
-
-Alt som legges her blir liggende åpent på GitHub. Bilder med gjenkjennelige
-personer eller kundemateriale som ikke er klarert for publisering, bør enten
-vente til repoet settes til privat, eller lastes opp som blob i stedet.
+- **Video legges i `public/video/`**, ikke her.
