@@ -231,3 +231,157 @@ curl -sL "https://reflektor.no/sitemap.xml" -o sitemap.xml
 
 Uten dem er all tekst og struktur i `src/content/site.ts` utledet av
 nøkkeltall. Med dem kan faktisk markup, schema og tekst leses direkte.
+
+---
+
+# Analyse av dagens side (2026-08-22)
+
+Kilde: **Ahrefs Site Audit, prosjekt 10162201**, crawlet 2026-08-18. Prosjektet
+har verifisert eierskap, noe som gir tilgang til faktisk sidetekst – ikke bare
+nøkkeltall. Det løser tilgangsproblemet: direkte HTTP til reflektor.no er
+fortsatt blokkert herfra, men crawlen inneholder det vi trengte.
+
+Helsescore 98 av 100, 40 sider, 1 feil.
+
+## Tilbudet, konkret
+
+Dette er det mest presise vi har, og det bør styre hele siden:
+
+| | |
+|---|---|
+| Pris | **30 000 kr/mnd**, fast |
+| Produksjonsdager | 1 per måned, hos dere / hos oss / på lokasjon |
+| Leveranse | 8–10 ferdig redigerte videoer per måned |
+| Publisering | 2 ganger i uka på Instagram, krysspublisert til Facebook |
+| Bindingstid | Ingen, kun ordinær oppsigelsesfrist |
+| Strategiforslag | Gratis, levert på 3 virkedager |
+| Ekstra produksjonsdag | +30 000 kr (reklamefilm, produktfoto, kampanje) |
+
+**Inngår ikke:** kommentarfelt og meldinger, stories, betalt annonsering.
+
+At dette står like tydelig som hva som inngår, er et bevisst valg. Fra FAQ-en:
+«Vi sier dette tydelig fordi *SoMe-byrå* betyr ulike ting hos ulike
+leverandører.» Ikke mykne opp denne seksjonen i ny versjon – ærligheten er
+selve salgsargumentet.
+
+## Posisjonering
+
+H1 på forsiden:
+
+> Sosiale medier – *nesten* på autopilot.
+
+Kursiveringen av «nesten» er poenget. Løftet er stort, og forbeholdet står i
+samme setning. Det er hele merkevaren i fire ord.
+
+Undertittel: «1 produksjonsdag → 4 uker med innhold.»
+
+## Tone of voice
+
+Stemmen er påfallende konsistent og uvanlig for bransjen. Seks trekk:
+
+**1. Pris står åpent, med begrunnelse.**
+> «Vi oppgir prisen åpent fordi de fleste byråer ikke gjør det. Et fast beløp
+> er lettere å budsjettere enn et estimat, og det gjør det mulig å sammenligne
+> oss med alternativene før dere tar kontakt.»
+
+**2. Nekter å love resultater – og advarer mot dem som gjør det.**
+> «Vi lover ikke tall, og vi anbefaler skepsis mot byråer som gjør det.»
+> «Et byrå som styrer etter et engasjementstall, ender med å lage innhold som
+> jager tallet fremfor å bygge merkevaren.»
+
+**3. Argumenterer mot eget salg når det er riktig.**
+> «Er dere ute etter målbar effekt på kort sikt, er annonsering et riktigere
+> verktøy enn oss.»
+
+**4. Begrunner begrensninger som kvalitet, ikke mangel.**
+> «Fordi vi heller gjør to kanaler ordentlig enn fire halvveis.»
+
+**5. Kontrastsetninger som bærer budskapet.**
+«Rytme slår skippertak.» «To kanaler med jevnt, godt innhold gir mer enn fem
+kanaler med tynt budskap.» «Det handler om å være til stede hver uke, ikke å
+lage én film i året.»
+
+**6. Konkrete tall overalt, null superlativer.**
+Ingen «lidenskapelig opptatt av», ingen «skreddersydde løsninger». Tallene
+gjør jobben: 1 dag, 8–10 videoer, 2 poster, 52 uker, 3 virkedager.
+
+Tiltale: «dere» om kunden, «vi» om Reflektor. Korte hovedsetninger.
+
+## Struktur
+
+Navigasjon: **Pris · Vårt Arbeid · Om oss · FAQ · Blogg · Ta kontakt**
+
+At «Pris» er første menypunkt – og peker til `/sosiale-medier-byra` – er
+konsistent med åpenhetsposisjoneringen. Behold det. Ikke bytt til «Tjenester».
+
+Alle CTA-er peker til `/kontaktoss`. Varianter i bruk: «Ta kontakt», «Få et
+strategiforslag», «Book en uforpliktende prat», «Gratis strategiforslag»,
+«Ta en prat».
+
+Sider med reelt innhold, etter omfang:
+
+| Side | Ord | Merknad |
+|---|---|---|
+| `/faq` | 2330 | Størst. 18 spørsmål, FAQPage-schema |
+| `/innholdsproduksjon` | 1606 | FAQPage-schema |
+| `/` og `/hjem` | 1068 | Identiske |
+| `/eventfotograf-eventvideo` | 1014 | |
+| `/vart-arbeid/egon` | 965 | Behov → oppdrag → leveranser → resultat |
+| `/privacypolicy` | 879 | 12 seksjoner, dekker Meta Lead Ads |
+| `/employer-branding-video-oslo` | 768 | Vinklet mot HR |
+| `/videoproduksjon-i-oslo` | 531 | |
+| `/sosiale-medier-byra` | 467 | Kort, men bærer prisbudskapet |
+| `/om-oss` | 342 | |
+| `/kontaktoss` | 101 | |
+
+## Team og tillitssignaler
+
+- **Pål Barlein** – CEO
+- **Magne Finseth da Fonseca** – Produsent & kundeansvarlig
+- **Henrik Holthe** – Produsent & kundeansvarlig
+- **Viktor Norén** – Produsent & kundeansvarlig
+
+Gaselle-bedrift kåret av Dagens Næringsliv i 2025. Bakgrunn som
+produksjonsselskap – «produsentene har gjort dette for noen av Norges mest
+kjente merkevarer».
+
+Publiserte kundecaser: **Egon** og **Anton Sport**, begge «foto og video på
+månedlig basis». Historikken beskrives som «fra restauranter til sportskjeder».
+
+## Schema
+
+Sitewide: `Organization`, `ProfessionalService`, `Service`, `WebSite`.
+`FAQPage` på `/faq` og `/innholdsproduksjon`. `Article` på bloggartikler.
+
+Dette er solid og må videreføres. `FAQPage` bør også vurderes på
+`/sosiale-medier-byra`, som har åpenbart FAQ-egnet innhold.
+
+## Funn som krever handling
+
+**`/` og `/hjem` er identiske.** Samme title, samme H1, samme 1068 ord. Det
+besvarer det åpne spørsmålet fra forrige runde: dette er duplisert innhold, ikke
+en flyttet forside. Løst i `next.config.ts` – forsiden finnes kun på `/`, og
+`/hjem` redirigerer dit.
+
+**`/kontaktoss` har `Pål Barlein` som H1.** Kontaktsiden er den siste siden før
+konvertering og har bare 101 ord. H1 bør beskrive handlingen, ikke personen.
+
+**`/blogg/hva-gjr-en-innholdsprodusent` har `<br/>` inne i title-tagen.**
+
+**`/cart` er fortsatt live.** Squarespace-rest uten funksjon. Forsvinner ved
+plattformbytte.
+
+**Manglende ø i slugs:** `hva-gjr-`, `videomarkedsfring`. Beholdes som de er –
+rangeringene er viktigere enn kosmetikken.
+
+## Hva som fortsatt mangler
+
+Crawlen gir tekst og struktur, men ikke:
+
+- **Visuell profil** – farger, fonter, logo, bildebruk
+- **NAP-detaljer** – adresse, telefon, org.nr. fra footeren
+- **Elfsight-seksjonen** med Google-anmeldelser (lastes med JavaScript)
+- **Kundelogoene** under «Noen av bedriftene vi har produsert innhold for»
+- **`/reklamefilm`** – ikke publisert da crawlen kjørte 18. august
+
+Disse krever enten snapshot fra din maskin eller at du oppgir dem direkte.

@@ -1,6 +1,21 @@
 import Link from "next/link";
 import { Container } from "./Container";
-import { site, landingssider } from "@/content/site";
+import { site } from "@/content/site";
+
+/**
+ * Navigasjonen speiler dagens side.
+ *
+ * Merk at «Pris» er første menypunkt og peker til /sosiale-medier-byra. Det er
+ * et bevisst posisjoneringsvalg – åpen pris er Reflektors tydeligste
+ * differensiering. Ikke bytt det mot et generisk «Tjenester».
+ */
+const lenker = [
+  { href: "/sosiale-medier-byra", tekst: "Pris" },
+  { href: "/vart-arbeid", tekst: "Vårt arbeid" },
+  { href: "/om-oss", tekst: "Om oss" },
+  { href: "/faq", tekst: "FAQ" },
+  { href: "/blogg", tekst: "Blogg" },
+];
 
 export function Header() {
   return (
@@ -11,40 +26,22 @@ export function Header() {
             {site.navn}
           </Link>
           <ul className="hidden items-center gap-8 text-sm md:flex">
-            {/* Navigasjonen speiler annonsegruppene i Google Ads – de tre
-                kommersielle landingssidene kommer først. */}
-            {landingssider.map((side) => (
-              <li key={side.slug}>
+            {lenker.map((lenke) => (
+              <li key={lenke.href}>
                 <Link
-                  href={`/${side.slug}`}
+                  href={lenke.href}
                   className="text-blekk-dempet transition-colors hover:text-blekk"
                 >
-                  {side.navn}
+                  {lenke.tekst}
                 </Link>
               </li>
             ))}
-            <li>
-              <Link
-                href="/vart-arbeid"
-                className="text-blekk-dempet transition-colors hover:text-blekk"
-              >
-                Vårt arbeid
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/om-oss"
-                className="text-blekk-dempet transition-colors hover:text-blekk"
-              >
-                Om oss
-              </Link>
-            </li>
           </ul>
           <Link
             href="/kontaktoss"
             className="rounded-full bg-aksent px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-aksent-mork"
           >
-            Kontakt oss
+            Ta kontakt
           </Link>
         </nav>
       </Container>

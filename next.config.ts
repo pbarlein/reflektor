@@ -18,6 +18,12 @@ const redirects: NextConfig["redirects"] = async () => [
   // --- Skrivefeil-URL-er som gir 404 ---
   { source: "/vrt-arbeid", destination: "/vart-arbeid", permanent: true },
   { source: "/forside-v2", destination: "/", permanent: true },
+  /*
+   * BEKREFTET duplikat: Ahrefs-crawlen 2026-08-18 viser at / og /hjem
+   * serverte identisk innhold – samme title, samme H1, samme 1068 ord.
+   * Forsiden finnes derfor kun på / her.
+   */
+  { source: "/hjem", destination: "/", permanent: true },
 
   // --- Personsider: /folk og /jon-sverre er 404 ---
   { source: "/folk", destination: "/om-oss", permanent: true },
@@ -73,9 +79,6 @@ const redirects: NextConfig["redirects"] = async () => [
   /*
    * IKKE LAGT INN, med vilje:
    *
-   * /hjem   – forsidens slug ble endret til /hjem, men det er uavklart hva /
-   *           faktisk serverer. Feil gjetning her rammer forsiden. Avklares
-   *           mot snapshotene.
    * /cart   – Squarespace-rest. Forsvinner av seg selv ved plattformbytte.
    * /privacypolicy, /gratis-strategimote, /videoproduksjon-i-oslo,
    * /employer-branding-video-oslo, /eventfotograf-eventvideo

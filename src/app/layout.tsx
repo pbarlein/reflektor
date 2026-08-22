@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   // Sperre mot at den nye siden indekseres før DNS peker hit.
   robots: tillatIndeksering() ? undefined : { index: false, follow: false },
   title: {
-    default: `${site.navn} – ${site.tagline.toLowerCase()}`,
+    default: `${site.navn} – strategi, innhold og publisering til fast pris`,
     template: `%s | ${site.navn}`,
   },
   description: site.ingress,
