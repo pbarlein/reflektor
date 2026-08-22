@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" width="555.03579" height="664.6025" viewBox="0 0 555.03579 664.6025">
+<defs>
+<clipPath id="clip_1">
+<path transform="matrix(1,0,0,-1,-227.8016,802.2109)" d="M227.8016 137.6084H782.8374V802.2109H227.8016Z" clip-rule="evenodd"/>
+</clipPath>
+<clipPath id="clip_2">
+<path transform="matrix(1,0,0,-1,-227.8016,802.2109)" d="M0 1000H1000V0H0Z"/>
+</clipPath>
+</defs>
+<g clip-path="url(#clip_1)">
+<g inkscape:groupmode="layer" inkscape:label="Layer 1">
+<path transform="matrix(1,0,0,-1,370.04,2)" d="M0 0V-168.771H-182.739V-342.668H-368.04V0Z" fill="#de4826"/>
+<path transform="matrix(1,0,0,-1,187.3009,487.68067)" d="M0 0H.385L0 .641Z" fill="#de4826"/>
+<g clip-path="url(#clip_2)">
+<path transform="matrix(1,0,0,-1,482.4258,406.56248)" d="M0 0C-27.297-27.552-58.949-45.749-93.035-57.923L25.373-256.04H-190.301L-294.74-81.118-295.125-80.477V61.895C-287.948 61.511-281.285 61.382-275.261 61.382-242.456 61.382-186.84 64.458-151.087 100.083-114.821 136.221-112.386 190.684-112.258 223.874H-112.386L-112.642 235.791H70.61V209.009C70.61 153.521 66.636 67.405 0 0" fill="#de4826"/>
+</g>
+</g>
+</g>
+</svg>

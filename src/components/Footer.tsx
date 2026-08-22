@@ -1,45 +1,69 @@
 import Link from "next/link";
 import { Container } from "./Container";
-import { site } from "@/content/site";
+import { Logo } from "./Logo";
+import { site, landingssider } from "@/content/site";
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-kant py-12">
+    <footer className="bg-mork py-16 text-blekk-invers">
       <Container>
-        <div className="grid gap-10 sm:grid-cols-3">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="font-semibold">{site.navn}</p>
-            <p className="mt-2 text-sm text-blekk-dempet">
+            <Logo variant="merke" pa="mork" className="h-8 text-base" />
+            <p className="mt-4 text-sm text-blekk-invers/60">
               {site.taglineKort}
             </p>
-            {/* TODO: NAP-blokk – adresse, telefon og org.nr. Finnes i footeren
-                på dagens side, men fanges ikke av Ahrefs-crawlen. Må hentes
-                manuelt; understøtter lokal synlighet. */}
           </div>
+
           <nav aria-label="Tjenester">
             <p className="text-sm font-medium">Tjenester</p>
-            <ul className="mt-3 space-y-2 text-sm text-blekk-dempet">
-              <li><Link href="/sosiale-medier-byra" className="hover:text-blekk">Sosiale medier på fast pris</Link></li>
-              <li><Link href="/innholdsproduksjon" className="hover:text-blekk">Innholdsproduksjon</Link></li>
-              <li><Link href="/reklamefilm" className="hover:text-blekk">Reklamefilm</Link></li>
-              <li><Link href="/employer-branding-video-oslo" className="hover:text-blekk">Employer branding-video</Link></li>
-              <li><Link href="/eventfotograf-eventvideo" className="hover:text-blekk">Event­foto og -video</Link></li>
+            <ul className="mt-3 space-y-2 text-sm text-blekk-invers/60">
+              {landingssider.map((side) => (
+                <li key={side.slug}>
+                  <Link href={`/${side.slug}`} className="hover:text-blekk-invers">
+                    {side.tittel}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </nav>
+
           <nav aria-label="Selskap">
             <p className="text-sm font-medium">Selskap</p>
-            <ul className="mt-3 space-y-2 text-sm text-blekk-dempet">
-              <li><Link href="/om-oss" className="hover:text-blekk">Om oss</Link></li>
-              <li><Link href="/vart-arbeid" className="hover:text-blekk">Vårt arbeid</Link></li>
-              <li><Link href="/faq" className="hover:text-blekk">Ofte stilte spørsmål</Link></li>
-              <li><Link href="/blogg" className="hover:text-blekk">Blogg</Link></li>
-              <li><Link href="/kontaktoss" className="hover:text-blekk">Ta kontakt</Link></li>
-              <li><Link href="/personvern" className="hover:text-blekk">Personvern</Link></li>
+            <ul className="mt-3 space-y-2 text-sm text-blekk-invers/60">
+              <li><Link href="/om-oss" className="hover:text-blekk-invers">Om oss</Link></li>
+              <li><Link href="/vart-arbeid" className="hover:text-blekk-invers">Vårt arbeid</Link></li>
+              <li><Link href="/faq" className="hover:text-blekk-invers">Ofte stilte spørsmål</Link></li>
+              <li><Link href="/blogg" className="hover:text-blekk-invers">Blogg</Link></li>
+              <li><Link href="/personvern" className="hover:text-blekk-invers">Personvern</Link></li>
             </ul>
           </nav>
+
+          {/* NAP-blokken understøtter lokal synlighet – skal alltid stå her. */}
+          <address className="not-italic">
+            <p className="text-sm font-medium">Kontakt</p>
+            <ul className="mt-3 space-y-2 text-sm text-blekk-invers/60">
+              <li>
+                <a href={`mailto:${site.kontakt.epost}`} className="hover:text-blekk-invers">
+                  {site.kontakt.epost}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`tel:${site.kontakt.telefon.replace(/\s/g, "")}`}
+                  className="hover:text-blekk-invers"
+                >
+                  {site.kontakt.telefon}
+                </a>
+              </li>
+              <li>{site.kontakt.sted}</li>
+              {/* TODO: gateadresse og org.nr. fra footeren på dagens side */}
+            </ul>
+          </address>
         </div>
-        <p className="mt-10 text-sm text-blekk-dempet">
-          © {new Date().getFullYear()} {site.navn}. {site.kontakt.sted}.
+
+        <p className="mt-12 text-sm text-blekk-invers/40">
+          © {new Date().getFullYear()} {site.navn}. Alle rettigheter forbeholdt.
         </p>
       </Container>
     </footer>

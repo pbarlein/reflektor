@@ -385,3 +385,124 @@ Crawlen gir tekst og struktur, men ikke:
 - **`/reklamefilm`** – ikke publisert da crawlen kjørte 18. august
 
 Disse krever enten snapshot fra din maskin eller at du oppgir dem direkte.
+
+---
+
+# Designsystemet (2026-08-22)
+
+Kilder: merkevaremanual fra **Holum Studio** (februar 2023) og
+nettleserinspeksjon av dagens side. Der de to er uenige vinner den levende
+siden – det er den folk faktisk ser.
+
+## Farger
+
+| Rolle | Verdi | Kilde |
+|---|---|---|
+| Burnt Orange (aksent) | `#DE4826` | Manual og live – identisk |
+| Mørk flate | `#121212` | Målt. Manual: `#141414` / Deep Coal `#292626` |
+| Beige hovedflate | `#F7F3ED` | Målt. Manual: Chalk White `#F5F4F2` |
+| Kantlinje | `#E2DBD0` | Avledet |
+
+Manualen har i tillegg `#163F4D` (mørk petrol), `#EBE9D0` og `#E8E4DF` som
+ikke er i bruk på siden i dag.
+
+**Brun gradient** er signaturelementet på innholdskort og seksjonsblokker.
+Stoppverdiene er samplet fra skjermbilder, ikke gjettet:
+
+```
+linear-gradient(105deg, #11100E 0%, #4A3429 45%, #471F15 100%)
+```
+
+## Typografi
+
+**Poppins** gjennomgående – Light 300, Regular 400, Medium 500, Bold 700,
+Black 900. Lastes via `next/font/google`.
+
+H1 er **vekt 500, ikke bold**. Bevisst lettere enn typisk. Ikke «rett opp»
+i dette.
+
+Mønsteret i overskrifter er å bryte dem opp med farge og kursiv:
+«Sosiale medier – *nesten* på autopilot.»
+
+## Knapper
+
+Fylt oransje, `border-radius: 5px`, hvit tekst. **Roteres et par grader ut av
+akse** – et lite, lekent grep som går igjen på alle sider. Implementert som
+`.knapp-skjev`, som retter seg opp ved hover og er slått av under
+`prefers-reduced-motion`.
+
+## Logo
+
+Vektorisert fra `.ai`-filen til `public/bilder/logo/`:
+
+- `reflektor-ikon.svg` – R-ikonet alene
+- `reflektor-logo.svg` / `-hvit.svg` – stablet lockup med tagline
+- `reflektor-logo-horisontal.svg` / `-hvit.svg` – horisontal lockup med tagline
+- `reflektor-ikon-512.png`, `-192.png` – for favicon og OG
+
+Merk at begge de offisielle lockupene inneholder taglinen **«foto & video på
+månedlig basis»** – den gamle posisjoneringen som produksjonsselskap. Dagens
+header bruker ikon + ordmerke uten tagline, og i vektorfilen overlapper ikonet
+og taglinen vertikalt, så de kan ikke skilles ved beskjæring. `Logo`-komponenten
+setter derfor ordmerket i Poppins. Det er tro mot profilen, siden Poppins er
+merkevarefonten.
+
+---
+
+# Ytelse: den største enkeltgevinsten
+
+Målt på forsiden, desktop, varm cache:
+
+| Metrikk | Verdi |
+|---|---|
+| First Contentful Paint | **6,3 s** |
+| Totalt overført | **14,0 MB** |
+| Herav video | **13,7 MB** på 13 filer |
+| Største enkeltfil | 3,2 MB |
+| Ressurser | 134 |
+
+Videoene har `preload="metadata"`, `autoplay`, **ingen poster**, og ligger i
+2597 × 1080 uansett skjermstørrelse. Resultatet er en tom svart boks med
+spinner i heroen i flere sekunder, og tomme flater lenger ned – både et LCP-
+og et CLS-problem.
+
+Et SoMe-byrå som selger video må ha video på siden. Men 14 MB og 6,3 sekunder
+er ikke et designvalg, det er Squarespace som ikke gjør jobben.
+
+**Krav til ny versjon:** adaptiv bitrate (Mux eller Cloudflare Stream),
+poster-bilde alltid, `preload="none"` under fold, separate oppløsninger per
+breakpoint.
+
+## Grep som skal bevares
+
+- **Hero med fire vertikale videoer side ved side** – viser 9:16-formatet som
+  faktisk leveres. Sterkt og relevant for et SoMe-byrå.
+- **Kundelogorekke** rett under heroen: Idun, Orkla, Anton Sport, Egon, Soul
+  Cake, Selvaag, The Well, ASKO. Dette er **produksjonskunder**, ikke
+  SoMe-abonnenter – de skal ikke fremstilles som det.
+- **Komplett footer** med NAP, org.nr. og sosiale lenker.
+- **FAQ på forsiden** i kortversjon, med lenke til full side.
+- **Tre-stegs forklaring:** Strategi → Produksjon → Publisering.
+
+## Flere feil å rette
+
+1. `/reklamefilm` arver SEO-tittelen fra `/innholdsproduksjon`. H1 er
+   «Reklamefilm til TV og nett», tittelfeltet er aldri satt.
+2. `/takk` har tittelen «General 1» – Squarespace-standard som aldri ble endret.
+3. Ingen `robots`-meta noe sted på dagens side.
+4. Kontaktskjemaet har **ingen `required`-attributter** – Squarespace validerer
+   kun via JavaScript. Ny implementasjon skal ha ekte HTML-validering.
+
+## Kontaktinformasjon
+
+`contact@reflektor.no` · `+47 47605070` · Oslo
+
+Pål Barlein står med navn, tittel, e-post og telefon i en mørk sidekolonne på
+`/kontaktoss`. Det bygger tillit og skal beholdes.
+
+## Ikke verifisert
+
+- **Mobilvisning.** Alle målinger er desktop. Siden målgruppen er SoMe, er det
+  sannsynligvis der flertallet av besøkende er. Må sjekkes separat.
+- **Faktisk LCP.** FCP på 6,3 s er reell; LCP er trolig verre.
+- **Eksakt gateadresse og org.nr.** til NAP-blokken.

@@ -28,10 +28,9 @@ export const site = {
 
   kontakt: {
     sted: "Oslo",
-    // UAVKLART – e-post, telefon og org.nr. ligger i footeren på dagens side,
-    // men fanges ikke av crawlen. Må fylles inn manuelt.
-    epost: "",
-    telefon: "",
+    epost: "contact@reflektor.no",
+    telefon: "+47 47605070",
+    // UAVKLART – org.nr. står i footeren på dagens side, men er ikke hentet ut.
     orgnr: "",
   },
 
@@ -169,11 +168,11 @@ export const landingssider: Landingsside[] = [
   {
     slug: "reklamefilm",
     navn: "Reklamefilm",
-    tittel: "Reklamefilm",
-    // UAVKLART – siden var ikke publisert da crawlen kjørte 2026-08-18.
-    ingress: "Film som fungerer i feeden – fra idé til ferdig klipp.",
+    tittel: "Reklamefilm til TV og nett",
+    // UAVKLART – brødteksten er ikke hentet ut. H1 er verifisert.
+    ingress: "Reklamefilm til TV og nett.",
     annonsegruppe: "Reklamefilm",
-    status: "under-bygging",
+    status: "live",
   },
 ];
 
@@ -249,3 +248,30 @@ export const bloggSlugs = [
   "hvordan-ta-portrett-bilder",
   "hva-koster-et-some-byra",
 ] as const;
+
+/**
+ * Kunder vi har produsert innhold for, slik de vises i logorekken under heroen.
+ *
+ * VIKTIG: dette er PRODUKSJONSKUNDER fra foto- og videovirksomheten. De skal
+ * ikke fremstilles som SoMe-abonnementskunder – det ville vært en feilaktig
+ * referanse. Rekken viser produksjonserfaring, ikke kundelisten for
+ * månedsavtalen.
+ */
+export const kundelogoer = [
+  "Idun",
+  "Orkla",
+  "Anton Sport",
+  "Egon",
+  "Soul Cake",
+  "Selvaag",
+  "The Well",
+  "ASKO",
+] as const;
+
+/** Kontaktperson på /kontaktoss. Navn og direktenummer bygger tillit. */
+export const kontaktperson = {
+  navn: "Pål Barlein",
+  rolle: "CEO",
+  epost: "contact@reflektor.no",
+  telefon: "+47 47605070",
+} as const;

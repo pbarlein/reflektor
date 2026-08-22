@@ -1,12 +1,19 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { site } from "@/content/site";
 import { basisUrl, tillatIndeksering } from "@/lib/miljo";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+// Poppins er merkevarefonten. Vektene følger manualen:
+// Light 300, Regular 400, Medium 500, Bold 700, Black 900.
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700", "900"],
+  variable: "--font-poppins",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(basisUrl()),
@@ -29,7 +36,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="no">
-      <body className={`${inter.variable} font-sans`}>
+      <body className={`${poppins.variable} font-sans`}>
         <Header />
         <main>{children}</main>
         <Footer />
