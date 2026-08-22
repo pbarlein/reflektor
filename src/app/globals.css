@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+/*
+ * Designtokens.
+ *
+ * UAVKLART: fargepalett, fonter og visuell profil er ikke mottatt fra
+ * Reflektor ennå (docs/kontekst.md). Verdiene under er et nøytralt,
+ * profesjonelt utgangspunkt – bytt dem her, så følger hele siden etter.
+ */
+@theme {
+  --color-flate: #ffffff;
+  --color-flate-dempet: #f6f6f4;
+  --color-blekk: #14141a;
+  --color-blekk-dempet: #5c5c68;
+  --color-aksent: #1c4ed8;
+  --color-aksent-mork: #143aa3;
+  --color-kant: #e4e4e0;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  @theme {
+    --color-flate: #0e0e12;
+    --color-flate-dempet: #17171d;
+    --color-blekk: #f4f4f2;
+    --color-blekk-dempet: #a0a0ac;
+    --color-kant: #26262e;
+  }
+}
+
+body {
+  background: var(--color-flate);
+  color: var(--color-blekk);
+  -webkit-font-smoothing: antialiased;
+}
