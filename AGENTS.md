@@ -12,17 +12,42 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 Ny nettside for reflektor.no. Next.js (App Router) på Vercel, norsk språk.
 
-**Les `docs/kontekst.md` før du gjør endringer.** Der ligger analysen av dagens
-side, SEO-situasjonen og begrunnelsen bak arkitekturen. Prosjektkontekst hører
-hjemme i det dokumentet – ikke i en chat, som ingen ny sesjon kan arve.
+**Les `docs/kontekst.md` før du gjør endringer.** Prosjektkontekst hører hjemme
+der – ikke i en chat, som ingen ny sesjon kan arve.
 
-Tre ting som er lett å ødelegge:
+## Eneste KPI: skjemaleads
 
-1. **Bloggslugs i `src/content/site.ts` må ikke endres.** Bloggen bærer all
-   ikke-brandtrafikk til domenet. Endrer du en slug, mister siden rangeringen.
-2. **Bloggtekstene er ikke migrert fra Squarespace.** Siden kan ikke lanseres
-   før de er det – tomme sider på rangerende URL-er er verre enn dagens side.
-3. **Alt tekstinnhold bor i `src/content/site.ts`**, ikke i komponentene.
-   Felt merket UAVKLART er plassholdere som ikke er godkjent av kunden.
+Leads måles i GA4 (`takk_page_view` på `/takk`) og Google Ads. Ikke i Ahrefs.
+Trafikk, rangeringer og synlighet er ikke mål i seg selv. Vurder enhver endring
+mot om den gir flere utfylte skjemaer.
 
-Redirect-kartet fra dagens Squarespace-URL-er ligger i `next.config.ts`.
+## Fire ting som er lett å ødelegge
+
+1. **Live URL-er flyttes ikke.** Redirects skal kun rette opp faktiske 404-er.
+   `/sosiale-medier-byra`, `/innholdsproduksjon`, `/reklamefilm` og
+   `/kontaktoss` er live sider det annonseres mot. Første utkast redirigerte to
+   av dem bort og ville sendt betalt trafikk i grøfta. Sjekk at en URL faktisk
+   er død før du legger inn en redirect.
+2. **`/takk` er hellig.** URL-en og GA4-hendelsen bærer 107+ historiske
+   konverteringer. Endrer du dem, mister Reflektor målingen av sin eneste KPI.
+3. **Bloggslugs i `src/content/site.ts` må ikke endres.** Bloggen beholdes for
+   lenkeverdien – ~481 refererende domener. Men innholdet er ordbok- og
+   skoleoppgavestoff som ikke konverterer: det skal ikke styre arkitekturen, og
+   det skal ikke lages mer av den typen.
+4. **Bloggtekstene er ikke migrert fra Squarespace.** Siden kan ikke lanseres
+   før de er det.
+
+## Ahrefs-data må leses med forbehold
+
+Tallene er estimater og etterslepende, GSC er ikke koblet til, og alt som er
+bygget i 2026 har ennå ingen tall. Fravær av data er ikke bevis på fravær av
+verdi. Bruk Ahrefs til å finne URL-er med lenker som må redirigeres – ikke til
+å avgjøre hva siden skal handle om.
+
+## Praktisk
+
+- Alt tekstinnhold bor i `src/content/site.ts`, ikke i komponentene. Felt merket
+  UAVKLART er plassholdere som ikke er godkjent av kunden.
+- Redirect-kartet ligger i `next.config.ts`.
+- `docs/snapshot/` (HTML fra dagens side) må lages på en maskin med tilgang til
+  reflektor.no – nettverkspolicyen her blokkerer domenet.

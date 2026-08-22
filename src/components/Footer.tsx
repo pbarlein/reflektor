@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Container } from "./Container";
-import { site, tjenester } from "@/content/site";
+import { site, landingssider } from "@/content/site";
 
 export function Footer() {
   return (
@@ -10,14 +10,17 @@ export function Footer() {
           <div>
             <p className="font-semibold">{site.navn}</p>
             <p className="mt-2 text-sm text-blekk-dempet">{site.tagline}</p>
+            {/* TODO: komplett NAP-blokk med adresse, telefon og org.nr.
+                Den finnes allerede i footeren på dagens side og skal
+                gjenbrukes ordrett – den understøtter lokal synlighet. */}
           </div>
           <nav aria-label="Tjenester">
             <p className="text-sm font-medium">Tjenester</p>
             <ul className="mt-3 space-y-2 text-sm text-blekk-dempet">
-              {tjenester.map((t) => (
-                <li key={t.slug}>
-                  <Link href={`/tjenester/${t.slug}`} className="hover:text-blekk">
-                    {t.navn}
+              {landingssider.map((side) => (
+                <li key={side.slug}>
+                  <Link href={`/${side.slug}`} className="hover:text-blekk">
+                    {side.navn}
                   </Link>
                 </li>
               ))}
@@ -27,9 +30,10 @@ export function Footer() {
             <p className="text-sm font-medium">Selskap</p>
             <ul className="mt-3 space-y-2 text-sm text-blekk-dempet">
               <li><Link href="/om-oss" className="hover:text-blekk">Om oss</Link></li>
-              <li><Link href="/arbeid" className="hover:text-blekk">Kundecaser</Link></li>
+              <li><Link href="/vart-arbeid" className="hover:text-blekk">Vårt arbeid</Link></li>
+              <li><Link href="/faq" className="hover:text-blekk">Ofte stilte spørsmål</Link></li>
               <li><Link href="/blogg" className="hover:text-blekk">Blogg</Link></li>
-              <li><Link href="/kontakt" className="hover:text-blekk">Kontakt</Link></li>
+              <li><Link href="/kontaktoss" className="hover:text-blekk">Kontakt</Link></li>
               <li><Link href="/personvern" className="hover:text-blekk">Personvern</Link></li>
             </ul>
           </nav>

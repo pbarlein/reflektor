@@ -1,112 +1,86 @@
 import type { NextConfig } from "next";
 
 /**
- * Redirect-kart fra dagens Squarespace-side.
+ * Redirect-kart.
  *
- * Bakgrunn: se docs/kontekst.md. Kort fortalt bærer bloggen hele SEO-verdien,
- * så alle /blogg/<slug> beholdes uendret og trenger ingen redirect. Det som
- * står her er opprydding i tjenestesider, kontakt-URL-er og rene feil.
+ * PRINSIPP: live URL-er flyttes ikke. Redirects retter kun opp faktiske
+ * 404-er og én 403. Se docs/kontekst.md.
  *
- * Regel: alltid pek til endelig URL. Dagens side har allerede 301-kjeder på de
- * mest trafikkerte sidene – vi skal ikke forlenge dem.
+ * Første utkast brøt dette – det flyttet /innholdsproduksjon og /kontaktoss,
+ * som begge er live sider det annonseres mot. Ikke gjenta det. Sjekk at en URL
+ * faktisk er død før du legger inn en redirect for den.
  */
 const redirects: NextConfig["redirects"] = async () => [
-  // --- Kontakt: /kontakt og /kontakt-oss er 404 i dag, /kontaktoss er ekte ---
-  { source: "/kontaktoss", destination: "/kontakt", permanent: true },
-  { source: "/kontakt-oss", destination: "/kontakt", permanent: true },
+  // --- Kontakt: /kontakt og /kontakt-oss er 404, /kontaktoss er den ekte ---
+  { source: "/kontakt", destination: "/kontaktoss", permanent: true },
+  { source: "/kontakt-oss", destination: "/kontaktoss", permanent: true },
 
-  // --- Kundecaser ---
-  { source: "/vart-arbeid", destination: "/arbeid", permanent: true },
-  { source: "/vart-arbeid/:slug", destination: "/arbeid/:slug", permanent: true },
-  { source: "/vrt-arbeid", destination: "/arbeid", permanent: true },
+  // --- Skrivefeil-URL-er som gir 404 ---
+  { source: "/vrt-arbeid", destination: "/vart-arbeid", permanent: true },
+  { source: "/forside-v2", destination: "/", permanent: true },
 
-  // --- Tjenester: samles under ett hierarki (var spredt på rotnivå) ---
+  // --- Personsider: /folk og /jon-sverre er 404 ---
+  { source: "/folk", destination: "/om-oss", permanent: true },
+  { source: "/jon-sverre", destination: "/om-oss", permanent: true },
+
+  // --- Døde tjeneste-URL-er til nærmeste levende landingsside ---
   {
-    source: "/innholdsproduksjon",
-    destination: "/tjenester/innholdsproduksjon",
+    source: "/tjenester/sosiale-medier",
+    destination: "/sosiale-medier-byra",
     permanent: true,
   },
   {
-    source: "/videoproduksjon-i-oslo",
-    destination: "/tjenester/videoproduksjon",
+    source: "/tjenester/some-annonsering",
+    destination: "/sosiale-medier-byra",
     permanent: true,
   },
   {
-    source: "/employer-branding-video-oslo",
-    destination: "/tjenester/employer-branding",
-    permanent: true,
-  },
-  {
-    source: "/eventfotograf-eventvideo",
-    destination: "/tjenester/event-foto-video",
-    permanent: true,
-  },
-  {
-    source: "/tjenester/eventfotograf-eventvideo",
-    destination: "/tjenester/event-foto-video",
+    source: "/tjenester/innholdsproduksjon",
+    destination: "/innholdsproduksjon",
     permanent: true,
   },
 
-  // --- Gamle fototjenester: alle varianter samles på én side ---
+  /*
+   * Resten av /tjenester/-treet er 404 uten en åpenbar etterfølger. De sendes
+   * til forsiden for å berge lenkeverdi. Vurder å peke dem mer presist når
+   * snapshotene viser hva sidene faktisk handlet om.
+   */
   ...[
-    "/foto",
-    "/produktfoto",
-    "/eiendomsfotograf",
-    "/bilderavansatte",
-    "/tjenester/bedriftsfoto",
-    "/tjenester/bilderavansatte",
-    "/tjenester/produktfoto",
-    "/tjenester/eiendomsfotograf",
-    "/tjenester/boligfoto",
-    "/tjenester/matfotograf",
-    "/tjenester/fotograf",
-  ].map((source) => ({
-    source,
-    destination: "/tjenester/foto",
-    permanent: true,
-  })),
-
-  // --- Gamle tjeneste-URL-er uten direkte etterfølger: til oversikten ---
-  ...[
-    "/tjenester/foto-og-video",
-    "/tjenester/performance-marketing",
+    "/tjenester/seo",
+    "/tjenester/betalt-sok",
     "/tjenester/markedsforing",
+    "/tjenester/performance-marketing",
+    "/tjenester/konverteringsoptimalisering",
+    "/tjenester/foto-og-video",
     "/tjenester/videograf",
     "/tjenester/videoproduksjon",
-    "/tjenester/innholdsproduksjon",
-    "/tjenester/some-annonsering",
-    "/tjenester/konverteringsoptimalisering",
-    "/tjenester/betalt-sok",
-    "/tjenester/seo",
-  ].map((source) => ({
-    source,
-    destination: "/tjenester",
-    permanent: true,
-  })),
+    "/tjenester/fotograf",
+    "/tjenester/matfotograf",
+    "/tjenester/boligfoto",
+    "/tjenester/bedriftsfoto",
+    "/tjenester/produktfoto",
+    "/tjenester/eiendomsfotograf",
+    "/tjenester/bilderavansatte",
+  ].map((source) => ({ source, destination: "/", permanent: true })),
 
-  // --- Personsider hadde alle title «Contact 1» – peker til om-oss ---
-  { source: "/magne-finseth-da-fonseca", destination: "/om-oss", permanent: true },
-  { source: "/viktor-noren", destination: "/om-oss", permanent: true },
-  { source: "/jon-sverre", destination: "/om-oss", permanent: true },
-  { source: "/folk", destination: "/om-oss", permanent: true },
-
-  // --- Konvertering: skjemaet er nå en del av landingssiden ---
+  // --- Svarte 403, trolig et kodet mellomrom som ble del av slugen ---
   {
-    source: "/gratis-strategimote-kontaktskjema",
-    destination: "/gratis-strategimote",
-    permanent: true,
-  },
-
-  // --- Diverse opprydding ---
-  { source: "/privacypolicy", destination: "/personvern", permanent: true },
-  { source: "/cart", destination: "/", permanent: true },
-  { source: "/forside-v2", destination: "/", permanent: true },
-  {
-    // Svarte 403 – trolig et kodet mellomrom som har blitt del av slugen
     source: "/blogg/hva-gjr-en-innholdsprodusentnbsp",
     destination: "/blogg/hva-gjr-en-innholdsprodusent",
     permanent: true,
   },
+
+  /*
+   * IKKE LAGT INN, med vilje:
+   *
+   * /hjem   – forsidens slug ble endret til /hjem, men det er uavklart hva /
+   *           faktisk serverer. Feil gjetning her rammer forsiden. Avklares
+   *           mot snapshotene.
+   * /cart   – Squarespace-rest. Forsvinner av seg selv ved plattformbytte.
+   * /privacypolicy, /gratis-strategimote, /videoproduksjon-i-oslo,
+   * /employer-branding-video-oslo, /eventfotograf-eventvideo
+   *         – alle live (HTTP 200). Beholdes som de er.
+   */
 ];
 
 const nextConfig: NextConfig = {

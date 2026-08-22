@@ -1,13 +1,6 @@
 import Link from "next/link";
 import { Container } from "./Container";
-import { site } from "@/content/site";
-
-const lenker = [
-  { href: "/tjenester", tekst: "Tjenester" },
-  { href: "/arbeid", tekst: "Arbeid" },
-  { href: "/blogg", tekst: "Blogg" },
-  { href: "/om-oss", tekst: "Om oss" },
-];
+import { site, landingssider } from "@/content/site";
 
 export function Header() {
   return (
@@ -18,19 +11,37 @@ export function Header() {
             {site.navn}
           </Link>
           <ul className="hidden items-center gap-8 text-sm md:flex">
-            {lenker.map((lenke) => (
-              <li key={lenke.href}>
+            {/* Navigasjonen speiler annonsegruppene i Google Ads – de tre
+                kommersielle landingssidene kommer først. */}
+            {landingssider.map((side) => (
+              <li key={side.slug}>
                 <Link
-                  href={lenke.href}
+                  href={`/${side.slug}`}
                   className="text-blekk-dempet transition-colors hover:text-blekk"
                 >
-                  {lenke.tekst}
+                  {side.navn}
                 </Link>
               </li>
             ))}
+            <li>
+              <Link
+                href="/vart-arbeid"
+                className="text-blekk-dempet transition-colors hover:text-blekk"
+              >
+                Vårt arbeid
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/om-oss"
+                className="text-blekk-dempet transition-colors hover:text-blekk"
+              >
+                Om oss
+              </Link>
+            </li>
           </ul>
           <Link
-            href="/kontakt"
+            href="/kontaktoss"
             className="rounded-full bg-aksent px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-aksent-mork"
           >
             Kontakt oss

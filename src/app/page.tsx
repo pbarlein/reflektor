@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { Container } from "@/components/Container";
-import { site, tjenester } from "@/content/site";
+import { site, landingssider } from "@/content/site";
 
+/**
+ * Forsiden.
+ *
+ * Åpent spørsmål: dagens forside fikk slug /hjem. Det er ikke avklart hva /
+ * faktisk serverer, og det må verifiseres mot snapshotene før lansering
+ * (docs/kontekst.md).
+ */
 export default function Forside() {
   return (
     <>
@@ -14,6 +21,8 @@ export default function Forside() {
             {site.ingress}
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
+            {/* Skjemalead er eneste KPI – primær-CTA skal alltid peke mot et
+                skjema, ikke mot innhold. */}
             <Link
               href="/gratis-strategimote"
               className="rounded-full bg-aksent px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-aksent-mork"
@@ -21,7 +30,7 @@ export default function Forside() {
               Book et gratis strategimøte
             </Link>
             <Link
-              href="/arbeid"
+              href="/vart-arbeid"
               className="rounded-full border border-kant px-6 py-3 text-sm font-medium transition-colors hover:bg-flate-dempet"
             >
               Se arbeidet vårt
@@ -33,16 +42,16 @@ export default function Forside() {
       <section className="border-t border-kant py-20">
         <Container>
           <h2 className="text-2xl font-semibold tracking-tight">Hva vi gjør</h2>
-          <ul className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-kant bg-kant sm:grid-cols-2 lg:grid-cols-3">
-            {tjenester.map((tjeneste) => (
-              <li key={tjeneste.slug} className="bg-flate">
+          <ul className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-kant bg-kant sm:grid-cols-3">
+            {landingssider.map((side) => (
+              <li key={side.slug} className="bg-flate">
                 <Link
-                  href={`/tjenester/${tjeneste.slug}`}
+                  href={`/${side.slug}`}
                   className="block h-full p-8 transition-colors hover:bg-flate-dempet"
                 >
-                  <h3 className="font-medium">{tjeneste.navn}</h3>
+                  <h3 className="font-medium">{side.navn}</h3>
                   <p className="mt-2 text-sm text-blekk-dempet text-pretty">
-                    {tjeneste.ingress}
+                    {side.ingress}
                   </p>
                 </Link>
               </li>

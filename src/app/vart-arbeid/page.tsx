@@ -8,16 +8,16 @@ export const metadata: Metadata = {
   description: "Utvalgt arbeid innen foto, video og sosiale medier.",
 };
 
-export default function Arbeid() {
+export default function VartArbeid() {
   return (
     <section className="py-20">
       <Container>
-        <h1 className="text-4xl font-semibold tracking-tight">Arbeid</h1>
+        <h1 className="text-4xl font-semibold tracking-tight">Vårt arbeid</h1>
         <ul className="mt-12 grid gap-8 sm:grid-cols-2">
           {caser.map((kundecase) => (
             <li key={kundecase.slug}>
               <Link
-                href={`/arbeid/${kundecase.slug}`}
+                href={`/vart-arbeid/${kundecase.slug}`}
                 className="block rounded-2xl border border-kant p-8 transition-colors hover:bg-flate-dempet"
               >
                 <h2 className="text-xl font-medium">{kundecase.kunde}</h2>

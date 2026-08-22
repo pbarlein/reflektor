@@ -1,12 +1,12 @@
 /**
  * Sentralisert innhold for reflektor.no.
  *
- * ALT tekstinnhold bor her, ikke i komponentene. Grunnen er at strategi, tone
- * of voice og budskap ennå ikke er avklart (se docs/kontekst.md) – når det
- * kommer skal teksten kunne byttes ett sted uten å røre markup.
+ * ALT tekstinnhold bor her, ikke i komponentene, slik at tekst kan byttes ett
+ * sted når budskapsplattformen foreligger (se docs/kontekst.md).
  *
- * Felt merket UAVKLART er plassholdere utledet av dagens nettside via
- * SEO-analyse. De er ikke godkjent av Reflektor og må erstattes.
+ * Felt merket UAVKLART er plassholdere. De er IKKE godkjent av Reflektor og
+ * er utledet av nøkkeltall – ikke av faktisk sidetekst, som ikke kan leses
+ * herfra (nettverksblokkering, se docs/kontekst.md).
  */
 
 export const site = {
@@ -14,7 +14,6 @@ export const site = {
   domene: "https://www.reflektor.no",
   sprak: "nb-NO",
 
-  // Fra dagens title-tag – den eneste posisjoneringen vi har belegg for.
   tagline: "Strategi, innhold og publisering til fast pris",
 
   // UAVKLART – plassholder inntil budskapsplattform foreligger.
@@ -23,71 +22,79 @@ export const site = {
     "innholdsproduksjon og publisering samlet hos ett byrå.",
 
   kontakt: {
-    // UAVKLART – e-post og telefon må fylles inn.
+    // UAVKLART – hentes fra NAP-blokken i footeren på dagens side.
     epost: "",
     telefon: "",
+    orgnr: "",
     sted: "Oslo",
   },
 } as const;
 
-export type Tjeneste = {
+/**
+ * Kommersielle landingssider.
+ *
+ * KRITISK: disse slugene ligger på rotnivå fordi det er URL-ene Google Ads og
+ * Google Business Profile peker på. De skal ikke flyttes inn under et
+ * /tjenester/-hierarki – første utkast gjorde det og ville sendt betalt
+ * trafikk bort fra sidene den er kjøpt inn til (docs/kontekst.md).
+ *
+ * Rekkefølgen speiler annonsegruppene i Google Ads.
+ */
+export type Landingsside = {
   slug: string;
   navn: string;
   ingress: string;
-  /** Søkeord vi vet er relevante, fra Ahrefs. Styrer tekst og metadata. */
-  sokeord?: string[];
+  /** Tilsvarende annonsegruppe i Google Ads, der det finnes. */
+  annonsegruppe?: string;
+  status: "live" | "under-bygging";
 };
 
-/**
- * Tjenestestrukturen er ny. Dagens /tjenester/* er 100 % 404, så vi har
- * ingen rangeringer å miste her og står fritt (docs/kontekst.md).
- */
-export const tjenester: Tjeneste[] = [
+export const landingssider: Landingsside[] = [
   {
-    slug: "sosiale-medier",
+    slug: "sosiale-medier-byra",
     navn: "Sosiale medier",
+    // UAVKLART – erstattes med faktisk tekst fra siden.
     ingress:
       "Strategi, innhold og publisering i kanalene der kundene deres allerede er.",
-    sokeord: ["some markedsføring", "markedsføring i sosiale medier"],
+    annonsegruppe: "SoMe-byrå",
+    status: "live",
   },
   {
     slug: "innholdsproduksjon",
-    navn: "Innholdsproduksjon",
+    navn: "Innhold og video",
     ingress:
       "Jevn tilgang på innhold som holder kanalene levende gjennom hele året.",
-    sokeord: ["innholdsproduksjon", "innholdsmarkedsføring"],
+    annonsegruppe: "Innhold og video",
+    status: "live",
   },
   {
-    slug: "videoproduksjon",
-    navn: "Videoproduksjon",
+    slug: "reklamefilm",
+    navn: "Reklamefilm",
     ingress: "Film som fungerer i feeden – fra idé til ferdig klipp.",
-    sokeord: ["videoproduksjon oslo", "videograf"],
-  },
-  {
-    slug: "employer-branding",
-    navn: "Employer branding",
-    ingress:
-      "Vis fram arbeidsplassen slik at de rette folkene søker seg til dere.",
-    sokeord: ["employer branding"],
-  },
-  {
-    slug: "event-foto-video",
-    navn: "Event­foto og -video",
-    ingress: "Dekning av arrangementer, klart til publisering samme uke.",
-    sokeord: ["eventfotograf", "videograf"],
-  },
-  {
-    slug: "foto",
-    navn: "Foto",
-    ingress: "Produktfoto, bedriftsfoto og portretter av ansatte.",
-    sokeord: ["produktfoto", "bedriftsfoto"],
+    annonsegruppe: "Reklamefilm",
+    status: "under-bygging",
   },
 ];
 
+export type Case = { slug: string; kunde: string; ingress: string };
+
 /**
- * Bloggslugs fra dagens side. MÅ IKKE ENDRES – bloggen bærer all
- * ikke-brandtrafikk (docs/kontekst.md). Tekstinnholdet skal migreres fra
- * Squarespace; her ligger bare rutingen.
+ * Kundecaser under /vart-arbeid. Kun Egon er bekreftet publisert.
+ *
+ * /matogdrikke/oda, /orkla og /wolt gir 404 i dag – mulige caser som har
+ * falt ut. Bør sjekkes mot snapshotene når de foreligger.
+ */
+export const caser: Case[] = [
+  { slug: "egon", kunde: "Egon", ingress: "Foto og video for restaurantkjeden." },
+];
+
+/**
+ * Bloggslugs fra dagens side. MÅ IKKE ENDRES.
+ *
+ * Bloggen beholdes utelukkende for lenkeverdien – ~481 refererende domener er
+ * ekte autoritet. Innholdet er ordbok- og skoleoppgavestoff som ikke
+ * konverterer, og studenttrafikk er ikke en KPI. Bloggen skal derfor ikke
+ * utvides med mer av samme type, og skal ikke styre arkitekturen.
  */
 export const bloggSlugs = [
   "hvilke-virkemidler-er-mest-effektive-i-reklame-og-hvordan-brukes-de",
@@ -109,18 +116,33 @@ export const bloggSlugs = [
   "hva-koster-et-some-byra",
 ] as const;
 
-export type Case = { slug: string; kunde: string; ingress: string };
-
 /**
- * Kundecaser. Kun Egon er publisert på dagens side.
+ * Eldre landingssider som fortsatt svarer 200 på dagens side.
  *
- * Merk: /matogdrikke/oda, /matogdrikke/orkla og /matogdrikke/wolt gir 404 i
- * dag – det kan være caser som har falt ut. Bør sjekkes mot Reflektor.
+ * De er ikke nevnt i 2026-arbeidet og er ikke annonsegrupper, men de er live
+ * og noen har rangeringer (/eventfotograf-eventvideo på «videograf», pos. 10).
+ * Rutene beholdes derfor så de ikke blir 404. Om de skal konsolideres inn i de
+ * tre primære landingssidene avgjøres når snapshotene viser innholdet.
  */
-export const caser: Case[] = [
+export const eldreLandingssider: Landingsside[] = [
   {
-    slug: "egon",
-    kunde: "Egon",
-    ingress: "Foto og video for restaurantkjeden.",
+    slug: "videoproduksjon-i-oslo",
+    navn: "Videoproduksjon i Oslo",
+    ingress: "Videoproduksjon for bedrifter i Oslo-området.",
+    status: "live",
+  },
+  {
+    slug: "employer-branding-video-oslo",
+    navn: "Employer branding-video",
+    ingress: "Onboarding- og kulturfilm som viser fram arbeidsplassen.",
+    status: "live",
+  },
+  {
+    slug: "eventfotograf-eventvideo",
+    navn: "Eventfotograf og -videograf",
+    ingress: "Dekning av arrangementer, klart til publisering samme uke.",
+    status: "live",
   },
 ];
+
+export const alleLandingssider = [...landingssider, ...eldreLandingssider];

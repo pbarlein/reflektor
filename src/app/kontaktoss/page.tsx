@@ -7,13 +7,18 @@ export const metadata: Metadata = {
   description: `Ta kontakt med ${site.navn}.`,
 };
 
-export default function Kontakt() {
+/**
+ * URL-en er /kontaktoss, ikke /kontakt. Den er live i dag, og /kontakt og
+ * /kontakt-oss redirigerer hit. Ikke bytt om på det (docs/kontekst.md).
+ */
+export default function KontaktOss() {
   return (
     <section className="py-20">
       <Container>
         <h1 className="text-4xl font-semibold tracking-tight">Kontakt oss</h1>
-        {/* TODO: skjema. Krever avklaring av mottaker – HubSpot er koblet,
-            så innsending bør trolig gå dit framfor e-post. */}
+        {/* TODO: skjema. Innsending må utløse takk_page_view på /takk – det er
+            hendelsen GA4 og Google Ads måler leads på. Skjemaet er eneste
+            KPI-bærende element på siden. */}
         <p className="mt-6 text-blekk-dempet">
           {site.kontakt.epost || "Kontaktinformasjon mangler – se docs/kontekst.md"}
         </p>

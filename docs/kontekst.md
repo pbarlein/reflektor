@@ -121,3 +121,113 @@ tapte kundecaser), `/vrt-arbeid`, `/forside-v2`, `/jon-sverre`.
 **Trafikkbærende sider ligger bak 301.** De fire bloggsidene som drar mest
 ikke-brandtrafikk redirigerer allerede én gang. Nye redirects må peke til
 endelig URL, ikke skape kjeder.
+
+---
+
+## Korreksjon: hva Ahrefs-tallene ikke viser
+
+Du har bare hatt Ahrefs som kilde. Les tallene derfra med disse forbeholdene,
+ellers trekker du feil konklusjon om hva siden skal være.
+
+### Ahrefs er etterslepende og estimert
+Trafikktallene er estimater, ikke faktiske klikk. GSC er ikke koblet til
+Ahrefs-prosjektet. Nye sider har per definisjon ingen tall ennå — fravær av
+data er ikke bevis på fravær av verdi.
+
+### Bloggen ser verdifull ut fordi den er gammel, ikke fordi den virker
+Posisjon 1 på "digital historiefortelling", "holdningskampanjer",
+"reklame virkemidler" er ordbok- og skoleoppgaveinnhold. Det konverterer ikke.
+Studenttrafikk er eksplisitt ikke en KPI.
+
+Bloggen skal beholdes for lenkeverdien — ~481 refererende domener er ekte
+autoritet. Men den skal ikke være utgangspunktet for hvordan ny side bygges,
+og det skal ikke lages mer innhold av den typen.
+
+### Det som er gjort i 2026 finnes ikke i tallene ennå
+Følgende er bygget eller fikset de siste ukene og har ikke rukket å gi utslag:
+
+- /sosiale-medier-byra — primær kommersiell landingsside
+- /innholdsproduksjon — ny landingsside (var tidligere uten interne lenker inn)
+- /reklamefilm — ny side, under bygging
+- Ny kanonisk forside (slug endret til /hjem — verifiser hva / faktisk serverer)
+- Ny footer med komplett NAP, org.nr., sosiale lenker
+- Organization-schema (JSON-LD) med 8 sameAs-kilder i Code Injection HEADER
+- Elfsight-seksjon med Google-anmeldelser
+- Konverteringssporing gjenopprettet — 107+ historiske konverteringer bevart
+- Google Ads restrukturert: annonsegrupper for SoMe-byrå, Innhold og video,
+  Reklamefilm. Et uovervåket broad match-eksperiment som brant ~20 000 kr/mnd
+  ble stoppet 11. august.
+- Google Business Profile: primærkategori endret til Markedsføringsbyrå
+- Ocast-oppføring: plass 1 av 516 på "Topp 10 Sosiale medier-byråer i Norge"
+
+Ahrefs viser ingen av delene. Ikke konkluder at tjenestesidene ikke fungerer —
+de har knapt eksistert.
+
+### Ahrefs kan ikke se KPI-en i det hele tatt
+Eneste suksessmål er skjemaleads. De måles i GA4 (takk_page_view) og Google Ads,
+ikke i Ahrefs. Ahrefs' estimat på betalt søk er også upålitelig — det viste
+null annonseaktivitet i august mens kontoen kjørte.
+
+Konklusjon: bruk Ahrefs til å forstå hvilke URL-er som har lenker og må
+301-redirectes. Ikke bruk det til å avgjøre hva siden skal handle om.
+
+---
+
+## Hva korreksjonen endret i koden
+
+Korreksjonen over avdekket en direkte feil i første utkast, og den er rettet.
+
+**Feilen:** `/innholdsproduksjon` ble 301-redirigert til
+`/tjenester/innholdsproduksjon`. Den siden er en ny kommersiell landingsside
+det annonseres mot — ikke en gammel URL. Redirecten ville sendt betalt trafikk
+bort fra siden den er bygget for.
+
+**Årsaken:** Ahrefs viste hele `/tjenester/*` som 404 og landingssidene uten
+trafikk. Det ble lest som «tjenestesidene er døde, her står vi fritt». Riktig
+lesning var «disse sidene er for nye til å ha tall».
+
+**Rettelsen — nytt prinsipp for URL-struktur:**
+
+> Live URL-er flyttes ikke. Redirects skal kun rette opp faktiske 404-er.
+
+Konkret:
+
+- Ingen oppfunnet `/tjenester/`-struktur. Landingssidene beholder rot-slugs
+  (`/sosiale-medier-byra`, `/innholdsproduksjon`, `/reklamefilm`), fordi det er
+  URL-ene Google Ads og Google Business Profile peker på.
+- `/kontaktoss` og `/vart-arbeid` beholdes uendret. Det er `/kontakt` og
+  `/kontakt-oss` som er 404 og skal redirigeres *inn* til `/kontaktoss` — ikke
+  omvendt, slik første utkast gjorde.
+- `/takk` er konverteringssiden GA4 måler `takk_page_view` på. Den må finnes,
+  og den skal ikke indekseres.
+- Bloggen beholdes uendret for lenkeverdien (~481 refererende domener), men
+  styrer ikke lenger arkitekturen og skal ikke utvides med mer av samme type.
+
+**Åpent spørsmål:** hva `/` faktisk serverer etter at forsidens slug ble endret
+til `/hjem`. Kan ikke verifiseres herfra (se under), og ingen redirect er lagt
+inn for `/hjem` før det er avklart — en feil gjetning her rammer forsiden.
+
+## Sidetilgang mangler fortsatt
+
+Nettverkspolicyen i Claude Code-miljøet blokkerer utgående trafikk til
+reflektor.no på proxynivå:
+
+```
+curl: (56) CONNECT tunnel failed, response 403
+```
+
+Dette er ikke Squarespace-cache — forespørselen når aldri fram, og
+cache-buster hjelper ikke. Snapshotene må derfor lages på din maskin og
+committes:
+
+```bash
+mkdir -p docs/snapshot && cd docs/snapshot
+for s in hjem sosiale-medier-byra innholdsproduksjon reklamefilm om-oss \
+         kontaktoss faq vart-arbeid takk; do
+  curl -sL "https://reflektor.no/$s?nocache=$(date +%s)" -o "$s.html"
+done
+curl -sL "https://reflektor.no/sitemap.xml" -o sitemap.xml
+```
+
+Uten dem er all tekst og struktur i `src/content/site.ts` utledet av
+nøkkeltall. Med dem kan faktisk markup, schema og tekst leses direkte.
