@@ -1,0 +1,30 @@
+/*
+ * Overstyringer av Claude Designs tokens.
+ *
+ * Vendorfilene holdes urørte så de kan byttes ut ved neste leveranse.
+ * Avvikene under er kundebeslutninger, ikke smak – hver enkelt er begrunnet
+ * og ført i docs/vedlegg-a.md.
+ */
+:root {
+  /*
+   * A19 – Hovedflate er beige, ikke hvit. Avklart av Pål 23.08.2026.
+   * Tokensettet satte --surface-page til hvit, men dagens reflektor.no bruker
+   * beige som hovedflate, og det er et bærende trekk ved uttrykket.
+   * --rf-bone finnes allerede i paletten.
+   */
+  --surface-page: var(--rf-bone);
+  --surface-muted: #efe9e0;
+
+  /*
+   * A20 – Hjørneradius. Pål overlot valget.
+   *
+   * Tre kilder var uenige: tokens sier firkantet som standard og pill på
+   * knapper, mens måling av dagens side ga ~5px. Valget er 4px – nærmest det
+   * som faktisk står i produksjon i dag, og en verdi som allerede finnes i
+   * skalaen (--radius-sm). Pill ville vært et tydelig brudd med dagens uttrykk.
+   *
+   * Foto og video beholder 0. «Photography is never rounded» står i
+   * tokensettet, og det gjelder fortsatt.
+   */
+  --radius-interaktiv: var(--radius-sm);
+}

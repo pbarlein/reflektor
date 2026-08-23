@@ -26,7 +26,7 @@ export default function Forside() {
           <div className="mt-10">
             <Link
               href="/kontaktoss"
-              className="knapp-skjev inline-block rounded-[5px] bg-aksent px-7 py-3.5 font-medium text-white hover:bg-aksent-mork"
+              className="knapp-skjev inline-block rounded-knapp bg-aksent px-7 py-3.5 font-medium text-white hover:bg-aksent-mork"
             >
               Ta kontakt
             </Link>
@@ -82,7 +82,7 @@ export default function Forside() {
             <div className="mt-10">
               <Link
                 href="/kontaktoss"
-                className="knapp-skjev inline-block rounded-[5px] bg-aksent px-7 py-3.5 font-medium text-white hover:bg-aksent-mork"
+                className="knapp-skjev inline-block rounded-knapp bg-aksent px-7 py-3.5 font-medium text-white hover:bg-aksent-mork"
               >
                 Ta en prat
               </Link>
@@ -108,7 +108,7 @@ export default function Forside() {
             {/* Skjemalead er eneste KPI – primær-CTA peker alltid mot skjema. */}
             <Link
               href="/kontaktoss"
-              className="knapp-skjev inline-block rounded-[5px] bg-aksent px-7 py-3.5 font-medium text-white hover:bg-aksent-mork"
+              className="knapp-skjev inline-block rounded-knapp bg-aksent px-7 py-3.5 font-medium text-white hover:bg-aksent-mork"
             >
               Få et strategiforslag
             </Link>

@@ -10,6 +10,7 @@
 @import "../styles/tokens/radius.css";
 @import "../styles/tokens/motion.css";
 @import "../styles/tokens/elevation.css";
+@import "../styles/tokens/overstyringer.css";
 
 /*
  * Broen mellom tokens og Tailwind. Tailwind-klassene skal alltid ende opp i
@@ -37,8 +38,8 @@
 
   --font-sans: var(--font-poppins), "Helvetica Neue", Arial, sans-serif;
 
-  --radius-sm: var(--radius-sm);
-  --radius-pill: var(--radius-pill);
+  --radius-knapp: var(--radius-interaktiv);
+  --radius-media: var(--radius-media);
 
   --spacing-seksjon: var(--section-y);
   --spacing-seksjon-lg: var(--section-y-lg);

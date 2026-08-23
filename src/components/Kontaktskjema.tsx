@@ -38,7 +38,7 @@ export function Kontaktskjema() {
           name="navn"
           required
           autoComplete="name"
-          className="rounded-[4px] border border-kant bg-white px-4 py-3"
+          className="rounded-knapp border border-kant bg-white px-4 py-3"
         />
       </div>
 
@@ -50,7 +50,7 @@ export function Kontaktskjema() {
           type="email"
           required
           autoComplete="email"
-          className="rounded-[4px] border border-kant bg-white px-4 py-3"
+          className="rounded-knapp border border-kant bg-white px-4 py-3"
         />
       </div>
 
@@ -61,7 +61,7 @@ export function Kontaktskjema() {
           name="telefon"
           type="tel"
           autoComplete="tel"
-          className="rounded-[4px] border border-kant bg-white px-4 py-3"
+          className="rounded-knapp border border-kant bg-white px-4 py-3"
         />
       </div>
 
@@ -73,13 +73,13 @@ export function Kontaktskjema() {
           id="melding"
           name="melding"
           rows={4}
-          className="rounded-[4px] border border-kant bg-white px-4 py-3"
+          className="rounded-knapp border border-kant bg-white px-4 py-3"
         />
       </div>
 
       <button
         type="submit"
-        className="knapp-skjev justify-self-start rounded-[4px] bg-aksent px-7 py-3.5 font-medium text-white hover:bg-aksent-hover"
+        className="knapp-skjev justify-self-start rounded-knapp bg-aksent px-7 py-3.5 font-medium text-white hover:bg-aksent-hover"
       >
         Få et strategiforslag
       </button>

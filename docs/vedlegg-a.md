@@ -141,3 +141,70 @@ Skal flere motta leads, må reflektor.no verifiseres som avsenderdomene – det
 er e-post-DNS, ikke nettsted-DNS, men skal likevel avklares eksplisitt.
 
 Erstatter det åpne punktet om mottaker i A22.
+
+---
+
+## Avklart 23.08.2026
+
+Pål besvarte de åpne designpunktene. Oppdatert status:
+
+**A19 · Overflatefarge — LØST.** Hovedflaten er **beige**. `--surface-page`
+peker nå på `--rf-bone`. Overstyringen ligger i
+`src/styles/tokens/overstyringer.css` så vendorfilene kan byttes ut ved neste
+tokenleveranse uten å miste beslutningen.
+
+**A20 · Hjørneradius — LØST.** Valget ble overlatt til Claude Code. Landet på
+**4px** (`--radius-sm`): nærmest de ~5px som faktisk står i produksjon i dag,
+og en verdi som allerede finnes i skalaen. Pill ville vært et tydelig brudd med
+dagens uttrykk. Foto og video beholder 0 — «photography is never rounded»
+gjelder fortsatt.
+
+**A21 · CI — DELVIS LØST.** Lenkesjekk er på plass og verifisert i begge
+retninger. Den leser ruter fra mappestrukturen og redirects fra
+`next.config.ts`, så den fanger døde interne lenker før deploy. Lighthouse mot
+budsjettet i 8.7 gjenstår — krever en deployet preview-URL workflowen kan peke
+på.
+
+**Typografi (briefens punkt 5) — LØST.** Poppins i **flere vekter**. Light 300,
+Regular 400, Medium 500, Bold 700 og Black 900 lastes via `next/font`.
+
+**Kundenavn (briefens punkt 3) — LØST.** Alle navn kan brukes: Idun, Orkla,
+Anton Sport, Egon, Soul Cake, Selvaag, The Well, ASKO og Vitusapotek. De skal
+fortsatt merkes som produksjonskunder, aldri som SoMe-abonnenter — det er en
+låst ramme i 0.3.
+
+---
+
+## A24 · Hero-video komprimert
+
+Kildefilen var 13,9 MB, 33,7 sekunder, 1486×618, uten lyd. Ytelsesbudsjettet i
+8.7 setter 2,5 MB.
+
+Resultat etter H.264-komprimering:
+
+| Fil | Oppløsning | Størrelse |
+|---|---|---|
+| `hero.mp4` | 1280×532 | 1,93 MB |
+| `hero-mobil.mp4` | 768×320 | 0,91 MB |
+| `hero-poster.jpg` | 1280 | 0,07 MB |
+
+Mobil får egen fil framfor å laste desktopversjonen og skalere den ned.
+Posteren bærer førstevisningen, videoen har `preload="none"` og hentes etterpå
+— det er slik både 2,5 MB-grensen for hero og 1,8 MB-grensen for totalvekt
+kan holdes samtidig.
+
+`prefers-reduced-motion` gir kun posteren; videofilen lastes aldri.
+
+Neste steg for ytterligere kutt er VP9 eller AV1 som alternativ kilde. Ikke
+gjort nå — H.264 alene holder budsjettet.
+
+---
+
+## A25 · API-nøkkelen ble delt i et skjermbilde
+
+`RESEND_API_KEY` var synlig i klartekst i et skjermbilde delt i chatten.
+Nøkkelen er ikke skrevet til repoet.
+
+Anbefaling: roter den i Resend etter at den er satt i Vercel. En nøkkel som har
+vært synlig utenfor en hemmelighetslagring bør behandles som kompromittert,
+uavhengig av hvor kort tid det gjaldt.

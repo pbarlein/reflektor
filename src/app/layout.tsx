@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Sporing, GtmNoscript } from "@/components/Sporing";
+import { OrganisasjonSchema } from "@/components/Schema";
 import { site } from "@/content/site";
 import { basisUrl, tillatIndeksering } from "@/lib/miljo";
 
@@ -40,6 +41,7 @@ export default function RootLayout({
       <body className={`${poppins.variable} font-sans`}>
         <GtmNoscript />
         <Sporing />
+        <OrganisasjonSchema />
         <Header />
         <main>{children}</main>
         <Footer />

@@ -252,10 +252,12 @@ export const bloggSlugs = [
 /**
  * Kunder vi har produsert innhold for, slik de vises i logorekken under heroen.
  *
+ * Alle navnene er godkjent for bruk av Pål 23.08.2026.
+ *
  * VIKTIG: dette er PRODUKSJONSKUNDER fra foto- og videovirksomheten. De skal
  * ikke fremstilles som SoMe-abonnementskunder – det ville vært en feilaktig
- * referanse. Rekken viser produksjonserfaring, ikke kundelisten for
- * månedsavtalen.
+ * referanse, og det er en låst ramme i brief 0.3. Rekken viser
+ * produksjonserfaring, ikke kundelisten for månedsavtalen.
  */
 export const kundelogoer = [
   "Idun",
@@ -266,6 +268,7 @@ export const kundelogoer = [
   "Selvaag",
   "The Well",
   "ASKO",
+  "Vitusapotek",
 ] as const;
 
 /** Kontaktperson på /kontaktoss. Navn og direktenummer bygger tillit. */

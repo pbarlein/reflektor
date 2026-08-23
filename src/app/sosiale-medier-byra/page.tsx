@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/Container";
+import { HeroVideo } from "@/components/HeroVideo";
+import { StickyCta } from "@/components/StickyCta";
+import { FaqSchema, TjenesteSchema } from "@/components/Schema";
 import { Kontaktskjema } from "@/components/Kontaktskjema";
 import { SlotTekst, hentTekst, slotsISeksjon, TbdMarkor } from "@/components/Slot";
 import { home } from "@/content/sider/home";
@@ -27,11 +30,36 @@ export const metadata: Metadata = {
 
 export default function Abonnementssiden() {
   const h1 = hentTekst(home, "home.hero.h1");
+  const cta = hentTekst(home, "home.hero.cta");
+
+  /*
+   * FAQ-schema bygges kun av spørsmål som faktisk har godkjent tekst.
+   * Formatet er spørsmål på første linje, svar på resten.
+   */
+  const faq = slotsISeksjon(home, 9)
+    .filter((s) => s.verdi)
+    .map((s) => {
+      const [sporsmal, ...resten] = s.verdi!.split("\n");
+      return { sporsmal, svar: resten.join("\n").trim() };
+    })
+    .filter((p) => p.svar);
 
   return (
     <>
-      {/* 1 · HERO */}
-      <section className="bg-mork py-16 text-blekk-invers sm:py-24">
+      <TjenesteSchema
+        navn="Sosiale medier på fast pris"
+        beskrivelse="Strategi, produksjon, redigering og publisering på Instagram og Facebook."
+        sti="/sosiale-medier-byra"
+      />
+      <FaqSchema qa={faq} />
+      {/* 1 · HERO — bakgrunnssløyfe av eget arbeid, poster først */}
+      <section className="relative isolate overflow-hidden bg-mork py-16 text-blekk-invers sm:py-24">
+        <HeroVideo className="absolute inset-0 -z-10 h-full w-full object-cover opacity-40" />
+        {/* Beskyttelsesgradient sikrer AA-kontrast på tekst over video (8.6) */}
+        <div
+          className="absolute inset-0 -z-10 bg-mork/55"
+          aria-hidden="true"
+        />
         <Container>
           <h1 className="max-w-3xl text-4xl sm:text-5xl lg:text-6xl">
             {h1 ?? <TbdMarkor id="home.hero.h1" />}
@@ -43,11 +71,12 @@ export default function Abonnementssiden() {
             className="mt-6 block max-w-xl text-lg text-blekk-invers/70"
           />
           <div className="mt-8 flex flex-wrap items-center gap-6">
+            {/* Inline på desktop. På mobil tar StickyCta over (6.1). */}
             <a
               href="#kontakt"
-              className="knapp-skjev inline-block rounded-[4px] bg-aksent px-7 py-3.5 font-medium text-white hover:bg-aksent-hover"
+              className="knapp-skjev hidden rounded-knapp bg-aksent px-7 py-3.5 font-medium text-white hover:bg-aksent-hover sm:inline-block"
             >
-              {hentTekst(home, "home.hero.cta") ?? <TbdMarkor id="home.hero.cta" />}
+              {cta ?? <TbdMarkor id="home.hero.cta" />}
             </a>
           </div>
           {/* Navngitt bevis over folden (6.1) */}
@@ -215,6 +244,10 @@ export default function Abonnementssiden() {
           </div>
         </Container>
       </section>
+
+      {/* Luft så den faste knappen ikke dekker skjemaets sendeknapp */}
+      <div className="h-20 sm:hidden" aria-hidden="true" />
+      <StickyCta tekst={cta ?? "Ta kontakt"} />
     </>
   );
 }

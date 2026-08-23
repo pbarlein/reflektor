@@ -38,7 +38,7 @@ export function Header() {
           </ul>
           <Link
             href="/kontaktoss"
-            className="knapp-skjev rounded-[5px] bg-aksent px-5 py-2 text-sm font-medium text-white hover:bg-aksent-mork"
+            className="knapp-skjev rounded-knapp bg-aksent px-5 py-2 text-sm font-medium text-white hover:bg-aksent-mork"
           >
             Ta kontakt
           </Link>

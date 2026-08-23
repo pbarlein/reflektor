@@ -27,7 +27,7 @@ export function TbdMarkor({ id }: { id: string }) {
   const slot = { id };
   return (
     <mark
-      className="inline-block rounded-[2px] bg-aksent/12 px-1.5 py-0.5 font-mono text-[13px] text-aksent"
+      className="inline-block rounded-xs bg-aksent/12 px-1.5 py-0.5 font-mono text-xs text-aksent"
       title="Copy ikke levert. Blokkerer produksjon."
     >
       TBD · {slot.id}

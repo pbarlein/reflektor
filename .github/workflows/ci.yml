@@ -22,8 +22,9 @@ jobs:
         run: npm run lint
       - name: content:check
         run: npm run content:check
+      - name: Lenkesjekk
+        run: npm run lenkesjekk
       - name: Bygg
         run: npm run build
-# TODO (vedlegg A): lenkesjekk og Lighthouse mot ytelsesbudsjettet i 8.7.
-# Lighthouse krever en deployet preview-URL – kobles på når Vercel-deployment
-# kan refereres fra workflowen.
+# TODO (vedlegg A): Lighthouse mot ytelsesbudsjettet i 8.7. Krever en deployet
+# preview-URL som workflowen kan peke på.
