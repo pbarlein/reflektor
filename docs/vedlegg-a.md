@@ -125,3 +125,19 @@ Steg 0 krever at sporingsoppsettet er *bekreftet i Google Ads-grensesnittet*.
 GTM-containeren og `takk_page_view` er implementert i koden, men verifiseringen
 krever innlogging i Google Ads og en reell skjemainnsending. Det er Påls
 oppgave, og den kan ikke lukkes av Claude Code.
+
+---
+
+## A23 · Leads leveres på e-post — avklart
+
+**Status:** avklart 23.08.2026. Leads går til `pal@reflektor.no`.
+
+Implementert med Resend. `RESEND_API_KEY` må settes i Vercel før skjemaet
+faktisk leverer – uten den logges leadet i Vercel-loggen og redirecten skjer
+som normalt, men ingen e-post sendes. Se `docs/leads.md`.
+
+Standardavsenderen krever ikke DNS-endring så lenge Pål er eneste mottaker.
+Skal flere motta leads, må reflektor.no verifiseres som avsenderdomene – det
+er e-post-DNS, ikke nettsted-DNS, men skal likevel avklares eksplisitt.
+
+Erstatter det åpne punktet om mottaker i A22.
