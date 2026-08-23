@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { sendSkjema } from "@/app/sosiale-medier-byra/handling";
+import { sendSkjema } from "@/lib/skjema";
 
 /**
  * Kontaktskjema – maks fire felt (brief 6.1, LÅST).
@@ -13,7 +13,7 @@ import { sendSkjema } from "@/app/sosiale-medier-byra/handling";
  * dagens Squarespace-skjema validerer kun via JavaScript og har ingen
  * required-attributter.
  */
-export function Kontaktskjema() {
+export function Kontaktskjema({ side }: { side: string }) {
   // Tidsstempelet settes direkte på DOM-noden etter montering. Å gå veien om
   // state ville utløst en render uten grunn – verdien leses kun ved innsending.
   const lastet = useRef<HTMLInputElement>(null);
@@ -24,6 +24,7 @@ export function Kontaktskjema() {
   return (
     <form action={sendSkjema} className="mt-8 grid max-w-lg gap-5">
       <input type="hidden" name="lastet" ref={lastet} defaultValue="0" />
+      <input type="hidden" name="side" value={side} />
 
       {/* Honningkrukke – skjult for mennesker, ikke for boter. */}
       <div className="absolute left-[-9999px]" aria-hidden="true">

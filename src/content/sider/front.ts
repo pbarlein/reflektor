@@ -20,6 +20,20 @@ export const front: Side = {
   ready: false,
   seksjoner: [
     {
+      nr: 0,
+      navn: "Metadata",
+      jobb: "Merkevaresøk. Ingen kommersielle ord.",
+      slots: {
+        /*
+         * MÅ IKKE inneholde «sosiale medier byrå». Det ordet tilhører
+         * /sosiale-medier-byra alene, og to sider som kjemper om samme ord
+         * er kannibalisering – ikke dobbelt sjanse.
+         */
+        "front.meta.title": TBD({ maksTegn: 60 }),
+        "front.meta.description": TBD({ maksTegn: 155 }),
+      },
+    },
+    {
       nr: 1,
       navn: "Hero",
       jobb: "Hvem Reflektor er, på én linje.",

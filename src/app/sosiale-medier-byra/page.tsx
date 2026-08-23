@@ -239,7 +239,7 @@ export default function Abonnementssiden() {
                 som="p"
                 className="mt-4 block max-w-md text-blekk-invers/70"
               />
-              <Kontaktskjema />
+              <Kontaktskjema side="/sosiale-medier-byra" />
             </div>
 
             <figure className="lg:pt-4">

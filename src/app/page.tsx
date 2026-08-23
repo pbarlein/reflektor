@@ -1,118 +1,171 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Container } from "@/components/Container";
-import { site, tilbud, prosess, kundelogoer } from "@/content/site";
+import { HeroVideo } from "@/components/HeroVideo";
+import { Kontaktskjema } from "@/components/Kontaktskjema";
+import { hentTekst, slotsISeksjon, TbdMarkor } from "@/components/Slot";
+import { front } from "@/content/sider/front";
+import { site, tilbud, kundelogoer, landingssider } from "@/content/site";
 
 /**
- * Forsiden.
+ * Forsiden – merkevaresiden (brief 3.0.1).
  *
- * Følger seksjonsrytmen fra dagens side: mørk hero, lys beige flate for
- * prosessen, brun gradient for pristilbudet, beige igjen for CTA.
+ * Seks seksjoner i låst rekkefølge. To ting skiller den fra en landingsside:
  *
- * «nesten» i overskriften er kursivert med vilje – forbeholdet står i samme
- * setning som løftet. Ikke stryk det for å gjøre løftet større.
+ * 1. Primær-CTA peker til /sosiale-medier-byra, ikke til skjemaet. Forsiden
+ *    selger ikke ferdig – den sender videre.
+ * 2. Den skal IKKE inneholde «sosiale medier byrå» i H1 eller title. Ordet
+ *    tilhører abonnementssiden alene. To sider som kjemper om samme søkeord
+ *    er kannibalisering, ikke dobbelt sjanse.
+ *
+ * Seksjon 4 er intern lenking som teller: fire kort som fører videre til
+ * landingssidene.
  */
+export const metadata: Metadata = {
+  title: hentTekst(front, "front.meta.title") ?? undefined,
+  description: hentTekst(front, "front.meta.description") ?? undefined,
+  alternates: { canonical: "https://www.reflektor.no/" },
+};
+
 export default function Forside() {
   return (
     <>
-      <section className="bg-mork py-20 text-blekk-invers sm:py-28">
+      {/* 1 · HERO */}
+      <section className="relative isolate overflow-hidden bg-mork py-20 text-blekk-invers sm:py-28">
+        <HeroVideo className="absolute inset-0 -z-10 h-full w-full object-cover opacity-40" />
+        <div className="absolute inset-0 -z-10 bg-mork/55" aria-hidden="true" />
         <Container>
-          <h1 className="max-w-4xl text-4xl tracking-tight text-balance sm:text-5xl lg:text-6xl">
-            Sosiale medier – <em className="italic text-aksent">nesten</em> på
-            autopilot.
+          <h1 className="max-w-4xl text-4xl sm:text-5xl lg:text-6xl">
+            {hentTekst(front, "front.hero.h1") ?? <TbdMarkor id="front.hero.h1" />}
           </h1>
-          <p className="mt-8 max-w-2xl text-lg text-blekk-invers/70 text-pretty">
-            {site.ingress}
+          <p className="mt-8 max-w-2xl text-lg text-blekk-invers/70">
+            {hentTekst(front, "front.hero.sub") ?? <TbdMarkor id="front.hero.sub" />}
           </p>
           <div className="mt-10">
+            {/* Peker til abonnementssiden, ikke til skjema (3.0.1). */}
             <Link
-              href="/kontaktoss"
-              className="knapp-skjev inline-block rounded-knapp bg-aksent px-7 py-3.5 font-medium text-white hover:bg-aksent-mork"
+              href="/sosiale-medier-byra"
+              className="knapp-skjev inline-block rounded-knapp bg-aksent px-7 py-3.5 font-medium text-white hover:bg-aksent-hover"
             >
-              Ta kontakt
+              {hentTekst(front, "front.hero.cta") ?? <TbdMarkor id="front.hero.cta" />}
             </Link>
           </div>
         </Container>
       </section>
 
-      {/* Produksjonskunder – ikke SoMe-abonnenter. Se kommentar i site.ts. */}
-      <section className="border-b border-kant py-10">
+      {/* 2 · ARBEIDET — hele beviset. Faktisk produsert video, ingen stock. */}
+      <section className="py-16">
         <Container>
-          <p className="text-xs tracking-widest text-blekk-dempet uppercase">
-            Noen av bedriftene vi har produsert innhold for
-          </p>
-          <ul className="mt-5 flex flex-wrap gap-x-10 gap-y-3 text-sm text-blekk-dempet">
-            {kundelogoer.map((kunde) => (
-              <li key={kunde}>{kunde}</li>
-            ))}
-          </ul>
-          {/* TODO: erstatt med logofiler i public/bilder/kunder/ */}
-        </Container>
-      </section>
-
-      <section className="py-20">
-        <Container>
-          <ul className="grid gap-10 sm:grid-cols-3">
-            {prosess.map((steg) => (
-              <li key={steg.navn}>
-                <h2 className="text-xl font-medium">{steg.navn}</h2>
-                <p className="mt-3 text-blekk-dempet text-pretty">{steg.tekst}</p>
+          <h2 className="text-2xl font-medium">Arbeidet</h2>
+          <ul className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-3">
+            {slotsISeksjon(front, 2).map((slot) => (
+              <li key={slot.id}>
+                {/* aspect-ratio reserverer høyden før videoen finnes (CLS). */}
+                <div className="flex aspect-[9/16] items-center justify-center bg-flate-dempet text-sm text-blekk-svak">
+                  video
+                </div>
+                <p className="mt-2 text-sm text-blekk-dempet">
+                  {slot.verdi ?? <TbdMarkor id={slot.id} />}
+                </p>
               </li>
             ))}
           </ul>
         </Container>
       </section>
 
-      <section className="pb-20">
+      {/* 3 · ABONNEMENTET — komprimert. Lenker videre, selger ikke ferdig. */}
+      <section className="pb-16">
         <Container>
-          <div className="gradient-brun rounded-2xl px-8 py-14 text-blekk-invers sm:px-14">
-            <h2 className="text-3xl font-medium tracking-tight sm:text-4xl">
-              Én fast pris. Alt inkludert.
+          <div className="gradient-brun px-8 py-12 text-blekk-invers sm:px-12">
+            <h2 className="text-3xl font-medium">
+              {hentTekst(front, "front.sub.h2") ?? <TbdMarkor id="front.sub.h2" />}
             </h2>
-            <p className="mt-6 max-w-2xl text-lg text-pretty">
-              {tilbud.prisPerManed.toLocaleString("nb-NO")} kr per måned.
-              Strategi, produksjon, redigering og publisering to ganger i uka på
-              Instagram og Facebook. Produksjonsmål: {tilbud.videoerPerManed}{" "}
-              videoer i måneden.
+            <p className="mt-5 max-w-2xl">
+              {hentTekst(front, "front.sub.body") ?? <TbdMarkor id="front.sub.body" />}
             </p>
-            <p className="mt-4 max-w-2xl text-blekk-invers/70 text-pretty">
-              Ingen timepriser. Ingen bindingstid. Fri bruk av alt innhold –
-              klart til gjenbruk i annonser, på nettsider, skjermer og
-              presentasjoner.
+
+            {/* De fire tellbare punktene og prisen er låste fakta, ikke copy. */}
+            <ul className="mt-8 grid gap-x-10 gap-y-2 sm:grid-cols-2">
+              {tilbud.inngar.slice(0, 4).map((punkt) => (
+                <li key={punkt} className="text-blekk-invers/80">
+                  {punkt}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-8 text-3xl font-medium">
+              {tilbud.prisPerManed.toLocaleString("nb-NO")} kr/mnd
             </p>
-            <div className="mt-10">
+
+            <div className="mt-8">
               <Link
-                href="/kontaktoss"
-                className="knapp-skjev inline-block rounded-knapp bg-aksent px-7 py-3.5 font-medium text-white hover:bg-aksent-mork"
+                href="/sosiale-medier-byra"
+                className="knapp-skjev inline-block rounded-knapp bg-aksent px-7 py-3.5 font-medium text-white hover:bg-aksent-hover"
               >
-                Ta en prat
+                {hentTekst(front, "front.sub.cta") ?? <TbdMarkor id="front.sub.cta" />}
               </Link>
             </div>
           </div>
         </Container>
       </section>
 
-      <section className="pb-24">
+      {/* 4 · ENGANGSOPPDRAG — intern lenking som teller. */}
+      <section className="pb-16">
         <Container>
-          <h2 className="max-w-3xl text-3xl font-medium tracking-tight text-balance sm:text-4xl">
-            Vi lager komplett strategiforslag til SoMe i løpet av{" "}
-            {tilbud.strategiforslagVirkedager} virkedager!
-          </h2>
-          <p className="mt-6 max-w-2xl text-blekk-dempet text-pretty">
-            Lyst til å møte oss? Book en uforpliktende prat – vi holder til i{" "}
-            {site.kontakt.sted} og jobber med bedrifter i hele Norge. Fortell
-            oss om din bedrift, og vi lager et komplett strategiforslag til SoMe
-            i løpet av {tilbud.strategiforslagVirkedager} virkedager. Sammen
-            planlegger vi første shoot og kommer i gang på kort tid!
+          <h2 className="text-2xl font-medium">Trenger dere bare én ting?</h2>
+          <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+            {slotsISeksjon(front, 4).map((slot, i) => {
+              const mal = landingssider[i] ?? landingssider[0];
+              return (
+                <li key={slot.id}>
+                  <Link
+                    href={`/${mal.slug}`}
+                    className="block h-full border border-kant p-6 transition-colors hover:bg-flate-dempet"
+                  >
+                    {slot.verdi ?? <TbdMarkor id={slot.id} />}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </Container>
+      </section>
+
+      {/* 5 · KUNDER — produksjonskunder, aldri abonnenter. */}
+      <section className="pb-16">
+        <Container>
+          <h2 className="text-2xl font-medium">Hvem vi produserer for</h2>
+          <p className="mt-4 max-w-xl text-blekk-dempet">
+            {hentTekst(front, "front.clients.intro") ?? (
+              <TbdMarkor id="front.clients.intro" />
+            )}
           </p>
-          <div className="mt-8">
-            {/* Skjemalead er eneste KPI – primær-CTA peker alltid mot skjema. */}
-            <Link
-              href="/kontaktoss"
-              className="knapp-skjev inline-block rounded-knapp bg-aksent px-7 py-3.5 font-medium text-white hover:bg-aksent-mork"
-            >
-              Få et strategiforslag
-            </Link>
+          <ul className="mt-8 flex flex-wrap gap-x-10 gap-y-3 text-blekk-dempet">
+            {kundelogoer.map((kunde) => (
+              <li key={kunde}>{kunde}</li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      {/* 6 · KONTAKT */}
+      <section id="kontakt" className="bg-mork py-16 text-blekk-invers">
+        <Container>
+          <div className="max-w-xl">
+            <h2 className="text-3xl font-medium">
+              {hentTekst(front, "front.contact.h2") ?? (
+                <TbdMarkor id="front.contact.h2" />
+              )}
+            </h2>
+            <p className="mt-4 text-blekk-invers/70">
+              {hentTekst(front, "front.contact.sub") ?? (
+                <TbdMarkor id="front.contact.sub" />
+              )}
+            </p>
+            <Kontaktskjema side="/" />
           </div>
+          <p className="mt-10 text-sm text-blekk-invers/50">
+            {site.kontakt.epost} · {site.kontakt.telefon}
+          </p>
         </Container>
       </section>
     </>

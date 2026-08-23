@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { sendLeadPaEpost } from "@/lib/lead";
+import { sendLeadPaEpost } from "./lead";
 
 /**
  * Skjemainnsending (brief 8.1).
@@ -29,7 +29,12 @@ export async function sendSkjema(formData: FormData) {
       epost: String(formData.get("epost") ?? ""),
       telefon: String(formData.get("telefon") ?? ""),
       melding: String(formData.get("melding") ?? ""),
-      side: "/sosiale-medier-byra",
+      /*
+       * Hvilken side leadet kom fra. Skjemaet står på flere sider, og uten
+       * dette ville alle leads blitt tilskrevet abonnementssiden – attribusjon
+       * på eneste KPI hadde vært verdiløs.
+       */
+      side: String(formData.get("side") ?? "ukjent"),
     };
 
     /*
