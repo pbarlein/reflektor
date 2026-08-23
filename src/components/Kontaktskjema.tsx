@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { sendSkjema } from "@/app/sosiale-medier-byra/handling";
 
 /**
@@ -14,12 +14,16 @@ import { sendSkjema } from "@/app/sosiale-medier-byra/handling";
  * required-attributter.
  */
 export function Kontaktskjema() {
-  const [lastet, setLastet] = useState(0);
-  useEffect(() => setLastet(Date.now()), []);
+  // Tidsstempelet settes direkte på DOM-noden etter montering. Å gå veien om
+  // state ville utløst en render uten grunn – verdien leses kun ved innsending.
+  const lastet = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (lastet.current) lastet.current.value = String(Date.now());
+  }, []);
 
   return (
     <form action={sendSkjema} className="mt-8 grid max-w-lg gap-5">
-      <input type="hidden" name="lastet" value={lastet} />
+      <input type="hidden" name="lastet" ref={lastet} defaultValue="0" />
 
       {/* Honningkrukke – skjult for mennesker, ikke for boter. */}
       <div className="absolute left-[-9999px]" aria-hidden="true">
