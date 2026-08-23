@@ -58,9 +58,10 @@ er det her man ser først.
 
 Ferdigdefinisjonen i 8.8 punkt 4 krever hele kjeden testet ende-til-ende:
 
-- [ ] Innsending gir e-post til `pal@reflektor.no`
-- [ ] Svar-til er avsenderens egen adresse
-- [ ] Redirect til `/takk` skjer
+- [x] Innsending gir e-post til `pal@reflektor.no` — verifisert 23.08.2026
+- [x] Redirect til `/takk` skjer — `GET /takk.rsc 200` i kjøretidsloggen,
+      og ingen feil- eller advarselslinjer på deploymentet
+- [ ] Svar-til er avsenderens egen adresse — ikke kontrollert i mottatt e-post
 - [ ] `takk_page_view` registreres i GA4
 - [ ] Konverteringen vises i **Google Ads-grensesnittet**, ikke bare i
       GTM Preview
