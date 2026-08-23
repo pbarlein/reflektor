@@ -56,9 +56,16 @@ export default function Forside() {
       {/* 2 · ARBEIDET — hele beviset. Faktisk produsert video, ingen stock. */}
       <section className="py-16">
         <Container>
-          <h2 className="text-2xl font-medium">Arbeidet</h2>
+          <h2 className="text-2xl font-medium">
+            {hentTekst(front, "front.work.h2") ?? <TbdMarkor id="front.work.h2" />}
+          </h2>
+          <p className="mt-3 text-blekk-dempet">
+            {hentTekst(front, "front.work.sub") ?? <TbdMarkor id="front.work.sub" />}
+          </p>
           <ul className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-3">
-            {slotsISeksjon(front, 2).map((slot) => (
+            {slotsISeksjon(front, 2)
+              .filter((s) => s.id.includes("caption"))
+              .map((slot) => (
               <li key={slot.id}>
                 {/* aspect-ratio reserverer høyden før videoen finnes (CLS). */}
                 <div className="flex aspect-[9/16] items-center justify-center bg-flate-dempet text-sm text-blekk-svak">
@@ -111,9 +118,15 @@ export default function Forside() {
       {/* 4 · ENGANGSOPPDRAG — intern lenking som teller. */}
       <section className="pb-16">
         <Container>
-          <h2 className="text-2xl font-medium">Trenger dere bare én ting?</h2>
+          <h2 className="text-2xl font-medium">
+            {hentTekst(front, "front.services.h2") ?? (
+              <TbdMarkor id="front.services.h2" />
+            )}
+          </h2>
           <ul className="mt-8 grid gap-4 sm:grid-cols-2">
-            {slotsISeksjon(front, 4).map((slot, i) => {
+            {slotsISeksjon(front, 4)
+              .filter((s) => s.id.includes("items"))
+              .map((slot, i) => {
               const mal = landingssider[i] ?? landingssider[0];
               return (
                 <li key={slot.id}>
@@ -133,7 +146,11 @@ export default function Forside() {
       {/* 5 · KUNDER — produksjonskunder, aldri abonnenter. */}
       <section className="pb-16">
         <Container>
-          <h2 className="text-2xl font-medium">Hvem vi produserer for</h2>
+          <h2 className="text-2xl font-medium">
+            {hentTekst(front, "front.clients.h2") ?? (
+              <TbdMarkor id="front.clients.h2" />
+            )}
+          </h2>
           <p className="mt-4 max-w-xl text-blekk-dempet">
             {hentTekst(front, "front.clients.intro") ?? (
               <TbdMarkor id="front.clients.intro" />
