@@ -208,3 +208,24 @@ Nøkkelen er ikke skrevet til repoet.
 Anbefaling: roter den i Resend etter at den er satt i Vercel. En nøkkel som har
 vært synlig utenfor en hemmelighetslagring bør behandles som kompromittert,
 uavhengig av hvor kort tid det gjaldt.
+
+---
+
+## A26 · Pris på reklamefilm oppgitt
+
+Briefens eget punkt 2 etterlyste fra-priser på engangstjenester. Reflektor
+oppga 23.08.2026: **reklamefilm fra 40 000 kr**, eller 30 000 kr som del av en
+fast avtale. Det siste stemmer med den kjente prisen for ekstra produksjonsdag.
+
+Fortsatt åpent: fra-pris for videoproduksjonsdag og produktfotodag.
+
+## A27 · To tegngrenser hevet
+
+`home.clients.intro` fra 120 til 150, `home.services.items[*]` fra 80 til 90.
+
+Begge var mine estimater, ikke krav fra briefen. Copyen som kom inn lå 17 og 5
+tegn over, og designet har rom. Å be om omskriving for å treffe et tall jeg
+selv fant på ville vært feil bruk av protokollen.
+
+Grenser som stammer fra briefen — H1 under 8 ord, maks fire skjemafelt — står
+uendret og skal ikke justeres på denne måten.

@@ -34,16 +34,23 @@ export default function Abonnementssiden() {
   const cta = hentTekst(home, "home.hero.cta");
 
   /*
-   * FAQ-schema bygges kun av spørsmål som faktisk har godkjent tekst.
-   * Formatet er spørsmål på første linje, svar på resten.
+   * FAQ-slots har formatet «spørsmål | svar». Samme parsing brukes til både
+   * visningen og FAQPage-schemaet, så de to kan ikke komme i utakt.
+   *
+   * Kun spørsmål med faktisk svar tas med – schema bygget på halv tekst ville
+   * vært verre enn ingen schema.
    */
+  function parseFaq(verdi: string | null) {
+    if (!verdi) return null;
+    const [sporsmal, ...resten] = verdi.split("|");
+    const svar = resten.join("|").trim();
+    if (!sporsmal.trim() || !svar) return null;
+    return { sporsmal: sporsmal.trim(), svar };
+  }
+
   const faq = slotsISeksjon(home, 9)
-    .filter((s) => s.verdi)
-    .map((s) => {
-      const [sporsmal, ...resten] = s.verdi!.split("\n");
-      return { sporsmal, svar: resten.join("\n").trim() };
-    })
-    .filter((p) => p.svar);
+    .map((s) => parseFaq(s.verdi))
+    .filter((p) => p !== null);
 
   return (
     <>
@@ -198,18 +205,19 @@ export default function Abonnementssiden() {
         <Container>
           <h2 className="text-2xl font-medium">Ofte stilte spørsmål</h2>
           <div className="mt-8 max-w-2xl divide-y divide-kant border-y border-kant">
-            {slotsISeksjon(home, 9).map((slot) => (
-              <details key={slot.id} className="py-4">
-                <summary className="cursor-pointer font-medium">
-                  {slot.verdi ? slot.verdi.split("\n")[0] : <TbdMarkor id={slot.id} />}
-                </summary>
-                {slot.verdi && (
-                  <p className="mt-3 text-blekk-dempet">
-                    {slot.verdi.split("\n").slice(1).join("\n")}
-                  </p>
-                )}
-              </details>
-            ))}
+            {slotsISeksjon(home, 9).map((slot) => {
+              const parset = parseFaq(slot.verdi);
+              return (
+                <details key={slot.id} className="py-4">
+                  <summary className="cursor-pointer font-medium">
+                    {parset ? parset.sporsmal : <TbdMarkor id={slot.id} />}
+                  </summary>
+                  {parset && (
+                    <p className="mt-3 text-blekk-dempet">{parset.svar}</p>
+                  )}
+                </details>
+              );
+            })}
           </div>
         </Container>
       </section>

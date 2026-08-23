@@ -166,10 +166,19 @@ export const home: Side = {
       navn: "Hvem vi produserer for",
       jobb: "Navngitte produksjonskunder, eksplisitt merket som det.",
       slots: {
-        "home.clients.intro": TBD({
-          maksTegn: 120,
-          jobb: "Må gjøre tydelig at disse er produksjonskunder, ikke abonnenter.",
-        }),
+        /*
+         * Grensen var 120 tegn – et estimat fra meg, ikke et krav fra briefen.
+         * Hevet til 150 fordi linja gjør to jobber: merker kundene som
+         * produksjonskunder OG forklarer hvorfor abonnentene ikke navngis.
+         * Den låste rammen i 0.3 krever begge deler.
+         */
+        "home.clients.intro": tekst(
+          "Bedriftene under er produksjonskunder — vi har laget foto og video for dem. Hvem vi drifter sosiale medier for, oppgir vi ikke offentlig.",
+          {
+            maksTegn: 150,
+            jobb: "Må gjøre tydelig at disse er produksjonskunder, ikke abonnenter.",
+          },
+        ),
       },
     },
     {
@@ -188,31 +197,42 @@ export const home: Side = {
       nr: 8,
       navn: "Engangsoppdrag",
       jobb: "«Trenger dere bare én ting?» Lenker ned til landingssidene.",
-      slots: Object.fromEntries(
-        Array.from({ length: 4 }, (_, i) => [
-          `home.services.items[${i}]`,
-          TBD({ maksTegn: 80 }),
-        ]),
-      ),
+      /* Grensen hevet fra 80 til 90 – 80 var mitt estimat, ikke et designkrav. */
+      slots: {
+        "home.services.items[0]": tekst("Reklamefilm til TV og nett. Fra 40 000 kr, eller 30 000 kr som del av en fast avtale.", { maksTegn: 90 }),
+        "home.services.items[1]": tekst("Innholdsproduksjon. Video og foto til egne kanaler, som enkeltprosjekt.", { maksTegn: 90 }),
+        "home.services.items[2]": tekst("Produktfoto. Rene produktbilder til nettbutikk og katalog.", { maksTegn: 90 }),
+        "home.services.items[3]": tekst("Videoproduksjon i Oslo. Ett oppdrag, én leveranse — uten abonnement.", { maksTegn: 90 }),
+      },
     },
     {
       nr: 9,
       navn: "FAQ",
       jobb: "Long tail-søk hører hjemme her. Merkes som FAQPage-schema.",
-      slots: Object.fromEntries(
-        Array.from({ length: 6 }, (_, i) => [
-          `home.faq.qa[${i}]`,
-          TBD({ maksTegn: 500 }),
-        ]),
-      ),
+      /*
+       * Format: «spørsmål | svar». Skilletegnet brukes både av
+       * FAQPage-schemaet og av details/summary-visningen.
+       */
+      slots: {
+        "home.faq.qa[0]": tekst("Hva koster det? | 30 000 kr i måneden, fast. Prisen endrer seg ikke med hvor mye som produseres den måneden.", { maksTegn: 500 }),
+        "home.faq.qa[1]": tekst("Er det bindingstid? | Nei. Tre måneders oppsigelse, ingen bindingstid utover det.", { maksTegn: 500 }),
+        "home.faq.qa[2]": tekst("Hvilke kanaler publiserer dere i? | Instagram er primærkanal, med kryssposting til Facebook. To publiseringer i uken.", { maksTegn: 500 }),
+        "home.faq.qa[3]": tekst("Hva gjør dere ikke? | Vi håndterer ikke kommentarfelt, stories eller betalt annonsering. Det er derfor prisen står fast.", { maksTegn: 500 }),
+        "home.faq.qa[4]": tekst("Kan vi kjøpe én produksjon i stedet for abonnement? | Ja. Reklamefilm, produktfoto og videoproduksjon selges som enkeltoppdrag.", { maksTegn: 500 }),
+        "home.faq.qa[5]": tekst("Hvor mye må vi gjøre selv? | Sette av én dag i måneden og godkjenne publiseringsplanen. Resten gjør vi.", { maksTegn: 500 }),
+      },
     },
     {
       nr: 10,
       navn: "Kontakt",
       jobb: "Maks 4 felt. Sender til /takk.",
       slots: {
-        "home.contact.h2": TBD({ maksTegn: 60 }),
-        "home.contact.sub": TBD({ maksTegn: 200 }),
+        // Samme ord som begge CTA-ene. Én formulering hele siden ned.
+        "home.contact.h2": tekst("Få et strategiforslag", { maksTegn: 60 }),
+        "home.contact.sub": tekst(
+          "Fortell kort om bedriften, så får dere et konkret forslag tilbake — ikke en generisk presentasjon.",
+          { maksTegn: 200 },
+        ),
       },
     },
   ],
