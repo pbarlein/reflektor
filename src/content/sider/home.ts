@@ -38,10 +38,24 @@ export const home: Side = {
           "Sosiale medier-byrå i Oslo – fast pris 30 000 kr/mnd",
           { maksTegn: 60 },
         ),
-        "home.meta.description": TBD({
-          maksTegn: 155,
-          jobb: "Selger klikket i søkeresultatet. Ikke en gjentakelse av H1.",
-        }),
+        /*
+         * Åpner på «SoMe-byrå» med vilje. H1 eier «sosiale medier-byrå», og
+         * åtte ord rekker ikke til begge primærsøkeordene. Descriptionen tar
+         * det andre uten å røre H1.
+         *
+         * «Ingen bindingstid» er valgt foran «tre måneders oppsigelse» fordi
+         * det er det som henter klikket. Den låste rammen i 0.3 krever at
+         * begge står eksplisitt på SIDEN – og det gjør de, i seksjon 3.
+         */
+        "home.meta.description": tekst(
+          "SoMe-byrå i Oslo med fast pris: 30 000 kr/mnd. Én produksjonsdag " +
+            "gir 8–10 ferdige videoer, publisert to ganger i uken. Ingen " +
+            "bindingstid.",
+          {
+            maksTegn: 155,
+            jobb: "Selger klikket i søkeresultatet. Ikke en gjentakelse av H1.",
+          },
+        ),
       },
     },
     {
@@ -122,12 +136,30 @@ export const home: Side = {
       nr: 5,
       navn: "Slik fungerer det",
       jobb: "Fire steg. Understreker hvor lite kunden må gjøre.",
-      slots: Object.fromEntries(
-        Array.from({ length: 4 }, (_, i) => [
-          `home.process.steps[${i}]`,
-          TBD({ maksTegn: 140 }),
-        ]),
-      ),
+      /*
+       * Hvert steg sier hva kunden slipper å gjøre – det er jobben briefen
+       * gir seksjonen. Steg 3 gjentar «godkjenner» fra hero-sub'en med vilje:
+       * kontrollen over hva som publiseres er innvendingen som tåler å bli
+       * sagt to ganger.
+       */
+      slots: {
+        "home.process.steps[0]": tekst(
+          "Vi blir enige om retning og hva som skal produseres. Ett møte, så er den delen unnagjort.",
+          { maksTegn: 140 },
+        ),
+        "home.process.steps[1]": tekst(
+          "Én produksjonsdag i måneden. Dere setter av tiden — vi står for resten.",
+          { maksTegn: 140 },
+        ),
+        "home.process.steps[2]": tekst(
+          "Vi klipper 8–10 ferdige videoer og legger dem i en publiseringsplan dere godkjenner.",
+          { maksTegn: 140 },
+        ),
+        "home.process.steps[3]": tekst(
+          "Vi publiserer to ganger i uken på Instagram, med kryssposting til Facebook.",
+          { maksTegn: 140 },
+        ),
+      },
     },
     {
       nr: 6,
