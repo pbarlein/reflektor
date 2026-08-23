@@ -22,23 +22,55 @@ export const home: Side = {
   ready: false,
   seksjoner: [
     {
+      nr: 0,
+      navn: "Metadata",
+      jobb: "Det som avgjør om noen klikker i søkeresultatet.",
+      slots: {
+        /*
+         * Primærsøkeord først (8.3). «| Reflektor» legges på ett sted, i
+         * metadatafunksjonen – aldri her.
+         *
+         * Prisankeret er med vilje tilbake: title-taggen var en periode
+         * identisk med H1, og da forsvant «30 000 kr/mnd» fra SERP-snippeten.
+         * Den er dagens formulering på reflektor.no, ikke nyskrevet.
+         */
+        "home.meta.title": tekst(
+          "Sosiale medier-byrå i Oslo – fast pris 30 000 kr/mnd",
+          { maksTegn: 60 },
+        ),
+        "home.meta.description": TBD({
+          maksTegn: 155,
+          jobb: "Selger klikket i søkeresultatet. Ikke en gjentakelse av H1.",
+        }),
+      },
+    },
+    {
       nr: 1,
       navn: "Hero",
       jobb: "Tilbudet, prisen og beviset i ett skjermbilde.",
       slots: {
-        "home.hero.h1": TBD({
+        "home.hero.h1": tekst("Sosiale medier-byrå i Oslo med fast pris", {
           maksOrd: 8,
           jobb: "Må eie «some byrå» og «sosiale medier byrå».",
         }),
-        "home.hero.sub": TBD({
-          maksTegn: 180,
-          jobb: "Hva kunden slipper å gjøre selv.",
+        "home.hero.sub": tekst(
+          "Én produksjonsdag i måneden gir 8–10 ferdige videoer. Vi " +
+            "publiserer to ganger i uken på Instagram og Facebook. Dere " +
+            "godkjenner før noe går ut.",
+          { maksTegn: 180, jobb: "Hva kunden slipper å gjøre selv." },
+        ),
+        // Samme ord som skjemaknappen nederst. Én formulering hele siden ned.
+        "home.hero.cta": tekst("Få et strategiforslag", {
+          maksTegn: 24,
+          jobb: "Handling, ikke «Les mer».",
         }),
-        "home.hero.cta": TBD({ maksTegn: 24, jobb: "Handling, ikke «Les mer»." }),
-        "home.hero.proof": TBD({
-          maksTegn: 90,
-          jobb: "Navngitt bevis over folden. Produksjonskunder.",
-        }),
+        // Navnene går igjen i logostripa i seksjon 6, så heroen og den
+        // bekrefter hverandre framfor å introdusere et nytt sett.
+        "home.hero.proof": tekst(
+          "Vi produserer innhold for blant andre Orkla, Anton Sport, " +
+            "Vitusapotek og The Well.",
+          { maksTegn: 90, jobb: "Navngitt bevis over folden. Produksjonskunder." },
+        ),
       },
     },
     {
@@ -64,10 +96,15 @@ export const home: Side = {
           "Tre måneders oppsigelse. Ingen bindingstid.",
           { maksTegn: 80 },
         ),
-        "home.pricing.note": TBD({
-          maksTegn: 200,
-          jobb: "Hva som gjør fastprisen mulig – innvendingen bak innvendingen.",
-        }),
+        "home.pricing.note": tekst(
+          "Prisen dekker produksjonsdag, redigering og publisering. " +
+            "Kommentarfelt, stories og betalt annonsering inngår ikke — det " +
+            "er derfor prisen står fast.",
+          {
+            maksTegn: 200,
+            jobb: "Hva som gjør fastprisen mulig – innvendingen bak innvendingen.",
+          },
+        ),
       },
     },
     {

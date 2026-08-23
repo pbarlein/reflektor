@@ -23,8 +23,9 @@ import { kundelogoer } from "@/content/site";
  * på desktop – ikke begge.
  */
 export const metadata: Metadata = {
-  // Primærsøkeord først. «| Reflektor» legges på i layout, ikke her.
-  title: "Sosiale medier-byrå i Oslo med fast pris",
+  // Hentes fra innholdslaget, ikke skrevet her (brief 8.3).
+  title: hentTekst(home, "home.meta.title") ?? undefined,
+  description: hentTekst(home, "home.meta.description") ?? undefined,
   alternates: { canonical: "https://www.reflektor.no/sosiale-medier-byra" },
 };
 
