@@ -1,0 +1,29 @@
+name: CI
+
+# Rødt CI blokkerer merge, uansett hvor pen siden er (brief 8.1.2).
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  sjekk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Typesjekk
+        run: npx tsc --noEmit
+      - name: Lint
+        run: npm run lint
+      - name: content:check
+        run: npm run content:check
+      - name: Bygg
+        run: npm run build
+# TODO (vedlegg A): lenkesjekk og Lighthouse mot ytelsesbudsjettet i 8.7.
+# Lighthouse krever en deployet preview-URL – kobles på når Vercel-deployment
+# kan refereres fra workflowen.

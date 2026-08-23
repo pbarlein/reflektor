@@ -1,77 +1,87 @@
 @import "tailwindcss";
 
 /*
- * Designtokens hentet fra faktisk måling av dagens reflektor.no
- * (nettleserinspeksjon 2026-08-22) og merkevaremanualen fra Holum Studio.
- *
- * Der de to er uenige vinner den levende siden – den er det folk faktisk ser.
- * Manualens verdier står som kommentar.
+ * Designtokens fra Claude Design. Se src/styles/tokens/LES-MEG.md.
+ * Ingen vilkårlige verdier i komponenter (brief 8.1.1).
  */
-@theme {
-  /* Beige hovedflate. Ikke hvit – det er et bevisst valg. */
-  --color-flate: #f7f3ed;
-  --color-flate-dempet: #efe9e0;
-
-  /* Mørke seksjoner, header og footer. Manual: #141414 / Deep Coal #292626 */
-  --color-mork: #121212;
-
-  --color-blekk: #131212;
-  --color-blekk-dempet: #5c5750;
-  --color-blekk-invers: #f7f3ed;
-
-  /* Burnt Orange. Identisk i manual og på live side. */
-  --color-aksent: #de4826;
-  --color-aksent-mork: #c13d1e;
-
-  --color-kant: #e2dbd0;
-  --color-kant-mork: #2c2828;
-
-  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
-}
+@import "../styles/tokens/colors.css";
+@import "../styles/tokens/typography.css";
+@import "../styles/tokens/spacing.css";
+@import "../styles/tokens/radius.css";
+@import "../styles/tokens/motion.css";
+@import "../styles/tokens/elevation.css";
 
 /*
- * Brun gradient – signaturelementet på innholdskort og seksjonsblokker.
+ * Broen mellom tokens og Tailwind. Tailwind-klassene skal alltid ende opp i
+ * en tokenverdi – aldri i et tall skrevet inn i en komponent.
  *
- * Stoppverdiene er samplet fra skjermbilder av dagens side, ikke gjettet:
- * nær sort øverst til venstre, gjennom varm brun, til rødbrun til høyre.
+ * Font: Poppins, ikke Figtree. Se LES-MEG.md for hvorfor.
  */
-@theme {
-  --color-brun-start: #11100e;
-  --color-brun-midt: #4a3429;
-  --color-brun-slutt: #471f15;
-}
+@theme inline {
+  --color-flate: var(--surface-page);
+  --color-flate-dempet: var(--surface-muted);
+  --color-mork: var(--surface-inverse);
+  --color-sort: var(--surface-black);
+  --color-aksent: var(--action-primary);
+  --color-aksent-hover: var(--action-primary-hover);
+  --color-aksent-trykk: var(--action-primary-press);
 
-.gradient-brun {
-  background-image: linear-gradient(
-    105deg,
-    var(--color-brun-start) 0%,
-    var(--color-brun-midt) 45%,
-    var(--color-brun-slutt) 100%
-  );
+  --color-blekk: var(--text-body);
+  --color-blekk-dempet: var(--text-muted);
+  --color-blekk-svak: var(--text-subtle);
+  --color-blekk-invers: var(--text-on-inverse);
+
+  --color-kant: var(--border-hairline);
+  --color-kant-sterk: var(--border-strong);
+  --color-kant-invers: var(--border-inverse);
+
+  --font-sans: var(--font-poppins), "Helvetica Neue", Arial, sans-serif;
+
+  --radius-sm: var(--radius-sm);
+  --radius-pill: var(--radius-pill);
+
+  --spacing-seksjon: var(--section-y);
+  --spacing-seksjon-lg: var(--section-y-lg);
 }
 
 body {
-  background: var(--color-flate);
-  color: var(--color-blekk);
+  background: var(--surface-page);
+  color: var(--text-body);
+  font-size: var(--type-body-size);
+  line-height: var(--leading-normal);
+  letter-spacing: var(--tracking-body);
   -webkit-font-smoothing: antialiased;
 }
 
-/*
- * H1 er 500, ikke bold. Bevisst lettere enn typisk – ikke «rett opp» i dette.
- */
-h1 {
-  font-weight: 500;
+h1,
+h2,
+h3 {
+  letter-spacing: var(--tracking-heading);
+  line-height: var(--leading-snug);
+  text-wrap: balance;
+}
+
+/* Synlig fokusmarkering på alt interaktivt (brief 8.6). */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 /*
- * CTA-knappene står et par grader ut av akse. Et lite, lekent grep som går
- * igjen på alle sider i dagens design. Nullstilles ved hover slik at knappen
- * retter seg opp når man peker på den.
+ * Brun gradient – signaturflaten fra dagens side. Stoppverdiene er samplet
+ * fra skjermbilder, ikke gjettet.
+ */
+.gradient-brun {
+  background-image: linear-gradient(105deg, #11100e 0%, #4a3429 45%, #471f15 100%);
+}
+
+/*
+ * CTA-knappene står et par grader ut av akse – et grep som går igjen på alle
+ * sider i dagens design. Retter seg opp ved hover.
  */
 .knapp-skjev {
-  --skjev: -2deg;
-  transform: rotate(var(--skjev));
-  transition: transform 150ms ease, background-color 150ms ease;
+  transform: rotate(-2deg);
+  transition: var(--transition-interactive);
 }
 
 .knapp-skjev:hover {
@@ -82,6 +92,5 @@ h1 {
   .knapp-skjev,
   .knapp-skjev:hover {
     transform: none;
-    transition: none;
   }
 }

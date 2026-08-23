@@ -1,0 +1,216 @@
+{
+  "$meta": {
+    "navn": "Reflektor designtokens",
+    "versjon": "1.0.0",
+    "dato": "2026-08-23",
+    "kilde": "Nettsidebrief 2026 v1.4 — kapittel 7.4, 7.6 og 3.0.1. Leveranse 7.7 punkt 1.",
+    "avsender": "Claude Design",
+    "mottaker": "Claude Code",
+    "regel": "Dette er eneste kilde til sannhet for farge, type, rom, rutenett og bevegelse. En verdi som ikke finnes her, skal legges til her — aldri skrives inn i en komponent (jf. 8.1.1). Filen inneholder verdier og regler, ikke ferdig CSS: Claude Code mapper den til Tailwind-temaet og til CSS-variabler.",
+    "enheter": "Alle px-verdier er tall i px med mindre annet er oppgitt. Alle farger er sRGB hex.",
+    "kontrastmetode": "WCAG 2.2 relativ luminans, beregnet 23.08.2026. AA = 4.5:1 for tekst under 24px (eller under 18.66px bold), 3:1 for tekst 24px+ / 18.66px+ bold og for grensen rundt UI-kontroller."
+  },
+
+  "color": {
+    "$regler": [
+      "Tre merkevarefarger er låst: paper #F7F3ED, ink #131212, accent #DE4826. Brun gradient videreføres som signaturelement.",
+      "Aksenten brukes kun til primær CTA og til å markere det som skal leses først. Aldri dekorativt, aldri som seksjonsbakgrunn, aldri som flatefyll bak brødtekst.",
+      "accent.500 (#DE4826) er merkevareverdien. Den har 3.75:1 mot paper og er derfor ULOVLIG for tekst under 24px. Til liten tekst, eyebrows og til CTA-fyll brukes accent.600 (#C63C1D).",
+      "Maks to bakgrunnsfarger per side i tillegg til svart/gradient (jf. designsystemet).",
+      "Tre gråtrinn — ikke fire. De er utledet av paper og ink, ikke nøytralgrå: de er varme.",
+      "Mørk modus bygges ikke i fase 1. ink-flater er ikke mørk modus, de er en seksjonsvariant."
+    ],
+    "paper": { "value": "#F7F3ED", "rolle": "Standard sidebakgrunn. LÅST.", "kontrast": { "ink": 16.92, "gray.600": 4.86, "accent.600": 4.67 } },
+    "paper.raised": { "value": "#FDFBF7", "rolle": "Kortflate på paper. Erstatter skygge som separasjon." },
+    "ink": { "value": "#131212", "rolle": "All brødtekst og alle overskrifter på paper. Alternativ seksjonsbakgrunn. LÅST." },
+    "ink.raised": { "value": "#1E1C1B", "rolle": "Kortflate på ink-seksjoner." },
+    "black": { "value": "#000000", "rolle": "Kun bak video og bak fullbleed-bilder, slik at videokant og bakgrunn er samme svart." },
+    "accent": {
+      "50":  { "value": "#FDF1EC", "rolle": "Mykt fyll: aktiv FAQ-rad, valgt skjemafelt. Ikke bak tekst mindre enn 15px." },
+      "100": { "value": "#F6D5C9", "rolle": "Fyll på ink-flater, sitatstrek." },
+      "300": { "value": "#EDA98F", "rolle": "Aksenttekst PÅ ink (7.9:1). Eneste lovlige aksentverdi for liten tekst på mørk flate." },
+      "500": { "value": "#DE4826", "rolle": "Merkevareaksent. LÅST. Tillatt som: tekst 24px+ (eller 19px+ bold), det ene kursive ordet i en H1, tall i statistikkblokk, 2px understrek på aktiv nav, fokusring, ikon. Kontrast mot paper 3.75:1.", "kontrast": { "paper": 3.75, "ink": 4.51, "hvit": 4.15 } },
+      "600": { "value": "#C63C1D", "rolle": "Handlingsverdien. Fyll i primær CTA (etikett i paper = 5.17:1), all aksenttekst under 24px, eyebrows.", "kontrast": { "paper": 4.67, "paperTekstPåDen": 5.17 } },
+      "700": { "value": "#A83217", "rolle": "Hover på primær CTA. 6.70:1 med paper-etikett." },
+      "800": { "value": "#7E2612", "rolle": "Aktiv/trykk på primær CTA." },
+      "900": { "value": "#5A1B0D", "rolle": "Aksentkant på gradient og på ink." }
+    },
+    "gray": {
+      "600": { "value": "#6E6A64", "rolle": "Dempet tekst på paper — bildetekst, metadata, feltbeskrivelse. 4.86:1, lovlig ned til 15px. Eneste grå som får bære tekst.", "kontrast": { "paper": 4.86 } },
+      "400": { "value": "#B5AFA6", "rolle": "Sterk kant: 1.5px omriss på outline-knapp og skjemakontroll. Aldri tekst." },
+      "200": { "value": "#E6E1D9", "rolle": "Hårstrek: kortkant, FAQ-linje, header-underkant, tabellrad. Aldri tekst." }
+    },
+    "onInk": {
+      "text":  { "value": "#F7F3ED", "rolle": "Tekst på ink og på gradient. 16.9:1." },
+      "muted": { "value": "rgba(247,243,237,0.66)", "rolle": "Dempet tekst på ink. Aldri under 15px." },
+      "hairline": { "value": "rgba(247,243,237,0.18)", "rolle": "Kant på ink-kort og på gradientkort." }
+    },
+    "gradient.brand": {
+      "value": "linear-gradient(148deg, #2A1D17 0%, #4A3124 46%, #8A4A2C 100%)",
+      "stops": ["#2A1D17", "#4A3124", "#8A4A2C"],
+      "vinkel": "148deg",
+      "rolle": "Signaturelementet. Reservert for maks én flate per side, og på landingssidene er den flaten broen (6.2). Brukes ellers bak forsidens abonnementsseksjon.",
+      "regler": [
+        "paper-tekst er lovlig hvor som helst på gradienten — svakeste punkt er 6.14:1.",
+        "accent.500 skal ALDRI ligge på gradienten. Den kolliderer med det varmeste stoppet. Bruk paper-tekst og outline-CTA i paper.",
+        "Ingen tekst direkte på foto uten scrim — gradienten er ikke en scrim, den er en flate.",
+        "Ikke animer stoppene. Ikke roter vinkelen per seksjon."
+      ],
+      "status": "[TBD-1] Stoppene er rekonstruert fra dagens signaturflate og skal verifiseres mot originalfilen fra Holum Studio før produksjon. Vinkel og antall stopp er låst uansett verdi."
+    },
+    "status": {
+      "error":   { "value": "#B3261E", "rolle": "Feilmelding i skjema. Bevisst ulik accent.600 i valør slik at feil ikke leses som CTA." },
+      "success": { "value": "#2F6B4F", "rolle": "Kun /takk og skjemabekreftelse." }
+    }
+  },
+
+  "typography": {
+    "$beslutning": "Poppins beholdes IKKE alene. Poppins suppleres: displayfamilie til overskrifter og eyebrows, Poppins til brødtekst og UI. Begrunnelse og alternativ B ligger i docs/designtokens-regler.md, kapittel «Fontvalget».",
+    "families": {
+      "display": {
+        "value": "Archivo Variable",
+        "stack": "\"Archivo Variable\", \"Archivo\", \"Helvetica Neue\", Arial, sans-serif",
+        "akser": "wght 400–900",
+        "brukesTil": "H1–H3, statistikktall, eyebrow, knappeetiketter over 20px",
+        "hvorfor": "Høy x-høyde og halvsmal bredde gjør at den setter tett uten å tette igjen. Reell optisk vektforskjell 500→800. Full æ/ø/å i alle vekter (latin-ext).",
+        "lisens": "SIL OFL — selvhostet woff2, subsettet latin + latin-ext",
+        "budsjett": "≤ 34 KB variabel woff2",
+        "alternativ": "Instrument Sans hvis Archivo leser for teknisk i preview. Samme roller, samme tokens, ingen andre endringer."
+      },
+      "body": {
+        "value": "Poppins",
+        "stack": "\"Poppins\", \"Segoe UI\", system-ui, sans-serif",
+        "vekter": [400, 500, 600],
+        "brukesTil": "brødtekst, ingress, lister, skjema, nav, footer, bildetekst",
+        "merknad": "Dagens nettsted har kun vekt 500. Vekt 400 legges til som ny brødtekstverdi (500 er for tung på 17px), 500 blir UI/nav, 600 blir eneste utheving i brødtekst. Ingen 700 i brødtekst — utheving over 600 tilhører display.",
+        "budsjett": "≤ 3 × 20 KB woff2, subsettet latin + latin-ext"
+      },
+      "maksAntallFamilier": 2
+    },
+    "scale": {
+      "$regel": "Ni trinn, forhold ~1.32 på desktop og ~1.22 på mobil. Mobilverdien er utgangspunktet (mobil først, 6.1). Mellom brekkpunktene interpoleres flytende: clamp(mobil, lineær, desktop) med 375px og 1180px som ankere — ingen trinnvise media queries for type (8.1.1).",
+      "display-xl": { "mobile": 44, "desktop": 92, "lineHeight": 1.02, "tracking": "-0.03em", "weight": 800, "family": "display", "bruk": "H1 i hero på abonnementssiden og forsiden. Maks 8 ord — se maxChars." },
+      "display-l":  { "mobile": 36, "desktop": 68, "lineHeight": 1.04, "tracking": "-0.03em", "weight": 800, "family": "display", "bruk": "H1 på landingssider, brobanner-H2." },
+      "display-m":  { "mobile": 30, "desktop": 52, "lineHeight": 1.06, "tracking": "-0.025em", "weight": 700, "family": "display", "bruk": "Seksjons-H2, prisbeløp, statistikktall." },
+      "heading":    { "mobile": 26, "desktop": 38, "lineHeight": 1.12, "tracking": "-0.02em", "weight": 700, "family": "display", "bruk": "H3, case-tittel, FAQ-spørsmål på desktop." },
+      "subheading": { "mobile": 21, "desktop": 27, "lineHeight": 1.25, "tracking": "-0.01em", "weight": 600, "family": "display", "bruk": "Hero-ingress, kortoverskrift, sitat." },
+      "body-l":     { "mobile": 18, "desktop": 20, "lineHeight": 1.55, "tracking": "0", "weight": 400, "family": "body", "bruk": "Ingress, brotekst, leveranseliste." },
+      "body":       { "mobile": 17, "desktop": 17, "lineHeight": 1.6, "tracking": "0", "weight": 400, "family": "body", "bruk": "All brødtekst. Skalerer ikke — 17px er riktig i begge ender." },
+      "body-s":     { "mobile": 15, "desktop": 15, "lineHeight": 1.5, "tracking": "0", "weight": 400, "family": "body", "bruk": "Bildetekst, feltbeskrivelse, vilkårslinje, footer." },
+      "eyebrow":    { "mobile": 12, "desktop": 13, "lineHeight": 1.2, "tracking": "0.14em", "weight": 700, "family": "display", "transform": "uppercase", "bruk": "Seksjonsmarkør. Maks tre ord. accent.600 eller gray.600 — aldri accent.500." }
+    },
+    "measure": { "body": "68ch", "ingress": "56ch", "display": "22ch", "$regel": "Brødtekst maks 68 tegn per linje (7.4). Overskrifter brytes med bevisst linjeskift i innholdsfilen, ikke av tilfeldig kolonnebredde." },
+    "maxChars": {
+      "$regel": "Håndheves av content:check (8.2), ikke av øyemål. Verdier gjelder tegn inkludert mellomrom.",
+      "hero.h1": 46,
+      "hero.sub": 130,
+      "section.h2": 52,
+      "card.title": 34,
+      "cta.label": 22,
+      "eyebrow": 24,
+      "faq.question": 74
+    },
+    "rules": [
+      "Kursiv brukes maks én gang per side: ett ord i én overskrift, i accent.500, og bare hvis overskriften er 24px+.",
+      "Ingen versaler på overskrift over tre ord. Unntak: sidetittelen VÅRT ARBEID.",
+      "Setningsbokstav (norsk) på alle overskrifter og nav-etiketter.",
+      "Tall er lastbærende: bruk tabulærsiffer (font-variant-numeric: tabular-nums) i pris, statistikk og kapasitetstall så kolonner ikke danser.",
+      "Aldri opasitet på tekst for å dempe den — bruk gray.600 eller onInk.muted."
+    ]
+  },
+
+  "space": {
+    "$regel": "Basis 4px. Komponentavstand hentes fra 4–32. Seksjonsavstand hentes fra 72–200. Det finnes ingenting mellom 32 og 72 — det er der uttrykket faller sammen (7.4: kontrasten mellom tett og åpent er halve uttrykket).",
+    "scale": { "1": 4, "2": 8, "3": 12, "4": 16, "6": 24, "8": 32, "12": 48, "16": 64, "18": 72, "24": 96, "32": 128, "40": 160, "50": 200 },
+    "section": { "mobile": 72, "mobileLarge": 96, "desktop": 128, "desktopLarge": 160, "$regel": "Large-verdien brukes kun rundt seksjonsskifter som også skifter bakgrunn." },
+    "stack": { "tight": 8, "default": 16, "loose": 24, "block": 32 },
+    "insetCard": { "mobile": 20, "desktop": 32 },
+    "hitArea": { "min": 44, "$regel": "Alle trykkflater minst 44×44, også nav-lenker og FAQ-rader." }
+  },
+
+  "grid": {
+    "columns": { "mobile": 4, "desktop": 12 },
+    "gutter": { "mobile": 16, "desktop": 24 },
+    "margin": { "mobile": 20, "tablet": 32, "desktop": 56 },
+    "container": { "text": 720, "default": 1180, "wide": 1440, "bleed": "100vw" },
+    "breakpoints": { "sm": 375, "md": 768, "lg": 1024, "xl": 1180, "xxl": 1440 },
+    "rules": [
+      "Asymmetri er ønsket i redaksjonelle seksjoner, men innenfor rutenettet: tillatte tekstblokker på desktop er kolonne 1–6, 1–7, 2–8 eller 6–12. Ikke frihånd.",
+      "Ingen tekstblokk over 7 kolonner på desktop.",
+      "Container queries der en komponent skal oppføre seg etter egen bredde (kort, arbeidsrutenett). Media queries kun der komponenten faktisk skifter form (nav → mobilmeny, prosessteg horisontal → vertikal)."
+    ]
+  },
+
+  "radius": {
+    "$regel": "Firkantet er utgangspunktet — det gjentar geometrien i R-merket. Bilder og video er ALDRI avrundet.",
+    "none": 0, "control": 2, "pill": 999,
+    "bruk": { "none": "kort, seksjon, bilde, video, før/etter-ramme", "control": "input, textarea, select", "pill": "knapp og badge — kun der" }
+  },
+
+  "rotation": {
+    "$regel": "Dagens roterte CTA-knapper videreføres som token, ikke som tilfeldige verdier per knapp (7.4). Rotasjonen er konstant — den animeres ikke ved hover.",
+    "cta": "-2deg",
+    "badge": "1.5deg",
+    "unntak": "Sticky CTA på mobil roteres ikke (den ligger mot skjermkanten og en skjev knapp der leses som en feil)."
+  },
+
+  "elevation": {
+    "$regel": "Ingen skygge i hviletilstand. Skygge finnes kun som hover på et kort som i sin helhet er en lenke, og på sticky CTA. Aldri farget, aldri innvendig.",
+    "none": "none",
+    "hover": "0 12px 32px -12px rgba(19,18,18,0.22)",
+    "sticky": "0 -8px 24px -12px rgba(19,18,18,0.28)",
+    "focus": "0 0 0 3px rgba(222,72,38,0.55)"
+  },
+
+  "motion": {
+    "$regel": "Tre navngitte overganger for hele nettstedet. Én easing-kurve. Ingenting utenfor denne listen skal animeres. Innhold skal være lesbart i sluttilstand uansett om animasjonen har rukket å kjøre.",
+    "easing": { "standard": "cubic-bezier(0.2, 0.6, 0.2, 1)" },
+    "transitions": {
+      "ui": {
+        "duration": 180,
+        "easing": "standard",
+        "egenskaper": ["color", "background-color", "border-color", "box-shadow", "transform"],
+        "utløses av": "hover, fokus, trykk på knapp, lenke, kort, skjemakontroll",
+        "detalj": "Trykk = translateY(1px) + ett trinn ned i fargerampen. Ingen skalering, ingen ripple. Opasitet er ikke en hovertilstand."
+      },
+      "reveal": {
+        "duration": 380,
+        "easing": "standard",
+        "fra": "opacity 0, translateY(16px)",
+        "til": "opacity 1, translateY(0)",
+        "stagger": 60,
+        "maksElementerPerStagger": 4,
+        "utløses av": "IntersectionObserver, terskel 0.2, kjører én gang per element",
+        "detalj": "Kun fade + kort løft. Aldri fra siden, aldri skalering. Elementer over folden animerer ikke — heroen er ferdig ved første maling."
+      },
+      "expand": {
+        "duration": 260,
+        "easing": "standard",
+        "egenskaper": ["height", "opacity"],
+        "utløses av": "FAQ-trekkspill (<details>), mobilmeny",
+        "detalj": "Ikonet + roterer til ×. Innholdet er i DOM og søkbart også lukket."
+      }
+    },
+    "textRegel": "Bevegelse på tekst er kun tillatt der teksten er lesbar i sluttilstand innen 400 ms (7.3). Derfor finnes ingen kinetisk typografi-token.",
+    "reducedMotion": "prefers-reduced-motion: reduce → transform-delen av ui og reveal settes til 0, expand settes til 0ms, opasitetsovergangen beholdes. Ingen scroll-drevet bevegelse i det hele tatt."
+  },
+
+  "video": {
+    "$regel": "Vertikalt 9:16 er hjemmeformatet og vises som sådan — aldri beskåret til liggende.",
+    "aspect": { "home": "9 / 16", "case": "16 / 10", "hero": "9 / 16 mobil, 16 / 9 desktop via <source media>" },
+    "krav": ["poster-bilde alltid, og posteren er første maling", "autoplay muted loop playsinline", "loading/lazy under folden", "hero-video skal ha et statisk fallback som holder alene", "aspect-ratio på elementet — ingen fast seksjonshøyde, ingen overflow-triks"],
+    "scrim": { "bottom": "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 42%, rgba(0,0,0,0) 100%)", "$regel": "Ingen tekst på foto eller video uten denne." }
+  },
+
+  "focus": {
+    "$regel": "Fokus er aldri fjernet og aldri usynlig. :focus-visible → 3px accent.500-glød (elevation.focus) + 2px offset. Samme uttrykk på paper og på ink.",
+    "ring": "0 0 0 3px rgba(222,72,38,0.55)",
+    "offset": 2
+  },
+
+  "$åpnePunkter": [
+    "[TBD-1] Brun gradient: stopp-verdier rekonstruert, skal verifiseres mot originalfil fra Holum Studio. Vinkel, antall stopp og bruksregel er låst uansett.",
+    "[TBD-2] Displayfamilie skal godkjennes i preview på ekte telefon før den låses. Archivo er forslaget, Instrument Sans er alternativet. Bytte påvirker ingen andre tokens.",
+    "[TBD-3] accent.500 har 3.75:1 mot paper og kan derfor ikke bære liten tekst. Løsningen her er accent.600 til liten tekst. Hvis merkevaren senere krever accent.500 i eyebrows, må paper gjøres lysere — det er en merkevarebeslutning, ikke en designbeslutning, og tilhører Pål."
+  ]
+}

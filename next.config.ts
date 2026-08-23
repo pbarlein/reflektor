@@ -45,6 +45,25 @@ const redirects: NextConfig["redirects"] = async () => [
     destination: "/innholdsproduksjon",
     permanent: true,
   },
+  /*
+   * Søkekonsollen viser 1 935 visninger og posisjon 15,8 på «produktfoto» for
+   * denne URL-en, med 22 rangerende søkeord. Første versjon sendte den til
+   * forsiden sammen med resten av det døde /tjenester/-treet – det ville kastet
+   * bort den sterkeste enkeltposisjonen vi har på et kommersielt søkeord.
+   */
+  {
+    source: "/tjenester/produktfoto",
+    destination: "/produktfoto",
+    permanent: true,
+  },
+  /* 1 466 visninger, 43 søkeord. Samme resonnement. */
+  {
+    source: "/tjenester/eventfotograf-eventvideo",
+    destination: "/eventfotograf-eventvideo",
+    permanent: true,
+  },
+  /* 87 visninger, posisjon 8,7. Oversikten finnes ikke lenger – til forsiden. */
+  { source: "/tjenester", destination: "/", permanent: true },
 
   /*
    * Resten av /tjenester/-treet er 404 uten en åpenbar etterfølger. De sendes
@@ -64,7 +83,6 @@ const redirects: NextConfig["redirects"] = async () => [
     "/tjenester/matfotograf",
     "/tjenester/boligfoto",
     "/tjenester/bedriftsfoto",
-    "/tjenester/produktfoto",
     "/tjenester/eiendomsfotograf",
     "/tjenester/bilderavansatte",
   ].map((source) => ({ source, destination: "/", permanent: true })),

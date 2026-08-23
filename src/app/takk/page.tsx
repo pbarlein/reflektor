@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/Container";
+import { TakkHendelse } from "@/components/TakkHendelse";
 
 export const metadata: Metadata = {
   title: "Takk for henvendelsen",
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
 export default function Takk() {
   return (
     <section className="py-20">
+      <TakkHendelse />
       <Container>
         <h1 className="text-4xl font-semibold tracking-tight">
           Takk for henvendelsen

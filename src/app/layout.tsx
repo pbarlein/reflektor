@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { Sporing, GtmNoscript } from "@/components/Sporing";
 import { site } from "@/content/site";
 import { basisUrl, tillatIndeksering } from "@/lib/miljo";
 
@@ -37,6 +38,8 @@ export default function RootLayout({
   return (
     <html lang="no">
       <body className={`${poppins.variable} font-sans`}>
+        <GtmNoscript />
+        <Sporing />
         <Header />
         <main>{children}</main>
         <Footer />

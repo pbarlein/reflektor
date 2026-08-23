@@ -64,3 +64,20 @@ Squarespace. Se `docs/forhandsvisning.md`.
   `NEXT_PUBLIC_TILLAT_INDEKSERING=true`, og først når DNS peker hit. Ikke fjern
   sperren for å «teste at SEO virker».
 - **Arbeid på branch**, ikke `main`. Push til `main` utløser produksjonsdeploy.
+
+## Nettsidebriefen 2026 ligger over alt annet
+
+`docs/Reflektor-nettsidebrief-2026-v1.4.pdf` er strategilaget over denne filen
+og `docs/*`. Ved konflikt gjelder briefen på **sidearkitektur, søkeord,
+avatarer og copy-protokoll**. Kontekstfilene gjelder på teknisk detalj og
+dagens tilstand.
+
+- **Ikke finn på copy, tall, kundenavn, priser eller resultater.** Manglende
+  tekst skrives som `TBD(...)` i `src/content/sider/`, aldri som plassholder.
+  Copy hentes etter protokollen i kapittel 9 – én side om gangen.
+- **Beslutningsrekkefølge ved konflikt:** låste rammer → verifiserte data i
+  kapittel 2 og 4 → konverteringsrammene i 7.6 → estetisk preferanse.
+- **Nye avvik føres i `docs/vedlegg-a.md`**, ikke som antakelser i koden.
+- Tokens i `src/styles/tokens/` er eneste kilde til sannhet for styling. Ingen
+  vilkårlige verdier i komponenter, ingen `!important`.
+- `npm run content:check` blokkerer sider merket `ready: true` som mangler copy.
