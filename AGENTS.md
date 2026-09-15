@@ -49,8 +49,11 @@ verdi. Bruk Ahrefs til å finne URL-er med lenker som må redirigeres – ikke t
 - Alt tekstinnhold bor i `src/content/site.ts`, ikke i komponentene. Felt merket
   UAVKLART er plassholdere som ikke er godkjent av kunden.
 - Redirect-kartet ligger i `next.config.ts`.
-- `docs/snapshot/` (HTML fra dagens side) må lages på en maskin med tilgang til
-  reflektor.no – nettverkspolicyen her blokkerer domenet.
+- Nettverksnivået er **Custom** (satt 15.09.2026). reflektor.no, Dropbox-
+  innhold, vercel.app og researchkildene er åpne. Det betyr at dagens side kan
+  leses direkte, og at media kan hentes fra Dropbox — se `docs/media.md`.
+  Nivået leses ved sesjonsstart; endres det tilbake til Trusted, faller begge
+  deler bort igjen.
 
 ## Ingenting skal gå live
 

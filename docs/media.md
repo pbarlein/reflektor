@@ -77,44 +77,50 @@ alt-tekster, sette riktige størrelser og sørge for at de lastes effektivt.
 Filene finnes allerede i Dropbox under `/Reflektor/Bildearkiv`,
 `/Reflektor/Videoarkiv` og `/Reflektor/Assets`.
 
-## Dropbox: katalog, ikke rørledning (testet 15.09.2026)
+## Dropbox som mediekilde (verifisert 15.09.2026)
 
-Spørsmålet var om Pål kan legge bilder og video i en Dropbox-mappe som Claude
-Code henter og komprimerer fra. Svaret er delvis, og skillet er verdt å skrive
-ned fordi det ikke er åpenbart.
+Pål kan legge bilder og video i Dropbox, og Claude Code henter og komprimerer
+derfra. Hele kjeden er testet ende-til-ende, ikke antatt.
 
-**Virker** — Dropbox-MCP-en går utenom nettverkspolicyen:
+**Forutsetningen** er at miljøets nettverksnivå er **Custom** med
+`*.dropboxusercontent.com` i allowlisten. Uten den linjen lister MCP-en fint,
+men innholdet blokkeres av proxyen med `CONNECT tunnel failed, response 403`.
+Nivået settes på cloud-miljøet (skyikonet ved sesjonstittelen, eller
+miljøvelgeren på «New»), og leses ved oppstart.
 
-- `list_folder` lister mapper og filer med størrelse og dato
-- `search` finner filer på navn
-- `get_file_metadata` gir størrelse, MIME-type, endringstidspunkt
-- `file_preview` gir Pål en miniatyr og en «åpne i Dropbox»-lenke i klienten
+Husk å krysse av for «Also include default list of common package managers» —
+uten den forsvinner npm og PyPI, og buildet stopper.
 
-**Virker ikke** — selve filinnholdet:
-
-- `download_link` returnerer en URL på `dl.dropboxusercontent.com`
-- `file_preview` returnerer en URL på `previews.dropboxusercontent.com`
-- Begge blokkeres av proxyen: `CONNECT tunnel failed, response 403`
-
-Verifisert direkte, ikke antatt. Proxyens egen statusside logget begge
-avvisningene som `connect_rejected` (policy-avslag på gateway).
-
-Konsekvensen: Claude Code kan **se katalogen og lese filnavn, størrelser og
-datoer**, men kan ikke lese en eneste piksel. Miniatyren `file_preview` gir,
-rendres i Påls klient — ikke i containeren.
-
-### Hva det betyr i praksis
-
-Dropbox er fortsatt nyttig, men til utvelgelse og ikke til henting:
+### Arbeidsflyten
 
 1. Pål legger kandidater i en mappe, f.eks. `/Reflektor/Marketing/Nettside/`
-2. Claude Code lister mappen og kan lage `file_preview`-kort som Pål ser
-3. Pål velger — eller Claude Code foreslår ut fra filnavn, format og størrelse
-4. **De valgte filene må inn hit på en av de to veiene som er bevist:**
-   opplasting i chatten, eller commit til repoet via GitHub
+2. `mcp__Dropbox__list_folder` lister dem med størrelse og dato
+3. `mcp__Dropbox__download_link` gir en engangs-URL (60–900 sekunder)
+4. `curl` henter filen ned i containeren
+5. Komprimering med `imageio-ffmpeg` / `pillow` — se resten av dokumentet
+6. Resultatet commites til repoet
 
-Komprimeringen skjer først når filene faktisk ligger i containeren. Verktøyene
-er på plass (`imageio-ffmpeg`, `pillow`) — se resten av dette dokumentet.
+### Verifiser alltid sjekksummen
 
-Et klipp per opplasting er lite tungvint sammenlignet med alternativet, som er
-at ingen får sett dem. Antallet er lite: tre 9:16-klipp til forsiden.
+`download_link` returnerer `content_hash`. Det er Dropbox' egen blokkbaserte
+SHA-256: filen deles i 4 MiB-blokker, hver blokk hashes, og hashene
+konkateneres og hashes på nytt. Ikke en vanlig `sha256sum`.
+
+```python
+import hashlib
+blocks = []
+with open(sti, "rb") as f:
+    while (b := f.read(4 * 1024 * 1024)):
+        blocks.append(hashlib.sha256(b).digest())
+print(hashlib.sha256(b"".join(blocks)).hexdigest())
+```
+
+Testet på en 61 654-byte JPEG: match. Verdt å kjøre på videofilene, der en
+avkortet overføring ellers kan gi en fil som ser hel ut helt til ffmpeg
+kveler på den.
+
+### URL-en er engangs
+
+Den brukes opp av første HTTP-forespørsel uansett metode — også `HEAD` og
+Range. Ikke forhåndssjekk den med `curl -I` først; da er den brukt opp når
+nedlastingen skal skje. Hent en ny `download_link` per forsøk.
