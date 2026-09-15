@@ -76,3 +76,45 @@ alt-tekster, sette riktige størrelser og sørge for at de lastes effektivt.
 
 Filene finnes allerede i Dropbox under `/Reflektor/Bildearkiv`,
 `/Reflektor/Videoarkiv` og `/Reflektor/Assets`.
+
+## Dropbox: katalog, ikke rørledning (testet 15.09.2026)
+
+Spørsmålet var om Pål kan legge bilder og video i en Dropbox-mappe som Claude
+Code henter og komprimerer fra. Svaret er delvis, og skillet er verdt å skrive
+ned fordi det ikke er åpenbart.
+
+**Virker** — Dropbox-MCP-en går utenom nettverkspolicyen:
+
+- `list_folder` lister mapper og filer med størrelse og dato
+- `search` finner filer på navn
+- `get_file_metadata` gir størrelse, MIME-type, endringstidspunkt
+- `file_preview` gir Pål en miniatyr og en «åpne i Dropbox»-lenke i klienten
+
+**Virker ikke** — selve filinnholdet:
+
+- `download_link` returnerer en URL på `dl.dropboxusercontent.com`
+- `file_preview` returnerer en URL på `previews.dropboxusercontent.com`
+- Begge blokkeres av proxyen: `CONNECT tunnel failed, response 403`
+
+Verifisert direkte, ikke antatt. Proxyens egen statusside logget begge
+avvisningene som `connect_rejected` (policy-avslag på gateway).
+
+Konsekvensen: Claude Code kan **se katalogen og lese filnavn, størrelser og
+datoer**, men kan ikke lese en eneste piksel. Miniatyren `file_preview` gir,
+rendres i Påls klient — ikke i containeren.
+
+### Hva det betyr i praksis
+
+Dropbox er fortsatt nyttig, men til utvelgelse og ikke til henting:
+
+1. Pål legger kandidater i en mappe, f.eks. `/Reflektor/Marketing/Nettside/`
+2. Claude Code lister mappen og kan lage `file_preview`-kort som Pål ser
+3. Pål velger — eller Claude Code foreslår ut fra filnavn, format og størrelse
+4. **De valgte filene må inn hit på en av de to veiene som er bevist:**
+   opplasting i chatten, eller commit til repoet via GitHub
+
+Komprimeringen skjer først når filene faktisk ligger i containeren. Verktøyene
+er på plass (`imageio-ffmpeg`, `pillow`) — se resten av dette dokumentet.
+
+Et klipp per opplasting er lite tungvint sammenlignet med alternativet, som er
+at ingen får sett dem. Antallet er lite: tre 9:16-klipp til forsiden.

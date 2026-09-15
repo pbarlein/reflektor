@@ -66,8 +66,10 @@ export const front: Side = {
           maksTegn: 120,
           jobb: "Slå fast at alt er egenprodusert. Ingen stock.",
         }),
+        // Tre klipp, ikke seks. Seksjonen skal vise formatet, ikke være en
+        // portefølje — se begrunnelsen i ReelVegg.tsx.
         ...Object.fromEntries(
-          Array.from({ length: 6 }, (_, i) => [
+          Array.from({ length: 3 }, (_, i) => [
             `front.work.caption[${i}]`,
             TBD({ maksTegn: 60, jobb: "Kunde · format." }),
           ]),
@@ -109,6 +111,24 @@ export const front: Side = {
       slots: {
         "front.reviews.eyebrow": tekst("Det kundene sier", { maksTegn: 30 }),
         "front.reviews.h2": TBD({ maksTegn: 70 }),
+        // Seks av de ni Google-anmeldelsene, ikke alle ni: rutenettet går opp
+        // i to og tre kolonner, og etter seks navngitte avsendere som sier det
+        // samme legger den syvende ingenting til. Velg de seks som er mest
+        // konkrete — «leverer raskt» veier mindre enn en anmeldelse som sier
+        // hva som faktisk ble levert.
+        //
+        // MÅ HENTES MANUELT fra Googles anmeldelser av Reflektor. De lå bak
+        // Elfsight-widgeten på Squarespace og finnes ikke i noe crawl.
+        // Sitatene skal stå ordrett — de skrives ikke om her.
+        ...Object.fromEntries(
+          Array.from({ length: 6 }, (_, i) => [
+            `front.reviews.quote[${i}]`,
+            TBD({
+              maksTegn: 240,
+              jobb: "Sitat | navn | selskap. Ordrett fra Google.",
+            }),
+          ]),
+        ),
       },
     },
     {

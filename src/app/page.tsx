@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/components/Container";
 import { Eyebrow } from "@/components/Eyebrow";
 import { ReelVegg } from "@/components/ReelVegg";
+import { Anmeldelser } from "@/components/Anmeldelser";
 import { Kontaktskjema } from "@/components/Kontaktskjema";
 import { hentTekst, slotsISeksjon, TbdMarkor } from "@/components/Slot";
 import { front } from "@/content/sider/front";
@@ -68,6 +69,16 @@ export default function Forside() {
               <Tbd id="front.hero.proof" />
             )}
           </p>
+
+          {/* Kunderekken hører hjemme her, ikke i anmeldelsesseksjonen: den
+              er produksjonserfaring, ikke en uttalelse. Å blande logoer og
+              sitater lar logoene lese som om de sto bak sitatene — og disse
+              kundene er produksjonskunder, aldri SoMe-abonnenter. */}
+          <ul className="mt-6 flex flex-wrap gap-x-7 gap-y-2 text-sm text-blekk-svak">
+            {kundelogoer.map((kunde) => (
+              <li key={kunde}>{kunde}</li>
+            ))}
+          </ul>
         </Container>
       </section>
 
@@ -171,7 +182,7 @@ export default function Forside() {
         </Container>
       </section>
 
-      {/* 5 · ANMELDELSER — navngitt bevis */}
+      {/* 5 · ANMELDELSER — navngitt bevis, stram form */}
       <section className="pb-20">
         <Container>
           <Eyebrow>{hentTekst(front, "front.reviews.eyebrow")}</Eyebrow>
@@ -180,14 +191,12 @@ export default function Forside() {
               <Tbd id="front.reviews.h2" />
             )}
           </h2>
-          {/* TODO: anmeldelsene fra Google. Navn og selskap er poenget —
-              anonyme sitater har ingen verdi i denne strukturen. */}
-          <ul className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-blekk-dempet">
-            {kundelogoer.map((kunde) => (
-              <li key={kunde}>{kunde}</li>
-            ))}
-          </ul>
         </Container>
+        <Anmeldelser
+          anmeldelser={slotsISeksjon(front, 5)
+            .filter((s) => s.id.includes("quote"))
+            .map((s) => ({ id: s.id, verdi: s.verdi }))}
+        />
       </section>
 
       {/* 6 · FAQ — native details, ingen JavaScript */}
