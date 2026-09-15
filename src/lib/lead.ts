@@ -16,6 +16,7 @@
 export type Lead = {
   navn: string;
   epost: string;
+  bedrift: string;
   telefon: string;
   melding: string;
   side: string;
@@ -45,6 +46,7 @@ export async function sendLeadPaEpost(lead: Lead): Promise<void> {
   const linjer = [
     `Navn:    ${lead.navn}`,
     `E-post:  ${lead.epost}`,
+    `Bedrift: ${lead.bedrift || "—"}`,
     `Telefon: ${lead.telefon || "—"}`,
     `Side:    ${lead.side}`,
     "",

@@ -22,6 +22,9 @@
   --color-flate: var(--surface-page);
   --color-flate-dempet: var(--surface-muted);
   --color-mork: var(--surface-inverse);
+  --color-dyp: var(--surface-dyp);
+  --color-pa-dyp: var(--text-on-dyp);
+  --color-pa-dyp-dempet: var(--text-on-dyp-muted);
   --color-sort: var(--surface-black);
   --color-aksent: var(--action-primary);
   --color-aksent-hover: var(--action-primary-hover);
@@ -38,8 +41,9 @@
 
   --font-sans: var(--font-poppins), "Helvetica Neue", Arial, sans-serif;
 
-  --radius-knapp: var(--radius-interaktiv);
-  --radius-media: var(--radius-media);
+  --radius-interaktiv: var(--radius-interaktiv);
+  --radius-flate: var(--radius-flate);
+  --radius-medie: var(--radius-medie);
 
   --spacing-seksjon: var(--section-y);
   --spacing-seksjon-lg: var(--section-y-lg);

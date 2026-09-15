@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
     const lead = {
       navn: String(data.get("navn") ?? ""),
       epost: String(data.get("epost") ?? ""),
+      bedrift: String(data.get("bedrift") ?? ""),
       telefon: String(data.get("telefon") ?? ""),
       melding: String(data.get("melding") ?? ""),
       side: String(data.get("side") ?? "ukjent"),

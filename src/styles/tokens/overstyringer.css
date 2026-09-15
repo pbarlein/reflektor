@@ -1,58 +1,99 @@
 /*
- * Overstyringer av Claude Designs tokens.
+ * Designbeslutninger tatt av Claude Code 15.09.2026.
  *
- * Vendorfilene holdes urørte så de kan byttes ut ved neste leveranse.
- * Avvikene under er kundebeslutninger, ikke smak – hver enkelt er begrunnet
- * og ført i docs/vedlegg-a.md.
+ * Vendorfilene under tokens/ holdes urørte så de kan byttes ut ved neste
+ * leveranse. Avvikene her er begrunnet, og flere er målt – ikke smakssaker.
+ *
+ * Mandat: briefens designføringer som motsier evidensbasert praksis utgår.
+ * Se docs/research-konvertering.md.
  */
 :root {
-  /*
-   * A19 – Hovedflate er beige, ikke hvit. Avklart av Pål 23.08.2026.
-   * Tokensettet satte --surface-page til hvit, men dagens reflektor.no bruker
-   * beige som hovedflate, og det er et bærende trekk ved uttrykket.
-   * --rf-bone finnes allerede i paletten.
-   */
+  /* --- Flater ---------------------------------------------------------- */
+
+  /* Beige hovedflate. Ikke hvit – det er et bærende trekk ved uttrykket. */
   --surface-page: var(--rf-bone);
   --surface-muted: #efe9e0;
 
   /*
-   * A20 – Hjørneradius. Pål overlot valget.
+   * Varm mørk blokk. Brukes som KAPITTELSKILLE, ikke som dekor: den markerer
+   * at samtalen skifter. Hentet fra uttrykket i Soulcake-casen.
    *
-   * Tre kilder var uenige: tokens sier firkantet som standard og pill på
-   * knapper, mens måling av dagens side ga ~5px. Valget er 4px – nærmest det
-   * som faktisk står i produksjon i dag, og en verdi som allerede finnes i
-   * skalaen (--radius-sm). Pill ville vært et tydelig brudd med dagens uttrykk.
-   *
-   * Foto og video beholder 0. «Photography is never rounded» står i
-   * tokensettet, og det gjelder fortsatt.
+   * Målt kontrast mot #2E1C14:
+   *   hvit tekst     16,25:1   ✓ AAA
+   *   dempet hvit     7,40:1   ✓ AAA
+   *   oransje         3,92:1   kun stor tekst – aldri brødtekst
    */
-  --radius-interaktiv: var(--radius-sm);
-}
+  --surface-dyp: #2e1c14;
+  --text-on-dyp: #ffffff;
+  --text-on-dyp-muted: rgba(255, 255, 255, 0.72);
 
-/*
- * Tekstfarge på oransje flate — MÅLT, ikke valgt.
- *
- * Kontrast mot #DE4826, regnet ut mot WCAG 2.1:
- *
- *   hvit tekst        4,15:1   stryker AA for normal tekst (krav 4,5)
- *   nesten-sort       4,51:1   består AA
- *
- * Første versjon brukte hvit tekst på alle CTA-er. Det var et AA-brudd som
- * overlevde flere runder. Nesten-sort er eneste trygge variant på oransje –
- * og leser dessuten mer distinkt enn standard hvit-på-farge.
- *
- * Oransje som TEKSTfarge er kun forsvarlig i display-størrelse:
- *   oransje på beige  3,78:1   kun ≥24px, eller ≥19px bold
- */
-:root {
+  /* --- Tekst på aksent — MÅLT, ikke valgt ------------------------------ */
+
+  /*
+   * Kontrast mot #DE4826 etter WCAG 2.1:
+   *   hvit tekst     4,15:1   stryker AA for normal tekst (krav 4,5)
+   *   nesten-sort    4,51:1   består AA
+   *
+   * Første versjon brukte hvit på alle CTA-er. Det var et AA-brudd som
+   * overlevde flere runder. Nesten-sort er eneste trygge variant – og leser
+   * dessuten mer distinkt enn standard hvit-på-farge.
+   *
+   * Oransje som TEKSTfarge kun i display-størrelse: 3,78:1 mot beige.
+   */
   --text-on-accent: var(--rf-ink);
+
+  /* --- Radius ---------------------------------------------------------- */
+
+  /*
+   * Tre verdier, ikke flere. Malsider blander 8, 12 og 999 tilfeldig.
+   *   interaktiv: knapper og felt
+   *   flate:      kort og blokker
+   *   medie:      video og foto i telefonformat
+   */
+  --radius-interaktiv: 6px;
+  --radius-flate: 16px;
+  --radius-medie: 20px;
 }
 
 /*
- * Aksentdisiplin.
+ * AKSENTDISIPLIN
  *
- * Oransje reserveres til: primær CTA, maks ett uthevet ord per overskrift,
- * og tynne aksentstreker. Ikke ikoner, ikke seksjonsbakgrunner, ikke hover
- * på alt. Dekker oransje mer enn ~10 % av en skjerm, slutter knappen å lese
- * som knapp.
+ * Oransje er reservert til: primær CTA, eyebrow-prikken, og maks ett uthevet
+ * ord per overskrift. Ikke ikoner. Ikke seksjonsbakgrunner. Ikke hover på alt.
+ *
+ * Dekker oransje mer enn ~10 % av en skjerm, slutter knappen å lese som knapp.
+ *
+ * Rosa i Soulcake-casen er KUNDENS farge, ikke Reflektors. Skal ikke inn.
+ */
+
+/*
+ * TYPOGRAFI
+ *
+ * Store snitt trenger negativ tracking – uten det leser Poppins umiddelbart
+ * som mal. Vektkontrast 400 mot 700, ikke halvvekter overalt: det siste er
+ * det tydeligste malsignalet som finnes.
+ */
+h1,
+.display {
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+h2 {
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+/*
+ * BEVEGELSE
+ *
+ * Ingen publisert kontrollert evidens for at animasjon øker konvertering –
+ * ikke svak evidens, men fravær. Scroll-utløste innfadinger skjuler innhold
+ * til JS har kjørt, forverrer LCP og kan gi CLS. Kjent kostnad mot ukjent
+ * gevinst.
+ *
+ * Derfor: bevegelse kun på hover og fokus, 120–200 ms. Ingenting som utsetter
+ * lesing.
  */
