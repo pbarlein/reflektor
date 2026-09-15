@@ -28,6 +28,11 @@ mot om den gir flere utfylte skjemaer.
    `/kontaktoss` er live sider det annonseres mot. Første utkast redirigerte to
    av dem bort og ville sendt betalt trafikk i grøfta. Sjekk at en URL faktisk
    er død før du legger inn en redirect.
+
+   **Unntak, bestilt 15.09.2026:** `/sosiale-medier-byra` skal 301-es til `/`
+   — men først på cutover, og først etter at Google Ads har byttet endelig
+   URL. Ikke utført. Se `docs/cutover.md`, som også forklarer hvorfor unntaket
+   ikke opphever regelen for de tre andre.
 2. **`/takk` er hellig.** URL-en og GA4-hendelsen bærer 107+ historiske
    konverteringer. Endrer du dem, mister Reflektor målingen av sin eneste KPI.
 3. **Bloggslugs i `src/content/site.ts` må ikke endres.** Bloggen beholdes for

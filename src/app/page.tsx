@@ -5,10 +5,15 @@ import { ReelVegg } from "@/components/ReelVegg";
 import { Anmeldelser } from "@/components/Anmeldelser";
 import { Kontaktskjema } from "@/components/Kontaktskjema";
 import { hentTekst, slotsISeksjon, TbdMarkor } from "@/components/Slot";
+import {
+  OrganisasjonSchema,
+  TjenesteSchema,
+  FaqSchema,
+} from "@/components/Schema";
 import { front } from "@/content/sider/front";
 import { klarerteAnmeldelser } from "@/content/anmeldelser";
 import { reels } from "@/content/reels";
-import { site, tilbud, kundelogoer } from "@/content/site";
+import { site, tilbud } from "@/content/site";
 
 /**
  * Forsiden.
@@ -40,8 +45,32 @@ function Tbd({ id }: { id: string }) {
 }
 
 export default function Forside() {
+  // FAQ-schemaet skal være ORDRETT identisk med det som står på siden.
+  // Avvik mellom synlig tekst og markup er et kjent kvalitetsproblem, og
+  // her koster det ingenting å unngå: begge leses fra samme slot.
+  const faq = slotsISeksjon(front, 6)
+    .map((slot) => slot.verdi?.split("|") ?? null)
+    .filter((d): d is string[] => d !== null && d.length >= 2)
+    .map((d) => ({ sporsmal: d[0].trim(), svar: d.slice(1).join("|").trim() }));
+
   return (
     <>
+      {/*
+        Entiteten eies av forsiden. Organization + LocalBusiness ligger kun
+        her, ikke i layout — se begrunnelsen i Schema.tsx.
+
+        Ingen Review eller AggregateRating. Google regner anmeldelser av seg
+        selv, på egen side, som self-serving: det gir null stjerner OG er et
+        regelbrudd. Se A33.
+      */}
+      <OrganisasjonSchema />
+      <TjenesteSchema
+        navn="Sosiale medier til fast månedspris"
+        beskrivelse={hentTekst(front, "front.meta.description") ?? ""}
+        sti="/"
+      />
+      <FaqSchema qa={faq} />
+
       {/* 1 · HERO — posisjonering i øvre halvdel av første skjerm.
           Rytmen varierer bevisst mellom seksjonene: jevn vertikal padding
           overalt er et malsignal. Forholdet mellom største og minste
@@ -89,21 +118,22 @@ export default function Forside() {
             </p>
           </div>
 
-          <p className="mt-10 max-w-lg text-sm text-blekk-dempet">
+          {/*
+            Beviset står som SETNING, ikke som logorekke. Den tidligere
+            rekken med sju navn sto rett under denne linjen og sa nesten det
+            samme — fem av navnene var de samme.
+
+            Setningen er dessuten det tryggere av de to: «Produserer foto og
+            video for …» sier eksplisitt hva kundeforholdet ER. En bar rekke
+            med navn under et tilbud om månedsabonnement inviterer til å lese
+            dem som abonnenter, og det ville vært en feilaktig referanse.
+          */}
+          <p className="mt-10 max-w-xl text-sm tracking-[0.02em] text-blekk-dempet">
             {hentTekst(front, "front.hero.proof") ?? (
               <Tbd id="front.hero.proof" />
             )}
           </p>
 
-          {/* Kunderekken hører hjemme her, ikke i anmeldelsesseksjonen: den
-              er produksjonserfaring, ikke en uttalelse. Å blande logoer og
-              sitater lar logoene lese som om de sto bak sitatene — og disse
-              kundene er produksjonskunder, aldri SoMe-abonnenter. */}
-          <ul className="mt-6 flex flex-wrap gap-x-7 gap-y-2 border-t border-kant pt-6 text-sm tracking-[0.02em] text-blekk-svak">
-            {kundelogoer.map((kunde) => (
-              <li key={kunde}>{kunde}</li>
-            ))}
-          </ul>
         </Container>
       </section>
 
