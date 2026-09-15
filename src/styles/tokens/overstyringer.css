@@ -69,19 +69,25 @@
 /*
  * TYPOGRAFI
  *
- * Store snitt trenger negativ tracking – uten det leser Poppins umiddelbart
- * som mal. Vektkontrast 400 mot 700, ikke halvvekter overalt: det siste er
- * det tydeligste malsignalet som finnes.
+ * Negativ tracking på display-størrelser er en typografisk konvensjon
+ * (optisk størrelse), ikke et målt funn. Kildekontrollen 15.09 fant ingen
+ * studie bak tallene som sto her før – de er strøket fra
+ * docs/research-konvertering.md. Verdien er derfor et håndverksvalg justert
+ * på øyemål mot Poppins, ikke et forskningsfunn, og ligger nå innenfor det
+ * konvensjonen faktisk dekker (−1 til −2 %).
+ *
+ * Vektkontrast 400 mot 700, ikke halvvekter overalt: det siste er det
+ * tydeligste malsignalet som finnes.
  */
 h1,
 .display {
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   line-height: 1.04;
   text-wrap: balance;
 }
 
 h2 {
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
   line-height: 1.12;
   text-wrap: balance;
 }

@@ -3,37 +3,69 @@
 Research gjennomført 15.09.2026, tre parallelle spor: byråbransjen globalt,
 evidensgrunnlaget for konverteringsdesign, og moderne uttrykk som konverterer.
 
-## Metodisk forbehold — les dette først
+## Kildekontroll gjennomført 15.09.2026
 
-**Ingen av sporene fikk hentet en eneste levende side.** Nettverkspolicyen
-blokkerte WebFetch og curl mot samtlige domener som ble forsøkt. Alt på
-sidenivå bygger på søketreff og andrehåndsbeskrivelser, ikke på inspisert
-kildekode.
+Dokumentet ble opprinnelig skrevet uten nettilgang — ingen av sporene fikk
+hentet en levende side. Etter at nettverksnivået ble satt til Custom er alle
+tolv empiriske påstander etterprøvd mot primærkilden.
 
-Kontrastallene er unntaket. De er regnet ut lokalt mot våre egne tokenverdier
-og er harde tall.
+**Utfallet:** fem holdt uendret, tre er korrekte men trengte forbehold, tre
+måtte omformuleres, og én var udokumentert og er fjernet som evidens.
+Endringene står markert i seksjonene under.
+
+To ting er verdt å vite om grunnlaget som helhet:
+
+1. **Påstand 1, 2 og 3 er samme forskergruppe** (Kohavi/Linowski/Vermeer).
+   Dokumentet har færre uavhengige kilder enn det ser ut som.
+2. **Hastighetsstudiene er søkemotorer og e-handel** med millioner av
+   brukere. De sier lite presist om et B2B-leadskjema med hundrevis av
+   konverteringer. Poenget i påstand 1 og 4 rammer også dem.
+
+Kontrastallene er regnet ut lokalt mot våre egne tokenverdier og er harde
+tall uavhengig av nett.
 
 ---
 
-## Det viktigste funnet: mesteparten av CRO-evidensen replikerer ikke
+## Det viktigste funnet: kjente CRO-mønstre replikerer dårlig
 
-Kohavi, Linowski og Vermeer, *Trustworthy A/B Patterns and the Winner's
-Curse* (KDD 2026). Åtte forhåndsregistrerte replikasjoner av kjente mønstre,
-median 2,4 millioner brukere per eksperiment.
+Kohavi, Linowski, Vermeer m.fl., *Trustworthy A/B Patterns and the Winner's
+Curse*, KDD 2026. Ordrett: «only two showed statistically significant effects
+in the expected direction at α=0.05, and one was statistically significant in
+the opposite direction.» Median 2,4 mill. brukere per test.
 
-**Kun to av åtte effekter var signifikante i forventet retning. Én var
-signifikant i motsatt retning.**
+> **Korrigert etter kildekontroll.** Dokumentet sa tidligere «mesteparten av
+> CRO-evidensen replikerer ikke». Det overselger. Studien dekker **åtte tester
+> av fire mønstre** — avrundede knapper, sidehastighet, kupongkodefelt og
+> sticky CTA — plukket fra GoodUI, Evidoo og GuessTheTest. Det er ikke et
+> representativt utvalg av publisert CRO-litteratur.
 
 Konkret:
 
-- **Sticky CTA**: negativ hos Talabat med 8,1 mill. brukere (−0,13 % ordre,
-  p=0,042), til tross for 22 positive tester i GoodUI med snitt +4,45 %.
-- **Avrundede knapper**: den publiserte studien hevdet +55 % CTR. Replikert
-  med 7,4 mill. brukere: effekten var to størrelsesordener mindre og ikke
-  signifikant.
+- **Avrundede knapper**: originalen (Biswas, Abell & Chacko, *Journal of
+  Consumer Research* 2024) hevdet +55,49 % CTR, p=0,037, på 919 brukere.
+  Replikert på over 7 mill.: +0,16 % (p=0,20), +0,29 % (p=0,60), +0,73 %
+  (p=0,09). To størrelsesordener mindre. Dette funnet står seg.
+- **Sticky CTA**: Talabat, 8 128 679 brukere, 7 uker. −0,13 % ordre per
+  bruker (p=0,042), −0,18 % omsetning (p=0,011). GoodUIs 22 tester hadde
+  snitt +4,45 %, men er stort sett underpowered.
 
-Sammenhold med Kohavi fra Microsoft: bare rundt en tredel av ideer som testes
-forbedrer måltallet. Bing rapporterer ~85 % feilrate.
+> **Viktig forbehold som paperet selv tar, og som dokumentet tidligere
+> utelot:** «the experiment is not a classic sticky CTA, as it only
+> emphasized the saving incentive in the sticky component that was already
+> present in the control.» Det sticky elementet **fantes i kontrollgruppen**.
+> Testen målte en fremdriftsindikator for besparelser, ikke sticky CTA mot
+> ingen sticky CTA.
+>
+> Konsekvens for oss: dette er ikke bevis mot sticky CTA. Se seksjonen om
+> anti-mønstre, som er rettet tilsvarende.
+
+Sammenhold med Kohavi, *False Positives in A/B Tests* (KDD 2024): i Bing
+lykkes ~15 % av **eksperimentene** (altså ~85 % feilrate); Microsoft samlet
+~33 %, bransjemedian ~10 %.
+
+> **Korrigert.** Dokumentet sa «ideer». Paperet har en egen seksjon som
+> advarer mot nettopp den oversettelsen — én idé testes ofte i flere
+> eksperimenter, så ideenes feilrate er lavere enn eksperimentenes.
 
 **Konsekvens for Reflektor:** med 107 historiske konverteringer er egen
 A/B-testing statistisk umulig. Design må bygges på mekanismeforståelse og de
@@ -48,9 +80,18 @@ få robuste funnene — ikke på tall fra CRO-byråer.
 Fra randomiserte slowdown-eksperimenter, ikke korrelasjon:
 
 - **Bing**: 2 000 ms serverforsinkelse ga −4,3 % omsetning per bruker.
-- **Vodafone Italia**: 31 % LCP-forbedring ga **+8 % salg og +15 %
-  lead-to-visit**. Sterkeste offentlige datapunkt i en lead-gen-kontekst.
-- **Deloitte/Google**: 0,1 s raskere ga −8,3 % fluktrate på lead-gen-sider.
+  Schurman & Brutlag, Velocity 2009. Ekte kontrollert eksperiment, men fra
+  2009 og på en søkemotor. Presentasjon, ikke fagfellevurdert.
+- **Vodafone Italia**: 31 % LCP-forbedring ga **+8 % salg**, og +15 % på
+  **lead-til-besøk-raten** — altså andelen besøkende som ble lead, ikke
+  «lead conversion» i vanlig forstand. A/B-testet, altså kausalt.
+- **Deloitte/Google**: 0,1 s raskere er assosiert med −8,3 % fluktrate på
+  lead-gen-sider, og +21,6 % progresjon på skjemainnsending.
+
+> **Korrigert.** Deloitte-tallet sto som kausalt («ga»). Det er det ikke:
+> studien modellerte sammenhengen mellom hastighet og utfall på tvers av 37
+> merkevaresider og ~30 mill. økter. Det er en assosiasjon, ikke et
+> eksperiment.
 
 Merk at «53 % forlater sider som bruker over 3 sekunder» er korrelasjon fra
 2016 og systematisk feilsitert. Ikke bruk den.
@@ -84,25 +125,58 @@ det er den beste grunnen til å kreve fullt navn, tittel og selskap i sitater.
 
 | Mønster | Hva testingen viser |
 |---|---|
-| Karuseller | ~1 % av besøkende klikker i det hele tatt. 84 % av klikkene treffer slide 1. |
-| Sticky CTA | Negativ i den høyest powerede replikasjonen. |
+| Karuseller | ~1 % klikker, 84 % av klikkene på slide 1 — men se forbeholdet under. |
+| Sticky CTA | **Strøket som anti-mønster.** Replikasjonen testet ikke dette. |
 | Avrundede knapper og mikroestetikk | Replikert til null på 7,4 mill. brukere. |
 | Flertrinnsskjema | Ingen publisert kontrollert studie funnet. Alle tall fra leverandørblogger. |
 | «Tre felt er optimalt» | Observasjonsdata uten kontroll for tilbudstype. |
 | Testimonial- og logostatistikk | Sirkulær sitering mellom markedsføringsblogger. Ingen primærkilde. |
 | Animasjon øker konvertering | Ingen publisert kontrollert evidens funnet. Ikke svak evidens — fravær. |
 
+> **To rettelser etter kildekontroll.**
+>
+> **Sticky CTA hører ikke hjemme her.** Talabat-testen hadde et sticky element
+> i *begge* grupper; den målte innholdet i det, ikke om det fantes. Det finnes
+> altså ikke noe godt bevis mot sticky CTA — bare mangel på bevis for.
+> Forsiden utelater den fortsatt, men grunnen er nå en annen: den koster
+> skjermplass på mobil, og prisen står allerede i heroen. Det er en
+> designvurdering, ikke et forskningsfunn, og skal ikke forkles som det.
+>
+> **Karusell-tallene er ett nettsted, ikke et snitt.** Runyons data fra ND.edu
+> (okt. 2012–jan. 2013) er analyse, ikke eksperiment. I hans eget datasett
+> spriker klikkraten fra 1,07 % til 9,41 % på tvers av fem sider, og én
+> auto-roterende karusell hadde 8,8 % med bare 40 % på første slide. «~1 % og
+> 84 %» er det mest pessimistiske enkelttilfellet. Konklusjonen om å unngå
+> auto-roterende hero-karuseller står, men den hviler på mekanisme — skjult
+> innhold, flyttende klikkmål — ikke på disse tallene.
+
 ---
 
 ## Prisspørsmålet — den skarpeste avveiningen
 
-HockeyStack, 31 mill. besøkende: **ikke-transparente prissider gir ~64 % flere
-skjemautfyllinger, men konverterer til pipeline 1,7× dårligere.**
-Observasjonelt og forvekslingsutsatt, men retningen er konsistent med at pris
-fungerer som selvkvalifisering.
+HockeyStack, 31 mill. besøkende fra 80 B2B SaaS-selskaper med både pris- og
+demoside. Tallene, verifisert i kilden:
+
+- **Skjemautfylling på prissiden: 4,6 % uten pris mot 2,8 % med.** Altså
+  ~64 % flere skjemaer når prisen er skjult.
+- **Skjema → pipeline: 10,31 % uten pris mot 17,50 % med.** Altså langt
+  bedre leads når prisen står.
+- Sidevisninger per besøkende: 2,57 mot 4,26 i favør av transparent pris.
+
+Rapporten peker altså i begge retninger avhengig av hvor i trakten man måler.
+Å sitere 64 %-tallet alene er å sitere halve rapporten.
+
+**Forvekslingen som ikke kan regnes bort:** dette er et korrelasjonelt
+benchmark på tvers av 80 selskaper, ikke et eksperiment. Selskaper som skjuler
+pris er systematisk annerledes — enterprise, høy kontraktsverdi, lengre salg.
+Sammenligningen blander pristransparens med segment.
 
 TrustRadius har hatt transparent prising som kjøpernes viktigste ønske fire år
 på rad.
+
+For Reflektor er spørsmålet uansett avgjort på annet grunnlag: Pål har bestemt
+at prisen skal stå, fordi AEO vekter pristransparens tungt. 30 000 kr/mnd er
+dessuten en selvkvalifiserende pris i seg selv.
 
 **Fellen:** Reflektors KPI teller skjemaer, ikke kvalifiserte skjemaer. Å vise
 pris vil trolig se ut som en nedgang i GA4 samtidig som forretningen bedres.
@@ -149,9 +223,23 @@ selv et mal-signal.
 Billigste motgift hvis det skal adresseres: Poppins til UI og brødtekst,
 et distinkt display-snitt til H1. Kostnad rundt 25–40 kB WOFF2 subsettet.
 
-Uansett font: negativ tracking på store snitt (−2 til −3 % ved 48px+), og
-vektkontrast 400 mot 700 framfor halvvekter overalt. Halvvekter over hele
-siden er det tydeligste malsignalet som finnes.
+Uansett font: vektkontrast 400 mot 700 framfor halvvekter overalt. Halvvekter
+over hele siden er det tydeligste malsignalet som finnes.
+
+> **Fjernet etter kildekontroll: «negativ tracking −2 til −3 % ved 48px+».**
+> Sto her som et empirisk funn. Det finnes ingen konverterings-, lesbarhets-
+> eller eyetracking-studie bak det, og ingen sporbar opprinnelse for akkurat
+> de tallene.
+>
+> Negativ tracking på display-størrelser er en **typografisk konvensjon**
+> (optisk størrelse), ikke et målt funn — og den er skriftavhengig, ikke
+> universell. Apples HIG gir SF Pro **+0,8 %** ved 48 pt; det er SF *Compact*
+> som ligger på −2 %. Designlitteraturen anbefaler typisk −1 til −2 % for
+> display, og advarer mot mer.
+>
+> Vi bruker det fortsatt, men som håndverksvalg justert på øyemål mot Poppins
+> — ikke fordi et tall sier det. Verdien er senket fra −3 % til −2 %, som er
+> innenfor det konvensjonen faktisk dekker.
 
 ---
 

@@ -16,10 +16,16 @@ import { site, tilbud, kundelogoer } from "@/content/site";
  * kontakt. Alle tre researchsporene fant den rekkefølgen uavhengig.
  *
  * Grep som er bevisst utelatt, med begrunnelse i
- * docs/research-konvertering.md: sticky CTA (negativ i den høyest powerede
- * replikasjonen, 8,1 mill. brukere), karusell (~1 % klikker), scroll-utløst
- * innfading (skjuler innhold til JS har kjørt, forverrer LCP), bakgrunnsvideo
- * i hero (dyrest sted å legge video).
+ * docs/research-konvertering.md: scroll-utløst innfading (skjuler innhold til
+ * JS har kjørt, forverrer LCP), auto-roterende hero-karusell (skjult innhold,
+ * flyttende klikkmål), bakgrunnsvideo i hero (dyrest sted å legge video).
+ *
+ * Sticky CTA er også utelatt, men etter kildekontrollen 15.09 er grunnen en
+ * annen enn før: Talabat-replikasjonen som sto som bevis mot sticky CTA
+ * hadde et sticky element i BEGGE grupper og målte innholdet i det, ikke om
+ * det fantes. Det finnes altså ikke bevis mot sticky CTA – bare fravær av
+ * bevis for. Vi utelater den fordi den koster skjermplass på mobil og prisen
+ * allerede står i heroen. Det er en designvurdering, ikke et forskningsfunn.
  */
 export const metadata: Metadata = {
   title: hentTekst(front, "front.meta.title") ?? undefined,
