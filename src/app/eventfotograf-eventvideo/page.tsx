@@ -1,10 +1,5 @@
-import type { Metadata } from "next";
-import { Landingsside, lagMetadata } from "@/components/Landingsside";
-
-const SLUG = "eventfotograf-eventvideo";
-
-export const metadata: Metadata = lagMetadata(SLUG);
+import { UnderArbeid } from "@/components/UnderArbeid";
 
 export default function EventfotografEventvideo() {
-  return <Landingsside slug={SLUG} />;
+  return <UnderArbeid sti="/eventfotograf-eventvideo" />;
 }

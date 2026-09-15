@@ -279,3 +279,28 @@ Vercel Authentication slått på med scope
 `prod_deployment_urls_and_all_previews`. Scopet er viktig: arbeidsbranchen er
 satt som produksjonsbranch i Vercel, så `reflektor-ny.vercel.app` er et
 produksjonsdeployment. Scope «preview» alene ville latt hovedadressen stå åpen.
+
+---
+
+## A32 · Sidekomposisjonene revet — omstart på design
+
+**Besluttet av Pål 15.09.2026.**
+
+Begrunnelse: den forrige versjonen etterlignet dagens Squarespace-side på
+uttrykk, seksjonsrekkefølge og copy. Det ga en side som brukte tiden på å
+være tro mot det gamle framfor å konvertere.
+
+**Fjernet:** sidekomposisjonene for `/` og `/sosiale-medier-byra`,
+innholdsfilene med copy (`home.ts`, `front.ts`, `produktfoto.ts` og de tre
+stubbene), bromalen fra 6.2, `Landingsside.tsx`, samt hjelpeklassene for brun
+gradient og skjeve knapper. Rutene er holdt i live med en naken
+`UnderArbeid`-komponent, fordi redirect-kartet peker på dem og
+`/sosiale-medier-byra` er Final URL i Google Ads.
+
+**Beholdt:** alt som er designuavhengig. Se tabellen i `AGENTS.md`.
+
+**Konsekvens for briefen:** kapittel 6, 9.1 og 3.0.1 er satt til side. De
+låste rammene i 0.3 består.
+
+Alt som ble fjernet ligger i git-historikken fram til commit `f7be019` og kan
+hentes tilbake.

@@ -1,10 +1,5 @@
-import type { Metadata } from "next";
-import { Landingsside, lagMetadata } from "@/components/Landingsside";
-
-const SLUG = "employer-branding-video-oslo";
-
-export const metadata: Metadata = lagMetadata(SLUG);
+import { UnderArbeid } from "@/components/UnderArbeid";
 
 export default function EmployerBrandingVideoOslo() {
-  return <Landingsside slug={SLUG} />;
+  return <UnderArbeid sti="/employer-branding-video-oslo" />;
 }

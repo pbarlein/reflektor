@@ -69,29 +69,9 @@ h3 {
 }
 
 /*
- * Brun gradient – signaturflaten fra dagens side. Stoppverdiene er samplet
- * fra skjermbilder, ikke gjettet.
+ * Utrykksspesifikke hjelpeklasser – brun gradient og skjeve knapper – ble
+ * fjernet 15.09.2026 da designet skulle bygges på nytt. De er dokumentert i
+ * docs/kontekst.md og kan hentes fra git-historikken hvis de skal tilbake.
+ *
+ * Tokens under src/styles/tokens/ står urørt. De er merkevaren, ikke layouten.
  */
-.gradient-brun {
-  background-image: linear-gradient(105deg, #11100e 0%, #4a3429 45%, #471f15 100%);
-}
-
-/*
- * CTA-knappene står et par grader ut av akse – et grep som går igjen på alle
- * sider i dagens design. Retter seg opp ved hover.
- */
-.knapp-skjev {
-  transform: rotate(-2deg);
-  transition: var(--transition-interactive);
-}
-
-.knapp-skjev:hover {
-  transform: rotate(0deg);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .knapp-skjev,
-  .knapp-skjev:hover {
-    transform: none;
-  }
-}

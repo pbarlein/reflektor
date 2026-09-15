@@ -65,19 +65,55 @@ Squarespace. Se `docs/forhandsvisning.md`.
   sperren for å «teste at SEO virker».
 - **Arbeid på branch**, ikke `main`. Push til `main` utløser produksjonsdeploy.
 
-## Nettsidebriefen 2026 ligger over alt annet
+## Omstart 15.09.2026 — design bygges fritt
 
-`docs/Reflektor-nettsidebrief-2026-v1.4.pdf` er strategilaget over denne filen
-og `docs/*`. Ved konflikt gjelder briefen på **sidearkitektur, søkeord,
-avatarer og copy-protokoll**. Kontekstfilene gjelder på teknisk detalj og
-dagens tilstand.
+Sidekomposisjonene ble revet. Fundamentet står. Bakgrunnen: den forrige
+versjonen var forankret i dagens Squarespace-side på uttrykk, seksjons-
+rekkefølge og copy, og det ga en side som etterlignet i stedet for å
+konvertere.
 
-- **Ikke finn på copy, tall, kundenavn, priser eller resultater.** Manglende
-  tekst skrives som `TBD(...)` i `src/content/sider/`, aldri som plassholder.
-  Copy hentes etter protokollen i kapittel 9 – én side om gangen.
-- **Beslutningsrekkefølge ved konflikt:** låste rammer → verifiserte data i
-  kapittel 2 og 4 → konverteringsrammene i 7.6 → estetisk preferanse.
-- **Nye avvik føres i `docs/vedlegg-a.md`**, ikke som antakelser i koden.
-- Tokens i `src/styles/tokens/` er eneste kilde til sannhet for styling. Ingen
-  vilkårlige verdier i komponenter, ingen `!important`.
-- `npm run content:check` blokkerer sider merket `ready: true` som mangler copy.
+**Briefens låsing av struktur gjelder ikke lenger.** Kapittel 6
+(seksjonsrekkefølge), 9.1 (copy-rekkefølge) og 3.0.1 (forsidens seks
+seksjoner) er satt til side. Seksjoner, sidelengde, antall sider og
+navigasjon bestemmes ut fra hva som gir flere utfylte skjemaer.
+
+**Disse låste rammene fra kapittel 0.3 består:**
+
+- Pris skrives «30 000 kr/mnd», aldri med mva-notasjon
+- Tre måneders oppsigelse, ingen bindingstid — begge eksplisitt på
+  abonnementssiden
+- Kontaktskjema → `/takk` er eneste inbound-strøm
+- KPI er skjemaleads. Trafikk er ikke et suksessmål
+- Produksjonskunder navngis aldri som SoMe-abonnenter
+- Ikke finn på copy, tall, kundenavn, priser eller resultater
+
+Briefen er fortsatt gyldig på søkeordsfordeling, avatarer og copy-protokollen:
+Claude Code ber om copy, skriver den ikke selv. Manglende tekst er `TBD(...)`.
+
+## Fundamentet som ikke skal rives
+
+Dette er designuavhengig og dyrt å gjenskape. Rør det kun med grunn:
+
+| Hva | Hvorfor |
+|---|---|
+| `next.config.ts` | Redirect-kartet er bygget på faktiske visningstall fra Search Console, ikke på crawl-data. `/tjenester/produktfoto` alene har 1 935 visninger. |
+| `src/app/api/skjema/route.ts` | POST med 303 gir ekte sidelasting på `/takk`. En serverhandling ville gitt klientside-navigasjon og drept GTM. Se A28. |
+| `src/components/Sporing.tsx`, `TakkHendelse.tsx` | GTM-N4KGSS93 og GA4-hendelsen. 107+ historiske konverteringer henger på dem. |
+| `src/lib/lead.ts` | Leadlevering på e-post. Verifisert ende-til-ende. |
+| `src/lib/miljo.ts` | Indekseringssperren. |
+| `src/components/Schema.tsx` | JSON-LD. Usynlig, men bærer entitetssignalene. |
+| `scripts/` + CI | `content:check` og lenkesjekk. Begge verifisert i to retninger. |
+| `src/styles/tokens/` | Merkevaren, ikke layouten. |
+| `docs/` | Analysene. Å gjenskape dem koster dager. |
+
+## Hva synligheten faktisk krever
+
+Fire ting, ingen av dem visuelle:
+
+1. **Adressene må finnes** — ruting, ikke design
+2. **Bloggtekstene må overleve på sine URL-er** — kun bloggmalen
+3. **`/takk` må være ekte sidevisning i samme GTM-container**
+4. **NAP og Organization-schema må være konsistente** — bunntekst og markup
+
+Alt annet står fritt: layout, farger, typografi, seksjoner, sidelengde,
+bildebruk, navigasjon. Synlighet og design henger nesten ikke sammen.
