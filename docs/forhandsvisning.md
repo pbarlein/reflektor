@@ -1,124 +1,120 @@
-# Se siden mens den bygges
+# Forhåndsvisning
 
-Den nye siden bygges parallelt med at reflektor.no kjører videre på
-Squarespace. Dette dokumentet forklarer hvordan du ser den underveis, og hva
-som faktisk skal til for at noe går live.
+**Previewen er live:** https://reflektor-ny.vercel.app
 
-## Squarespace er ikke i fare
+Verifisert 15.09.2026 mot commit `4d611dc`. Åpnes i hvilken som helst
+nettleser, uten innlogging.
 
-Verdt å være presis om dette, for det er lett å bli nervøs av ordet «deploy»:
+---
 
-**Den eneste bryteren som flytter reflektor.no er DNS.** Så lenge domenet
-peker på Squarespace, ligger dagens side urørt uansett hva vi gjør her.
-Vercel-deployments lever på sine egne URL-er (`*.vercel.app`) til et domene
-peker på dem.
+## Hvorfor den URL-en, og ikke en preview-URL med hash
 
-Vi rører verken DNS eller Squarespace før du sier fra.
+Vercel-prosjektet `reflektor-ny` har arbeidsbranchen som **produksjonsbranch**.
+Hver push gir derfor en deploy med `target: production`, ikke en preview.
 
-Den reelle risikoen er en annen, og den er håndtert: at en ferdig kopi av
-siden blir **indeksert** og konkurrerer mot reflektor.no i søk. Se
-«Indekseringssperren» under.
+Det høres mer dramatisk ut enn det er: reflektor.no peker fortsatt på
+Squarespace. «Produksjon» betyr her bare `reflektor-ny.vercel.app`, ikke det
+levende domenet. Bryteren som faktisk flytter reflektor.no er DNS, og den er
+urørt.
 
-## Tre nivåer
+Én praktisk følge: Deployment Protection står på
+`prod_deployment_urls_and_all_previews`. Den beskytter de hash-URL-ene
+(`reflektor-n23pxkmrl-…`) — de gir 302 til Vercel-innlogging — men **ikke**
+det stabile domenet. Derfor er `reflektor-ny.vercel.app` åpen for alle som
+har lenken.
 
-### 1. Lokal utviklingsserver – mens du jobber
+## Indekseringssperren er verifisert på den levende URL-en
 
-```bash
-npm run dev
-```
-
-Åpne `http://localhost:3000`. Siden oppdateres i nettleseren i det sekundet en
-fil lagres. Dette er det du har åpent mest.
-
-Kjører du Claude Code i samme terminalvindu, trenger du et nytt: `Cmd + T`,
-`cd` til mappen, og kjør `npm run dev` der.
-
-### 2. Vercel preview – for å se det på ordentlig
-
-Hver push til en branch gir en unik URL. Ekte hosting, ekte HTTPS, ekte
-ytelse. Bruk den til mobiltesting, deling og Lighthouse.
-
-**Oppsettet er en engangsjobb, og `npx vercel link` alene holder ikke.**
-`vercel link` kobler bare mappen din til et Vercel-prosjekt lokalt. For at
-push til GitHub skal utløse deploy må Git-integrasjonen på plass:
-
-```bash
-npx vercel login
-npx vercel link          # oppretter/kobler prosjektet
-npx vercel git connect   # kobler GitHub-repoet til prosjektet
-```
-
-Alternativt: opprett prosjektet i Vercel-dashboardet og importer repoet der.
-Det gjør det samme, med færre steg å huske.
-
-Preview-URL-en er ikke søkbar, men den er offentlig for alle med lenken. Vil
-du stramme det inn, slå på Deployment Protection i prosjektinnstillingene.
-
-### 3. Mobil
-
-Enkleste vei er Vercel preview-URL-en – den virker overalt uten oppsett.
-
-Vil du teste lokalt på telefonen:
-
-```bash
-npm run dev:mobil
-```
-
-Finn maskinens IP (Systeminnstillinger → Nettverk) og åpne
-`http://192.168.x.x:3000` på telefonen. Krever samme wifi.
-
-## Indekseringssperren
-
-Vercel setter `X-Robots-Tag: noindex` på previews automatisk – men **ikke på
-produksjonsdeployments**. Siden planen er å ha en ferdig produksjonsdeploy
-liggende før DNS byttes, ville den vært indekserbar. Det er hullet vi har
-lukket.
-
-Standard er derfor: **alt er stengt for søkemotorer.**
+Ikke antatt, hentet:
 
 ```
+$ curl https://reflektor-ny.vercel.app/robots.txt
 User-Agent: *
 Disallow: /
+
+$ curl https://reflektor-ny.vercel.app/ | grep meta.*robots
+<meta name="robots" content="noindex, nofollow"/>
 ```
 
-I tillegg får hver side `<meta name="robots" content="noindex, nofollow">`.
+Begge deler kommer fra `src/lib/miljo.ts`. Vercel setter selv
+`X-Robots-Tag: noindex` på previews, men ikke på produksjonsdeploys — og
+siden denne branchen deployer som produksjon, er det sperren i koden som
+gjør jobben. Ikke fjern den for å teste at SEO virker.
 
-Sperren åpnes kun ved å sette miljøvariabelen bevisst – først når DNS faktisk
-peker hit:
+---
+
+## To ting å vite når du ser på den
+
+### 1. Videoene spiller ikke i mitt testverktøy — det er ikke en feil på siden
+
+Klippene er H.264 i MP4. Chromium-bygget Playwright bruker er
+open-source-varianten **uten proprietære kodeker**:
 
 ```
-NEXT_PUBLIC_TILLAT_INDEKSERING=true
+canPlayType('video/mp4; codecs="avc1.42E01E"')  →  ""   (tom = kan ikke spille)
+canPlayType('video/webm; codecs="vp9"')         →  "probably"
 ```
 
-Logikken ligger i `src/lib/miljo.ts`. Den styrer også canonical-URL, slik at
-previews ikke sender signaler til den levende Squarespace-siden.
+Filene serveres korrekt (HTTP 206 med range-støtte, 2,4 MB på 0,86 s).
+H.264 spilles av Chrome, Safari, Firefox og Edge på ekte maskiner.
 
-## Ikke bedøm ytelse på `npm run dev`
+**Konsekvens: jeg kan se posterbildene, men ikke verifisere avspillingen
+selv.** Det må gjøres i en vanlig nettleser. Sjekk at alle fire starter når
+de kommer i synsfeltet, og at bare de synlige spiller.
 
-Utviklingsserveren kjører ukomprimert og uoptimalisert – bilder, fonter og
-caching oppfører seg annerledes enn i produksjon. Skal du måle:
+### 2. Sporingen fyrer på previewen
+
+Målt på `reflektor-ny.vercel.app`, utgående forespørsler ved sidelast:
+
+- `google-analytics.com/g/collect` — GA4
+- `pagead2.googlesyndication.com/ccm/collect?tid=AW-11026823614` — Google Ads
+  konverteringskonto
+- `aplo-evnt.com/api/v1/intent_pixel/…` — tredjeparts besøkspiksel via GTM
+
+`src/components/Sporing.tsx` har ingen miljøsperre. GTM lastes uansett hvor
+siden kjører.
+
+**Risikoen:** previewtrafikk havner i de samme kontoene som bærer den eneste
+KPI-en. Åpner du eller jeg previewen, telles det som sidevisninger. Og fyller
+noen ut testskjemaet, går det til `/takk`, som fyrer `takk_page_view` — altså
+selve konverteringshandlingen med 107+ historiske registreringer.
+
+**Ikke endret.** Sporing er fundament, og en sperre her ville samtidig fjernet
+muligheten til å verifisere kjeden på preview — som er nettopp det som må
+gjøres før lansering, og som allerede har bommet én gang (se A28).
+
+Avveiningen er Påls. Skal den lukkes, er mønsteret det samme som for
+indeksering:
+
+```ts
+// Sporing.tsx
+if (process.env.NEXT_PUBLIC_SPORING !== "true") return null;
+```
+
+Da må flagget settes bevisst i Vercel når kjeden skal testes, og skrus av
+igjen etterpå.
+
+**Inntil det er avklart: ikke fyll ut skjemaet på previewen med mindre du
+mener å registrere en konvertering.**
+
+---
+
+## Lokal utvikling
 
 ```bash
-npm run build && npm start
+npm run dev          # localhost:3000
+npm run dev:mobil    # eksponert på nettverket, for test på telefon
 ```
 
-Eller bedre: mål på en Vercel preview. Ellers jager du problemer som ikke
-finnes i produksjon.
+`npm run build` før push. `content:check` og `lenkesjekk` kjører i CI og
+stopper publisering ved TBD-er, for lange tekster eller døde interne lenker.
 
-## Branch-disiplin
-
-Arbeidet skjer på `claude/reflektor-new-website-10fmt0`. Push til `main`
-utløser en produksjonsdeploy i Vercel. Det treffer fortsatt ikke reflektor.no
-uten DNS-endring, men hold arbeidet på branchen til siden er klar.
+---
 
 ## Sjekkliste før lansering
 
-- [ ] Bloggtekstene migrert fra Squarespace (tomme sider vil rasere SEO)
-- [ ] `docs/snapshot/` hentet, og tekst på landingssidene hentet derfra
-- [ ] Avklart hva `/` skal servere etter at forsidens slug ble `/hjem`
-- [ ] Skjema sender til riktig mottaker og utløser `takk_page_view` på `/takk`
-- [ ] GA4 og Google Ads-konvertering verifisert mot eksisterende oppsett
-- [ ] NAP, org.nr. og Organization-schema (JSON-LD) på plass
-- [ ] Redirect-kartet testet mot faktiske gamle URL-er
+- [ ] Bloggtekstene migrert fra Squarespace — **blokkerer lansering**
+- [ ] `/sosiale-medier-byra` → `/` 301, etter Ads-URL-bytte (`docs/cutover.md`)
 - [ ] `NEXT_PUBLIC_TILLAT_INDEKSERING=true` satt i Vercel
-- [ ] DNS pekt om – **til slutt**
+- [ ] Sporingskjeden verifisert ende-til-ende: skjema → `/takk` → GA4-hendelse
+- [ ] DNS flyttet — **det er den eneste handlingen som faktisk flytter siden**
