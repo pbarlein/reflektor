@@ -44,24 +44,33 @@
   <h1>Forsiden trenger 22 tekster</h1>
   <p class="ingress">Siden er bygget og fungerer. Strukturen, designet, bildene
   og anmeldelsene er på plass. Det som mangler er copy. Dette dokumentet er
-  bestillingen — ett felt per rad, med jobben feltet skal gjøre og hvor langt
-  det får være.</p>
+  bestillingen: ett felt per rad, med hvor teksten havner, hvilket format den
+  må ha og hvor lang den får være.</p>
 </div>
 
 <div class="kol2">
-  <h2 style="margin-top:0">Hva siden skal gjøre</h2>
+  <h2 style="margin-top:0">Hva dette dokumentet er — og ikke er</h2>
+  <p>Jeg har bygget siden, ikke strategien. Dette dokumentet inneholder det
+  jeg <em>vet</em>: hvilke felt som finnes, hvor lange de kan være, hvilket
+  format de må ha, og hva som allerede står på siden.</p>
+  <p><strong>Det inneholder med vilje ingen målgruppebeskrivelse, ingen
+  tonestemme og ingen søkeordsføringer.</strong> Prosjektet som skriver copyen
+  kjenner briefen, avatarene og søkeordsfordelingen. Jeg gjør ikke det, og et
+  gjett fra meg ville bare stått i veien.</p>
+  <p class="liten">Der jeg likevel har notert noe om innhold, står det merket
+  <strong>«antakelse»</strong>. Det er utledet fra koden eller fra
+  anmeldelsene, ikke fra briefen. Overstyr fritt.</p>
+
+  <h2>Det som er hardt</h2>
+  <p><strong>Tegngrensene håndheves av CI.</strong> Ett tegn over, og
+  publisering stopper. Tell før du sender.</p>
+  <p><strong>Slot-ID-ene er nøkler i koden.</strong> De må komme ordrett
+  tilbake.</p>
+  <p><strong>To felt har påkrevd format</strong> med loddrett strek som
+  skilletegn — se tabellen.</p>
   <p><strong>Én KPI: utfylte kontaktskjemaer.</strong> Ikke trafikk, ikke
-  rangeringer, ikke synlighet. Hver setning vurderes mot om den gjør at flere
-  fyller ut skjemaet.</p>
-  <p><strong>Tilbudet:</strong> Reflektor overtar sosiale medier for bedrifter
-  til fast månedspris. De produserer alt innhold selv — foto, video, reels.
-  Ingen stock.</p>
-  <p><strong>Hvem leser:</strong> en markedsansvarlig eller daglig leder som
-  vet at de burde være aktive i sosiale medier, men ikke har tid eller folk.
-  De har ofte prøvd selv, eller hatt en frilanser som forsvant.</p>
-  <p><strong>Den egentlige innvendingen er ikke prisen.</strong> Den er
-  arbeidsmengden: «hvor mye må <em>vi</em> gjøre?» Prisen er 30 000 kr/mnd,
-  og den kvalifiserer seg selv. Arbeidsmengden gjør det ikke.</p>
+  rangeringer. Kontaktskjema er eneste vei inn på siden — ingen «book et
+  møte», ingen chat.</p>
 
   <h2>Låste rammer</h2>
   <ul>
@@ -84,64 +93,69 @@
     årevis.</p>
   </div>
 
-  <h2>Tone</h2>
-  <p>Nøktern og konkret. Det som skiller Reflektor i anmeldelsene er at de er
-  lette å jobbe med og leverer raskt — ikke at de er «kreative» eller
-  «lidenskapelige». Skriv som noen som vet hva jobben koster.</p>
-  <p>Unngå: «vi brenner for», «skreddersydde løsninger», «ta din merkevare til
-  neste nivå», «i en digital verden». Si heller hva som faktisk skjer.</p>
-  <p>Å si hva som <em>ikke</em> inngår er en del av stemmen, ikke en svakhet.</p>
+  <h2>Én observasjon fra anmeldelsene <span class="liten">(antakelse)</span></h2>
+  <p class="liten">Ikke en tonestemme — bare noe jeg la merke til da jeg hentet
+  ut de ni Google-anmeldelsene, og som dere kan gjøre hva dere vil med.</p>
+  <p>Det kundene faktisk trekker fram er at Reflektor er lette å jobbe med,
+  raske, og at folk blir avslappet foran kamera. «Kreativ» og «profesjonell»
+  går igjen, men alltid som tillegg — aldri som det som begrunner
+  anbefalingen.</p>
+  <p class="liten">Alle ni anmeldelser i fulltekst ligger i
+  <span style="font-family:'Liberation Mono',monospace">src/content/anmeldelser.ts</span>
+  hvis dere vil lese dem selv.</p>
 
   <h2>Slik leveres svaret</h2>
   <p>Én PDF tilbake, med <strong>slot-ID og tekst</strong> per felt, i samme
-  rekkefølge som tabellen. ID-ene brukes direkte i koden, så de må stå ordrett.</p>
-  <p class="liten">Tegngrensene er harde — de håndheves av en sjekk som stopper
-  publisering ved overskridelse. Tell før du sender.</p>
+  rekkefølge som tabellen.</p>
   <p class="liten">Er et felt vanskelig uten mer informasjon, lever de andre og
   skriv hva som mangler for nettopp det feltet. Delvis levering er nyttig.</p>
+  <p class="liten">Mener dere et felt bør hete noe annet, ligge et annet sted
+  eller ha en annen lengde — si det. Strukturen er min, ikke hellig, og den er
+  bygget uten kjennskap til briefen.</p>
 </div>
 
 <div class="brekk"></div>
 <h2 style="margin-top:0">De 22 feltene</h2>
-<p class="liten" style="margin-bottom:3mm">Fem felt er allerede fylt og står
-med grå tekst — de trenger ingenting, men viser tonen som er etablert.</p>
+<p class="liten" style="margin-bottom:3mm">Fem felt er allerede fylt og står med
+grå tekst. De trenger ingenting — de er tatt med fordi de er godkjent av Pål og
+dermed viser hva som allerede er slått fast.</p>
 
 <table>
-<thead><tr><th style="width:42mm">Slot-ID</th><th style="width:17mm">Grense</th><th>Jobben feltet skal gjøre</th></tr></thead>
+<thead><tr><th style="width:42mm">Slot-ID</th><th style="width:17mm">Grense</th><th>Hvor teksten står, og hva formatet krever</th></tr></thead>
 
-<tr class="seks"><td colspan="3">0 · METADATA <em>— avgjør om noen klikker i søkeresultatet</em></td></tr>
-<tr><td class="id">front.meta.title</td><td class="lim">60 tegn</td><td>Tittel i Google. Bør inneholde både «sosiale medier» og prisankeret.</td></tr>
-<tr><td class="id">front.meta.description</td><td class="lim">155 tegn</td><td>Utdraget under tittelen. <span class="aksent">Prisen bør stå</span> — AI-svar vekter pristransparens tungt.</td></tr>
+<tr class="seks"><td colspan="3">0 · METADATA <em>— vises i søkeresultatet, ikke på siden</em></td></tr>
+<tr><td class="id">front.meta.title</td><td class="lim">60 tegn</td><td>Tittel i søkeresultatet.</td></tr>
+<tr><td class="id">front.meta.description</td><td class="lim">155 tegn</td><td>Utdraget under tittelen.</td></tr>
 
-<tr class="seks"><td colspan="3">1 · HERO <em>— tilbudet og beviset i øvre halvdel av første skjerm</em></td></tr>
+<tr class="seks"><td colspan="3">1 · HERO <em>— fire felt over folden, side om side med prisen</em></td></tr>
 <tr><td class="id">front.hero.h1</td><td class="lim">8 ord</td><td class="ferdig">FERDIG: «Sosiale medier – nesten på autopilot.» («nesten» står i kursiv)</td></tr>
-<tr><td class="id">front.hero.sub</td><td class="lim">180 tegn</td><td>Svar på den egentlige innvendingen: hvor mye må kunden selv gjøre? Dette er det viktigste feltet på siden.</td></tr>
-<tr><td class="id">front.hero.cta</td><td class="lim">24 tegn</td><td>Knappetekst. Må si hva man får, ikke hva man gjør. Skal matche knappen i skjemaet: «Få et strategiforslag».</td></tr>
-<tr><td class="id">front.hero.proof</td><td class="lim">100 tegn</td><td>Navngitt bevis over folden. Kun godkjente kundenavn.</td></tr>
+<tr><td class="id">front.hero.sub</td><td class="lim">180 tegn</td><td>Ingressen under H1. Står over folden, ved siden av prisen og CTA-en.</td></tr>
+<tr><td class="id">front.hero.cta</td><td class="lim">24 tegn</td><td>Knappetekst. <strong>Bør matche knappen i skjemaet</strong>, som i dag sier «Få et strategiforslag» — to ulike formuleringer for samme handling svekker begge.</td></tr>
+<tr><td class="id">front.hero.proof</td><td class="lim">100 tegn</td><td>Kort linje under CTA-en. Kun godkjente kundenavn, se rammene.</td></tr>
 
 <tr class="seks"><td colspan="3">2 · ARBEIDET <em>— fire klipp: Anton Sport ×2, The Well, Soul Cake</em></td></tr>
 <tr><td class="id">front.work.eyebrow</td><td class="lim">30 tegn</td><td class="ferdig">FERDIG: «Arbeidet»</td></tr>
-<tr><td class="id">front.work.h2</td><td class="lim">60 tegn</td><td>Overskrift over klippene.</td></tr>
-<tr><td class="id">front.work.sub</td><td class="lim">120 tegn</td><td>Slå fast at alt er egenprodusert. Ingen stock, ingen innleide.</td></tr>
+<tr><td class="id">front.work.h2</td><td class="lim">60 tegn</td><td>Overskrift over de fire klippene.</td></tr>
+<tr><td class="id">front.work.sub</td><td class="lim">120 tegn</td><td>Ingress under overskriften, over de fire klippene.</td></tr>
 
 <tr class="seks"><td colspan="3">3 · SLIK FUNGERER DET <em>— mørk blokk, tre steg</em></td></tr>
 <tr><td class="id">front.how.eyebrow</td><td class="lim">30 tegn</td><td class="ferdig">FERDIG: «Slik jobber vi»</td></tr>
 <tr><td class="id">front.how.h2</td><td class="lim">70 tegn</td><td>Overskrift over de tre stegene.</td></tr>
-<tr><td class="id">front.how.steps[0]</td><td class="lim">180 tegn</td><td rowspan="3">Tre steg fra signering til publisert innhold. <strong>Format: tittel <span class="aksent">|</span> forklaring</strong> — loddrett strek mellom. Steg 1 bør vise hvor lite kunden må gjøre.</td></tr>
+<tr><td class="id">front.how.steps[0]</td><td class="lim">180 tegn</td><td rowspan="3">Tre steg. <strong>Format: tittel <span class="aksent">|</span> forklaring</strong> — loddrett strek mellom. Vises som nummerert rad i den mørke blokken, så de tre bør være omtrent like lange.</td></tr>
 <tr><td class="id">front.how.steps[1]</td><td class="lim">180 tegn</td></tr>
 <tr><td class="id">front.how.steps[2]</td><td class="lim">180 tegn</td></tr>
 
 <tr class="seks"><td colspan="3">4 · PRIS <em>— tallet står allerede i designet</em></td></tr>
 <tr><td class="id">front.price.eyebrow</td><td class="lim">30 tegn</td><td class="ferdig">FERDIG: «Pris»</td></tr>
 <tr><td class="id">front.price.h2</td><td class="lim">60 tegn</td><td>Overskrift over prisen.</td></tr>
-<tr><td class="id">front.price.note</td><td class="lim">220 tegn</td><td>Hvorfor fastpris er mulig. Innvendingen bak innvendingen: «hva er haken?»</td></tr>
+<tr><td class="id">front.price.note</td><td class="lim">220 tegn</td><td>Avsnitt under prisen. Står rett etter listen over hva som ikke inngår.</td></tr>
 
 <tr class="seks"><td colspan="3">5 · ANMELDELSER <em>— åtte Google-anmeldelser, alle 5 av 5, ligger inne</em></td></tr>
 <tr><td class="id">front.reviews.eyebrow</td><td class="lim">30 tegn</td><td class="ferdig">FERDIG: «Det kundene sier»</td></tr>
-<tr><td class="id">front.reviews.h2</td><td class="lim">70 tegn</td><td>Overskrift. Den løftede anmeldelsen nevner 70 % vekst for Vindu Butikken — overskriften skal ikke gjenta tallet.</td></tr>
+<tr><td class="id">front.reviews.h2</td><td class="lim">70 tegn</td><td>Overskrift. Rett under står anmeldelsen som nevner 70 % vekst for Vindu Butikken, så tallet er allerede sagt.</td></tr>
 
-<tr class="seks"><td colspan="3">6 · FAQ <em>— innvendingshåndtering, seks spørsmål</em></td></tr>
-<tr><td class="id">front.faq.qa[0]</td><td class="lim">500 tegn</td><td rowspan="6"><strong>Format: spørsmål <span class="aksent">|</span> svar</strong> — loddrett strek mellom.<br><br>Skriv spørsmålene slik folk faktisk stiller dem, ikke slik en bedrift ville formulert dem. Dekning betyr mer enn korthet: et svar som avvæpner en innvending får være langt.<br><br>Minst to bør komme fra spørsmål Pål faktisk får i salgssamtaler. Én bør ta oppsigelse og bindingstid.</td></tr>
+<tr class="seks"><td colspan="3">6 · FAQ <em>— seks spørsmål, svaret åpnes ved klikk</em></td></tr>
+<tr><td class="id">front.faq.qa[0]</td><td class="lim">500 tegn</td><td rowspan="6"><strong>Format: spørsmål <span class="aksent">|</span> svar</strong> — loddrett strek mellom.<br><br>Vises som sammenslåtte rader — spørsmålet er synlig, svaret åpnes ved klikk. Derfor koster et langt svar ingenting i sidelengde.<br><br><strong>Én av de seks må dekke oppsigelse og bindingstid</strong>, som er en låst ramme.</td></tr>
 <tr><td class="id">front.faq.qa[1]</td><td class="lim">500 tegn</td></tr>
 <tr><td class="id">front.faq.qa[2]</td><td class="lim">500 tegn</td></tr>
 <tr><td class="id">front.faq.qa[3]</td><td class="lim">500 tegn</td></tr>
@@ -150,7 +164,7 @@ med grå tekst — de trenger ingenting, men viser tonen som er etablert.</p>
 
 <tr class="seks"><td colspan="3">7 · KONTAKT <em>— mørk blokk med skjemaet</em></td></tr>
 <tr><td class="id">front.contact.h2</td><td class="lim">60 tegn</td><td>Overskrift ved siden av skjemaet.</td></tr>
-<tr><td class="id">front.contact.sub</td><td class="lim">200 tegn</td><td>Senk terskelen. Hva skjer etter innsending, og hva forplikter man seg til? (Skjemaet sier allerede: svar innen 3 virkedager, uforpliktende.)</td></tr>
+<tr><td class="id">front.contact.sub</td><td class="lim">200 tegn</td><td>Ingress ved siden av skjemaet. Skjemaet sier allerede selv: svar innen 3 virkedager, uforpliktende, og oppgir telefonnummer.</td></tr>
 </table>
 
 <div class="boks">
