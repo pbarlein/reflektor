@@ -28,3 +28,31 @@
    */
   --radius-interaktiv: var(--radius-sm);
 }
+
+/*
+ * Tekstfarge på oransje flate — MÅLT, ikke valgt.
+ *
+ * Kontrast mot #DE4826, regnet ut mot WCAG 2.1:
+ *
+ *   hvit tekst        4,15:1   stryker AA for normal tekst (krav 4,5)
+ *   nesten-sort       4,51:1   består AA
+ *
+ * Første versjon brukte hvit tekst på alle CTA-er. Det var et AA-brudd som
+ * overlevde flere runder. Nesten-sort er eneste trygge variant på oransje –
+ * og leser dessuten mer distinkt enn standard hvit-på-farge.
+ *
+ * Oransje som TEKSTfarge er kun forsvarlig i display-størrelse:
+ *   oransje på beige  3,78:1   kun ≥24px, eller ≥19px bold
+ */
+:root {
+  --text-on-accent: var(--rf-ink);
+}
+
+/*
+ * Aksentdisiplin.
+ *
+ * Oransje reserveres til: primær CTA, maks ett uthevet ord per overskrift,
+ * og tynne aksentstreker. Ikke ikoner, ikke seksjonsbakgrunner, ikke hover
+ * på alt. Dekker oransje mer enn ~10 % av en skjerm, slutter knappen å lese
+ * som knapp.
+ */
