@@ -45,10 +45,13 @@ export default function Forside() {
 
   return (
     <>
-      {/* 1 · HERO — posisjonering i øvre halvdel av første skjerm */}
-      <section className="py-20 sm:py-28">
+      {/* 1 · HERO — posisjonering i øvre halvdel av første skjerm.
+          Rytmen varierer bevisst mellom seksjonene: jevn vertikal padding
+          overalt er et malsignal. Forholdet mellom største og minste
+          seksjonsrytme her er omtrent 3:1. */}
+      <section className="pt-16 pb-24 sm:pt-24 sm:pb-36">
         <Container>
-          <h1 className="max-w-4xl text-4xl sm:text-5xl lg:text-[4.25rem]">
+          <h1 className="max-w-4xl text-[2.75rem] leading-[1.04] sm:text-6xl sm:leading-[1.02] lg:text-[5rem] lg:leading-[1.0]">
             Sosiale medier – <em className="not-italic text-aksent">nesten</em>{" "}
             på autopilot.
           </h1>
@@ -65,7 +68,7 @@ export default function Forside() {
               {hentTekst(front, "front.hero.cta") ?? <Tbd id="front.hero.cta" />}
             </a>
             {/* Prisen står allerede her. Selvkvalifisering, og AEO vekter det. */}
-            <p className="text-blekk-dempet">
+            <p className="tracking-[0.02em] text-blekk-dempet">
               {tilbud.prisPerManed.toLocaleString("nb-NO")} kr/mnd · ingen
               bindingstid
             </p>
@@ -81,7 +84,7 @@ export default function Forside() {
               er produksjonserfaring, ikke en uttalelse. Å blande logoer og
               sitater lar logoene lese som om de sto bak sitatene — og disse
               kundene er produksjonskunder, aldri SoMe-abonnenter. */}
-          <ul className="mt-6 flex flex-wrap gap-x-7 gap-y-2 text-sm text-blekk-svak">
+          <ul className="mt-6 flex flex-wrap gap-x-7 gap-y-2 border-t border-kant pt-6 text-sm tracking-[0.02em] text-blekk-svak">
             {kundelogoer.map((kunde) => (
               <li key={kunde}>{kunde}</li>
             ))}
@@ -90,7 +93,7 @@ export default function Forside() {
       </section>
 
       {/* 2 · ARBEIDET — vis produktet før du forklarer det */}
-      <section className="pb-20">
+      <section className="pb-28 sm:pb-36">
         <Container>
           <Eyebrow>{hentTekst(front, "front.work.eyebrow")}</Eyebrow>
           <h2 className="mt-4 max-w-2xl text-3xl sm:text-4xl">
@@ -109,10 +112,8 @@ export default function Forside() {
       <section className="pb-20">
         <Container>
           <div className="rounded-flate bg-dyp px-8 py-14 text-pa-dyp sm:px-14">
-            <Eyebrow>
-              <span className="text-pa-dyp">
-                {hentTekst(front, "front.how.eyebrow")}
-              </span>
+            <Eyebrow variant="dyp">
+              {hentTekst(front, "front.how.eyebrow")}
             </Eyebrow>
             <h2 className="mt-4 max-w-2xl text-3xl sm:text-4xl">
               {hentTekst(front, "front.how.h2") ?? <Tbd id="front.how.h2" />}
@@ -151,14 +152,14 @@ export default function Forside() {
       </section>
 
       {/* 4 · PRIS — åpent, med vilkårene */}
-      <section className="pb-20">
+      <section className="pb-28 sm:pb-36">
         <Container>
           <Eyebrow>{hentTekst(front, "front.price.eyebrow")}</Eyebrow>
           <h2 className="mt-4 max-w-2xl text-3xl sm:text-4xl">
             {hentTekst(front, "front.price.h2") ?? <Tbd id="front.price.h2" />}
           </h2>
 
-          <p className="mt-8 text-5xl font-medium sm:text-6xl">
+          <p className="mt-8 text-6xl leading-none tracking-[-0.02em] sm:text-7xl">
             {tilbud.prisPerManed.toLocaleString("nb-NO")} kr
             <span className="text-2xl text-blekk-dempet">/mnd</span>
           </p>
@@ -199,11 +200,14 @@ export default function Forside() {
             )}
           </h2>
         </Container>
-        <Anmeldelser anmeldelser={klarerteAnmeldelser} />
+        <Anmeldelser
+          fremhevet={klarerteAnmeldelser[0]}
+          ovrige={klarerteAnmeldelser.slice(1)}
+        />
       </section>
 
       {/* 6 · FAQ — native details, ingen JavaScript */}
-      <section className="pb-20">
+      <section className="pb-24">
         <Container>
           <h2 className="max-w-2xl text-3xl sm:text-4xl">
             Det folk lurer på før de tar kontakt

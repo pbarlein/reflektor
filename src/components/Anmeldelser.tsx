@@ -2,43 +2,73 @@ import { Container } from "./Container";
 import type { Anmeldelse } from "@/content/anmeldelser";
 
 /**
- * Anmeldelsesvegg i stram form.
+ * Anmeldelser i to former: én løftet, resten i et hårstreksatt rutenett.
  *
- * Formvalget: Soul Cake-casen viser sitater i full bredde, ett om gangen. Det
- * gir ett bevis per skjermhøyde. Styrken i navngitte anmeldelser ligger i
- * ANTALLET navngitte avsendere som sier det samme, og den effekten forsvinner
- * når man ser ett av gangen.
+ * Hvorfor delt: den sterkeste anmeldelsen er kvalitativt forskjellig fra de
+ * andre. Thomas Messel oppgir et tall — 70 % vekst — og et forbehold som
+ * gjør tallet troverdig: «selv i et krevende marked med generell nedgang for
+ * alle i vår bransje». Å legge den i et rutenett med åtte andre gjør den til
+ * én av ni. Å løfte den gir den vekten den fortjener.
  *
- * Derfor: kort sitat, navn, selskap, i et rutenett som lar flere stå i samme
- * blikk. Ingen kort med skygge, ingen avatarer, ingen stjernerad per sitat —
- * bare hårfine skiller. Sitatet skal leses, ikke innrammes. At alle er 5 av 5
- * sies én gang i overskriften, ikke ni ganger i rutenettet.
+ * Resten står tett, i samme blikk. Styrken i navngitte anmeldelser ligger i
+ * ANTALLET avsendere som sier det samme, og den effekten forsvinner når man
+ * ser ett sitat av gangen — som er nettopp det casesiden gjør.
  *
- * Navn og selskap er ikke pynt. Anonyme sitater er det svakeste sosiale
- * beviset som finnes, og leses av mange som oppdiktet. Kildetroverdighets-
- * litteraturen er det nærmeste vi kommer hard evidens her.
+ * Ingen kort, ingen skygger, ingen avatarer, ingen stjernerad per sitat. At
+ * alle er 5 av 5 sies én gang, ikke ni ganger. Skiller er hårstreker.
  *
- * Tekstene er ordrette utdrag fra Google. Fulltekst ligger i samme fil, så
- * utdraget kan etterprøves — se src/content/anmeldelser.ts.
+ * MERK — ingen Review- eller AggregateRating-schema på disse.
+ * Googles retningslinjer for review snippets sier at anmeldelser av en enhet,
+ * plassert på enhetens egen side, er «self-serving». Det gir null stjerner i
+ * søkeresultatet OG er et regelbrudd. Se docs/vedlegg-a.md.
  */
-export function Anmeldelser({ anmeldelser }: { anmeldelser: Anmeldelse[] }) {
+export function Anmeldelser({
+  fremhevet,
+  ovrige,
+}: {
+  fremhevet?: Anmeldelse;
+  ovrige: Anmeldelse[];
+}) {
   return (
-    <Container>
-      <ul className="mt-10 grid gap-x-10 border-t border-kant sm:grid-cols-2 lg:grid-cols-3">
-        {anmeldelser.map((a) => (
-          <li key={a.navn} className="border-b border-kant py-7">
-            <blockquote className="text-[0.975rem] leading-relaxed text-pretty">
-              {a.sitat}
+    <>
+      {fremhevet && (
+        <Container>
+          <figure className="mt-12 max-w-4xl">
+            <blockquote className="text-2xl leading-[1.25] tracking-[-0.015em] text-balance sm:text-3xl lg:text-[2.5rem]">
+              {fremhevet.sitat}
             </blockquote>
-            <p className="mt-4 text-sm">
-              <span className="font-medium">{a.navn}</span>
-              {a.selskap && (
-                <span className="text-blekk-dempet"> · {a.selskap}</span>
+            <figcaption className="mt-7 text-sm tracking-[0.02em]">
+              <span className="font-medium">{fremhevet.navn}</span>
+              {fremhevet.selskap && (
+                <span className="text-blekk-dempet"> · {fremhevet.selskap}</span>
               )}
-            </p>
-          </li>
-        ))}
-      </ul>
-    </Container>
+            </figcaption>
+          </figure>
+        </Container>
+      )}
+
+      <Container>
+        <ul className="mt-16 grid gap-x-12 border-t border-kant-regel sm:grid-cols-2 lg:grid-cols-3">
+          {ovrige.map((a) => (
+            <li key={a.navn} className="border-b border-kant py-7">
+              <blockquote className="text-[0.95rem] leading-relaxed text-pretty">
+                {a.sitat}
+              </blockquote>
+              <p className="mt-4 text-sm tracking-[0.02em]">
+                <span className="font-medium">{a.navn}</span>
+                {a.selskap && (
+                  <span className="text-blekk-dempet"> · {a.selskap}</span>
+                )}
+              </p>
+            </li>
+          ))}
+        </ul>
+        {/* Kildeattribusjon én gang, ikke per sitat. */}
+        <p className="mt-6 text-sm tracking-[0.02em] text-blekk-svak">
+          Alle {ovrige.length + (fremhevet ? 1 : 0)} er hentet fra Reflektors
+          anmeldelser på Google. Alle er 5 av 5.
+        </p>
+      </Container>
+    </>
   );
 }

@@ -15,32 +15,101 @@
   --surface-muted: #efe9e0;
 
   /*
-   * Varm mørk blokk. Brukes som KAPITTELSKILLE, ikke som dekor: den markerer
-   * at samtalen skifter. Hentet fra uttrykket i Soulcake-casen.
+   * Varm mørk blokk. KAPITTELSKILLE, ikke dekor: den markerer at samtalen
+   * skifter. Kadensen er én til to ganger på en lang side, aldri annenhver
+   * seksjon – en helbeige side uten mørke brudd leser som mal, og en side
+   * som veksler hele veien mister effekten.
    *
-   * Målt kontrast mot #2E1C14:
-   *   hvit tekst     16,25:1   ✓ AAA
-   *   dempet hvit     7,40:1   ✓ AAA
-   *   oransje         3,92:1   kun stor tekst – aldri brødtekst
+   * Målt kontrast mot #2E1C14 (WCAG 2.1, regnet lokalt):
+   *   #FFFFFF  16,25   ✓ AAA
+   *   #F5F0E8  14,32   ✓ AAA   ← vi bruker denne
+   *   #C9BDB5   8,84   ✓ AAA
+   *   #F0704F   5,52   ✓ AA    ← oransje som TÅLER brødtekst her
+   *   #E85A38   4,60   ✓ AA
+   *   #DE4826   3,92   ✗       ← merkevareoransjen stryker på brun
+   *
+   * Teksten er bone, ikke ren hvit. Ren hvit på varm brun leser kaldt og
+   * bryter paletten; vi mister 1,9 av 16 kontrastpoeng på å unngå det.
+   *
+   * Og: merkevareoransjen kan IKKE brukes som tekst på den brune flaten.
+   * Der trengs den lysnede varianten.
    */
   --surface-dyp: #2e1c14;
-  --text-on-dyp: #ffffff;
-  --text-on-dyp-muted: rgba(255, 255, 255, 0.72);
+  --text-on-dyp: #f5f0e8;
+  --text-on-dyp-muted: #c9bdb5;
+  --aksent-pa-dyp: #f0704f;
+  --kant-pa-dyp: #573c31;
 
   /* --- Tekst på aksent — MÅLT, ikke valgt ------------------------------ */
 
   /*
-   * Kontrast mot #DE4826 etter WCAG 2.1:
-   *   hvit tekst     4,15:1   stryker AA for normal tekst (krav 4,5)
-   *   nesten-sort    4,51:1   består AA
+   * Kontrast mot #DE4826, regnet lokalt etter WCAG 2.1:
+   *   #FFFFFF  4,149   ✗
+   *   #141414  4,440   ✗   ← bommer med 0,06
+   *   #121212  4,515   ✓
+   *   #0D0D0D  4,684   ✓   ← valgt, med margin
+   *   #000000  5,061   ✓
    *
-   * Første versjon brukte hvit på alle CTA-er. Det var et AA-brudd som
-   * overlevde flere runder. Nesten-sort er eneste trygge variant – og leser
-   * dessuten mer distinkt enn standard hvit-på-farge.
+   * To feil er gjort her, begge på samme knapp:
    *
-   * Oransje som TEKSTfarge kun i display-størrelse: 3,78:1 mot beige.
+   * 1. Første versjon brukte hvit tekst. Det var et rent AA-brudd.
+   * 2. Rettelsen pekte på var(--rf-ink) = #141414 med kommentaren «4,51».
+   *    Men 4,51 er #121212. #141414 gir 4,440 og stryker fortsatt.
+   *    Riktig prinsipp, feil farge.
+   *
+   * Derfor en fast verdi og ikke en token-referanse: verdien her MÅ følge
+   * aksentfargen, ikke merkevarens sortverdi. Endres --color-accent, skal
+   * dette tallet regnes ut på nytt.
+   *
+   * Alternativet var å mørkne knappeflaten til #C93E1F og bruke hvit
+   * (5,009 ✓). Forkastet fordi det endrer merkevarefargen på sidens mest
+   * eksponerte element for å løse et problem som kan løses i teksten.
    */
-  --text-on-accent: var(--rf-ink);
+  --text-on-accent: #0d0d0d;
+
+  /*
+   * Oransje som TEKSTfarge på beige: #DE4826 gir 3,658 – kun ≥24px, eller
+   * ≥19px bold. Ikke 48px, som det sto før; grensen er lavere enn antatt.
+   * Trengs oransje i brødtekststørrelse, er #C03A1C (4,792) minsteverdien.
+   */
+  --aksent-tekst-liten: #c03a1c;
+
+  /* --- Varme nøytraler ------------------------------------------------- */
+
+  /*
+   * Vendorpaletten er nøytralt grå i den mørke enden: --rf-ink #141414,
+   * --rf-ink-500 #6B6B6B. Nøytral grå på varm beige leser som to systemer
+   * lagt oppå hverandre – det er det vanligste som skiller en beige palett
+   * som fungerer fra en som ikke gjør det.
+   *
+   * Målt mot #F5F0E8:
+   *   #6B6B6B  4,70  ✓ AA, men kald
+   *   #6A5A50  5,80  ✓ AA, varm        ← valgt
+   *   #75655B  4,91  ✓ AA, varmere lys
+   *
+   * Brødteksten holdes mørk og nesten nøytral (#1C1310 gir 16,10) – varmen
+   * skal ligge i flatene og den dempede teksten, ikke gjøre brødtekst brun.
+   */
+  --text-body: #1c1310;
+  --text-muted: #6a5a50;
+  --text-subtle: #7a6a60; /* 4,56 mot bone – fortsatt AA */
+
+  /* --- Hårstreker, ikke skygger ---------------------------------------- */
+
+  /*
+   * Skygger er ute. Kort-med-skygge-på-lys-flate er 2020-språket og er
+   * praktisk talt fraværende hos sidene som setter standarden i segmentet.
+   * Skiller lages med linje og flatebytte, ikke med opphøying.
+   *
+   * To styrker, målt mot bone:
+   *   svak  #DDD5C8  1,28  – celler, lister, skjemafelt
+   *   regel #C9BDA9  1,63  – seksjonsskiller
+   *
+   * Vendorverdien --rf-ink-200 (#E2E2E2, 1,14) er både for svak og kald.
+   */
+  --border-hairline: #ddd5c8;
+  --border-rule: #c9bda9;
+  --border-strong: #1c1310;
 
   /* --- Radius ---------------------------------------------------------- */
 
@@ -92,6 +161,38 @@ h2 {
   text-wrap: balance;
 }
 
+h3 {
+  text-wrap: balance;
+}
+
+/*
+ * Sporingen skal SNU FORTEGN. Negativ på display, positiv på små størrelser.
+ * Det er håndlaget optisk størrelse, og fraværet av det – null sporing
+ * overalt – er en av de tydeligste markørene for at typografien ikke er satt.
+ *
+ * Vendorfilen har --tracking-body: -0.005em, altså negativ på brødtekst.
+ * Det er feil vei for små grader.
+ */
+body {
+  letter-spacing: 0;
+}
+
+.tekst-liten,
+figcaption,
+.caption {
+  letter-spacing: 0.02em;
+}
+
+.eyebrow {
+  letter-spacing: 0.08em;
+}
+
+/* Brødtekst tåler `pretty`: Firefox mangler den fortsatt, men den
+   degraderer pent, så layout skal ikke forutsette den. */
+p {
+  text-wrap: pretty;
+}
+
 /*
  * BEVEGELSE
  *
@@ -102,4 +203,19 @@ h2 {
  *
  * Derfor: bevegelse kun på hover og fokus, 120–200 ms. Ingenting som utsetter
  * lesing.
+ *
+ * prefers-reduced-motion respekteres. Det er billig, det er riktig, og det er
+ * påfallende sjeldent i segmentet – av elleve stilark gjennomgått hadde to
+ * det. Å være bedre enn konkurrentene koster her fire linjer CSS.
  */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -19,9 +19,26 @@ import { Container } from "./Container";
  * innhold er nåbart med én swipe. Innvendingen mot karuseller gjelder
  * auto-roterende hero-bannere, ikke en mediestripe som ligger stille.
  *
+ * Formatet er 8:16, ikke 9:16. Klippene beskjæres 6 % i sidene med
+ * `object-fit: cover`. Det er et bevisst valg, ikke slurv: en smalere kolonne
+ * gjør at flere reels får plass ved siden av hverandre, og veggen leser
+ * tettere og mer som et format. Mønsteret er hentet fra sider som viser
+ * vertikal video godt på desktop.
+ *
+ * Ingen telefonramme rundt klippene. Mockup-telefoner rundt vertikal video
+ * daterer en side umiddelbart. Bare radius, ingenting annet.
+ *
+ * Ingen skygge. Skiller lages med flatebytte og linje, ikke med opphøying —
+ * kort-med-skygge er 2020-språket, og det er praktisk talt fraværende hos
+ * sidene som setter standarden i segmentet nå.
+ *
  * Ytelsesregler som følger av budsjettet:
  * - `aspect-ratio` på containeren reserverer høyden. Uten den får vi CLS.
  * - Posterbilde er standard. Video lastes ikke før den trengs.
+ * - Én video spiller av gangen når klippene kommer; resten pauses med
+ *   IntersectionObserver. Fire samtidige autoplay er målbar LCP- og
+ *   batteriskade, og ytelse er prosjektets sterkeste evidens.
+ * - Dekorativ video får `aria-hidden` og `tabindex="-1"`.
  *
  * Klippene finnes ikke ennå. Rammene står med riktig format så rytmen kan
  * vurderes, og byttes ut når filene kommer.
@@ -38,12 +55,12 @@ export function ReelVegg({ tekster }: { tekster: (string | null)[] }) {
       >
         {tekster.map((tekst, i) => (
           <li key={i} className="w-[72vw] shrink-0 snap-start sm:w-auto">
-            <div className="aspect-[9/16] overflow-hidden rounded-medie bg-flate-dempet shadow-card">
+            <div className="aspect-[8/16] overflow-hidden rounded-medie bg-flate-dempet">
               <div className="flex h-full items-center justify-center text-sm text-blekk-svak">
                 9:16
               </div>
             </div>
-            <p className="mt-3 text-sm text-blekk-dempet">
+            <p className="mt-3 text-sm tracking-[0.02em] text-blekk-dempet">
               {tekst ?? (
                 <mark className="rounded-xs bg-aksent/12 px-1.5 py-0.5 font-mono text-xs text-aksent">
                   TBD

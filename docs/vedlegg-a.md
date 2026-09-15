@@ -304,3 +304,54 @@ låste rammene i 0.3 består.
 
 Alt som ble fjernet ligger i git-historikken fram til commit `f7be019` og kan
 hentes tilbake.
+
+## A33 — Ingen Review- eller AggregateRating-schema på egne anmeldelser
+
+Googles retningslinjer for review snippets sier at `Review` og
+`AggregateRating` på `Organization` og `LocalBusiness` bare gjelder «sites
+that capture reviews about **other** ... organizations».
+
+En anmeldelse av Reflektor, plassert på reflektor.no, er dermed
+«self-serving». Konsekvensen er todelt: siden blir **ikke kvalifisert** for
+stjerner i søkeresultatet, og markeringen er et brudd på retningslinjene.
+Det gjelder også om anmeldelsene kommer via en tredjepartswidget — altså
+også dagens Elfsight-løsning.
+
+**Derfor:** anmeldelsene på forsiden er vanlig HTML uten schema.
+`src/components/Schema.tsx` skal ikke utvides med `aggregateRating`.
+
+Fristelsen er reell, for stjerner i SERP ser ut som gratis CTR. Den er det
+ikke — den gir null stjerner og en policyrisiko på samme tid.
+
+Kilde: developers.google.com/search/docs/appearance/structured-data/review-snippet
+
+## A34 — Motsigelse i typografien som må avklares med kunden
+
+Tre kilder i prosjektet sier ulike ting om skriftsnittet:
+
+1. `docs/vedlegg-a.md` A13: Poppins er merkevarefonten (fra Holum-manualen).
+2. `src/styles/tokens/typography.css`: `--font-display: "Figtree"`.
+3. `docs/designsystem-readme.md`: ordmerket beskrives som «geometric
+   grotesque with a tall x-height, **double-storey a**».
+
+Punkt 3 er uforenlig med punkt 1: **Poppins har enstavs `a`**. Enten er
+beskrivelsen av ordmerket feil, eller så er ordmerket ikke satt i Poppins.
+
+`globals.css` bruker i dag Poppins, altså punkt 1. Det står til avklaring.
+
+Merk også, som faktagrunnlag og ikke som anbefaling:
+
+- Poppins ligger på popularitetsrangering 5 på Google Fonts og er statisk —
+  ingen variabel vektakse, ingen optisk størrelse. Brøkvekter (420, 440) og
+  ekte optisk størrelse er dermed utelukket.
+- Ytelsesargumentet mot Poppins holder ikke: fem statiske vekter er 39 kB
+  woff2 subsettet. Figtree variabel 300–900 er 20 kB, men Schibsted Grotesk
+  er 47 kB — «variabelt er lettere» stemmer ikke generelt og må måles.
+- Formproblemet er reelt: monolineær geometrisk med nesten sirkulære `o`,
+  `e` og `c` gir ujevne mellomrom ved 80–160px. Poppins leser godt på 17px
+  UI og middelmådig på 120px display.
+
+Mønsteret i segmentet er sans + serif-par, med seriff som display-snitt.
+Det billigste grepet ville være å beholde Poppins i UI og skjema og legge
+til et display-snitt for H1 — men **det er et merkevarevalg som er Påls, ikke
+Claude Codes**, og ingenting er endret på grunnlag av dette.

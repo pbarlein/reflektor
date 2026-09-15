@@ -36,8 +36,16 @@
   --color-blekk-invers: var(--text-on-inverse);
 
   --color-kant: var(--border-hairline);
+  --color-kant-regel: var(--border-rule);
   --color-kant-sterk: var(--border-strong);
   --color-kant-invers: var(--border-inverse);
+  --color-kant-pa-dyp: var(--kant-pa-dyp);
+
+  /* Merkevareoransjen stryker AA på den brune flaten (3,92). Denne er
+     lysnet til 5,52 og er den eneste som kan brukes som tekst der. */
+  --color-aksent-pa-dyp: var(--aksent-pa-dyp);
+  /* Oransje som tekst på beige i under 24px krever denne (4,79 mot 3,66). */
+  --color-aksent-tekst: var(--aksent-tekst-liten);
 
   --font-sans: var(--font-poppins), "Helvetica Neue", Arial, sans-serif;
 
@@ -54,7 +62,9 @@ body {
   color: var(--text-body);
   font-size: var(--type-body-size);
   line-height: var(--leading-normal);
-  letter-spacing: var(--tracking-body);
+  /* Ikke --tracking-body: den er negativ (-0.005em), og små grader skal ha
+     null eller positiv sporing. Se overstyringer.css. */
+  letter-spacing: 0;
   -webkit-font-smoothing: antialiased;
 }
 

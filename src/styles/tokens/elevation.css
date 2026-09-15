@@ -9,3 +9,18 @@
   --scrim-bottom:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.36) 42%,rgba(0,0,0,0) 100%); /* @kind other */
   --scrim-full:linear-gradient(to bottom,rgba(0,0,0,.45),rgba(0,0,0,.45)); /* @kind other */
 }
+
+/*
+ * OVERSTYRT 15.09.2026 — skygger brukes ikke.
+ *
+ * Kort-med-skygge-på-lys-flate er 2020-språket. Gjennomgang av ni
+ * produksjonsstilark fra sider som setter standarden i segmentet: to hadde
+ * NULL skygger i hele bygget, to hadde én. Malsidene (Webflow/Framer) hadde
+ * tjue.
+ *
+ * Skiller lages med hårstrek og flatebytte. Se --border-hairline og
+ * --border-rule i overstyringer.css.
+ *
+ * Verdiene over beholdes fordi vendorfilene skal kunne byttes ut, og fordi
+ * --shadow-focus fortsatt brukes: fokusring er tilgjengelighet, ikke dekor.
+ */
