@@ -210,7 +210,23 @@ export default function Forside() {
         </Container>
       </section>
 
-      {/* 4 · PRIS — åpent, med vilkårene */}
+      {/*
+        4 · PRIS
+
+        Prisen er kvalifiseringsøyeblikket. Første versjon var venstrestilt
+        løpende tekst — tallet, vilkårene, listen og forbeholdet under
+        hverandre i én spalte — og den leste som nok et avsnitt i stedet for
+        som et tilbud.
+
+        Nå har den en egen flate med hårstrek rundt. Ikke et kort med skygge,
+        som er 2020-språket: en ramme og et flatebytte. Tallet og vilkårene
+        står i samme blikk øverst, listen under en delelinje, og forbeholdet
+        nederst i sin egen celle.
+
+        At det som IKKE inngår står like tydelig som det som inngår, er et
+        valg. Å tie om det ville gjort tilbudet lettere å love og vanskeligere
+        å tro på.
+      */}
       <section className="pb-28 sm:pb-36">
         <Container>
           <Eyebrow>{hentTekst(front, "front.price.eyebrow")}</Eyebrow>
@@ -218,34 +234,59 @@ export default function Forside() {
             {hentTekst(front, "front.price.h2") ?? <Tbd id="front.price.h2" />}
           </h2>
 
-          <p className="mt-8 text-6xl leading-none tracking-[-0.02em] sm:text-7xl">
-            {tilbud.prisPerManed.toLocaleString("nb-NO")} kr
-            <span className="text-2xl text-blekk-dempet">/mnd</span>
-          </p>
-          <p className="mt-3 text-lg">
-            Tre måneders oppsigelse. Ingen bindingstid.
-          </p>
-
-          <ul className="mt-10 grid max-w-3xl gap-x-10 gap-y-3 sm:grid-cols-2">
-            {tilbud.inngar.map((punkt) => (
-              <li key={punkt} className="flex gap-3">
-                <span className="text-aksent" aria-hidden="true">
-                  —
+          <div className="mt-10 rounded-flate border border-kant-regel">
+            {/* Tallet og vilkårene i samme blikk */}
+            <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-5 p-7 sm:p-10">
+              <p className="text-6xl leading-[0.9] tracking-[-0.03em] sm:text-7xl">
+                {tilbud.prisPerManed.toLocaleString("nb-NO")}
+                <span className="text-3xl tracking-normal text-blekk-dempet">
+                  {" "}
+                  kr/mnd
                 </span>
-                {punkt}
-              </li>
-            ))}
-          </ul>
+              </p>
+              <p className="text-lg text-balance">
+                Tre måneders oppsigelse.
+                <br className="hidden sm:block" /> Ingen bindingstid.
+              </p>
+            </div>
 
-          {/* Å si hva som IKKE inngår er en del av stemmen, ikke en svakhet. */}
-          <p className="mt-8 max-w-xl text-blekk-dempet">
-            Inngår ikke: {tilbud.inngarIkke.join(", ").toLowerCase()}.
-          </p>
-          <p className="mt-3 max-w-xl text-blekk-dempet">
-            {hentTekst(front, "front.price.note") ?? (
-              <Tbd id="front.price.note" />
-            )}
-          </p>
+            {/*
+              Ingen kolonnemellomrom. Første versjon hadde gap-x-12, og da
+              brøt hårstrekene i mellomrommet — to korte streker per rad i
+              stedet for én. Det leste som en feil, ikke som et valg.
+
+              Nå møtes de: skillet mellom kolonnene er en loddrett strek, og
+              radskillene går ubrutt tvers over. Panelet leser som et bord.
+            */}
+            <ul className="grid border-t border-kant sm:grid-cols-2">
+              {tilbud.inngar.map((punkt, i) => (
+                <li
+                  key={punkt}
+                  className={`flex gap-3.5 border-b border-kant px-7 py-4 sm:px-10 ${
+                    i % 2 === 0 ? "sm:border-r sm:border-r-kant" : ""
+                  }`}
+                >
+                  <span
+                    className="mt-2 size-1.5 shrink-0 rounded-full bg-aksent"
+                    aria-hidden="true"
+                  />
+                  <span className="text-[0.95rem] leading-relaxed">{punkt}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="grid gap-x-12 gap-y-4 bg-flate-dempet/60 p-7 sm:grid-cols-2 sm:p-10">
+              <p className="text-[0.95rem] leading-relaxed text-blekk-dempet">
+                <span className="font-medium text-blekk">Inngår ikke: </span>
+                {tilbud.inngarIkke.join(", ").toLowerCase()}.
+              </p>
+              <p className="text-[0.95rem] leading-relaxed text-blekk-dempet">
+                {hentTekst(front, "front.price.note") ?? (
+                  <Tbd id="front.price.note" />
+                )}
+              </p>
+            </div>
+          </div>
         </Container>
       </section>
 
