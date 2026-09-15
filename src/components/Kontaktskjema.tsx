@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { sendSkjema } from "@/lib/skjema";
 
 /**
  * Kontaktskjema – maks fire felt (brief 6.1, LÅST).
+ *
+ * Vanlig POST til /api/skjema, ikke en serverhandling. Grunnen står i
+ * src/app/api/skjema/route.ts: en serverhandling gir klientside-navigasjon,
+ * og da kjører ikke GTM på nytt på /takk. Hele målingen henger på at den gjør
+ * det.
  *
  * Konverteringen faller kraftig per felt utover fire. Kvalifisering skjer i
  * oppfølgingen, ikke i skjemaet.
@@ -22,7 +26,11 @@ export function Kontaktskjema({ side }: { side: string }) {
   }, []);
 
   return (
-    <form action={sendSkjema} className="mt-8 grid max-w-lg gap-5">
+    <form
+      method="post"
+      action="/api/skjema"
+      className="mt-8 grid max-w-lg gap-5"
+    >
       <input type="hidden" name="lastet" ref={lastet} defaultValue="0" />
       <input type="hidden" name="side" value={side} />
 

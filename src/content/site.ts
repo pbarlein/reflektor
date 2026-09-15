@@ -28,10 +28,12 @@ export const site = {
 
   kontakt: {
     sted: "Oslo",
-    epost: "contact@reflektor.no",
+    // Alltid pal@, aldri info@. Fastsatt av Marketing 15.09.2026.
+    epost: "pal@reflektor.no",
     telefon: "+47 47605070",
-    // UAVKLART – org.nr. står i footeren på dagens side, men er ikke hentet ut.
-    orgnr: "",
+    orgnr: "926 974 270",
+    adresse: "Tvetenveien 162, 0671 Oslo",
+    firma: "Reflektor AS",
   },
 
   // Brukes i Organization-schema. Gaselle-status er et konkret tillitssignal.
@@ -252,7 +254,11 @@ export const bloggSlugs = [
 /**
  * Kunder vi har produsert innhold for, slik de vises i logorekken under heroen.
  *
- * Alle navnene er godkjent for bruk av Pål 23.08.2026.
+ * BEKREFTET LISTE per 15.09.2026. Idun, Orkla, Selvaag, ASKO og Vitusapotek
+ * er fjernet – de var ikke bekreftet. Legg aldri til et navn uten at Pål har
+ * godkjent nettopp det navnet.
+ *
+ * Happis og Retail 24 er ABONNENTER og skal aldri stå som referanser.
  *
  * VIKTIG: dette er PRODUKSJONSKUNDER fra foto- og videovirksomheten. De skal
  * ikke fremstilles som SoMe-abonnementskunder – det ville vært en feilaktig
@@ -260,21 +266,19 @@ export const bloggSlugs = [
  * produksjonserfaring, ikke kundelisten for månedsavtalen.
  */
 export const kundelogoer = [
-  "Idun",
-  "Orkla",
   "Anton Sport",
+  "The Well",
+  "Peppes Pizza",
   "Egon",
   "Soul Cake",
-  "Selvaag",
-  "The Well",
-  "ASKO",
-  "Vitusapotek",
+  "Baker Brun",
+  "Premium PT",
 ] as const;
 
 /** Kontaktperson på /kontaktoss. Navn og direktenummer bygger tillit. */
 export const kontaktperson = {
   navn: "Pål Barlein",
   rolle: "CEO",
-  epost: "contact@reflektor.no",
+  epost: "pal@reflektor.no",
   telefon: "+47 47605070",
 } as const;

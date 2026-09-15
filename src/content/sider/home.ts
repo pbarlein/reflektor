@@ -80,9 +80,15 @@ export const home: Side = {
         }),
         // Navnene går igjen i logostripa i seksjon 6, så heroen og den
         // bekrefter hverandre framfor å introdusere et nytt sett.
+        /*
+         * MÅ BEKREFTES. Godkjent copy 23.08 navnga Orkla og Vitusapotek, som
+         * Marketing 15.09 førte opp som ikke-bekreftede. Navnene er byttet mot
+         * to fra den bekreftede lista – setningen er ellers uendret. Dette er
+         * en mekanisk substitusjon, ikke ny copy, og skal godkjennes på nytt.
+         */
         "home.hero.proof": tekst(
-          "Vi produserer innhold for blant andre Orkla, Anton Sport, " +
-            "Vitusapotek og The Well.",
+          "Vi produserer innhold for blant andre Peppes Pizza, Anton Sport, " +
+            "Egon og The Well.",
           { maksTegn: 90, jobb: "Navngitt bevis over folden. Produksjonskunder." },
         ),
       },

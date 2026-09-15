@@ -229,3 +229,53 @@ selv fant på ville vært feil bruk av protokollen.
 
 Grenser som stammer fra briefen — H1 under 8 ord, maks fire skjemafelt — står
 uendret og skal ikke justeres på denne måten.
+
+---
+
+## A28 · `/takk` fyrte ikke GTM på nytt
+
+**Status:** rettet 15.09.2026.
+
+Skjemaet brukte en serverhandling med `redirect("/takk")`. Det gir en
+klientside-navigasjon – nettleseren henter en RSC-nyttelast og bytter innhold
+uten å laste dokumentet på nytt. Sporet i kjøretidsloggen:
+
+```
+GET /takk.rsc 200
+```
+
+GTM-containeren lastes én gang i layouten. Ved en slik navigasjon kjører den
+ikke på nytt, og verken `page_view` eller Google Ads-konverteringstaggen ville
+fyrt uten at GTM i tillegg var satt opp med en History Change-trigger.
+
+Testen 23.08 bekreftet at e-posten kom fram og at `/takk` ble nådd – men ikke
+at GTM kjørte. Feilen var usynlig fram til Marketing spesifiserte kravet om
+ekte sidevisning.
+
+Løsningen er et vanlig skjema som POSTer til `/api/skjema` og får 303
+tilbake. Det gir ekte dokumentnavigasjon: ny URL, full sidelasting, GTM kjører
+på nytt. Skjemaet virker også uten JavaScript.
+
+## A29 · Kundelisten strammet inn
+
+Idun, Orkla, Selvaag, ASKO og Vitusapotek fjernet – ikke bekreftet. Bekreftet
+liste: Anton Sport, The Well, Peppes Pizza, Egon, Soul Cake, Baker Brun,
+Premium PT. Happis og Retail 24 er abonnenter og skal aldri stå som referanser.
+
+**Følgefeil:** `home.hero.proof` var godkjent copy 23.08 og navnga Orkla og
+Vitusapotek. Navnene er byttet mot to fra den bekreftede lista; setningen er
+ellers uendret. Det er en mekanisk substitusjon, ikke ny copy, og **må
+godkjennes på nytt**.
+
+## A30 · NAP fastsatt
+
+Reflektor AS · org.nr. 926 974 270 · Tvetenveien 162, 0671 Oslo ·
+pal@reflektor.no. Aldri info@ eller contact@ – sistnevnte var hentet fra
+merkevaremanualen og er nå fjernet fra kodebasen.
+
+## A31 · Preview beskyttet
+
+Vercel Authentication slått på med scope
+`prod_deployment_urls_and_all_previews`. Scopet er viktig: arbeidsbranchen er
+satt som produksjonsbranch i Vercel, så `reflektor-ny.vercel.app` er et
+produksjonsdeployment. Scope «preview» alene ville latt hovedadressen stå åpen.

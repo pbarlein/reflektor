@@ -56,14 +56,20 @@ export function Footer() {
                   {site.kontakt.telefon}
                 </a>
               </li>
-              <li>{site.kontakt.sted}</li>
-              {/* TODO: gateadresse og org.nr. fra footeren på dagens side */}
+              <li>{site.kontakt.adresse}</li>
+              <li>Org.nr. {site.kontakt.orgnr}</li>
             </ul>
           </address>
         </div>
 
+        {/*
+          * NAP skal være identisk med det som står i eksterne kataloger.
+          * Krysskildekonsistens er et teknisk signal for AI-siteringer, ikke
+          * en redaksjonell detalj – ikke omformuler dette.
+          */}
         <p className="mt-12 text-sm text-blekk-invers/40">
-          © {new Date().getFullYear()} {site.navn}. Alle rettigheter forbeholdt.
+          © {new Date().getFullYear()} {site.kontakt.firma} · Org.nr.{" "}
+          {site.kontakt.orgnr} · {site.kontakt.adresse}
         </p>
       </Container>
     </footer>
