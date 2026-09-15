@@ -124,3 +124,55 @@ kveler på den.
 Den brukes opp av første HTTP-forespørsel uansett metode — også `HEAD` og
 Range. Ikke forhåndssjekk den med `curl -I` først; da er den brukt opp når
 nedlastingen skal skje. Hent en ny `download_link` per forsøk.
+
+## Nettleser i containeren — og CA-fellen
+
+Chromium er forhåndsinstallert på `/opt/pw-browsers/chromium-1194/chrome-linux/chrome`.
+Merk versjonssuffikset: stien uten det (`/opt/pw-browsers/chromium/...`) finnes
+ikke, selv om `PLAYWRIGHT_BROWSERS_PATH` peker på mappen over.
+
+Installer Playwright med `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1` så npm ikke
+prøver å hente en nettleser som allerede ligger der.
+
+**Fellen:** første navigasjon feiler med `ERR_CERT_AUTHORITY_INVALID`. Proxyen
+terminerer TLS, og Chromium leser ikke `/etc/ssl/certs` — den bruker sin egen
+NSS-database. `--use-system-ca` hjelper ikke.
+
+Riktig fiks er å legge CA-ene i NSS-basen. Ikke slå av sertifikatvalidering;
+det er unødvendig her, og det skjuler ekte feil senere:
+
+```bash
+apt-get update -qq && apt-get install -y libnss3-tools
+cd /usr/local/share/ca-certificates
+for f in *.crt; do
+  certutil -d sql:/root/.pki/nssdb -A -t "C,," -n "${f%.crt}" -i "$f"
+done
+```
+
+`apt-get update` først er nødvendig — pakkeindeksen i imaget er utdatert og
+peker på en versjon som er borte fra speilet (404).
+
+### Slik ble Google-anmeldelsene hentet
+
+De lå bak Elfsight-widgeten, altså i JavaScript og aldri i HTML. Å gjette
+Elfsights API-endepunkter var blindvei — de er udokumenterte og flytter seg.
+
+Det som virket: render `www.reflektor.no` i Chromium, lytt på `response`, og
+fang svaret widgeten selv henter. Widgeten er lazy-lastet, så siden må rulles
+til bunns før forespørselen i det hele tatt skjer.
+
+```js
+p.on("response", async (r) => { /* filtrer på /review/ og status 200 */ });
+await p.goto(url, { waitUntil: "networkidle" });
+for (let i = 0; i < 12; i++) { await p.mouse.wheel(0, 1200); await p.waitForTimeout(700); }
+```
+
+Nyttesvaret kom fra `service-reviews-ultimate.elfsight.com/data/reviews`, med
+`result.data[]` og feltene `reviewer_name`, `rating`, `text`, `published_at`,
+`url` og `response` (Reflektors eget svar på anmeldelsen).
+
+To ting verdt å vite neste gang: DOM-teksten er avkortet med «Les mer», så
+fulltekst må tas fra API-svaret. Og Reflektors egne svar er gull — de navngir
+selskapet anmelderen jobber i, der anmeldelsen selv ikke gjør det.
+
+Resultatet ligger i `src/content/anmeldelser.ts`.
