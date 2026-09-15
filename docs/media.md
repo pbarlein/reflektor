@@ -176,3 +176,36 @@ fulltekst må tas fra API-svaret. Og Reflektors egne svar er gull — de navngir
 selskapet anmelderen jobber i, der anmeldelsen selv ikke gjør det.
 
 Resultatet ligger i `src/content/anmeldelser.ts`.
+
+## Klippene på forsiden
+
+Hentet fra `/Reflektor/SALG/Claude Code/Bilder og videoer` (139 filer) via
+Dropbox-MCP + curl, verifisert mot `content_hash`, komprimert lokalt.
+
+| Klipp | Bransje | Kilde | Web |
+|---|---|---|---|
+| `antonsport` | Sportsbutikk | 134 MB, 4K, 21,6 s | 2,4 MB |
+| `thewell` | Spa og hotell | 39 MB, 4K, 10,0 s | 1,4 MB |
+| `goretex` | Friluft | 120 MB, 4K, 19,2 s | 3,3 MB |
+| `soulcake` | Bakeri | 135 MB, 4K, 23,6 s | 2,7 MB |
+
+429 MB → 9,5 MB, altså 45×. Posterbildene er 187 kB til sammen, og det er
+alt som lastes før et klipp kommer i viewport.
+
+Kommandoen, for gjenbruk:
+
+```bash
+ffmpeg -i inn.mp4 -vf "scale=720:1280:flags=lanczos" -an \
+  -c:v libx264 -profile:v high -crf 30 -preset slow -pix_fmt yuv420p \
+  -movflags +faststart ut.mp4
+ffmpeg -ss 1 -i inn.mp4 -frames:v 1 -vf "scale=540:960:flags=lanczos" -q:v 6 ut.jpg
+```
+
+To valg verdt å kjenne:
+
+- **Posterbildet tas ett sekund inn**, ikke på første frame. Første frame er
+  ofte svart eller en innfading, og et svart posterbilde ser ut som en feil.
+- **Kildefilene beholdes i 9:16.** Beskjæringen til 8:16 ligger i CSS med
+  `object-fit: cover`, så formatet kan endres uten å re-enkode.
+
+Originalene skal ikke inn i repoet. De ligger i Dropbox.

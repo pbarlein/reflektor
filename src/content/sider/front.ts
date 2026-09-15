@@ -66,14 +66,8 @@ export const front: Side = {
           maksTegn: 120,
           jobb: "Slå fast at alt er egenprodusert. Ingen stock.",
         }),
-        // Tre klipp, ikke seks. Seksjonen skal vise formatet, ikke være en
-        // portefølje — se begrunnelsen i ReelVegg.tsx.
-        ...Object.fromEntries(
-          Array.from({ length: 3 }, (_, i) => [
-            `front.work.caption[${i}]`,
-            TBD({ maksTegn: 60, jobb: "Kunde · format." }),
-          ]),
-        ),
+        // Klippene er IKKE slots. De ligger i src/content/reels.ts med
+        // kunde og bransje — se begrunnelsen for utvalget der.
       },
     },
     {

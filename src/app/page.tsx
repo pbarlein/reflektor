@@ -7,6 +7,7 @@ import { Kontaktskjema } from "@/components/Kontaktskjema";
 import { hentTekst, slotsISeksjon, TbdMarkor } from "@/components/Slot";
 import { front } from "@/content/sider/front";
 import { klarerteAnmeldelser } from "@/content/anmeldelser";
+import { reels } from "@/content/reels";
 import { site, tilbud, kundelogoer } from "@/content/site";
 
 /**
@@ -39,10 +40,6 @@ function Tbd({ id }: { id: string }) {
 }
 
 export default function Forside() {
-  const reeltekster = slotsISeksjon(front, 2)
-    .filter((s) => s.id.includes("caption"))
-    .map((s) => s.verdi);
-
   return (
     <>
       {/* 1 · HERO — posisjonering i øvre halvdel av første skjerm.
@@ -52,8 +49,12 @@ export default function Forside() {
       <section className="pt-16 pb-24 sm:pt-24 sm:pb-36">
         <Container>
           <h1 className="max-w-4xl text-[2.75rem] leading-[1.04] sm:text-6xl sm:leading-[1.02] lg:text-[5rem] lg:leading-[1.0]">
-            Sosiale medier – <em className="not-italic text-aksent">nesten</em>{" "}
-            på autopilot.
+            {/* Kursiv, ikke oransje. Instrument Serif har en ekte kursiv, og
+                den er den naturlige uthevingen i et seriffsnitt. Det frigjør
+                aksentfargen til CTA-en alene — oransje to steder i samme
+                viewport svekker knappen, som er det ene stedet fargen skal
+                bety «trykk her». */}
+            Sosiale medier – <em>nesten</em> på autopilot.
           </h1>
 
           <p className="mt-7 max-w-xl text-lg text-blekk-dempet">
@@ -61,12 +62,26 @@ export default function Forside() {
           </p>
 
           <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-4">
-            <a
-              href="#kontakt"
-              className="rounded-interaktiv bg-aksent px-7 py-3.5 font-medium text-[color:var(--text-on-accent)] transition-colors hover:bg-aksent-hover"
-            >
-              {hentTekst(front, "front.hero.cta") ?? <Tbd id="front.hero.cta" />}
-            </a>
+            {/*
+              Knappen bytter utseende når teksten mangler. Grunnen er ikke
+              kosmetisk: TBD-markøren er oransje på lys flate, og inne i en
+              oransje knapp blir den usynlig. Da ser previewen ut som en
+              ferdig knapp uten tekst, i stedet for som en manglende slot.
+              Preview er flaten Pål vurderer på — det skal være umulig å tro
+              at noe er ferdig når det ikke er det.
+            */}
+            {hentTekst(front, "front.hero.cta") ? (
+              <a
+                href="#kontakt"
+                className="rounded-interaktiv bg-aksent px-7 py-3.5 font-medium text-[color:var(--text-on-accent)] transition-colors hover:bg-aksent-hover"
+              >
+                {hentTekst(front, "front.hero.cta")}
+              </a>
+            ) : (
+              <span className="inline-block rounded-interaktiv border border-dashed border-aksent px-7 py-3.5">
+                <Tbd id="front.hero.cta" />
+              </span>
+            )}
             {/* Prisen står allerede her. Selvkvalifisering, og AEO vekter det. */}
             <p className="tracking-[0.02em] text-blekk-dempet">
               {tilbud.prisPerManed.toLocaleString("nb-NO")} kr/mnd · ingen
@@ -104,7 +119,7 @@ export default function Forside() {
           </p>
         </Container>
         <div className="mt-10">
-          <ReelVegg tekster={reeltekster} />
+          <ReelVegg reels={reels} />
         </div>
       </section>
 

@@ -17,6 +17,11 @@ import type { Anmeldelse } from "@/content/anmeldelser";
  * Ingen kort, ingen skygger, ingen avatarer, ingen stjernerad per sitat. At
  * alle er 5 av 5 sies én gang, ikke ni ganger. Skiller er hårstreker.
  *
+ * Pull-quoten settes i display-seriffen, ikke i Poppins. Den er et
+ * overskriftsnivå i praksis — den har samme grad og samme jobb — og et
+ * display-snitt som bare brukes på h1 og h2 leser som en inkonsekvens når
+ * sidens største tekst står i brødtekstsnittet.
+ *
  * MERK — ingen Review- eller AggregateRating-schema på disse.
  * Googles retningslinjer for review snippets sier at anmeldelser av en enhet,
  * plassert på enhetens egen side, er «self-serving». Det gir null stjerner i
@@ -34,7 +39,7 @@ export function Anmeldelser({
       {fremhevet && (
         <Container>
           <figure className="mt-12 max-w-4xl">
-            <blockquote className="text-2xl leading-[1.25] tracking-[-0.015em] text-balance sm:text-3xl lg:text-[2.5rem]">
+            <blockquote className="font-[family-name:var(--font-display-serif)] text-[1.75rem] leading-[1.2] tracking-[-0.015em] text-balance sm:text-4xl sm:leading-[1.15] lg:text-[2.75rem] lg:leading-[1.1]">
               {fremhevet.sitat}
             </blockquote>
             <figcaption className="mt-7 text-sm tracking-[0.02em]">
@@ -63,10 +68,20 @@ export function Anmeldelser({
             </li>
           ))}
         </ul>
-        {/* Kildeattribusjon én gang, ikke per sitat. */}
-        <p className="mt-6 text-sm tracking-[0.02em] text-blekk-svak">
+        {/*
+          Kildeattribusjon én gang, ikke per sitat.
+
+          Setningen om oppdragstype er ikke pynt. Anmeldelsene kommer fra
+          både produksjonsoppdrag og månedsabonnement, og uten den
+          opplysningen leser en leser hele veggen som abonnenter. Det ville
+          vært villedende: flere av selskapene her har aldri hatt abonnement.
+          Å si det generelt — uten å knytte noe navn til noen av delene —
+          er både sant og tilstrekkelig.
+        */}
+        <p className="mt-6 max-w-2xl text-sm tracking-[0.02em] text-blekk-svak">
           Alle {ovrige.length + (fremhevet ? 1 : 0)} er hentet fra Reflektors
-          anmeldelser på Google. Alle er 5 av 5.
+          anmeldelser på Google, og alle er 5 av 5. De dekker både enkeltstående
+          produksjonsoppdrag og løpende månedsavtaler.
         </p>
       </Container>
     </>

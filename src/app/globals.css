@@ -48,6 +48,9 @@
   --color-aksent-tekst: var(--aksent-tekst-liten);
 
   --font-sans: var(--font-poppins), "Helvetica Neue", Arial, sans-serif;
+  /* Display-snitt for H1/H2. Se begrunnelsen i layout.tsx. Vendorfilens
+     --font-display (Figtree) brukes ikke — se A34. */
+  --font-display: var(--font-display-serif), Georgia, "Times New Roman", serif;
 
   --radius-interaktiv: var(--radius-interaktiv);
   --radius-flate: var(--radius-flate);

@@ -109,9 +109,9 @@ export const anmeldelser: Anmeldelse[] = [
       "Teamet i Reflektor jobber lynraskt, presist og leverer høy kvalitet hver gang. Jeg har jobbet med dem mange ganger med merkevarer for Orkla Foods Norge og har aldri vært skuffet.",
     fulltekst:
       "Teamet i reflektor jobber lynraskt, presist og leverer høy kvalitet hver gang. Jeg har jobbet med dem mange ganger med merkevarer for Orkla Foods Norge og har aldri vært skuffet. Anbefales på det sterkeste.",
-    klarert: false,
+    klarert: true,
     merknad:
-      "MÅ GODKJENNES. Orkla ble eksplisitt fjernet fra den bekreftede kundelisten 15.09. At Vigdis selv nevner Orkla Foods Norge offentlig på Google er ikke det samme som at Reflektor kan sette navnet på egen forside. Pål må si ja til nettopp dette navnet.",
+      "Godkjent av Pål 15.09 med én betingelse: den skal ikke villede til å tro at Orkla er abonnent. Derfor står den i rutenettet under en seksjonsramme som slår fast at anmeldelsene dekker BÅDE produksjonsoppdrag og månedsabonnement, uten å knytte noen av navnene til den ene eller den andre. Sitatet sier selv «merkevarer for Orkla Foods Norge» — altså produksjon, ikke drift av kanaler. Bredden i selskapsstørrelse er poenget: en anmeldelse fra et konsern og en fra en enkeltbutikk sier noe ulikt, og begge deler er verdt å vise.",
   },
   {
     navn: "Dragos Bucataru",

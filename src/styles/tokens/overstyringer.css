@@ -150,12 +150,16 @@
  */
 h1,
 .display {
+  font-family: var(--font-display-serif), Georgia, "Times New Roman", serif;
+  font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.04;
   text-wrap: balance;
 }
 
 h2 {
+  font-family: var(--font-display-serif), Georgia, "Times New Roman", serif;
+  font-weight: 400;
   letter-spacing: -0.015em;
   line-height: 1.12;
   text-wrap: balance;
