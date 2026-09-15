@@ -6,6 +6,7 @@ import { Anmeldelser } from "@/components/Anmeldelser";
 import { Kontaktskjema } from "@/components/Kontaktskjema";
 import { hentTekst, slotsISeksjon, TbdMarkor } from "@/components/Slot";
 import { front } from "@/content/sider/front";
+import { klarerteAnmeldelser } from "@/content/anmeldelser";
 import { site, tilbud, kundelogoer } from "@/content/site";
 
 /**
@@ -198,11 +199,7 @@ export default function Forside() {
             )}
           </h2>
         </Container>
-        <Anmeldelser
-          anmeldelser={slotsISeksjon(front, 5)
-            .filter((s) => s.id.includes("quote"))
-            .map((s) => ({ id: s.id, verdi: s.verdi }))}
-        />
+        <Anmeldelser anmeldelser={klarerteAnmeldelser} />
       </section>
 
       {/* 6 · FAQ — native details, ingen JavaScript */}
