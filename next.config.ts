@@ -105,6 +105,15 @@ const redirects: NextConfig["redirects"] = async () => [
 ];
 
 const nextConfig: NextConfig = {
+  images: {
+    /*
+     * AVIF først, WebP som fallback. Next serverer bare WebP som standard.
+     * Gevinsten er beskjeden her — de tjue bildene veier 0,77 MB etter
+     * WebP-konvertering, målt på deployen — men AVIF er typisk 20–30 %
+     * mindre igjen, og det koster ingenting utover litt byggetid.
+     */
+    formats: ["image/avif", "image/webp"],
+  },
   redirects,
 };
 

@@ -28,6 +28,10 @@ import type { Reel } from "@/content/reels";
  * selv, den skjuler ikke hovedbudskapet, og alt er nåbart med én swipe.
  *
  * YTELSE — dette er prosjektets sterkeste evidens, så den styrer her:
+ * - Klippene er 640×1138, ikke 720×1280. Cellen er ~285 CSS px bred, altså
+ *   570 device px ved 2x — 720 var overdimensjonert. Målt på den deployede
+ *   siden ga nedskaleringen 9,72 → 7,28 MB, og en ramme fra hvert klipp vist
+ *   ved faktisk størrelse er ikke til å skille fra originalen.
  * - `poster` lastes, video gjør det ikke. `preload="none"`.
  * - Bare klippet som er i viewport spiller. IntersectionObserver pauser
  *   resten. Fire samtidige autoplay er målbar LCP- og batteriskade.
