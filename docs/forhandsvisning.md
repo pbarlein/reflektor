@@ -99,6 +99,50 @@ mener å registrere en konvertering.**
 
 ---
 
+## Målt ytelse
+
+På den deployede siden 16.09.2026, Chromium, 1440 px:
+
+| | Ved sidelast | Etter full scroll |
+|---|---|---|
+| Overført | **0,86 MB** | 8,33 MB |
+| Forespørsler | 57 | 78 |
+
+| Metrikk | Målt |
+|---|---|
+| **LCP** | **888 ms** (H1) |
+| TTFB | 551 ms |
+| DOMContentLoaded | 760 ms |
+| load | 1 309 ms |
+
+LCP på 888 ms ligger godt under Googles «god»-grense på 2 500 ms, og
+LCP-elementet er H1 — altså tekst, ikke et bilde. Det er ønsket: teksten
+over folden er det som skal komme først.
+
+Av de 8,33 MB etter full scroll er **7,28 MB video** og bare 0,51 MB bilder.
+Tjue bilder koster altså under en halv megabyte, fordi `next/image` leverer
+AVIF (20 av 20 filer). Videoen er det som veier, og den lastes bare når et
+klipp kommer i synsfeltet.
+
+Forbedringen gjennom natten, samme måling før og etter:
+
+| | Før | Etter |
+|---|---|---|
+| Totalt etter scroll | 11,03 MB | **8,33 MB** |
+| Bilder | 0,77 MB | **0,51 MB** |
+| Video | 9,72 MB | **7,28 MB** |
+
+Bildene falt da AVIF ble slått på. Videoen falt da klippene ble kodet på
+nytt i 640×1138 i stedet for 720×1280 — cellen er ~285 CSS px bred, så 720
+var overdimensjonert. Sammenligning av samme bilderute ved faktisk
+visningsstørrelse viste ingen synlig forskjell.
+
+**Én forespørsel feiler:** `aplo-evnt.com/api/v1/intent_pixel/track_request`
+svarer 400. Det er en tredjeparts besøkspiksel som lastes gjennom GTM, ikke
+noe siden selv gjør. Den hører sammen med sporingsspørsmålet over.
+
+---
+
 ## Lokal utvikling
 
 ```bash
