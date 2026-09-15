@@ -178,14 +178,27 @@ export default function Forside() {
               {hentTekst(front, "front.how.h2") ?? <Tbd id="front.how.h2" />}
             </h2>
 
-            <ol className="mt-12 grid gap-10 sm:grid-cols-3 sm:gap-8">
+            {/*
+              Loddrette hårstreker mellom stegene, i samme språk som
+              prisbordet. --kant-pa-dyp er en egen verdi: den vanlige
+              hårstreken er regnet mot beige og forsvinner helt på brunt.
+
+              Skillene er strukturelle, ikke dekor — de sier at dette er tre
+              trinn i rekkefølge, ikke tre likestilte påstander.
+            */}
+            <ol className="mt-12 grid gap-10 sm:grid-cols-3 sm:gap-0">
               {slotsISeksjon(front, 3)
                 .filter((s) => s.id.includes("steps"))
                 .map((slot, i) => {
                   const delt = slot.verdi?.split("|") ?? null;
                   return (
-                    <li key={slot.id}>
-                      <span className="font-mono text-sm text-aksent">
+                    <li
+                      key={slot.id}
+                      className={`sm:px-8 ${i === 0 ? "sm:pl-0" : ""} ${
+                        i < 2 ? "sm:border-r sm:border-[color:var(--kant-pa-dyp)]" : "sm:pr-0"
+                      }`}
+                    >
+                      <span className="font-mono text-sm text-aksent-pa-dyp">
                         {i + 1}
                       </span>
                       {delt ? (
