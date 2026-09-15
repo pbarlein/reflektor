@@ -13,6 +13,8 @@ import {
 import { front } from "@/content/sider/front";
 import { klarerteAnmeldelser } from "@/content/anmeldelser";
 import { reels } from "@/content/reels";
+import { redaksjonelt, band } from "@/content/arbeid";
+import { Arbeidsnett, Arbeidsband } from "@/components/Arbeidsbilder";
 import { site, tilbud } from "@/content/site";
 
 /**
@@ -151,6 +153,18 @@ export default function Forside() {
         <div className="mt-10">
           <ReelVegg reels={reels} />
         </div>
+
+        {/*
+          Stillbildene ligger i SAMME seksjon som klippene, under samme
+          overskrift, uten eget mellomtittel-nivå.
+
+          To grunner. Copy-protokollen: en ny seksjon ville krevd ny
+          overskrift, og den skriver ikke jeg. Og innholdsmessig er det
+          riktig — abonnementet leverer foto og video fra samme
+          produksjonsdag, så å skille dem i to seksjoner ville antydet to
+          leveranser der det er én.
+        */}
+        <Arbeidsnett bilder={redaksjonelt} />
       </section>
 
       {/* 3 · SLIK FUNGERER DET — mørk blokk som kapittelskille */}
@@ -249,6 +263,22 @@ export default function Forside() {
           fremhevet={klarerteAnmeldelser[0]}
           ovrige={klarerteAnmeldelser.slice(1)}
         />
+      </section>
+
+      {/*
+        Tett bånd i full bredde, mellom beviset og innvendingene.
+
+        Plasseringen er valgt: anmeldelsene sier at folk er fornøyde, båndet
+        viser hvor mye de faktisk får. Rekkefølgen er «andre mener dette» →
+        «her er mengden» → «her er det du lurer på» → skjema.
+
+        Bryter containeren med vilje, og har ingen overskrift. Et bånd som
+        stopper ved tekstbredden leser som en illustrasjon; ett som går ut av
+        skjermen leser som en strøm. Uten overskrift leser det som en pause i
+        argumentet, ikke som en ny seksjon — og det er nøyaktig jobben.
+      */}
+      <section className="pb-24" aria-label="Utvalg fra arbeidet">
+        <Arbeidsband bilder={band} />
       </section>
 
       {/* 6 · FAQ — native details, ingen JavaScript */}

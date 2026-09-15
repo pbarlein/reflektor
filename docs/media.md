@@ -209,3 +209,45 @@ To valg verdt å kjenne:
   `object-fit: cover`, så formatet kan endres uten å re-enkode.
 
 Originalene skal ikke inn i repoet. De ligger i Dropbox.
+
+## Stillbildene på forsiden (20 stk)
+
+Hentet fra samme Dropbox-mappe, samme vei som klippene. 247 MB 4K-originaler
+ned til 4,0 MB kildefiler; `next/image` lager AVIF/WebP og responsive
+størrelser derfra i kjøretid.
+
+To sett med hver sin jobb:
+
+| Sett | Antall | Kildebredde | Jobb |
+|---|---|---|---|
+| `redaksjonelt` | 8 | 1600 px | Kvalitet. Ujevne bredder, styrte radhøyder. |
+| `band` | 12 | 640 px | Volum. Tett, jevnt, full bredde. |
+
+```bash
+# Nedskalering før commit – next/image jobber med 4 MB, ikke 250
+python -c "
+from PIL import Image, ImageOps
+im = ImageOps.exif_transpose(Image.open(inn)).convert('RGB')
+im.thumbnail((1600, 6400), Image.LANCZOS)
+im.save(ut, 'JPEG', quality=78, optimize=True, progressive=True)"
+```
+
+`ImageOps.exif_transpose` er ikke valgfritt: flere av kildefilene har
+orienteringsflagg i EXIF, og uten den kommer bilder fra enkelte kamera ut
+liggende når de skal stå.
+
+### MÅ SJEKKES AV PÅL: gjenkjennelige tredjepartsmerker
+
+Bildene har ingen bildetekster, men flere merker er lesbare i motivet:
+
+- **Freia / Japp** — hele `dag2`–`dag6` er fra samme arrangement, og
+  `mat1` viser Japp-produkter i et produksjonslokale. Freia eies av Orkla,
+  som er navnet som ble tatt ut av den bekreftede kundelisten.
+- **Michelin** — plaketten i `stallen`
+- **Adidas** — jakken i `peppes1`
+- **ZERoh!**, **Sunkost**, **Battery**, **Gore-Tex**
+
+Å vise egne arbeidsprøver er normal praksis, og ingen av dem er navngitt i
+tekst. Men merkene er synlige, og særlig Freia-bildene er verdt en bevisst
+vurdering gitt hvordan Orkla er håndtert ellers i prosjektet. Skal noen ut,
+er det å fjerne én linje i `src/content/arbeid.ts`.
