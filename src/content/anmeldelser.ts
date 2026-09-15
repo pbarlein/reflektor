@@ -120,9 +120,9 @@ export const anmeldelser: Anmeldelse[] = [
       "Their monthly package has allowed us to create a monthly content schedule for our business, which has added a lot of organisation to our marketing calendar.",
     fulltekst:
       "We have been working with Reflektor for almost 6 months, as part of their monthly content package. We are incredibly happy with the quality of work they produce, their professionalism and creativity. They are also very flexible in terms of the type of content they produce, whether it would be videos, stop-motion, photos, advertisements, infotainment commercials, etc. Their monthly package has allowed us to create a monthly content schedule for our business, which has added a lot of organisation to our marketing calendar. The quality is always fantastic and it helps that they are incredibly nice people!",
-    klarert: false,
+    klarert: true,
     merknad:
-      "MÅ AVKLARES. Dette er den eneste anmeldelsen som beskriver selve månedsabonnementet — altså produktet forsiden selger. Den er derfor den mest relevante av alle ni. Men anmelderen ER abonnent, og brief 0.3 sier at abonnenter ikke brukes som referanser. Regelen finnes for å hindre at produksjonskunder fremstilles som abonnenter; her er forholdet motsatt. Pål må avgjøre. Er dette Happis eller Retail 24, er svaret uansett nei.",
+      "Klarert av Pål 15.09. Den eneste anmeldelsen som beskriver selve månedsabonnementet — altså produktet forsiden selger — og dermed den mest relevante av alle ni. Ingen selskapsnavn nevnes, verken i anmeldelsen eller i Reflektors svar, så den navngir ingen abonnent.",
   },
 ];
 

@@ -355,3 +355,31 @@ Mønsteret i segmentet er sans + serif-par, med seriff som display-snitt.
 Det billigste grepet ville være å beholde Poppins i UI og skjema og legge
 til et display-snitt for H1 — men **det er et merkevarevalg som er Påls, ikke
 Claude Codes**, og ingenting er endret på grunnlag av dette.
+
+
+## A35 — Gore-Tex er Anton Sport, ikke en egen kunde
+
+Avklart av Pål 15.09.2026. Gore-Tex er et merke Anton Sport fører, og
+klippet er produsert for Anton Sport med det merket i fokus.
+
+Gjetningen min var riktig, men den var fortsatt en gjetning, og den ble ikke
+brukt før den var bekreftet. Det er regelen: et navn på siden skal komme fra
+en kilde, ikke fra at filene lå i samme mappe.
+
+Følgen for forsiden er at reel-veggen nå har to klipp fra samme kunde, side
+om side. Det er ikke tapt bredde. To klipp fra én kunde med ulikt fokus er
+det sterkeste beviset veggen kan gi for ABONNEMENTET — ett klipp viser at
+Reflektor kan filme, to viser hva en måned med avtale produserer. Og
+abonnementet er det forsiden selger.
+
+## A36 — Anmeldelsen fra abonnenten er klarert
+
+Klarert av Pål 15.09.2026. Dragos Bucataru beskriver månedsabonnementet, og
+er dermed den eneste av de ni anmeldelsene som omtaler nettopp produktet
+forsiden selger.
+
+Verken anmeldelsen eller Reflektors svar nevner et selskapsnavn, så den
+navngir ingen abonnent.
+
+Alle ni Google-anmeldelser er nå i bruk. Åtte vises på forsiden: én løftet
+til pull-quote, sju i rutenettet.

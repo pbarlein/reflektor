@@ -13,9 +13,8 @@ import type { Reel } from "@/content/reels";
  * faktisk leveres.
  *
  * FIRE klipp i ÉN rad, ikke seks i to. Seks 9:16-rammer ga 2,2 skjermhøyder
- * på desktop. Fire i én rad viser fire bransjer i ett blikk, og bredden er
- * hele poenget: spørsmålet seksjonen svarer på er «kan de levere for noen
- * som oss?».
+ * på desktop. Fire i én rad viser hele utvalget i ett blikk — se
+ * src/content/reels.ts for hvorfor akkurat disse fire.
  *
  * Formatet beskjæres til 8:16 (1:2) med `object-fit: cover`. Kildefilene
  * forblir 9:16 — beskjæringen ligger i CSS, så den kan endres uten å
@@ -100,10 +99,10 @@ export function ReelVegg({ reels }: { reels: Reel[] }) {
               {reel.kunde ? (
                 <>
                   <span className="font-medium">{reel.kunde}</span>
-                  <span className="text-blekk-dempet"> · {reel.bransje}</span>
+                  <span className="text-blekk-dempet"> · {reel.kontekst}</span>
                 </>
               ) : (
-                <span className="text-blekk-dempet">{reel.bransje}</span>
+                <span className="text-blekk-dempet">{reel.kontekst}</span>
               )}
             </p>
           </li>
