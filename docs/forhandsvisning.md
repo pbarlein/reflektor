@@ -105,37 +105,32 @@ På den deployede siden 16.09.2026, Chromium, 1440 px:
 
 | | Ved sidelast | Etter full scroll |
 |---|---|---|
-| Overført | **0,86 MB** | 8,33 MB |
-| Forespørsler | 57 | 78 |
+| Overført | **0,99 MB** | 7,98 MB |
+| Forespørsler | 55 | 82 |
 
-| Metrikk | Målt |
-|---|---|
-| **LCP** | **888 ms** (H1) |
-| TTFB | 551 ms |
-| DOMContentLoaded | 760 ms |
-| load | 1 309 ms |
+**LCP 996 ms**, TTFB 704 ms. LCP-elementet er H1 — altså tekst, ikke et
+bilde. Det er ønsket: teksten over folden skal komme først.
 
-LCP på 888 ms ligger godt under Googles «god»-grense på 2 500 ms, og
-LCP-elementet er H1 — altså tekst, ikke et bilde. Det er ønsket: teksten
-over folden er det som skal komme først.
+Av de 7,98 MB er 6,74 MB video og 0,70 MB bilder. Atten bilder koster altså
+under en megabyte fordi `next/image` leverer AVIF. Video lastes bare når et
+klipp kommer i synsfeltet, og bare synlige klipp spiller.
 
-Av de 8,33 MB etter full scroll er **7,28 MB video** og bare 0,51 MB bilder.
-Tjue bilder koster altså under en halv megabyte, fordi `next/image` leverer
-AVIF (20 av 20 filer). Videoen er det som veier, og den lastes bare når et
-klipp kommer i synsfeltet.
+Utviklingen gjennom arbeidet, samme måling:
 
-Forbedringen gjennom natten, samme måling før og etter:
+| | Først | Etter AVIF + riktig videobredde | Etter trimming |
+|---|---|---|---|
+| Totalt | 11,03 MB | 8,33 MB | **7,98 MB** |
+| Video | 9,72 MB | 7,28 MB | **6,74 MB** |
+| Bilder | 0,77 MB | 0,51 MB | 0,70 MB |
 
-| | Før | Etter |
-|---|---|---|
-| Totalt etter scroll | 11,03 MB | **8,33 MB** |
-| Bilder | 0,77 MB | **0,51 MB** |
-| Video | 9,72 MB | **7,28 MB** |
+Siste kolonne har **tre flere klipp og en ny seksjon** enn den første, og
+veier likevel mindre. Bildene gikk litt opp fordi arbeidsseksjonen nå viser
+større flater.
 
-Bildene falt da AVIF ble slått på. Videoen falt da klippene ble kodet på
-nytt i 640×1138 i stedet for 720×1280 — cellen er ~285 CSS px bred, så 720
-var overdimensjonert. Sammenligning av samme bilderute ved faktisk
-visningsstørrelse viste ingen synlig forskjell.
+Tre grep bærer forskjellen: AVIF i stedet for WebP, klipp kodet i 640 px
+i stedet for 720 (cellen er ~285 CSS px, så 720 var overdimensjonert), og
+klipp trimmet til åtte sekunder. Det siste er trygt fordi klippene looper —
+ingen ser dem ut.
 
 **Én forespørsel feiler:** `aplo-evnt.com/api/v1/intent_pixel/track_request`
 svarer 400. Det er en tredjeparts besøkspiksel som lastes gjennom GTM, ikke
