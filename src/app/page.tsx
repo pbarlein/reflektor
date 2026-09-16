@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { Container } from "@/components/Container";
 import { Eyebrow } from "@/components/Eyebrow";
 import { ReelVegg } from "@/components/ReelVegg";
@@ -14,8 +13,12 @@ import {
 import { front } from "@/content/sider/front";
 import { klarerteAnmeldelser } from "@/content/anmeldelser";
 import { reels } from "@/content/reels";
-import { arbeidskolonner, band } from "@/content/arbeid";
-import { Arbeidskolonner, Arbeidsband } from "@/components/Arbeidsbilder";
+import { arbeidskolonner, veggrader } from "@/content/arbeid";
+import {
+  Arbeidskolonner,
+  Arbeidsvegg,
+  Enkeltklipp,
+} from "@/components/Arbeidsbilder";
 import { site, tilbud } from "@/content/site";
 
 /**
@@ -385,15 +388,29 @@ export default function Forside() {
               </dl>
             </div>
 
-            <figure className="relative aspect-[4/3] overflow-hidden rounded-flate bg-flate-dempet lg:aspect-auto">
-              <Image
-                src="/arbeid/dag4-1600.jpg"
-                alt="Opptak med kamera under en produksjonsdag"
-                fill
-                sizes="(max-width: 1024px) 100vw, 40vw"
-                className="object-cover"
-              />
-            </figure>
+            {/*
+              Her sto et stillbilde, og det pekte på en fil jeg selv slettet
+              dagen før — seksjonen viste en tom boks. Feilen er rettet i
+              lenkesjekken også: den sjekket bare href, ikke mediefiler.
+
+              Stillbildet er ikke gjenopprettet. Seksjonen selger ÉN
+              produksjonsdag, og et klipp fra en produksjonsdag viser hva
+              det er: lampe, reflektor, monitor med opptaket på, kunden foran
+              kamera. Et stillbilde av det samme er en påstand; klippet er
+              dokumentasjon.
+
+              `preload="none"`: seksjonen ligger godt under folden, og
+              plakatbildet står til klippet er i synsfeltet.
+            */}
+            <Enkeltklipp
+              sti="/reels"
+              medie={{
+                type: "video",
+                fil: "produksjonsdag",
+                alt: "Klipp fra en produksjonsdag: lampe, reflektor og monitor",
+              }}
+              className="relative aspect-[4/3] overflow-hidden rounded-flate bg-flate-dempet sm:aspect-[3/2] lg:aspect-auto"
+            />
           </div>
 
           {/* Dokumentasjonen: hva som inngår, og hva som ikke gjør det */}
@@ -458,8 +475,13 @@ export default function Forside() {
         />
       </section>
 
-      <section className="pb-24" aria-label="Utvalg fra arbeidet">
-        <Arbeidsband medier={band} />
+      {/*
+        Veggen. Full bredde med vilje — en seksjon som stopper ved
+        tekstbredden leser som en illustrasjon, en som går ut av skjermen
+        leser som en strøm. Se arbeid.ts og globals.css.
+      */}
+      <section className="pb-14 sm:pb-20" aria-label="Utvalg fra arbeidet">
+        <Arbeidsvegg rader={veggrader} />
       </section>
 
       {/* 6 · FAQ — native details, ingen JavaScript */}

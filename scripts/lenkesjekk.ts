@@ -6,8 +6,17 @@
  * side der skjemaleads er eneste KPI koster den direkte.
  *
  * Sjekker kilden, ikke det bygde nettstedet: da fanges feilen før deploy.
+ *
+ * SJEKKER OGSÅ MEDIEFILER, og det er ikke pynt. 16.09.2026 slettet jeg
+ * `dag4-1600.jpg` som «ubrukt» etter å ha grepet i arbeid.ts alene. Filen lå
+ * i page.tsx. Prisseksjonen — seksjonen som faktisk kvalifiserer kunden —
+ * viste en tom boks på den deployede siden til Pål oppdaget det.
+ *
+ * En død `src` er dyrere enn en død `href`: en død lenke merkes når noen
+ * klikker, et manglende bilde er et hull som står der hele tiden. Denne
+ * sjekken ville tatt den på under et sekund.
  */
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import nextConfig from "../next.config.ts";
 
@@ -64,6 +73,56 @@ for (const fil of finnFiler("src")) {
   }
 }
 
+/*
+ * Mediefiler: alt som peker inn i public/ fra kildekoden.
+ *
+ * Fanger både `src="/arbeid/x.jpg"`, `poster="/reels/y.jpg"` og strengene
+ * komponentene bygger av datafilene — derfor matches også bare-strenger som
+ * starter med et av mediekatalognavnene. Malstrenger med ${...} hoppes over;
+ * de kan ikke løses uten å kjøre koden, og de dekkes av at datafilene selv
+ * lister filnavnene.
+ */
+const MEDIEKATALOGER = ["/arbeid/", "/reels/", "/bilder/"];
+const mangler: Funn[] = [];
+
+for (const fil of finnFiler("src")) {
+  const innhold = readFileSync(fil, "utf8");
+  for (const treff of innhold.matchAll(/["'`](\/[a-z0-9æøå._/-]+\.(?:jpg|jpeg|png|webp|avif|svg|mp4|webm))["'`]/gi)) {
+    const sti = treff[1];
+    if (!MEDIEKATALOGER.some((k) => sti.startsWith(k))) continue;
+    if (existsSync(`public${sti}`)) continue;
+    mangler.push({ fil, lenke: sti });
+  }
+}
+
+/*
+ * Datafilene navngir mediene uten filendelse, så de må sjekkes for seg.
+ * Uten dette ville en slettet fil som bare er referert fra content/ sluppet
+ * gjennom — og det var nøyaktig det som skjedde.
+ */
+const { veggrader, arbeidskolonner } = await import("../src/content/arbeid.ts");
+for (const c of veggrader.flat()) {
+  const forventet =
+    c.type === "foto"
+      ? [`public/arbeid/${c.fil}-vegg.jpg`]
+      : [`public/arbeid/${c.fil}.mp4`, `public/arbeid/${c.fil}.jpg`];
+  for (const f of forventet)
+    if (!existsSync(f)) mangler.push({ fil: "src/content/arbeid.ts (vegg)", lenke: f });
+}
+for (const c of arbeidskolonner.flat()) {
+  const forventet =
+    c.type === "foto"
+      ? [`public/arbeid/${c.fil}-1600.jpg`]
+      : [`public/reels/${c.fil}.mp4`, `public/reels/${c.fil}.jpg`];
+  for (const f of forventet)
+    if (!existsSync(f)) mangler.push({ fil: "src/content/arbeid.ts (rutenett)", lenke: f });
+}
+
+const { reels } = await import("../src/content/reels.ts");
+for (const r of reels)
+  for (const f of [`public/reels/${r.fil}.mp4`, `public/reels/${r.fil}.jpg`])
+    if (!existsSync(f)) mangler.push({ fil: "src/content/reels.ts", lenke: f });
+
 console.log(`\nlenkesjekk\n\n  ${ruter.size} ruter, ${redirectKilder.size} redirects\n`);
 
 if (doede.length > 0) {
@@ -73,4 +132,11 @@ if (doede.length > 0) {
   process.exit(1);
 }
 
-console.log("✓ Ingen døde interne lenker.\n");
+if (mangler.length > 0) {
+  console.error(`✗ ${mangler.length} mediefiler mangler i public/:\n`);
+  for (const m of mangler) console.error(`  ${m.fil}: ${m.lenke}`);
+  console.error("");
+  process.exit(1);
+}
+
+console.log("✓ Ingen døde interne lenker, ingen manglende mediefiler.\n");

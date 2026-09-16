@@ -74,6 +74,104 @@ html {
   scroll-padding-top: 5.5rem;
 }
 
+/*
+ * VEGGDRIFT — to rader som glir hver sin vei mens siden rulles.
+ *
+ * Drivkraften er rulleposisjonen, ikke en tidtaker. Det er ikke en
+ * smakssak, det er det som gjør mønsteret lovlig og behagelig:
+ *
+ * - WCAG 2.2.2 Pause, Stop, Hide krever en pauseknapp for innhold som
+ *   beveger seg av seg selv i mer enn fem sekunder. En marquee på tidtaker
+ *   ville trengt en slik knapp — og hover-pause teller ikke, den finnes
+ *   ikke på touch. Scroll-drevet bevegelse styres av brukeren og faller
+ *   utenfor kravet.
+ * - Den stopper når brukeren stopper. En marquee som fortsetter mens man
+ *   prøver å se på en celle, er irriterende på en måte dette ikke er.
+ *
+ * `animation-timeline: view()` er ikke Baseline: Chrome og Edge fra 115
+ * (juli 2023), Safari fra 26, Firefox fortsatt bak flagg i stabil per juni
+ * 2026 (prioritert i Interop 2026). Rundt 83 % globalt, og i Norge høyere
+ * fordi Firefox-andelen er lav. Feilmodus er «ingen animasjon», ikke
+ * ødelagt side: uten støtte står radene stille og er fortsatt fullt
+ * lesbare. Derfor ingen JavaScript-fallback — den ville kostet en
+ * rullelytter for alle, for å redde noe som ikke er ødelagt.
+ *
+ * VANDRINGEN ER SELVBEGRENSENDE. `calc(100vw - 100%)` er nøyaktig hvor
+ * langt raden kan flyttes før den slipper kanten: viewportbredden minus
+ * radens egen bredde. Ganget med 0,55 bruker vi drøyt halvparten av det
+ * slingringsmonnet. Da kan det ALDRI oppstå et tomrom i kanten, uansett
+ * skjermbredde eller hvor mange celler raden har — også på en skjerm der
+ * raden så vidt er bredere enn vinduet, der vandringen bare blir liten.
+ * Et fast pikseltall her ville brukket på første brede skjerm.
+ *
+ * Radene går motsatt vei fordi to lag som glir fra hverandre gir dybde.
+ * Samme vei ville bare sett ut som at hele seksjonen sklir.
+ */
+@keyframes vegg-venstre {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc((100vw - 100%) * 0.55), 0, 0);
+  }
+}
+
+@keyframes vegg-hoyre {
+  from {
+    transform: translate3d(calc((100vw - 100%) * 0.55), 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/*
+ * TIDSLINJEN ER NAVNGITT, og det er ikke stilpreferanse.
+ *
+ * Første forsøk brukte `animation-timeline: view()` rett på raden. Den sto
+ * bom stille, låst på nøyaktig 50 % uansett hvor på siden man var. Grunnen:
+ * raden ligger inne i en `overflow-x: hidden`-wrapper, og `overflow-x`
+ * hidden med `overflow-y` visible beregnes til `overflow-y: auto`. Wrapperen
+ * ER altså en rullecontainer, og `view()` måler synlighet i NÆRMESTE
+ * rullecontainer — ikke i vinduet. Raden fyller sin egen wrapper hele tiden,
+ * så framdriften endret seg aldri.
+ *
+ * `view-timeline-name` på seksjonen løser det: seksjonen ligger utenfor
+ * wrapperen, så dens rullecontainer er dokumentet. Radene slår opp navnet
+ * oppover i ancestorkjeden og finner det der.
+ */
+.vegg-spor {
+  view-timeline-name: --vegg;
+  view-timeline-axis: block;
+}
+
+@media (min-width: 1024px) {
+  .vegg-drift-venstre,
+  .vegg-drift-hoyre {
+    animation-timeline: --vegg;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    will-change: transform;
+  }
+
+  .vegg-drift-venstre {
+    animation-name: vegg-venstre;
+  }
+
+  .vegg-drift-hoyre {
+    animation-name: vegg-hoyre;
+  }
+}
+
+/* Ingen bevegelse betyr ingen bevegelse. Radene står der de står. */
+@media (prefers-reduced-motion: reduce) {
+  .vegg-drift-venstre,
+  .vegg-drift-hoyre {
+    animation: none;
+    transform: none;
+  }
+}
+
 body {
   background: var(--surface-page);
   color: var(--text-body);

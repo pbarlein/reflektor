@@ -1,4 +1,5 @@
 import { site, tilbud } from "@/content/site";
+import { googleProfil } from "@/content/anmeldelser";
 
 /**
  * JSON-LD (brief 8.3).
@@ -55,6 +56,42 @@ export function OrganisasjonSchema() {
       "https://www.linkedin.com/company/reflektor-as",
       "https://ocast.com/no/reflektor",
     ],
+    /*
+     * AggregateRating — og la det være helt klart hva den kan og ikke kan.
+     *
+     * DEN GIR IKKE STJERNER I GOOGLE. Googles egen dokumentasjon for
+     * Review snippet, lest 16.09.2026, sier det rett ut: «If the entity
+     * that's being reviewed controls the reviews about itself, their pages
+     * that use LocalBusiness or any other type of Organization structured
+     * data are ineligible for star review feature.» Forsiden er Reflektors
+     * egen side om Reflektor. Den blir aldri kvalifisert.
+     *
+     * A33 sa at slik markering også er et REGELBRUDD. Det var for sterkt,
+     * og er rettet: Google sier «ineligible», ikke «disallowed». Sidene
+     * beholder vanlig søkeplassering; de får bare ikke stjernene.
+     *
+     * HVORFOR DEN LIKEVEL STÅR HER: rich results er ikke den eneste
+     * leseren av JSON-LD. Språkmodellene henter entitetsfakta herfra, de
+     * kjører ikke JavaScript, og AGENTS.md lister entitetssignaler i
+     * markup som ett av fire krav til synlighet. Tallet er sant, det er
+     * hentet fra Googles egen oppføring, og det står ett sted i koden.
+     * Kostnaden er null og risikoen er null. Da tar vi den lille sjansen
+     * for at det gjør nytte et sted vi ikke måler.
+     *
+     * ratingValue må være et tall i JSON, ikke «5,0» med norsk komma.
+     * ratingCount er alle elleve; reviewCount er de ni med tekst. Begge
+     * deler er presist, og forskjellen er ikke tilfeldig.
+     *
+     * TALLET MÅ ETTERSES. Se merknaden ved googleProfil.
+     */
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: 5,
+      bestRating: 5,
+      worstRating: 1,
+      ratingCount: googleProfil.antall,
+      reviewCount: googleProfil.medTekst,
+    },
   };
 
   return (

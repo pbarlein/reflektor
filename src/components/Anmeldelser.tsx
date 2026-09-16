@@ -194,31 +194,28 @@ export function Anmeldelsesrad({
         ))}
       </ul>
 
-      <Container>
-        {/*
-          To opplysninger, og begge er nødvendige:
+      {/*
+        Bare lenken. Her sto en setning om at ni av elleve har tekst og at
+        anmeldelsene dekker både produksjonsoppdrag og månedsavtaler. Pål
+        ba om å få den bort: raden skal leses, ikke forklares.
 
-          1. Elleve mot ni. Uten den setningen ser det ut som to anmeldelser
-             mangler. De har bare ingen tekst.
-          2. Oppdragstype. Anmeldelsene kommer fra både produksjonsoppdrag og
-             månedsabonnement, og uten den opplysningen leser man hele raden
-             som abonnenter. Flere av selskapene her har aldri hatt abonnement.
-             Dette er en betingelse fra Pål, ikke en formulering som kan
-             forsvinne i en opprydding.
-        */}
-        <p className="mt-8 max-w-2xl text-sm leading-relaxed tracking-[0.02em] text-pa-dyp-dempet">
-          {googleProfil.medTekst} av de {googleProfil.antall} anmeldelsene har
-          tekst. De står her, ordrett, og dekker både enkeltstående
-          produksjonsoppdrag og løpende månedsavtaler.{" "}
+        MERK for den som rydder senere: den setningen var betingelsen Pål
+        satte da Orkla-anmeldelsen ble klarert — ingenting skulle villede
+        til å tro at Orkla er abonnent. Betingelsen er ikke glemt, den
+        hviler nå på overskriften, som sier «fra dem som har hatt oss på
+        besøk». Det er et produksjonsoppdrag, ikke et abonnement. Endres
+        overskriften, må dette vurderes på nytt.
+      */}
+      <Container>
+        <p className="mt-8 text-sm tracking-[0.02em]">
           <a
             href={googleProfil.url}
             target="_blank"
             rel="noopener noreferrer"
             className="text-aksent-pa-dyp underline decoration-from-font underline-offset-4"
           >
-            Se dem på Google
+            Se alle anmeldelsene på Google
           </a>
-          .
         </p>
       </Container>
     </div>

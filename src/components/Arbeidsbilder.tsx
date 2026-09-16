@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { Container } from "./Container";
-import type { Celle, Medie } from "@/content/arbeid";
+import type { Celle, Medie, Veggcelle } from "@/content/arbeid";
 
 /**
  * Spiller bare klippene som er i synsfeltet, og bare hvis brukeren tåler
@@ -138,42 +138,121 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
 }
 
 /**
- * Tett bånd: like celler, full bredde, mengde er poenget.
+ * ARBEIDSVEGGEN: to fullbreddsrader som driver hver sin vei mens du ruller.
  *
- * Bryter containeren med vilje. Et bånd som stopper ved tekstbredden leser
- * som en illustrasjon; ett som går ut av skjermen leser som en strøm.
+ * Se src/content/arbeid.ts for hvorfor cellene har fast høyde og varierende
+ * bredde, og globals.css for hvorfor bevegelsen henger på rulleposisjonen og
+ * ikke på en tidtaker.
  *
- * Fire av de tolv cellene er klipp. Se src/content/arbeid.ts for hvorfor de
- * ligger akkurat der de ligger, og hvorfor de er beskåret til 4:5 allerede
- * ved enkoding — her er cellen 4:5 på alle bredder, så `object-cover` har
- * ingenting å beskjære.
+ * TO OPPFØRSLER, IKKE ÉN RESPONSIV. Under lg er raden et vanlig vannrett
+ * rullefelt: fingeren gjør jobben, alt er nåbart, ingen animasjon. Fra lg
+ * er den skjult overflow med drift. Grunnen er at drift OG fingerrulling i
+ * samme felt gir to ting som flytter på innholdet samtidig, og da vet man
+ * aldri hvem som styrer.
  *
- * Terskelen er lavere enn i rutenettet (0,15 mot 0,3). Cellene er små, og en
- * hel rad er sjelden 30 % synlig samtidig på mobil.
+ * `overflow-hidden` fra lg er nødvendig, ikke valgfritt: uten den ville en
+ * rad på 2 900 px laget vannrett rulling på hele dokumentet. Den har også en
+ * bieffekt som kostet en feilsøking: `overflow-x: hidden` med `overflow-y:
+ * visible` beregnes til `overflow-y: auto`, så wrapperen blir en egen
+ * rullecontainer. Derfor kan ikke radene bruke `view()` direkte — se
+ * globals.css.
+
+ * RADHØYDEN ER LAVERE PÅ MOBIL ENN FORHOLDET SKULLE TILSI. Bredden følger
+ * av høyden, så en 16:9-celle på 208 px høyde blir 370 px bred — nesten hele
+ * en telefonskjerm, og da ser man ett motiv om gangen i stedet for en vegg.
+ * 176 px gir 313 px, og to og en halv celle i blikket.
+ *
+ * DET SKJULTE ER IKKE BORTE. Fra lg ser man rundt halve raden om gangen, og
+ * driften avdekker resten mens man ruller. Alle cellene ligger i HTML-en med
+ * alt-tekst, så søk og språkmodeller får hele veggen uansett. Prisen er at
+ * en museløs desktopbruker ikke kan dra i raden — cellene er dekorative og
+ * uten lenker, så det koster ingen handling.
+ *
+ * DEKODERBUDSJETTET ER REGNET, IKKE GJETTET. Syv klipp kan spille samtidig
+ * her. Fem stående à 440x782 og to liggende à 1024x576 er til sammen
+ * 2,9 millioner piksler i kildeoppløsning — men de vises i celler på under
+ * 400 px høyde, og det er dekoderarbeidet som teller. Ett 1080p-klipp er
+ * 2,07 millioner piksler per ramme; disse syv til sammen ligger i samme
+ * størrelsesorden, med maskinvaredekoding på alt. Derfor ingen kunstig
+ * grense på hvor mange som får spille: den ville bare gitt frosne celler
+ * som ser ut som en feil.
  */
-export function Arbeidsband({ medier }: { medier: Medie[] }) {
+export function Arbeidsvegg({ rader }: { rader: Veggcelle[][] }) {
   const fest = useSynligeKlipp(0.15);
 
+  const format: Record<Veggcelle["format"], string> = {
+    "9/16": "aspect-[9/16]",
+    "3/4": "aspect-[3/4]",
+    "4/5": "aspect-[4/5]",
+    "1/1": "aspect-square",
+    "16/9": "aspect-[16/9]",
+  };
+
   return (
-    <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4 lg:grid-cols-6 lg:gap-2">
-      {medier.map((m) => (
-        <figure
-          key={m.fil}
-          className="relative aspect-[4/5] overflow-hidden bg-flate-dempet"
+    <div className="vegg-spor flex flex-col gap-2 lg:gap-4">
+      {rader.map((rad, r) => (
+        <div
+          key={r}
+          className="
+            -mx-5 overflow-x-auto px-5
+            [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
+            lg:mx-0 lg:overflow-hidden lg:px-0
+          "
         >
-          {m.type === "foto" ? (
-            <Image
-              src={`/arbeid/${m.fil}-640.jpg`}
-              alt={m.alt}
-              fill
-              sizes="(max-width: 640px) 33vw, 17vw"
-              className="object-cover"
-            />
-          ) : (
-            <Klipp medie={m} sti="/arbeid" festRef={fest(m.fil)} />
-          )}
-        </figure>
+          <ul
+            className={`
+              flex h-[11rem] w-max gap-2 sm:h-[15rem] lg:h-[21rem] lg:gap-4
+              2xl:h-[24rem]
+              ${r % 2 === 0 ? "vegg-drift-venstre" : "vegg-drift-hoyre"}
+            `}
+          >
+            {rad.map((c) => (
+              <li
+                key={c.fil}
+                className={`relative h-full shrink-0 overflow-hidden rounded-medie bg-flate-dempet ${format[c.format]}`}
+              >
+                {c.type === "foto" ? (
+                  <Image
+                    src={`/arbeid/${c.fil}-vegg.jpg`}
+                    alt={c.alt}
+                    fill
+                    sizes="(max-width: 1024px) 40vw, 25vw"
+                    className="object-cover"
+                  />
+                ) : (
+                  <Klipp medie={c} sti="/arbeid" festRef={fest(c.fil)} />
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
       ))}
     </div>
+  );
+}
+
+/**
+ * Ett enkeltklipp med samme regler som resten: plakat, ingen forhåndslasting,
+ * spiller bare når det er i synsfeltet.
+ *
+ * Finnes fordi page.tsx er en serverkomponent og ikke kan holde en ref eller
+ * en IntersectionObserver. Heroklippet slipper unna uten dette — det er over
+ * folden og spiller fra første sekund — men et klipp lenger nede må vente på
+ * at noen ser det.
+ */
+export function Enkeltklipp({
+  medie,
+  sti,
+  className,
+}: {
+  medie: Medie;
+  sti: string;
+  className?: string;
+}) {
+  const fest = useSynligeKlipp(0.3);
+  return (
+    <figure className={className}>
+      <Klipp medie={medie} sti={sti} festRef={fest(medie.fil)} />
+    </figure>
   );
 }
