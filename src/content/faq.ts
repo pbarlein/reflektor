@@ -1,3 +1,6 @@
+import { slotsISeksjon } from "@/components/Slot";
+import { front } from "@/content/sider/front";
+
 /**
  * De nitten spørsmålene fra /faq på dagens reflektor.no.
  *
@@ -166,3 +169,31 @@ export function hentFaq(sporsmal: string): FaqPunkt {
   if (!treff) throw new Error(`Ukjent FAQ-spørsmål: «${sporsmal}»`);
   return treff;
 }
+
+/**
+ * Forsidens ti spørsmål: de seks godkjente slot-svarene fra front.ts, så de
+ * fire som hentes herfra.
+ *
+ * ÉN KILDE, TO FORBRUKERE. Både FAQ-seksjonen på forsiden og FAQPage-
+ * markeringen i JSON-LD leser denne. Før lå sammensetningen i page.tsx og
+ * markeringen bygde sin egen liste fra bare de seks slotsene — altså sa
+ * siden ti spørsmål og markeringen seks. Det er den typen avvik ingen
+ * oppdager, fordi det ene er usynlig.
+ *
+ * REKKEFØLGEN ER IKKE TILFELDIG. De seks først er skrevet for posisjonen
+ * rett før skjemaet og er korte. De fire fra /faq er 640–900 tegn og
+ * besvarer alternativene — de hører hjemme etter, ikke foran, fordi den som
+ * bare skummer skal møte de korte først.
+ *
+ * Et slot uten godkjent tekst faller ut i stedet for å rendres som et tomt
+ * trekkspill. Det skjuler ingenting: seksjonens slots står fortsatt i
+ * front.ts og fanges av content:check.
+ */
+export const forsidensSporsmal: FaqPunkt[] = [
+  ...slotsISeksjon(front, 6).flatMap((slot) => {
+    if (!slot.verdi) return [];
+    const [sporsmal, ...resten] = slot.verdi.split("|");
+    return [{ sporsmal: sporsmal.trim(), svar: resten.join("|").trim() }];
+  }),
+  ...forsidensTillegg.map(hentFaq),
+];
