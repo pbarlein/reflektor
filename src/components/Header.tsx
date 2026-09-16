@@ -95,6 +95,52 @@ function useSkjulVedNedrulling() {
   return skjult;
 }
 
+/**
+ * Én lenke i headeren.
+ *
+ * VELGER ELEMENT ETTER SITUASJON, og begge valgene har en grunn:
+ *
+ * - Ankerlenke OG vi står på forsiden → vanlig `<a>`. Ankerhopp må få tak
+ *   i klikket for at lenken skal virke mer enn én gang, og `<Link>` kaller
+ *   preventDefault selv, så klikket slipper aldri fram.
+ * - Alt annet → `<Link>`. Myk navigasjon, og ingen full sidelasting.
+ *
+ * Første forsøk brukte `<a>` overalt. Det virket, men ga en regresjon:
+ * «Pris» fra en underside ble en full sidelasting, og da la GTMs linker
+ * på en `?_gl=…`-parameter i URL-en. Målt, ikke antatt — den dukket opp i
+ * testen. Ikke skadelig, men stygt, og helt unødvendig.
+ */
+function Menylenke({
+  sti,
+  navn,
+  aktiv,
+  lukk,
+  className,
+}: {
+  sti: string;
+  navn: string;
+  aktiv?: boolean;
+  lukk: () => void;
+  className: string;
+}) {
+  const paForsiden = usePathname() === "/";
+  const felles = {
+    onClick: lukk,
+    className,
+    "aria-current": aktiv ? ("page" as const) : undefined,
+  };
+
+  return sti.startsWith("/#") && paForsiden ? (
+    <a href={sti} {...felles}>
+      {navn}
+    </a>
+  ) : (
+    <Link href={sti} {...felles}>
+      {navn}
+    </Link>
+  );
+}
+
 export function Header() {
   const sti = usePathname();
   const skjult = useSkjulVedNedrulling();
@@ -177,9 +223,11 @@ export function Header() {
           >
             {hovedmeny.map((l) => (
               <li key={l.sti}>
-                <Link
-                  href={l.sti}
-                  aria-current={aktiv(l.sti) ? "page" : undefined}
+                <Menylenke
+                  sti={l.sti}
+                  navn={l.navn}
+                  aktiv={aktiv(l.sti)}
+                  lukk={() => setApen(false)}
                   className="
                     block rounded-interaktiv px-4 py-2.5 text-[0.9375rem]
                     tracking-[0.01em] hover:bg-flate-dempet
@@ -190,20 +238,18 @@ export function Header() {
                     lg:aria-[current=page]:decoration-2
                     lg:aria-[current=page]:underline-offset-8
                   "
-                >
-                  {l.navn}
-                </Link>
+                />
               </li>
             ))}
           </ul>
 
           <div className="flex shrink-0 items-center gap-2">
-            <Link
-              href={ctaSti}
+            <Menylenke
+              sti={ctaSti}
+              navn={hovedCta.navn}
+              lukk={() => setApen(false)}
               className="rounded-interaktiv bg-aksent px-4 py-2.5 text-[0.9375rem] font-medium text-[#0D0D0D] transition-colors hover:bg-aksent-hover sm:px-5"
-            >
-              {hovedCta.navn}
-            </Link>
+            />
 
             {/*
               Knappen bærer tilstanden, ikke lenken. Utløseren MÅ være en

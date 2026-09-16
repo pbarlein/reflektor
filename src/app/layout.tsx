@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Sporing, GtmNoscript } from "@/components/Sporing";
+import { Ankerhopp } from "@/components/Ankerhopp";
 import { site } from "@/content/site";
 import { basisUrl, tillatIndeksering } from "@/lib/miljo";
 
@@ -75,6 +76,7 @@ export default function RootLayout({
       <body className={`${poppins.variable} ${displaySerif.variable} font-sans`}>
         <GtmNoscript />
         <Sporing />
+        <Ankerhopp />
         {/*
           Hoppelenke. WCAG 2.4.1 Bypass Blocks (nivå A) krever en mekanisme
           for å hoppe over gjentatt innhold.
