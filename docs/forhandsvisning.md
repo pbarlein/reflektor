@@ -234,3 +234,38 @@ stopper publisering ved TBD-er, for lange tekster eller døde interne lenker.
 - [ ] `NEXT_PUBLIC_TILLAT_INDEKSERING=true` satt i Vercel
 - [ ] Sporingskjeden verifisert ende-til-ende: skjema → `/takk` → GA4-hendelse
 - [ ] DNS flyttet — **det er den eneste handlingen som faktisk flytter siden**
+
+### Etter logoraden og glasspanelet (16.09.2026, tredje måling)
+
+| Metrikk | Målt |
+|---|---|
+| **LCP** | **664 og 812 ms** — fortsatt heroklippet |
+| TTFB | 108 og 267 ms |
+| CLS | 0,0085 |
+
+Lambdaen ble varmet opp med én forespørsel før målingen. Uten det gir
+kaldstart etter deploy TTFB rundt 3 400 ms og LCP over 4 000 ms — det er
+Vercel, ikke siden.
+
+**De 22 logobildene kostet ingenting.** De lastes `eager` med
+`fetchPriority="low"`, altså hentes uten å bli utsatt, men bakerst i køen.
+LCP er uendret eller bedre enn forrige måling (904 ms), og CLS gikk fra
+0,0112 til 0,0085 — logoene har eksplisitt bredde og høyde, så de skifter
+ikke.
+
+Eager var nødvendig, ikke et valg: med lat lasting lastet ni av elleve. De
+to siste ligger utenfor skjermen til høyre, og en IntersectionObserver på et
+element som flyttes av en CSS-animasjon inne i en rullecontainer er ikke noe
+å stole på.
+
+### Logoradens bevegelse — verifisert på deployet
+
+| Sjekk | Resultat |
+|---|---|
+| Drifter | Ja, −153 → −244 px på 2,5 s |
+| Pauser på hover | Ja, −247 → −247 px på 2,0 s |
+| `prefers-reduced-motion` | Drift av, kortinnhenting av, raden fortsatt rullbar |
+
+Det siste er poenget: slår man av bevegelsen, forsvinner ikke innholdet.
+Raden kan fortsatt dras i, og glasskortene står ferdig innhentet.
+
