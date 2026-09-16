@@ -634,3 +634,85 @@ for å beholde JSON-LD er de ANDRE svarmotorene og modellene, som leser
 markup og ikke kjører JavaScript. Det skillet er verdt å holde rett.
 
 **Lanseringssperre**, på linje med bloggmigreringen og `/produktfoto`.
+
+## A42 — Siden har ingen samtykkeløsning. Dagens side har det. 16.09.2026
+
+Funnet under kodegjennomgangen Pål ba om, og det er den alvorligste tingen
+jeg fant. Han kan ikke se det selv: det er usynlig i nettleseren, og det ser
+ut som at alt virker.
+
+### Hva som skjer nå
+
+`Sporing.tsx` laster Google Tag Manager umiddelbart ved hver sidelasting,
+uten noen form for samtykke. Inne i containeren fyrer GA4 og en
+Meta-piksel — sistnevnte er synlig i konsollen som
+`[Meta pixel] 572759520853896`. Informasjonskapsler settes og data sendes til
+Google og Meta før brukeren har tatt stilling til noe.
+
+Det finnes ingen banner, ingen samtykkelagring, ingen Consent Mode.
+
+### Dagens reflektor.no har banner
+
+Squarespace viser «By using this website, you agree to our use of cookies…»
+med Accept, Decline og Manage Cookies. Bekreftet i skjermbilde av den
+levende siden.
+
+**Den nye siden er altså en tilbakegang på dette punktet**, ikke en
+videreføring.
+
+### Reflektors egen personvernerklæring lover funksjonen
+
+Punkt 8, ordrett fra `/privacypolicy`:
+
+> Du kan administrere eller trekke tilbake samtykke til informasjonskapsler
+> via innstillingene på nettsiden, dersom dette er tilgjengelig.
+
+Erklæringen er nå migrert til `/personvern` og sier dette på den nye siden
+også. Det finnes ingen slike innstillinger.
+
+### Hvorfor det også angår KPI-en
+
+Google har krevd **Consent Mode v2** siden mars 2024 for annonsører med
+EØS-trafikk. Uten signalene begrenses målgruppe- og remarketingfunksjoner i
+Google Ads, og konverteringsmodelleringen blir svakere. Dette er altså ikke
+bare en juridisk sak — det treffer måling av skjemaleads, som er prosjektets
+eneste KPI.
+
+### Hvorfor jeg ikke har bygget det
+
+Tre grunner, og den siste er den viktigste:
+
+1. **Valg av løsning er ikke mitt.** Egen banner eller et CMP (Cookiebot,
+   Iubenda, Axeptio) er en beslutning om kostnad, drift og juridisk ansvar.
+2. **GTM er LÅST** i AGENTS.md. Consent Mode v2 krever konfigurasjon inne i
+   containeren — utløsere som venter på samtykke — og containeren bærer 107+
+   historiske konverteringer.
+3. **Halvveis er verre enn ingenting.** Å legge inn
+   `gtag('consent','default', … denied)` uten en banner som kan gi samtykke,
+   ville satt alt til nektet permanent. Da faller GA4-hendelsen og
+   Ads-konverteringen bort, og Reflektor mister målingen av sin eneste KPI
+   uten å få noe igjen for det.
+
+### Hva som må skje før lansering
+
+Rekkefølgen er bindende — punkt 2 uten punkt 1 slår av målingen:
+
+1. Velg samtykkeløsning og legg den inn slik at den laster FØR GTM.
+2. Sett Consent Mode v2 med `denied` som standard, og oppdater ved samtykke.
+3. Konfigurer GTM-utløserne til å vente på `consent granted`.
+4. Fyll ut de tre uutfylte stedene i personvernerklæringen (se under).
+5. Test at `takk_page_view` fortsatt fyrer etter at samtykke er gitt.
+
+**Lanseringssperre.**
+
+### Tre defekter i personvernerklæringen, live nå
+
+Funnet under migreringen. Ikke rettet — jeg kan ikke vite hva som er riktig.
+Merket med TBD-markører så de er synlige i forhåndsvisningen.
+
+1. «Sist oppdatert: **29.04.206**» — årstallet mangler et siffer.
+2. «lagres normalt i inntil **[for eksempel 12–24 måneder]**» — uutfylt
+   maltekst.
+3. «kan du kontakte oss på **[e-postadresse]**» — uutfylt maltekst, og den
+   alvorligste: erklæringen oppgir ingen adresse for å utøve rettighetene
+   sine. Adressen står i punkt 1, men punkt 9 er der en leser ser etter den.

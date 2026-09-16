@@ -19,6 +19,7 @@ import { SlikFungererDet } from "@/components/forside/SlikFungererDet";
 import { Vegg } from "@/components/forside/Vegg";
 import { forsidensSporsmal } from "@/content/faq";
 import { front } from "@/content/sider/front";
+import { basisUrl } from "@/lib/miljo";
 
 /**
  * Forsiden.
@@ -41,7 +42,8 @@ import { front } from "@/content/sider/front";
 export const metadata: Metadata = {
   title: hentTekst(front, "front.meta.title") ?? undefined,
   description: hentTekst(front, "front.meta.description") ?? undefined,
-  alternates: { canonical: "https://www.reflektor.no/" },
+  // Absolutt URL fra basisUrl(), ikke hardkodet — se miljo.ts.
+  alternates: { canonical: `${basisUrl()}/` },
 };
 
 export default function Forside() {

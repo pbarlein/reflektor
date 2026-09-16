@@ -1,4 +1,5 @@
 import { site, tilbud } from "@/content/site";
+import { basisUrl } from "@/lib/miljo";
 import { googleProfil } from "@/content/anmeldelser";
 
 /**
@@ -18,7 +19,7 @@ import { googleProfil } from "@/content/anmeldelser";
  *
  * VideoObject implementeres først når thumbnail-filer finnes (vedlegg A 11).
  */
-const ORG_ID = "https://www.reflektor.no/#organisasjon";
+const ORG_ID = `${basisUrl()}/#organisasjon`;
 
 export function OrganisasjonSchema() {
   const data = {
@@ -29,7 +30,7 @@ export function OrganisasjonSchema() {
     "@id": ORG_ID,
     name: site.navn,
     legalName: site.kontakt.firma,
-    url: "https://www.reflektor.no/",
+    url: `${basisUrl()}/`,
     email: site.kontakt.epost,
     telephone: site.kontakt.telefon,
     address: {
@@ -117,7 +118,7 @@ export function TjenesteSchema({
     "@type": "Service",
     name: navn,
     description: beskrivelse,
-    url: `https://www.reflektor.no${sti}`,
+    url: `${basisUrl()}${sti}`,
     provider: { "@id": ORG_ID },
     areaServed: "NO",
     offers: {
@@ -191,7 +192,11 @@ export function TjenesteSchema({
  * AGENTS.md lister entitetssignaler i markup som ett av fire krav til
  * synlighet. Se A41 i docs/vedlegg-a.md.
  */
-export function FaqSchema({ qa }: { qa: { sporsmal: string; svar: string }[] }) {
+export function FaqSchema({
+  qa,
+}: {
+  qa: { sporsmal: string; svar: string }[];
+}) {
   if (qa.length === 0) return null;
 
   const data = {
