@@ -172,6 +172,93 @@ html {
   }
 }
 
+/*
+ * LOGORADEN.
+ *
+ * Driften er en vanlig, uendelig marquee og ikke en scroll-drevet
+ * `view()`-tidslinje som arbeidsveggen. Grunnen er konkret: wrapperen har
+ * `overflow-x: auto` for at raden skal kunne dras i, og et element med
+ * overflow er en RULLECONTAINER. `view()` fester seg da til containeren i
+ * stedet for til dokumentet, og driften blir stående. Det er nøyaktig feilen
+ * arbeidsveggen gikk i, dokumentert i docs/. Her ville den ikke latt seg
+ * omgå, for rullingen er selve poenget.
+ *
+ * -50 % fordi sporet inneholder to identiske sett. Da er sluttbildet likt
+ * startbildet, og loopen er usynlig.
+ */
+@keyframes logorad-drift {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.logorad-spor {
+  animation: logorad-drift 55s linear infinite;
+}
+
+/* WCAG 2.2.2: bevegelse over fem sekunder må kunne stanses. */
+.logorad-maske:hover .logorad-spor,
+.logorad-maske:focus-within .logorad-spor {
+  animation-play-state: paused;
+}
+
+/*
+ * Uttoning i begge kanter. `mask-image` og ikke en gradient-overlay, fordi
+ * en overlay måtte hatt sidens bakgrunnsfarge bakt inn — og da ville den
+ * vært feil i det øyeblikket seksjonen bytter flate.
+ */
+.logorad-maske {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 4rem,
+    #000 calc(100% - 4rem),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 4rem,
+    #000 calc(100% - 4rem),
+    transparent 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logorad-spor {
+    animation: none;
+  }
+}
+
+/*
+ * GLASSPANELET i prisseksjonen.
+ *
+ * Glass krever noe å bryte mot. Uten struktur bak er et «glasskort» bare et
+ * lysere rektangel — det var lærdommen fra anmeldelsesraden, som ligger på
+ * mørk flate av samme grunn. Her er strukturen to store, myke radialer i
+ * merkevareoransje. De er valgt framfor et FOTO med overlegg, og det er en
+ * innholdsbeslutning, ikke en smaksbeslutning: et gjenkjennelig kundebilde
+ * bak abonnementsspesifikasjonen ville lest som at kunden ER abonnent, og
+ * det er uttrykkelig forbudt i AGENTS.md.
+ *
+ * Radialene er holdt lave i alfa. Hver prosent lysner flaten under
+ * glasskortene og senker kontrasten på teksten oppå. Verdiene her er målt,
+ * ikke gjettet — se kontrasttallene i page.tsx.
+ */
+.glassflate {
+  background-color: var(--surface-dyp);
+  background-image:
+    radial-gradient(
+      68rem 40rem at 12% 0%,
+      rgba(222, 72, 38, 0.34),
+      transparent 60%
+    ),
+    radial-gradient(
+      52rem 34rem at 92% 100%,
+      rgba(240, 112, 79, 0.26),
+      transparent 62%
+    );
+}
+
 body {
   background: var(--surface-page);
   color: var(--text-body);
@@ -204,3 +291,40 @@ h3 {
  *
  * Tokens under src/styles/tokens/ står urørt. De er merkevaren, ikke layouten.
  */
+
+/*
+ * KORTENE I GLASSPANELET HENTES INN NÅR DE KOMMER I SYNSFELTET.
+ *
+ * Samme teknikk som arbeidsveggen: `animation-timeline: view()`, altså ren
+ * CSS uten IntersectionObserver og uten JavaScript. Feiler den — Firefox har
+ * den bak flagg — står kortene bare ferdig innhentet. Det er grunnen til at
+ * `animation-fill-mode` ikke brukes til å skjule dem: et kort som starter
+ * usynlig og aldri animeres, blir borte for godt.
+ *
+ * MERK: panelet kan IKKE ha overflow-hidden. Et element med overflow er en
+ * rullecontainer, og da fester view() seg til den i stedet for til
+ * dokumentet. Det er feilen arbeidsveggen gikk i, og den er lett å gjeninnføre
+ * ved å legge på `overflow-hidden` for hjørneklipp — hjørnene klipper
+ * bakgrunnen uansett, via border-radius.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes kort-inn {
+      from {
+        opacity: 0;
+        transform: translateY(1.25rem);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .kort-inn {
+      animation: kort-inn linear both;
+      animation-timeline: view();
+      /* Ferdig innhentet godt før kortet står midt på skjermen. */
+      animation-range: entry 10% cover 34%;
+    }
+  }
+}

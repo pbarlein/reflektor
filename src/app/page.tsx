@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Container } from "@/components/Container";
 import { Eyebrow } from "@/components/Eyebrow";
+import { Logorad } from "@/components/Logorad";
 import { ReelVegg } from "@/components/ReelVegg";
 import { Anmeldelsesrad } from "@/components/Anmeldelser";
 import { Kontaktskjema } from "@/components/Kontaktskjema";
@@ -234,6 +235,26 @@ export default function Forside() {
             </figure>
           </div>
         </Container>
+      </section>
+
+      {/*
+        LOGORADEN. Plassert mellom heroen og arbeidsseksjonen på Påls
+        bestilling, og det er også riktig sted: heroens siste linje er
+        navngitt bevis i TEKST, og raden er det samme beviset i BILDER.
+
+        Full bredde, utenfor Container. En logostripe som stopper ved
+        tekstbredden leser som en illustrasjon; en som går ut av skjermen
+        leser som en liste det er mer av. Det siste er sant — elleve logoer
+        i riktige proporsjoner måler 2 018 px.
+
+        Se Logorad.tsx for drift, pause og tilgjengelighet, og logoer.ts for
+        hvorfor raden ikke har overskrift.
+      */}
+      <section
+        className="pb-24 sm:pb-32"
+        aria-label="Kunder Reflektor har produsert foto og video for"
+      >
+        <Logorad />
       </section>
 
       {/* 2 · ARBEIDET — vis produktet før du forklarer det */}
@@ -494,51 +515,122 @@ export default function Forside() {
               </div>
             </Rad>
 
-            {/* RAD 2 — DETTE INNGÅR. Hårstrek mellom punktene, ingen haker. */}
-            <Rad merkelapp="Dette inngår">
-              <ul className="-my-3">
-                {tilbud.inngar.map((punkt) => (
-                  <li
-                    key={punkt}
-                    className="border-b border-kant py-3 text-[1.0625rem] leading-relaxed last:border-0"
-                  >
-                    {punkt}
-                  </li>
-                ))}
-              </ul>
-            </Rad>
+          </div>
+        </Container>
+
+        {/*
+          GLASSPANELET — bygget 16.09.2026 på Påls bestilling: «seksjonere i
+          bredden», «rammer på seksjonene», «gjennomsiktig glass bak
+          teksten».
+
+          HVA SOM VAR GALT. De tre radene under prisen var seks like
+          tekstlinjer, så én, så tre — rundt 500 px sammenhengende sans i én
+          smal spalte, med halve bredden tom ved siden av. Det er sidens
+          eneste strekning uten bilde, bevegelse eller tall, og den ligger
+          rett før anmeldelsene. Pål har kalt den kjedelig to ganger; han har
+          rett begge gangene.
+
+          HVORFOR GLASSET MÅTTE FÅ EN MØRK FLATE. Et glasskort på lys, flat
+          bakgrunn er bare et lysere rektangel — `backdrop-blur` har
+          ingenting å gjøre uskarpt. Det var lærdommen fra anmeldelsesraden,
+          som ligger på mørk flate nettopp derfor. Strukturen her er to store
+          radialer i merkevareoransje, se .glassflate i globals.css.
+
+          HVORFOR IKKE ET KUNDEBILDE BAK. Det var førstevalget, og det er
+          forkastet. Et gjenkjennelig bilde fra en produksjon bak
+          spesifikasjonen av ABONNEMENTET leser som at den kunden er
+          abonnent. AGENTS.md forbyr det uttrykkelig. Gradienten påstår
+          ingenting.
+
+          PANELET ER INNFELT, IKKE FULL BREDDE. Anmeldelsesseksjonen rett
+          under er også mørk. Med beige luft rundt panelet og runde hjørner
+          leser de to som hver sin ting; i full bredde ville de smeltet
+          sammen til én lang mørk strekning.
+
+          KONTRAST, målt og ikke antatt — se tallene i docs/.
+        */}
+        <Container>
+          <div className="glassflate mt-16 rounded-medie px-6 py-12 text-pa-dyp sm:mt-20 sm:px-10 sm:py-16 lg:px-14">
+            <p className="text-xs font-medium tracking-[0.08em] text-pa-dyp-dempet uppercase">
+              Dette inngår
+            </p>
 
             {/*
-              RAD 3 — INNGÅR IKKE. Liten dose, etter det positive, om noe
-              perifert. Se research-konvertering.md om blemishing-effekten:
-              den virker bare når unntakene er akkurat det. Derfor lesbare,
-              ikke store.
+              SEKS KORT I BREDDEN. Tre spalter fra lg, to fra sm, én under.
+              Rekkefølgen flyter nedover spaltene og ikke bortover — den som
+              leser en tospaltet liste nedover skal ikke få 1, 3, 5.
             */}
-            <Rad merkelapp="Inngår ikke">
-              {/*
-                Punktene i `inngarIkke` er skrevet med stor forbokstav hver
-                for seg, fordi de tidligere sto etter en innledning
-                («Inngår ikke: …»). Nå er merkelappen flyttet ut i skinnen,
-                så de danner sin egen setning — og da må alle ned i små
-                bokstaver bortsett fra den første. Uten dette sto det
-                «… meldinger, Stories, Betalt annonsering».
-              */}
-              <p className="text-[1.0625rem] leading-relaxed text-blekk-dempet">
-                {((t) => t.charAt(0).toUpperCase() + t.slice(1))(
-                  tilbud.inngarIkke.join(", ").toLowerCase(),
-                )}
-                .
-              </p>
-            </Rad>
+            <ul className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {tilbud.inngar.map((punkt, i) => (
+                <li
+                  key={punkt}
+                  /*
+                    TO LAYOUTER. Fra sm står nummeret OVER teksten; under sm
+                    står det ved siden av. Stablet på telefon ga hvert kort
+                    en ekstra linjehøyde pluss et mellomrom, og med åtte kort
+                    ble panelet 1 690 px — 711 px lengre enn de tre
+                    tekstradene det erstattet. Sideveis er det 1 264 px.
+                  */
+                  className="kort-inn flex gap-4 rounded-flate border border-kant-pa-dyp/70 bg-[rgba(245,240,232,0.10)] p-5 backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)] sm:flex-col sm:p-6"
+                >
+                  {/*
+                    Nummeret, ikke en hake. En hake sier «SaaS-prisplan» —
+                    det var den komponenten som utløste «AI-preget» i forrige
+                    runde. Et løpenummer sier «spesifikasjon», og det gjør
+                    samtidig omfanget tellbart: seks punkter, ikke «flere».
+                  */}
+                  <span
+                    aria-hidden
+                    className="shrink-0 font-[family-name:var(--font-display-serif)] text-[1.5rem] leading-none text-aksent-pa-dyp sm:text-[1.75rem]"
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-[1.0625rem] leading-relaxed text-pretty">
+                    {punkt}
+                  </span>
+                </li>
+              ))}
+            </ul>
 
-            {/* RAD 4 — VILKÅR. Seksjonens sterkeste setning står her. */}
-            <Rad merkelapp="Vilkår">
-              <p className="max-w-2xl text-[1.0625rem] leading-relaxed text-pretty">
-                {hentTekst(front, "front.price.note") ?? (
-                  <Tbd id="front.price.note" />
-                )}
-              </p>
-            </Rad>
+            {/*
+              De to siste kortene deler bredden 1:2. «Inngår ikke» skal være
+              en LITEN dose — se research-konvertering.md om
+              blemishing-effekten: negativ informasjon løfter inntrykket bare
+              når den er liten, perifer og kommer etter det positive. Like
+              stor som vilkårene ville gjort den til et argument.
+            */}
+            <div className="mt-3 grid gap-3 lg:grid-cols-3">
+              <div className="kort-inn rounded-flate border border-kant-pa-dyp/70 bg-[rgba(245,240,232,0.10)] p-5 backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)] sm:p-6">
+                <p className="text-xs font-medium tracking-[0.08em] text-pa-dyp-dempet uppercase">
+                  Inngår ikke
+                </p>
+                {/*
+                  Punktene i `inngarIkke` er skrevet med stor forbokstav hver
+                  for seg, fordi de tidligere sto etter en innledning
+                  («Inngår ikke: …»). Nå står merkelappen for seg, så de
+                  danner sin egen setning — og da må alle ned i små bokstaver
+                  bortsett fra den første. Uten dette sto det «… meldinger,
+                  Stories, Betalt annonsering».
+                */}
+                <p className="mt-4 text-[1.0625rem] leading-relaxed text-pa-dyp-dempet">
+                  {((t) => t.charAt(0).toUpperCase() + t.slice(1))(
+                    tilbud.inngarIkke.join(", ").toLowerCase(),
+                  )}
+                  .
+                </p>
+              </div>
+
+              <div className="kort-inn rounded-flate border border-kant-pa-dyp/70 bg-[rgba(245,240,232,0.10)] p-5 backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)] sm:p-6 lg:col-span-2">
+                <p className="text-xs font-medium tracking-[0.08em] text-pa-dyp-dempet uppercase">
+                  Vilkår
+                </p>
+                <p className="mt-4 text-[1.0625rem] leading-relaxed text-pretty">
+                  {hentTekst(front, "front.price.note") ?? (
+                    <Tbd id="front.price.note" />
+                  )}
+                </p>
+              </div>
+            </div>
           </div>
         </Container>
       </section>

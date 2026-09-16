@@ -124,6 +124,17 @@ for (const r of reels)
     if (!existsSync(f)) mangler.push({ fil: "src/content/reels.ts", lenke: f });
 
 /*
+ * Logoene refereres med `/logoer/${l.id}.png`, altså en malstreng.
+ * Regexen over ser bare bokstavelige stier og ville sluppet en manglende
+ * logofil rett gjennom — samme hull som tok prisseksjonen.
+ */
+const { kundelogoer } = await import("../src/content/logoer.ts");
+for (const l of kundelogoer) {
+  const f = `public/logoer/${l.id}.png`;
+  if (!existsSync(f)) mangler.push({ fil: "src/content/logoer.ts", lenke: f });
+}
+
+/*
  * MOTSATT VEI: mediefiler som ingen refererer til.
  *
  * Sjekken over fanger referanser uten fil. Denne fanger fil uten referanse.
@@ -139,7 +150,7 @@ for (const r of reels)
  * Fant fire filer første gang den kjørte — to klipp som ble byttet ut med
  * et stillbilde i kontaktseksjonen.
  */
-const MEDIEMAPPER = ["public/reels", "public/arbeid"];
+const MEDIEMAPPER = ["public/reels", "public/arbeid", "public/logoer"];
 const foreldrelose: string[] = [];
 const allKilde = finnFiler("src")
   .map((f) => readFileSync(f, "utf8"))

@@ -473,3 +473,73 @@ bare bortkastede bytes i deployen, mens en manglende fil er et synlig hull
 — og heuristikken (leter etter filstammen som streng i `src/`) kan ta feil
 på en fil som refereres på en måte den ikke kjenner igjen. Å felle bygget
 på den usikkerheten er ikke verdt det.
+
+## Kundelogoene (16.09.2026)
+
+Elleve logoer til logoraden over arbeidsseksjonen. Utvalget er Påls, gitt i
+chat: Happis, The Well, Egon, Peppes, Anton Sport, Soul Cake, Selvaag,
+Retail24, Centropa, Idun Industri og Baker Brun.
+
+**ASKO og Orkla Foods Norge er utelatt med vilje.** Begge ligger på dagens
+reflektor.no, ingen av dem sto på lista, og Pål har tidligere sagt
+uttrykkelig at vi ikke skal antyde at vi har abonnement med Orkla.
+
+### Kilder
+
+Fem er hentet fra dagens reflektor.no (Squarespace-CDN, `?format=750w`), seks
+fra kundemappene i Dropbox:
+
+| Logo | Kilde |
+|---|---|
+| Anton Sport, The Well, Egon, Selvaag, Soul Cake | reflektor.no, Squarespace-CDN |
+| Peppes Pizza | `/Reflektor/Assets/Peppes/Lang logo sort.png` |
+| Baker Brun | `/Reflektor/Assets/Baker Brun/logo-baker-brun-png.png` |
+| Idun Industri | `/Reflektor/Assets/Idun/Logo/Logo_rod_flat.svg` |
+| Retail24 | `/Reflektor/Assets/Retail24/Retail24-logo-pos.png` |
+| Centropa | `/Reflektor/Assets/Centropa/logo_centropa.png` |
+| Happis | `/Reflektor/Assets/Happis/Happis_logo_email_signature_180px.png` |
+
+Alle seks fra Dropbox er innholdshash-verifisert mot Dropbox' egne
+blokk-hasher etter nedlasting. Idun er rendret fra SVG til PNG med cairosvg.
+
+**Happis er den svakeste kilden.** Eneste tilgjengelige fil er en
+e-postsignatur på 180×70 px. Den holder akkurat: logoen vises på 92×36, og
+2x av det er 72 px høyde mot kildens 70 — 3 % oppskalering. Skal raden noen
+gang vises større, må logoen hentes fra merkevaremanualen
+(`25.1 Happis Brand Guidelines.pdf` i samme mappe).
+
+### Størrelsene er regnet ut, ikke satt på øyemål
+
+Logoer har vilt ulike proporsjoner: Anton Sport er 9,6:1, The Well er 1,3:1.
+Skalerer man til samme **høyde**, blir Anton Sport en plakat og The Well et
+frimerke. Skalerer man til samme **bredde**, skjer det motsatte. Dagens side
+har det problemet — Idun-merket dominerer raden.
+
+Hver logo er derfor skalert til samme **blekkareal**: antall ugjennomsiktige
+piksler normalisert til 40×40 visningspiksler, med tak på 42 px høyde og
+gulv på 16 px. Tre treffer taket (The Well, Egon, Soul Cake) — alle tre er
+nesten kvadratiske merker.
+
+Filene ligger på 2x visningsstørrelse. Til sammen 180 kB PNG, som
+next/image serverer som webp.
+
+Tallene ligger i `src/content/logoer.ts` og må inn i `<Image>` for å unngå
+layout shift. **Byttes en logofil, må de regnes om.**
+
+### Fargene er beholdt
+
+Monokrom logorad ble vurdert og forkastet. `filter: brightness(0)` gir en
+ensfarget silhuett med alfaen i behold, og det hadde ryddet opp i at elleve
+merkevarefarger krasjer med hverandre — men det ødelegger to av logoene:
+Idun er hvit tekst i et rødt skjold og Baker Brun er en hvit sløyfe i en
+brun firkant. Begge blir en solid klump uten navn.
+
+Dagens reflektor.no har også fullfarge. Fargene beholdes.
+
+### Lenkesjekken dekker logoene
+
+`public/logoer` er lagt til i `MEDIEMAPPER`, og `logoer.ts` sjekkes
+eksplisitt begge veier. Det siste er nødvendig fordi logoene refereres med
+malstreng (`` `/logoer/${l.id}.png` ``), og regexen som finner mediestier
+ser bare bokstavelige strenger — samme hull som tok prisseksjonen. Begge
+retninger er verifisert ved å fjerne en fil og ved å legge inn en ubrukt.
