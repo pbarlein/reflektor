@@ -54,7 +54,16 @@ import { kundelogoer } from "@/content/logoer";
  */
 const SETT = 4;
 
-export function Logorad() {
+/**
+ * `dekorativ` brukes av den nederste raden. Den viser de samme elleve
+ * kundene som raden over arbeidsseksjonen, og informasjonen er dermed
+ * allerede lest opp én gang. Uten dette ville en skjermleserbruker hørt
+ * alle elleve navnene to ganger på samme side, uten å få noe nytt.
+ *
+ * Det er også grunnen til at den nederste raden ikke har egen aria-label på
+ * seksjonen: en dekorativ gjentakelse skal ikke annonseres som et landemerke.
+ */
+export function Logorad({ dekorativ = false }: { dekorativ?: boolean } = {}) {
   const sett = (skjult: boolean) => (
     <ul
       className="flex shrink-0 items-center gap-12 pr-12 sm:gap-16 sm:pr-16"
@@ -107,7 +116,7 @@ export function Logorad() {
     >
       <div className="logorad-spor flex w-max">
         {Array.from({ length: SETT }, (_, i) => (
-          <Fragment key={i}>{sett(i > 0)}</Fragment>
+          <Fragment key={i}>{sett(dekorativ || i > 0)}</Fragment>
         ))}
       </div>
     </div>
