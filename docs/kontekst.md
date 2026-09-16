@@ -362,6 +362,12 @@ månedlig basis». Historikken beskrives som «fra restauranter til sportskjeder
 Sitewide: `Organization`, `ProfessionalService`, `Service`, `WebSite`.
 `FAQPage` på `/faq` og `/innholdsproduksjon`. `Article` på bloggartikler.
 
+> **Forbehold, tilføyd 16.09.2026:** FAQ rich results finnes ikke lenger.
+> Google sluttet å vise dem 7. mai 2026 og fjernet dokumentasjonen i juni.
+> `FAQPage` skal likevel beholdes — se A41 i vedlegg-a.md for hvorfor
+> argumentet står seg, og hvorfor det ikke er det argumentet avsnittet
+> under kan se ut til å bygge på.
+
 Dette er solid og må videreføres. `FAQPage` bør også vurderes på
 `/sosiale-medier-byra`, som har åpenbart FAQ-egnet innhold.
 

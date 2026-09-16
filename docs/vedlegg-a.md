@@ -517,3 +517,99 @@ AGENTS.md ber om at ikke endres uten grunn, og «hvilken side skal arve
 produktfoto-posisjonen» er en innholdsbeslutning.
 
 **Dette er en lanseringssperre på linje med bloggmigreringen.**
+
+## A41 — FAQ rich results finnes ikke lenger. Hentet 16.09.2026
+
+Anledningen var Påls spørsmål om å komprimere FAQ-en på forsiden til to
+spalter for å få plass til flere spørsmål, «om det har en stor verdi for
+synlighet i søk». Jeg sjekket i stedet for å svare fra hukommelsen, og
+svaret er kategorisk.
+
+**Googles egne ord, fra changelogen på developers.google.com/search/updates:**
+
+> **8. mai 2026 — Deprecating the FAQ rich result feature.**
+> *What*: Added a deprecation notice to the FAQ rich result documentation.
+> *Why*: This feature will no longer appear in Google Search starting
+> **May 7, 2026**.
+
+> **Juni 2026 — Removing documentation for the FAQ rich result feature.**
+> *What*: Removed documentation for the FAQ rich result feature.
+> *Why*: The FAQ rich result feature is no longer shown in Google Search
+> results, as announced in the changelog entry in May 2026.
+
+Dokumentasjonssiden er borte. `…/structured-data/faqpage` svarer 301 til
+`…/search/updates#removing-faq-rich-result` — samme behandling som How-to
+fikk. Verifisert med `curl`: én omdirigering, endelig URL med ankeret.
+
+Rekkefølgen er verdt å merke seg. Først ble funksjonen i 2023 begrenset til
+«well-known, authoritative government and health websites» — altså aldri
+Reflektor. Siden 7. mai 2026 vises den ikke for noen.
+
+### Hva det betyr for prosjektet
+
+**`FaqSchema` skal bli stående.** Rich result var aldri grunnen den kunne
+ha for oss — begrensningen i 2023 hadde allerede utelukket et videobyrå.
+JSON-LD er der språkmodeller henter entitetsfakta, de kjører ikke
+JavaScript, og AGENTS.md lister entitetssignaler i markup som ett av fire
+krav til synlighet. Argumentet er uendret; det er bare den ene grunnen som
+aldri gjaldt oss, som nå er formelt død.
+
+**Men `kontekst.md` må leses med forbehold.** Den sier at `FAQPage` på
+`/faq` og `/innholdsproduksjon` er «solid og må videreføres», og at det
+«bør vurderes» på `/sosiale-medier-byra`. Rådet står seg på AEO-grunnlag,
+men ikke på det grunnlaget en leser i 2025 ville antatt.
+
+**Layout har null å si.** Google leser DOM-en, ikke CSS-rutenettet. En
+FAQ i to spalter og en i én spalte er identiske for både søk og
+språkmodeller. Skal FAQ-en gi mer synlighet, er variabelen ANTALL
+SPØRSMÅL OG DEKNING — altså tekst, ikke spaltebredde.
+
+### Det større funnet: `/faq` er en tom stubb
+
+Spørsmålet om spaltebredde på forsiden førte til noe viktigere. Forsiden
+har seks spørsmål. `/faq` på den NYE siden er tjue linjer med en overskrift
+og en TODO.
+
+`/faq` på dagens reflektor.no har **19 spørsmål** med `FAQPage`-schema.
+Hentet og telt fra sidens egen JSON-LD 16.09.2026:
+
+> Hva er et SoMe-byrå? · Hva er forskjellen på dere og et markedsføringsbyrå?
+> · Hvordan vet dere hva vi skal lage? · Kan vi bruke innholdet til annet enn
+> sosiale medier? · Hvorfor bare Instagram og Facebook — ikke TikTok eller
+> LinkedIn? · Hva er ikke inkludert? · Hva koster det? · Er 30 000 kroner i
+> måneden mye eller lite? · Bør vi heller ansette en SoMe-ansvarlig selv? ·
+> Hva om vi heller bruker pengene på annonsering? · Hvilke resultater kan vi
+> forvente? · Hvor lang tid tar det før vi ser noe? · Får vi rapportering
+> underveis? · Hvor mye tid må vi sette av? · Trenger vi eget kamera eller
+> utstyr? · Publiserer dere i ferier — og hva om produksjonsdagen må flyttes?
+> · Er det bindingstid — og kan vi prøve først? · Hvem eier innholdet? · Kan
+> dere levere mer enn 8–10 videoer i måneden?
+
+`kontekst.md` fører `/faq` som sidens STØRSTE med 2 330 visninger.
+
+**Dette er ikke et copy-problem.** Tekstene finnes, de er Reflektors egne,
+og de ligger live. Migrering er mekanisk arbeid, ikke skriving — i motsetning
+til nye spørsmål på forsiden, som ville måttet bestilles.
+
+**Og det er her AEO-argumentet faktisk biter.** Google beskriver «query
+fan-out»: AI Overviews og AI Mode sender ut flere relaterte søk på
+deltemaer og setter svaret sammen av dem. En side som besvarer nitten
+distinkte spørsmål har nitten flater å treffe slike delsøk med. Seks har
+seks. Det er antall spørsmål og dekning som er variabelen — ikke
+spaltebredde, som verken Google eller en språkmodell ser.
+
+Merk samtidig hva Google sier om selve markeringen, fra
+`developers.google.com/search/docs/appearance/ai-features`:
+
+> There are **no additional requirements** to appear in AI Overviews or AI
+> Mode, nor other special optimizations necessary.
+
+> To be eligible to be shown as a supporting link in AI Overviews or AI
+> Mode, a page must be indexed and eligible to be shown in Google Search
+> with a snippet […] There are no additional technical requirements.
+
+Altså: `FAQPage`-schema gir ingen dokumentert fordel hos GOOGLE. Argumentet
+for å beholde JSON-LD er de ANDRE svarmotorene og modellene, som leser
+markup og ikke kjører JavaScript. Det skillet er verdt å holde rett.
+
+**Lanseringssperre**, på linje med bloggmigreringen og `/produktfoto`.

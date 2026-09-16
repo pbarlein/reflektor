@@ -179,6 +179,17 @@ export function TjenesteSchema({
  *
  * Tar kun med spørsmål som faktisk har godkjent tekst – schema med TBD-innhold
  * ville vært verre enn ingen schema.
+ *
+ * INGEN RICH RESULT KOMMER UT AV DETTE. Google sluttet å vise FAQ rich
+ * results 7. mai 2026 og fjernet dokumentasjonssiden i juni; den svarer nå
+ * 301 til changelogen. Allerede fra 2023 var funksjonen begrenset til
+ * «well-known, authoritative government and health websites», så den har
+ * uansett aldri vært innen rekkevidde for et videobyrå.
+ *
+ * Grunnen til at blokken står er en annen, og den er uendret: JSON-LD er
+ * der språkmodeller henter entitetsfakta — de kjører ikke JavaScript — og
+ * AGENTS.md lister entitetssignaler i markup som ett av fire krav til
+ * synlighet. Se A41 i docs/vedlegg-a.md.
  */
 export function FaqSchema({ qa }: { qa: { sporsmal: string; svar: string }[] }) {
   if (qa.length === 0) return null;
