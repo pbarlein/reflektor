@@ -428,32 +428,89 @@ export default function Forside() {
             />
           </div>
 
-          {/* Dokumentasjonen: hva som inngår, og hva som ikke gjør det */}
-          <div className="mt-14 rounded-flate border border-kant">
-            <ul className="grid sm:grid-cols-2">
-              {tilbud.inngar.map((punkt, i) => (
-                <li
-                  key={punkt}
-                  className={`flex gap-3.5 px-6 py-4 text-[0.9rem] leading-relaxed text-blekk-dempet sm:px-8 ${
-                    i < tilbud.inngar.length - (tilbud.inngar.length % 2 === 0 ? 2 : 1)
-                      ? "border-b border-kant"
-                      : ""
-                  } ${i % 2 === 0 ? "sm:border-r sm:border-r-kant" : ""}`}
-                >
-                  <span
-                    className="mt-1.5 size-1 shrink-0 rounded-full bg-aksent"
+          {/*
+            SPESIFIKASJONEN.
+
+            Dette var en tabell: seks like rader i en innrammet boks, alt i
+            0,9 rem dempet tekst. Altså sidens minste og lyseste typografi,
+            for innholdet som ER produktet. Den forrige begrunnelsen var at
+            «det er dokumentasjon, ikke argument» — og det var feil vei rundt.
+            En kunde som vurderer 30 000 i måneden leser nettopp dette før
+            hun fyller ut skjemaet.
+
+            TRE GREP, ingen av dem dekor:
+
+            1. Boksen er borte. En innrammet boks med tolv hårstreker leser
+               som en tabell. En hårstrek på toppen og luft under leser som
+               en spesifikasjon. Samme språk som tallraden over, så de to
+               henger sammen i stedet for å konkurrere.
+            2. Størrelse og kontrast opp: 1,0625 rem i full blekkfarge mot
+               0,9 rem dempet. Ingenting er lagt til, det er bare lesbart.
+            3. Hakene gjør lista skannbar. Prikker sier «punkt»; haker sier
+               «dette får du».
+
+            «INNGÅR IKKE» BLE IKKE LØFTET TIL LIKE STOR VEKT, og det er et
+            bevisst valg mot min egen første idé. Jeg ville gjøre de to
+            spaltene like store, siden ærligheten er selve salgsargumentet.
+            Men Ein-Gar, Shiv & Tormala (Journal of Consumer Research 38:5,
+            2012, «When Blemishing Leads to Blossoming», fire studier i lab
+            og felt) fant at negativ informasjon løfter inntrykket bare når
+            den er en LITEN dose som kommer ETTER det positive, og gjelder
+            noe perifert. Tre unntak etter seks punkter, om kommentarfelt,
+            stories og annonsebudsjett, treffer den beskrivelsen presist.
+            Blåser man dem opp til halve blokken, er det ikke lenger en liten
+            dose. De er derfor gjort LESBARE, ikke store.
+
+            Avslutningslinja er løftet ut av grå småtekst. «Fungerer det
+            ikke, sier dere opp. Så enkelt er det» er den sterkeste setningen
+            i seksjonen, og den sto i sidens laveste kontrast.
+          */}
+          <div className="mt-16 border-t border-kant-regel pt-10">
+            <h3 className="flex items-center gap-2.5 text-xs font-medium tracking-[0.08em] text-blekk-dempet uppercase">
+              <span
+                className="size-1.5 shrink-0 rounded-full bg-aksent"
+                aria-hidden="true"
+              />
+              Dette inngår
+            </h3>
+
+            {/*
+              `grid-flow-col` + `grid-rows-3` gjør at punktene går NEDOVER
+              venstre spalte først, ikke bortover. Standard radflyt ga
+              1-2 / 3-4 / 5-6, og den som leser en tospaltet liste nedover
+              fikk da 1, 3, 5 — altså rekkefølgen brutt. Nå står 1-2-3 til
+              venstre og 4-5-6 til høyre, som også grupperer seg selv: det
+              vi lager til venstre, det som skjer med det til høyre.
+            */}
+            <ul className="mt-8 grid gap-x-12 gap-y-5 sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-3">
+              {tilbud.inngar.map((punkt) => (
+                <li key={punkt} className="flex gap-3.5">
+                  {/* Haken er dekor for en skjermleser — lista er allerede
+                      merket «Dette inngår» av overskriften over. */}
+                  <svg
+                    viewBox="0 0 20 20"
+                    className="mt-1 size-[1.05rem] shrink-0 stroke-aksent-tekst"
+                    fill="none"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     aria-hidden="true"
-                  />
-                  <span>{punkt}</span>
+                  >
+                    <path d="M4 10.5l4 4 8-9" />
+                  </svg>
+                  <span className="text-[1.0625rem] leading-relaxed text-balance">
+                    {punkt}
+                  </span>
                 </li>
               ))}
             </ul>
-            <div className="grid gap-x-12 gap-y-4 border-t border-kant bg-flate-dempet/60 px-6 py-6 text-[0.9rem] leading-relaxed text-blekk-dempet sm:grid-cols-2 sm:px-8">
-              <p>
+
+            <div className="mt-10 grid gap-x-12 gap-y-6 border-t border-kant pt-8 sm:grid-cols-2">
+              <p className="text-sm leading-relaxed text-blekk-dempet">
                 <span className="font-medium text-blekk">Inngår ikke: </span>
                 {tilbud.inngarIkke.join(", ").toLowerCase()}.
               </p>
-              <p>
+              <p className="text-[1.0625rem] leading-relaxed text-pretty">
                 {hentTekst(front, "front.price.note") ?? (
                   <Tbd id="front.price.note" />
                 )}

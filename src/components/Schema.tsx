@@ -135,6 +135,35 @@ export function TjenesteSchema({
       },
       availability: "https://schema.org/InStock",
     },
+    /*
+     * Hva som inngår, som STRUKTUR og ikke bare som HTML.
+     *
+     * Punktene står allerede synlig på forsiden, men bare som en liste i
+     * markupen. `hasOfferCatalog` er schema.orgs måte å si «dette er
+     * delene tjenesten består av», og den koster ingenting: den leses av
+     * det som leser JSON-LD, og ignoreres av alt annet.
+     *
+     * Ingen rich result kommer ut av dette — Google har ingen funksjon som
+     * viser en tjenestes innhold. Grunnen er den samme som for
+     * aggregateRating: språkmodellene henter entitetsfakta fra JSON-LD, de
+     * kjører ikke JavaScript, og «hva inngår i abonnementet» er nettopp
+     * spørsmålet noen stiller en svarmotor.
+     *
+     * Verdiene leses fra tilbud.inngar. Ingen ny tekst — det er de samme
+     * setningene som står synlig, og de kan ikke gli fra hverandre.
+     *
+     * UNNTAKENE ER IKKE MARKERT OPP. Schema.org har ingen ærlig måte å si
+     * «dette inngår ikke». Å presse dem inn i en description ville gjort
+     * markeringen dårligere enn å la være.
+     */
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Dette inngår",
+      itemListElement: tilbud.inngar.map((punkt) => ({
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: punkt },
+      })),
+    },
   };
 
   return (

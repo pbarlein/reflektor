@@ -282,3 +282,45 @@ konkret tilbud eller ett stort tall.
 5. **Prisangivelse** — bevisst valg av kvalitet over volum
 6. **Alt annet** — estetisk preferanse, ikke evidens, og bør ikke forsvares
    med tall
+
+---
+
+## Blemishing-effekten — funnet som overstyrte min egen designidé (16.09.2026)
+
+**Kilde:** Ein-Gar, Shiv & Tormala, «When Blemishing Leads to Blossoming: The
+Positive Effect of Negative Information», *Journal of Consumer Research*
+38(5), 2012, s. 846–859. Fire studier, lab og felt.
+
+**Funnet:** en liten dose negativ informasjon i en ellers positiv beskrivelse
+kan LØFTE inntrykket av produktet. Men effekten har to betingelser som er
+like viktige som funnet selv:
+
+1. Den negative informasjonen må komme **etter** den positive, ikke før.
+2. Den må være en **liten dose**, og gjelde noe **perifert** — ikke kjernen.
+
+Effekten er dessuten sterkest ved lavinnsatslesing, altså skanning.
+
+### Hva det betydde konkret
+
+Prisseksjonens «Inngår ikke» skulle bygges om. Min første idé var å gjøre
+den til en likeverdig spalte ved siden av «Dette inngår» — ærligheten er jo
+selve salgsargumentet, og den sto som grå småtekst i bunnen.
+
+**Funnet sier at det ville vært feil.** Tre unntak etter seks punkter, om
+kommentarfelt, stories og annonsebudsjett, er nøyaktig «liten dose, perifert,
+etter det positive». Blåser man dem opp til halve blokken, er det ikke lenger
+en liten dose — og da forsvinner mekanismen som gjør ærligheten til en
+fordel.
+
+Unntakene ble derfor gjort **lesbare, ikke store**: fortsatt dempet og
+mindre, men ikke lenger fine print i en grå fot.
+
+Dette er verdt å merke seg som metode: research som bare bekrefter det man
+allerede hadde tenkt, har sjelden gjort noe arbeid. Denne endret et konkret
+designvalg.
+
+### Hva funnet IKKE sier
+
+Det er gjort på produktbeskrivelser i eksperimentelle oppsett, ikke på B2B-
+tjenestesider med sekssifret årsverdi. Retningen er godt dokumentert;
+størrelsen på effekten her vet vi ingenting om. Ikke bruk det som et tall.
