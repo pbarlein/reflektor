@@ -60,6 +60,20 @@
   --spacing-seksjon-lg: var(--section-y-lg);
 }
 
+/*
+ * Headeren er klistret, så ankere må stoppe under den.
+ *
+ * To ting går i stykker uten dette, og begge er mer enn kosmetiske:
+ * `#pris` og `#kontakt` lander under headeren, og tastaturfokus gjør det
+ * samme — som er et brudd på WCAG 2.2, 2.4.11 Focus Not Obscured (AA).
+ *
+ * 5,5 rem er headerens høyde (4,5 rem ved lg) pluss litt luft. Verdien må
+ * følge headeren hvis den endrer høyde.
+ */
+html {
+  scroll-padding-top: 5.5rem;
+}
+
 body {
   background: var(--surface-page);
   color: var(--text-body);

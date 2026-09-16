@@ -75,8 +75,31 @@ export default function RootLayout({
       <body className={`${poppins.variable} ${displaySerif.variable} font-sans`}>
         <GtmNoscript />
         <Sporing />
+        {/*
+          Hoppelenke. WCAG 2.4.1 Bypass Blocks (nivå A) krever en mekanisme
+          for å hoppe over gjentatt innhold.
+
+          Den er IKKE først og fremst for skjermlesere. WebAIMs
+          skjermleserundersøkelse #10 (1 539 svar, des. 2023–jan. 2024) viser
+          at de finner fram via overskrifter (71,6 %), ikke via landemerker
+          (3,7 %) eller hoppelenker. Den er for seende tastaturbrukere, som
+          ellers må tabbe gjennom hele headeren på hver eneste sidelasting.
+
+          Synlig ved fokus, skjult ellers — en permanent synlig hoppelenke er
+          støy for alle andre.
+        */}
+        <a
+          href="#hovedinnhold"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-interaktiv focus:bg-aksent focus:px-4 focus:py-2.5 focus:text-[0.9375rem] focus:font-medium focus:text-[#0D0D0D]"
+        >
+          Hopp til innholdet
+        </a>
         <Header />
-        <main>{children}</main>
+        {/* tabIndex=-1 slik at hoppelenken faktisk FLYTTER fokus hit, og
+            ikke bare ruller. Uten den blir neste Tab stående i headeren. */}
+        <main id="hovedinnhold" tabIndex={-1}>
+          {children}
+        </main>
         <Footer />
       </body>
     </html>
