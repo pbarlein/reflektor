@@ -1,98 +1,69 @@
 /**
  * Arbeidsseksjonen: stillbilder og stående video om hverandre.
  *
- * Tidligere var dette åtte stillbilder i et jevnt bånd-rutenett. To ting var
- * galt med det. Det var for mange bilder for det seksjonen skulle si, og det
- * skilte foto fra video som om de var to leveranser — mens abonnementet
- * leverer begge deler fra samme produksjonsdag.
+ * BLOKKEN ER REKTANGULÆR. Alle fire kolonner er nøyaktig like høye, så
+ * seksjonen flukter på topp og bunn og på begge sider. Asymmetrien ligger
+ * inni: den høye cellen står på ulik plass i hver kolonne, og siste kolonne
+ * har to høye i stedet for én høy og to lave.
  *
- * Nå: fem bilder og tre klipp, blandet, i tre kolonner med ulik forskyvning.
+ * Slik holder det: hver kolonne er totalt FIRE enheter. En lav celle er én
+ * enhet, en høy er to. Kolonnene er flex-stabler med samme faste høyde, og
+ * cellene får `flex-1` eller `flex-[2]` — da fordeles høyden proporsjonalt
+ * uansett hvor mange celler kolonnen har.
  *
- * HVORFOR TRE KOLONNER MED FORSKYVNING, og ikke et rutenett med row-span:
- * et rutenett der celler spenner ulikt antall rader etterlater hull når
- * høydene ikke går opp, og hullene leser som feil. Tre uavhengige stabler
- * kan ikke få hull — de bare slutter på ulikt sted, og det er nettopp
- * asymmetrien. Forskyvningen øverst gjør at de heller ikke starter likt.
+ *   1: HØY(2) + lav + lav       3: lav + lav + HØY(2)
+ *   2: lav + HØY(2) + lav       4: HØY(2) + HØY(2)
  *
- * Klippene er de SMALESTE cellene. 9:16 i en bred kolonne blir absurd høyt;
- * i en smal kolonne blir det et telefonformat, som er det formatet innholdet
- * faktisk leveres i.
+ * Forrige versjon brukte tre stabler med ulik toppforskyvning. Den var
+ * asymmetrisk, men sluttet på tre ulike steder, og seksjonen så uferdig ut
+ * i bunnen. Dette gir samme uro inni og ro rundt.
  *
- * Klippene er andre enn dem i reel-veggen øverst, og fra andre bransjer:
- * elsykkel, industri og drikkevare, mot sportsbutikk, spa og bakeri der.
- * Å gjenbruke de samme fire ville gjort siden kortere, ikke rikere.
+ * KORTERE. Fire enheter à 230 px gir 968 px mot rundt 1 800 før — nesten
+ * halvert — samtidig som antall elementer gikk fra 8 til 11. Tettere og
+ * kortere er det samme grepet her: mindre celler, flere av dem.
  *
- * INGEN BILDETEKSTER. Flere av motivene kan jeg ikke knytte til en godkjent
+ * FORMATENE FØLGER AV GEOMETRIEN. En høy celle blir 288×476 px, altså 0,60 —
+ * nesten nøyaktig 9:16. Det er derfor klippene ligger i de høye cellene.
+ * En lav celle blir 288×230, altså liggende, så der ligger bilder som tåler
+ * liggende beskjæring: flatlay, detaljer, drone og et kjøkkenbilde. Det ene
+ * portrettmotivet som ikke tåler det, ligger i en HØY celle.
+ *
+ * INGEN BILDETEKSTER. Flere motiver kan jeg ikke knytte til en godkjent
  * kunde uten å gjette. Det navngitte beviset ligger i hero.proof,
- * reel-veggen og anmeldelsene; dette er et visuelt argument om spennvidde.
+ * reel-veggen og anmeldelsene.
  */
-export type Medie =
-  | { type: "foto"; fil: string; alt: string; format: string }
-  | { type: "video"; fil: string; alt: string };
+export type Celle =
+  | { type: "foto"; fil: string; alt: string; enheter: 1 | 2 }
+  | { type: "video"; fil: string; alt: string; enheter: 1 | 2 };
 
-/** Én stabel. `forskyvning` er Tailwind-klasser for toppmargin på desktop. */
-export type Kolonne = { forskyvning: string; medier: Medie[] };
-
-export const arbeidskolonner: Kolonne[] = [
-  {
-    forskyvning: "",
-    medier: [
-      { type: "video", fil: "gekko", alt: "Vertikalt klipp av elsykkel" },
-      {
-        type: "foto",
-        fil: "stallen",
-        alt: "Kokker på et kjøkken med en plakett",
-        format: "aspect-[4/3]",
-      },
-      {
-        type: "foto",
-        fil: "dag1",
-        alt: "Nærbilde av bakverk på brett",
-        format: "aspect-[4/5]",
-      },
-    ],
-  },
-  {
-    forskyvning: "lg:mt-20",
-    medier: [
-      {
-        type: "foto",
-        fil: "peppes1",
-        alt: "Gjest med pizzastykke foran et neonskilt",
-        format: "aspect-[4/5]",
-      },
-      { type: "video", fil: "zeroh", alt: "Vertikalt klipp av drikkevare" },
-      {
-        type: "foto",
-        fil: "drone",
-        alt: "Dronebilde av hotellanlegg med utendørsbasseng",
-        format: "aspect-[16/10]",
-      },
-    ],
-  },
-  {
-    forskyvning: "lg:mt-44",
-    medier: [
-      {
-        type: "foto",
-        fil: "kafe1",
-        alt: "Vegg av flasker i en butikkhylle",
-        format: "aspect-[3/4]",
-      },
-      { type: "video", fil: "battery", alt: "Vertikalt klipp fra industri" },
-    ],
-  },
+export const arbeidskolonner: Celle[][] = [
+  [
+    { type: "video", fil: "gekko", alt: "Vertikalt klipp av elsykkel", enheter: 2 },
+    { type: "foto", fil: "dag1", alt: "Nærbilde av bakverk på brett", enheter: 1 },
+    { type: "foto", fil: "helios", alt: "Flaskestilleben på grønt tekstil", enheter: 1 },
+  ],
+  [
+    { type: "foto", fil: "drone", alt: "Dronebilde av hotellanlegg med utendørsbasseng", enheter: 1 },
+    { type: "video", fil: "zeroh", alt: "Vertikalt klipp av drikkevare", enheter: 2 },
+    // Byttet fra «industri» til «mat1»: industri-bildet viser samme
+    // arbeidsutstyr som battery-klippet i kolonnen ved siden av, og de to
+    // sto rett overfor hverandre. Samme motiv to ganger i samme blikk leser
+    // som en feil, ikke som spennvidde. Industri-bildet ligger nå i båndet
+    // lenger nede, der det er lite og langt unna klippet.
+    { type: "foto", fil: "mat1", alt: "Ansatte i et produksjonslokale", enheter: 1 },
+  ],
+  [
+    { type: "foto", fil: "stallen", alt: "Kokker på et kjøkken med en plakett", enheter: 1 },
+    { type: "foto", fil: "kafe1", alt: "Vegg av flasker i en butikkhylle", enheter: 1 },
+    { type: "video", fil: "battery", alt: "Vertikalt klipp fra industri", enheter: 2 },
+  ],
+  [
+    { type: "video", fil: "egon", alt: "Vertikalt klipp fra serveringssted", enheter: 2 },
+    { type: "foto", fil: "peppes1", alt: "Gjest med pizzastykke foran et neonskilt", enheter: 2 },
+  ],
 ];
 
-/**
- * Det tette båndet lenger nede på siden. Uendret.
- *
- * Tolv små bilder i et jevnt rutenett over full bredde. Her er likheten
- * poenget: et variert nett ville sagt «utvalgte høydepunkter», et jevnt sier
- * «dette er en vanlig måned». Det er påstanden abonnementet gjør.
- *
- * Kildefil 640 px; next/image skalerer og konverterer.
- */
+/** Båndet bruker et enklere skjema — bare fil og alt-tekst. */
 export type Bilde = { fil: string; alt: string };
 
 export const band: Bilde[] = [
@@ -106,6 +77,6 @@ export const band: Bilde[] = [
   { fil: "sunkost", alt: "Produktbilde av pakninger og glass" },
   { fil: "kafe2", alt: "Person i genser fotografert bakfra utendørs" },
   { fil: "portrett", alt: "Portrett utendørs mot blå himmel" },
-  { fil: "mat1", alt: "Ansatte i et produksjonslokale" },
+  { fil: "industri", alt: "Nærbilde av slitt arbeidsutstyr" },
   { fil: "mat2", alt: "Person om bord i en båt" },
 ];

@@ -3,34 +3,32 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { Container } from "./Container";
-import type { Bilde, Kolonne } from "@/content/arbeid";
+import type { Bilde, Celle } from "@/content/arbeid";
 
 /**
- * Arbeidsseksjonen: foto og stående video om hverandre, i tre forskjøvne
- * stabler.
+ * Arbeidsseksjonen: foto og stående video om hverandre, i fire like høye
+ * kolonner.
  *
- * Se src/content/arbeid.ts for hvorfor stabler og ikke rutenett med row-span,
- * og hvorfor klippene ligger i de smaleste cellene.
+ * Se src/content/arbeid.ts for hvorfor blokken er rektangulær, hvorfor
+ * enhetene er som de er, og hvorfor klippene ligger i de høye cellene.
  *
- * YTELSE. Ytelse er prosjektets sterkest dokumenterte funn, og denne
- * seksjonen har både bilder og video, så den styrer valgene:
+ * TO LAYOUTER, ikke én responsiv. Under lg er det et vanlig tomkolonners
+ * rutenett med faste formater per celle — fire kolonner à 288 px finnes ikke
+ * på en telefon. Fra lg overtar flex-stablene med fast høyde, og det er DER
+ * blokken blir rektangulær. Å presse den ene løsningen ned på mobil ville
+ * gitt celler på under 90 px.
+ *
+ * YTELSE. Ytelse er prosjektets sterkest dokumenterte funn, og seksjonen har
+ * både bilder og fire klipp:
  *
  * - `next/image` med `fill` gir AVIF og responsive størrelser fra én kildefil.
  * - Video har `preload="none"` og posterbilde. Ingenting lastes før klippet
  *   er i synsfeltet.
- * - Bare klipp som faktisk er synlige spiller. IntersectionObserver pauser
- *   resten. Med sju klipp på siden totalt ville samtidig avspilling vært en
- *   målbar LCP- og batteriskade.
- * - `aspect-ratio` på hver celle reserverer høyden, så ingen CLS når en lang
- *   stabel lastes inn under scrolling.
+ * - Bare klipp som er synlige spiller. IntersectionObserver pauser resten.
+ * - Høyden er reservert av containeren, så ingen CLS.
  * - `prefers-reduced-motion` slår av autospill helt. Da står posterbildet.
  */
-export function Arbeidskolonner({ kolonner }: { kolonner: Kolonne[] }) {
-  /*
-     Refsene nøkles på filnavn, ikke på løpenummer. Et løpenummer ville måttet
-     telles opp under render, og det er en mutasjon som gir ustabile
-     tilordninger når React rendrer på nytt — lint fanget det.
-  */
+export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
   const refs = useRef<Record<string, HTMLVideoElement | null>>({});
 
   useEffect(() => {
@@ -44,62 +42,57 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Kolonne[] }) {
           else v.pause();
         }
       },
-      { threshold: 0.4 },
+      { threshold: 0.3 },
     );
     for (const v of Object.values(refs.current)) if (v) iakt.observe(v);
     return () => iakt.disconnect();
   }, []);
 
+  const celle = (c: Celle, mobilFormat: string) => (
+    <figure
+      key={c.fil}
+      className={`relative overflow-hidden rounded-flate bg-flate-dempet ${mobilFormat} lg:aspect-auto ${
+        c.enheter === 2 ? "lg:flex-[2]" : "lg:flex-1"
+      }`}
+    >
+      {c.type === "foto" ? (
+        <Image
+          src={`/arbeid/${c.fil}-1600.jpg`}
+          alt={c.alt}
+          fill
+          sizes="(max-width: 1024px) 50vw, 24vw"
+          className="object-cover"
+        />
+      ) : (
+        <video
+          ref={(el) => {
+            refs.current[c.fil] = el;
+          }}
+          className="size-full object-cover"
+          poster={`/reels/${c.fil}.jpg`}
+          preload="none"
+          muted
+          loop
+          playsInline
+          aria-hidden="true"
+          tabIndex={-1}
+          disablePictureInPicture
+          controlsList="nodownload noremoteplayback nofullscreen"
+        >
+          <source src={`/reels/${c.fil}.mp4`} type="video/mp4" />
+        </video>
+      )}
+    </figure>
+  );
+
   return (
     <Container>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+      <div className="grid grid-cols-2 gap-3 lg:h-[60.5rem] lg:grid-cols-4 lg:gap-4">
         {kolonner.map((kol, k) => (
-          <div
-            key={k}
-            className={`flex flex-col gap-4 lg:gap-5 ${kol.forskyvning}`}
-          >
-            {kol.medier.map((m) => {
-              if (m.type === "foto") {
-                return (
-                  <figure
-                    key={m.fil}
-                    className={`relative overflow-hidden rounded-flate bg-flate-dempet ${m.format}`}
-                  >
-                    <Image
-                      src={`/arbeid/${m.fil}-1600.jpg`}
-                      alt={m.alt}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 32vw"
-                      className="object-cover"
-                    />
-                  </figure>
-                );
-              }
-              return (
-                <figure
-                  key={m.fil}
-                  className="relative aspect-[9/16] overflow-hidden rounded-flate bg-flate-dempet"
-                >
-                  <video
-                    ref={(el) => {
-                      refs.current[m.fil] = el;
-                    }}
-                    className="size-full object-cover"
-                    poster={`/reels/${m.fil}.jpg`}
-                    preload="none"
-                    muted
-                    loop
-                    playsInline
-                    aria-hidden="true"
-                    tabIndex={-1}
-                    disablePictureInPicture
-                    controlsList="nodownload noremoteplayback nofullscreen"
-                  >
-                    <source src={`/reels/${m.fil}.mp4`} type="video/mp4" />
-                  </video>
-                </figure>
-              );
-            })}
+          <div key={k} className="contents lg:flex lg:h-full lg:flex-col lg:gap-4">
+            {kol.map((c) =>
+              celle(c, c.enheter === 2 ? "aspect-[9/16]" : "aspect-[4/5]"),
+            )}
           </div>
         ))}
       </div>

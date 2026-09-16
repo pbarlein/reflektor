@@ -83,7 +83,23 @@ export default function Forside() {
           seksjonsrytme her er omtrent 3:1. */}
       <section className="pt-16 pb-24 sm:pt-24 sm:pb-36">
         <Container>
-          <h1 className="max-w-4xl text-[2.75rem] leading-[1.04] sm:text-6xl sm:leading-[1.02] lg:text-[5rem] lg:leading-[1.0]">
+          {/*
+            Tekst og klipp side om side, begge innenfor containeren, så
+            venstre- og høyrekant flukter med arbeidsseksjonen under.
+
+            `items-stretch` er poenget: figuren arver høyden fra tekstspalten,
+            og klippet beskjæres med object-cover til den høyden. Da fyller
+            det rammen uten at heroen vokser, og uten at et 9:16-format
+            dikterer hvor høy førsteskjermen blir.
+
+            7/5-delingen og ikke 6/6: teksten bærer posisjoneringen og skal
+            ha mest plass. NN/g-tallene sier at 57 % av visningstiden ligger
+            over folden, og over 65 % av den i øvre halvdel — det er teksten
+            som må stå der, ikke bildet.
+          */}
+          <div className="grid items-stretch gap-10 lg:grid-cols-[7fr_5fr] lg:gap-14">
+            <div>
+          <h1 className="max-w-4xl text-[2.75rem] leading-[1.04] sm:text-6xl sm:leading-[1.02] lg:text-[4.25rem] lg:leading-[1.0]">
             {/* Kursiv, ikke oransje. Instrument Serif har en ekte kursiv, og
                 den er den naturlige uthevingen i et seriffsnitt. Det frigjør
                 aksentfargen til CTA-en alene — oransje to steder i samme
@@ -139,7 +155,42 @@ export default function Forside() {
               <Tbd id="front.hero.proof" />
             )}
           </p>
+            </div>
 
+            {/*
+              Heroklippet er det ENESTE som spiller uten IntersectionObserver.
+              Det er over folden fra første sekund, så det finnes ingen
+              «kommer i synsfeltet»-hendelse å vente på. Derfor også
+              preload="metadata" og ikke "none": her er ventetiden synlig.
+
+              Fortsatt dekorativt — informasjonen ligger i teksten ved siden
+              av, og klippet er uten lyd.
+            */}
+            {/*
+              Klippet ligger ABSOLUTT inne i figuren. Uten det bestemmer
+              videoens eget 9:16-format hvor høy raden blir, og heroen vokser
+              til nesten 1 400 px. Nå arver figuren høyden fra tekstspalten,
+              og klippet beskjæres til den — som var hele poenget med å legge
+              dem side om side.
+            */}
+            <figure className="relative h-[26rem] overflow-hidden rounded-flate bg-flate-dempet sm:h-[32rem] lg:h-auto">
+              <video
+                className="absolute inset-0 size-full object-cover"
+                poster="/reels/antonburst.jpg"
+                preload="metadata"
+                autoPlay
+                muted
+                loop
+                playsInline
+                aria-hidden="true"
+                tabIndex={-1}
+                disablePictureInPicture
+                controlsList="nodownload noremoteplayback nofullscreen"
+              >
+                <source src="/reels/antonburst.mp4" type="video/mp4" />
+              </video>
+            </figure>
+          </div>
         </Container>
       </section>
 
