@@ -165,6 +165,14 @@ export default function Forside() {
 
               Fortsatt dekorativt — informasjonen ligger i teksten ved siden
               av, og klippet er uten lyd.
+
+              VEKT: dette klippet er LCP-elementet, siden det maler før H1
+              rekker det. Målt gikk LCP fra 996 ms (H1) til 1 232 ms da det
+              kom inn, og førstelasten fra 0,99 til 2,72 MB. Derfor er det
+              kodet hardere enn de andre — CRF 33 og åtte sekunder — etter at
+              samme bilderute ved faktisk visningsstørrelse viste ingen
+              synlig forskjell mot CRF 31. Endres dette klippet, må LCP
+              måles på nytt.
             */}
             {/*
               Klippet ligger ABSOLUTT inne i figuren. Uten det bestemmer
