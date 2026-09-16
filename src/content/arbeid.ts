@@ -1,68 +1,100 @@
 /**
- * Stillbilder fra Reflektors arkiv.
+ * Arbeidsseksjonen: stillbilder og stående video om hverandre.
  *
- * To sett med hver sin jobb:
+ * Tidligere var dette åtte stillbilder i et jevnt bånd-rutenett. To ting var
+ * galt med det. Det var for mange bilder for det seksjonen skulle si, og det
+ * skilte foto fra video som om de var to leveranser — mens abonnementet
+ * leverer begge deler fra samme produksjonsdag.
  *
- * `redaksjonelt` viser KVALITET. Åtte bilder i tre bånd: 5/4/3, så 7/5, så
- * 4/4/4. Bredden varierer, høyden gjør det ikke innenfor hvert bånd.
+ * Nå: fem bilder og tre klipp, blandet, i tre kolonner med ulik forskyvning.
  *
- * Det siste er et rettet feilgrep. Første versjon satte `aspect-ratio` per
- * celle, og da ble høyden en funksjon av bredden: en smal celle med samme
- * format ble mye lavere enn en bred, og det etterlot et tydelig hull under
- * den korteste i hver rad. Nå styres høyden av `row-span` mot faste
- * radhøyder, uavhengig av bredden. Variasjonen ligger i bredden, som er der
- * den skal ligge — et rutenett med like celler leser som et arkiv, ikke som
- * et utvalg.
+ * HVORFOR TRE KOLONNER MED FORSKYVNING, og ikke et rutenett med row-span:
+ * et rutenett der celler spenner ulikt antall rader etterlater hull når
+ * høydene ikke går opp, og hullene leser som feil. Tre uavhengige stabler
+ * kan ikke få hull — de bare slutter på ulikt sted, og det er nettopp
+ * asymmetrien. Forskyvningen øverst gjør at de heller ikke starter likt.
  *
- * `band` viser VOLUM. Tolv små bilder i et tett, jevnt rutenett. Her er
- * likheten poenget: det skal se ut som mye, ikke som utvalgt. Abonnementet
- * selger mengde og jevnhet, og seksjonen argumenterer for nettopp det.
+ * Klippene er de SMALESTE cellene. 9:16 i en bred kolonne blir absurd høyt;
+ * i en smal kolonne blir det et telefonformat, som er det formatet innholdet
+ * faktisk leveres i.
  *
- * INGEN BILDETEKSTER, med vilje. Flere av bildene kan jeg ikke knytte til en
- * godkjent kunde uten å gjette, og halvt navngitte bildetekster leser som en
- * inkonsekvens. Det navngitte beviset ligger i hero.proof, reel-veggen og
- * anmeldelsene. Disse to seksjonene er et visuelt argument om spennvidde og
- * mengde, ikke en kundeliste.
+ * Klippene er andre enn dem i reel-veggen øverst, og fra andre bransjer:
+ * elsykkel, industri og drikkevare, mot sportsbutikk, spa og bakeri der.
+ * Å gjenbruke de samme fire ville gjort siden kortere, ikke rikere.
  *
- * Alt-tekstene beskriver hva man SER, ikke hvem kunden er.
- *
- * Kilder: /Reflektor/SALG/Claude Code/Bilder og videoer. 4K-originaler på
- * 5–30 MB, nedskalert til én kildefil hver. next/image lager AVIF/WebP og
- * responsive størrelser derfra. Se docs/media.md.
+ * INGEN BILDETEKSTER. Flere av motivene kan jeg ikke knytte til en godkjent
+ * kunde uten å gjette. Det navngitte beviset ligger i hero.proof,
+ * reel-veggen og anmeldelsene; dette er et visuelt argument om spennvidde.
  */
-export type Bilde = {
-  fil: string;
-  alt: string;
-  /** Tailwind-klasser for kolonnespenn og format i det redaksjonelle nettet. */
-  celle?: string;
-};
+export type Medie =
+  | { type: "foto"; fil: string; alt: string; format: string }
+  | { type: "video"; fil: string; alt: string };
 
-/** Store bilder. Kildefil 1600 px; next/image skalerer og konverterer. */
-export const redaksjonelt: Bilde[] = [
-  // Bånd 1 — 5/4/3, alle fem radhøyder
-  { fil: "peppes1", alt: "Gjest med pizzastykke foran et neonskilt",
-    celle: "col-span-2 aspect-[4/5] sm:col-span-5 sm:row-span-5 sm:aspect-auto" },
-  { fil: "goretex1", alt: "Mann i skalljakke i en togdør",
-    celle: "aspect-[4/5] sm:col-span-4 sm:row-span-5 sm:aspect-auto" },
-  { fil: "kafe1", alt: "Vegg av flasker i en butikkhylle",
-    celle: "aspect-[4/5] sm:col-span-3 sm:row-span-5 sm:aspect-auto" },
+/** Én stabel. `forskyvning` er Tailwind-klasser for toppmargin på desktop. */
+export type Kolonne = { forskyvning: string; medier: Medie[] };
 
-  // Bånd 2 — de to liggende bildene, lavere bånd
-  { fil: "drone", alt: "Dronebilde av hotellanlegg med utendørsbasseng",
-    celle: "col-span-2 aspect-[16/9] sm:col-span-7 sm:row-span-4 sm:aspect-auto" },
-  { fil: "stallen", alt: "Kokker på et kjøkken med en plakett",
-    celle: "col-span-2 aspect-[4/3] sm:col-span-5 sm:row-span-4 sm:aspect-auto" },
-
-  // Bånd 3 — tre like brede
-  { fil: "dag1", alt: "Nærbilde av bakverk på brett",
-    celle: "aspect-[4/5] sm:col-span-4 sm:row-span-5 sm:aspect-auto" },
-  { fil: "helios", alt: "Flaskestilleben på grønt tekstil",
-    celle: "aspect-[4/5] sm:col-span-4 sm:row-span-5 sm:aspect-auto" },
-  { fil: "industri", alt: "Nærbilde av slitt arbeidsutstyr",
-    celle: "aspect-[4/5] sm:col-span-4 sm:row-span-5 sm:aspect-auto" },
+export const arbeidskolonner: Kolonne[] = [
+  {
+    forskyvning: "",
+    medier: [
+      { type: "video", fil: "gekko", alt: "Vertikalt klipp av elsykkel" },
+      {
+        type: "foto",
+        fil: "stallen",
+        alt: "Kokker på et kjøkken med en plakett",
+        format: "aspect-[4/3]",
+      },
+      {
+        type: "foto",
+        fil: "dag1",
+        alt: "Nærbilde av bakverk på brett",
+        format: "aspect-[4/5]",
+      },
+    ],
+  },
+  {
+    forskyvning: "lg:mt-20",
+    medier: [
+      {
+        type: "foto",
+        fil: "peppes1",
+        alt: "Gjest med pizzastykke foran et neonskilt",
+        format: "aspect-[4/5]",
+      },
+      { type: "video", fil: "zeroh", alt: "Vertikalt klipp av drikkevare" },
+      {
+        type: "foto",
+        fil: "drone",
+        alt: "Dronebilde av hotellanlegg med utendørsbasseng",
+        format: "aspect-[16/10]",
+      },
+    ],
+  },
+  {
+    forskyvning: "lg:mt-44",
+    medier: [
+      {
+        type: "foto",
+        fil: "kafe1",
+        alt: "Vegg av flasker i en butikkhylle",
+        format: "aspect-[3/4]",
+      },
+      { type: "video", fil: "battery", alt: "Vertikalt klipp fra industri" },
+    ],
+  },
 ];
 
-/** Små bilder. Kildefil 640 px; next/image skalerer og konverterer. */
+/**
+ * Det tette båndet lenger nede på siden. Uendret.
+ *
+ * Tolv små bilder i et jevnt rutenett over full bredde. Her er likheten
+ * poenget: et variert nett ville sagt «utvalgte høydepunkter», et jevnt sier
+ * «dette er en vanlig måned». Det er påstanden abonnementet gjør.
+ *
+ * Kildefil 640 px; next/image skalerer og konverterer.
+ */
+export type Bilde = { fil: string; alt: string };
+
 export const band: Bilde[] = [
   { fil: "dag2", alt: "Ansatte samlet i en butikk" },
   { fil: "dag3", alt: "Lykkehjul under et arrangement" },

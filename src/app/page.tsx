@@ -17,8 +17,8 @@ import {
 import { front } from "@/content/sider/front";
 import { klarerteAnmeldelser } from "@/content/anmeldelser";
 import { reels } from "@/content/reels";
-import { redaksjonelt, band } from "@/content/arbeid";
-import { Arbeidsnett, Arbeidsband } from "@/components/Arbeidsbilder";
+import { arbeidskolonner, band } from "@/content/arbeid";
+import { Arbeidskolonner, Arbeidsband } from "@/components/Arbeidsbilder";
 import { site, tilbud } from "@/content/site";
 
 /**
@@ -230,8 +230,8 @@ export default function Forside() {
         argumentet, ikke et nytt kapittel, og en overskrift ville gjort den
         til det siste.
       */}
-      <section className="pb-28 sm:pb-36" aria-label="Bilder fra produksjonsdager">
-        <Arbeidsnett bilder={redaksjonelt} />
+      <section className="pb-28 sm:pb-36" aria-label="Arbeid fra produksjonsdager">
+        <Arbeidskolonner kolonner={arbeidskolonner} />
       </section>
 
       {/*
@@ -384,15 +384,16 @@ export default function Forside() {
         Flatebyttet gjør jobben ord ikke kan gjøre her — det markerer at det
         er noen andre enn Reflektor som snakker.
       */}
-      <AnmeldelseFremhevet
-        eyebrow={hentTekst(front, "front.reviews.eyebrow")}
-        overskrift={
-          hentTekst(front, "front.reviews.h2") ?? <Tbd id="front.reviews.h2" />
-        }
-        anmeldelse={klarerteAnmeldelser[0]}
-      />
-
-      <section className="pt-20 pb-28 sm:pt-24 sm:pb-36">
+      <section className="bg-dyp text-pa-dyp">
+        <AnmeldelseFremhevet
+          eyebrow={hentTekst(front, "front.reviews.eyebrow")}
+          overskrift={
+            hentTekst(front, "front.reviews.h2") ?? (
+              <Tbd id="front.reviews.h2" />
+            )
+          }
+          anmeldelse={klarerteAnmeldelser[0]}
+        />
         <Anmeldelsesrutenett
           anmeldelser={klarerteAnmeldelser.slice(1)}
           antallTotalt={klarerteAnmeldelser.length}

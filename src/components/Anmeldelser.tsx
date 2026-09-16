@@ -17,6 +17,11 @@ import type { Anmeldelse } from "@/content/anmeldelser";
  * Reflektor snakker. Det er sidens tredje mørke blokk, og det er grensen:
  * kadensen er prosess, bevis, kontakt, med lange lyse strekk imellom.
  *
+ * HELE seksjonen ligger på den mørke flaten, ikke bare det løftede sitatet.
+ * Grunnen er glasskortene under: gjennomskinnelighet trenger noe å bryte
+ * mot. Et glasskort på flat beige har ingenting bak seg og blir bare en
+ * lysere boks — effekten kommer av at flaten under skinner gjennom.
+ *
  * Tallet blir stående INNE i sitatet, ikke løftet ut som en egen overskrift.
  * Forskjellen er ikke kosmetisk: «70 %» i display-grad leser som noe Reflektor
  * leverer, mens det samme tallet i et attribuert sitat leser som noe én kunde
@@ -39,7 +44,7 @@ export function AnmeldelseFremhevet({
   eyebrow: React.ReactNode;
 }) {
   return (
-    <div className="bg-dyp py-20 text-pa-dyp sm:py-28">
+    <div className="pt-20 sm:pt-28">
       <Container>
         <p className="flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.08em] text-pa-dyp-dempet">
           <span
@@ -94,34 +99,59 @@ export function Anmeldelsesrutenett({
   antallTotalt: number;
 }) {
   return (
-    <Container>
-      <ul className="grid gap-x-12 border-t border-kant-regel sm:grid-cols-2 lg:grid-cols-3">
-        {anmeldelser.map((a) => (
-          <li key={a.navn} className="border-b border-kant py-8">
-            <blockquote className="leading-relaxed text-pretty">
-              {a.sitat}
-            </blockquote>
-            <p className="mt-5 text-sm tracking-[0.02em]">
-              <span className="font-medium">{a.navn}</span>
-              {a.selskap && (
-                <span className="text-blekk-dempet"> · {a.selskap}</span>
-              )}
-            </p>
-          </li>
-        ))}
-      </ul>
-      {/*
-        Kildeattribusjon én gang, ikke per sitat.
+    <div className="pb-20 sm:pb-28">
+      <Container>
+        {/*
+          GLASSKORT. Tre lag, og alle tre trengs:
 
-        Setningen om oppdragstype er ikke pynt. Anmeldelsene kommer fra både
-        produksjonsoppdrag og månedsabonnement, og uten den opplysningen leser
-        man hele veggen som abonnenter. Flere av selskapene her har aldri hatt
-        abonnement.
-      */}
-      <p className="mt-7 max-w-2xl text-sm tracking-[0.02em] text-blekk-svak">
-        Alle {antallTotalt} er hentet fra Reflektors anmeldelser på Google. De
-        dekker både enkeltstående produksjonsoppdrag og løpende månedsavtaler.
-      </p>
-    </Container>
+          1. Fyll på 6 % bone over den brune flaten. Målt effektiv bakgrunn
+             #3a2921: bone-tekst gir 12,19 og dempet tekst 7,52, altså AAA på
+             begge. Glass er ofte et lesbarhetsproblem; her er det ikke det,
+             fordi flaten under er mørk og jevn.
+          2. `backdrop-blur` — det er DETTE som gjør det til glass. Uten
+             uskarpheten er kortet bare en lysere firkant.
+          3. En kant på 14 % — den lyse kanten er det øyet leser som
+             «glasskant». Kontrast 1,50 mot flaten: synlig, men ikke en strek
+             som roper.
+
+          `supports-[backdrop-filter]` senker fyllet der uskarphet STØTTES.
+          Der den ikke gjør det, beholdes det kraftigere fyllet, slik at
+          kortet fortsatt leser som et kort og ikke forsvinner.
+        */}
+        <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {anmeldelser.map((a) => (
+            <li
+              key={a.navn}
+              className="flex flex-col rounded-flate border border-[rgba(245,240,232,0.14)] bg-[rgba(245,240,232,0.10)] p-6 backdrop-blur-xl sm:p-7 supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)]"
+            >
+              <blockquote className="leading-relaxed text-pretty">
+                {a.sitat}
+              </blockquote>
+              {/* Attribusjonen skyves til bunnen. Kortene i en rad er like
+                  høye, og uten dette havner navnene på ulik høyde — da leser
+                  raden som rotete i stedet for som et system. */}
+              <p className="mt-auto pt-6 text-sm tracking-[0.02em]">
+                <span className="font-medium">{a.navn}</span>
+                {a.selskap && (
+                  <span className="text-pa-dyp-dempet"> · {a.selskap}</span>
+                )}
+              </p>
+            </li>
+          ))}
+        </ul>
+        {/*
+          Kildeattribusjon én gang, ikke per sitat.
+
+          Setningen om oppdragstype er ikke pynt. Anmeldelsene kommer fra både
+          produksjonsoppdrag og månedsabonnement, og uten den opplysningen
+          leser man hele veggen som abonnenter. Flere av selskapene her har
+          aldri hatt abonnement.
+        */}
+        <p className="mt-8 max-w-2xl text-sm tracking-[0.02em] text-pa-dyp-dempet">
+          Alle {antallTotalt} er hentet fra Reflektors anmeldelser på Google. De
+          dekker både enkeltstående produksjonsoppdrag og løpende månedsavtaler.
+        </p>
+      </Container>
+    </div>
   );
 }
