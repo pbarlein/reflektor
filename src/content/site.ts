@@ -84,7 +84,29 @@ export const tilbud = {
   ],
 } as const;
 
-/** Arbeidsprosessen slik den presenteres på forsiden. */
+/**
+ * Arbeidsprosessen, slik den står på DAGENS side.
+ *
+ * RENDRES IKKE NOE STED PER 16.09.2026. Forsiden bruker slot-copyen
+ * `front.how.steps[...]`, som er godkjent av Pål; dette er råmaterialet fra
+ * crawlen av dagens reflektor.no. Sjekk før du tar den i bruk — teksten her
+ * har ikke vært gjennom copy-protokollen.
+ *
+ * KADENSEN ER PRESISERT 16.09.2026. Her sto «publiserer to ganger i uka på
+ * Instagram og Facebook», som kan leses som to ganger på HVER, altså fire
+ * poster. Det er ikke det som leveres: `posterPerUke` er 2, og de går til
+ * Instagram med krysspublisering til Facebook. Regnestykket bekrefter det —
+ * 2 x 52 = 104 i året, altså 8,7 i måneden, som lander midt i «8-10 videoer
+ * per måned». Én video er én post.
+ *
+ * Formuleringen er ikke funnet på: «med krysspublisering til Facebook» er
+ * ordrett den samme som står i `tilbud.inngar`, og er allerede i bruk på
+ * dagens side.
+ *
+ * Samme uklarhet finnes i `front.hero.sub` («8-10 videoer på Instagram og
+ * Facebook, to ganger i uken»). DEN er godkjent copy og kan ikke rettes her
+ * — den må tilbake til chat-prosjektet.
+ */
 export const prosess = [
   {
     navn: "Strategi",
@@ -101,12 +123,19 @@ export const prosess = [
   {
     navn: "Publisering",
     tekst:
-      "Vi klipper, tekster og publiserer to ganger i uka på Instagram og " +
-      "Facebook, hele året. Dere godkjenner før noe går ut.",
+      "Vi klipper, tekster og publiserer to ganger i uka på Instagram, med " +
+      "krysspublisering til Facebook – hele året. Dere godkjenner før noe " +
+      "går ut.",
   },
 ] as const;
 
-/** Prinsippene fra /om-oss. Kortformene er gode og bør beholdes. */
+/**
+ * Prinsippene fra /om-oss. Kortformene er gode og bør beholdes.
+ *
+ * RENDRES HELLER IKKE PER 16.09.2026 — /om-oss er fortsatt en stubb som bare
+ * viser `site.ingress`. Samme forbehold som for `prosess`: dette er
+ * råmateriale fra dagens side, ikke copy som har vært gjennom protokollen.
+ */
 export const prinsipper = [
   {
     navn: "Rytme slår skippertak",
