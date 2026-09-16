@@ -251,3 +251,52 @@ Bildene har ingen bildetekster, men flere merker er lesbare i motivet:
 tekst. Men merkene er synlige, og særlig Freia-bildene er verdt en bevisst
 vurdering gitt hvordan Orkla er håndtert ellers i prosjektet. Skal noen ut,
 er det å fjerne én linje i `src/content/arbeid.ts`.
+
+## Veggen og prisklippet (16.09.2026)
+
+Arbeidsveggen erstattet båndet, og prisseksjonen fikk et klipp. Samme
+pipeline som resten: Dropbox-MCP → `download_link` → `curl` → `content_hash`
+verifisert → komprimert lokalt. Alle fem nedlastningene stemte på sjekksum.
+
+### Enkodingen
+
+| Fil | Format | Kilde | Vindu | Størrelse |
+|---|---|---|---|---|
+| `reels/produksjonsdag.mp4` | 540×960 | BakerBrun_BTS_V1.mov | 3,0–11,0 s | 382 kB |
+| `arbeid/noods.mp4` | 1024×576 | Noods_V2_16x9.mov | 0,5–6,5 s | 624 kB |
+| `arbeid/servering.mp4` | 1024×576 | peppes-15s.mp4 | 5,6–11,6 s | 414 kB |
+| `arbeid/matcha.mp4` | 440×782 | Matcha.mp4 | 0,3–4,4 s | 158 kB |
+| `arbeid/spa.mp4` | 440×782 | Rhassoul 9x16 Reel.mov | 0,5–6,5 s | 171 kB |
+| `arbeid/kontor.mp4` | 440×782 | Moody Corporate 9x16.mp4 | 6,6–12,6 s | 95 kB |
+| `arbeid/kakao.mp4` | 440×782 | Kakao.mp4 | 0,5–6,5 s | 72 kB |
+| `arbeid/bekkestua.mp4` | 440×782 | Bekkestua.mp4 | 13,0–19,0 s | 272 kB |
+
+Til sammen 2,19 MB, hvorav 1,81 MB er veggen. Alle beskåret til
+målformatet ved enkoding, ikke i CSS: hver av dem brukes ett sted, i én
+form, så de tretti prosentene som aldri vises kodes bort.
+
+### Plakatregelen har fått en sperre til
+
+Regelen er fortsatt «skarpeste ramme innenfor det ferdige klippet», målt som
+varians av `ImageFilter.FIND_EDGES`. Sperren mot rammer med luma over 235
+eller under 14 er nødvendig: matchaklippet har et hvitt overgangskutt, og et
+kutt har flest kanter av alt. Uten sperren vant det hver gang, og plakaten
+ble en tom hvit rute med en logo i hjørnet.
+
+### To klipp ble forkastet, og hvorfor
+
+- **Film strip PT color.mov** — klippet ER en filmstrimmelmontasje med
+  svarte rammer rundt hvert bilde. I en celle på 200 px blir det grøt.
+- **Virke_KroppspressEvent_1-1.mov** — innbrent undertekst gjennom hele
+  klippet. Uleselig tekst i en liten celle leser som støy, ikke som innhold.
+  Temaet (kroppspress og doping) hører heller ikke hjemme på en forside som
+  selger månedsabonnement.
+
+Begge ble sjekket ved å trekke ut åtte rammer og se på dem. Det tar to
+minutter og sparer en runde med «hvorfor ser den cellen rar ut».
+
+### Merk: `sunkost`-bildet er ute, `kakao`-klippet er inne
+
+Sunkost er nå representert med to klipp (matcha og kakao) og null bilder.
+Det er den ene kunden veggen viser i dybden. De to filmene er visuelt ulike
+nok — grønn te mot brun kakao — til at det leser som en serie.
