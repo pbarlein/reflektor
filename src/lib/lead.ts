@@ -13,6 +13,8 @@
  * Nøkkelen ligger i Vercel-miljøvariabler, aldri i repoet (brief 8.1.2).
  */
 
+import { rensEnLinje, serUtSomEpost } from "./skjemavern";
+
 export type Lead = {
   navn: string;
   epost: string;
@@ -36,9 +38,17 @@ export async function sendLeadPaEpost(lead: Lead): Promise<void> {
   const nokkel = process.env.RESEND_API_KEY;
 
   if (!nokkel) {
+    /*
+     * INNHOLDET LOGGES IKKE. Her sto hele leadet som JSON — navn, e-post og
+     * telefon i klartekst i Vercel-loggen. Loggen er tilgangsstyrt, men
+     * personopplysninger skal ikke ligge der uansett, og siden har en
+     * personvernerklæring som ikke nevner det.
+     *
+     * Feilen skal fortsatt være umulig å overse: mangler nøkkelen, kommer
+     * ingen leads fram i det hele tatt.
+     */
     console.error(
-      "[lead] RESEND_API_KEY mangler – leadet ble IKKE sendt. " +
-        `Innhold: ${JSON.stringify(lead)}`,
+      `[lead] RESEND_API_KEY mangler – leadet fra ${lead.side} ble IKKE sendt.`,
     );
     return;
   }
@@ -62,9 +72,16 @@ export async function sendLeadPaEpost(lead: Lead): Promise<void> {
     body: JSON.stringify({
       from: AVSENDER,
       to: [MOTTAKER],
-      // Svar går rett til den som fylte ut skjemaet.
-      reply_to: lead.epost,
-      subject: `Ny henvendelse fra ${lead.navn || "nettsiden"}`,
+      /*
+       * Svar går rett til den som fylte ut skjemaet — men bare hvis
+       * adressen ser ut som en adresse. Er den det ikke, utelates feltet:
+       * e-posten skal komme fram uansett, og en ugyldig `reply_to` gir 422
+       * fra Resend og dermed ingen e-post.
+       */
+      ...(serUtSomEpost(lead.epost) ? { reply_to: lead.epost } : {}),
+      subject: rensEnLinje(
+        `Ny henvendelse fra ${lead.navn || "nettsiden"}`,
+      ).slice(0, 160),
       text: linjer,
     }),
   });

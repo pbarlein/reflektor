@@ -20,6 +20,8 @@ jobs:
         run: npx tsc --noEmit
       - name: Lint
         run: npm run lint
+      - name: Tester
+        run: npm test
       - name: content:check
         run: npm run content:check
       - name: Lenkesjekk
