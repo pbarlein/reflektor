@@ -193,10 +193,18 @@ export function Arbeidsvegg({ rader }: { rader: Veggcelle[][] }) {
       {rader.map((rad, r) => (
         <div
           key={r}
+          /*
+            INGEN MARGIN OG INGEN PADDING HER. Første versjon hadde
+            `-mx-5 px-5`, kopiert fra reel-veggen — men den ligger inne i en
+            Container, og denne gjør ikke det. Seksjonen er allerede full
+            bredde, så de negative margene dyttet raden 20 px utenfor
+            vinduet og ga vannrett rulling på HELE dokumentet, målt på
+            390 og 768 px. Full bredde betyr at cellene starter på kanten.
+          */
           className="
-            -mx-5 overflow-x-auto px-5
+            overflow-x-auto
             [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
-            lg:mx-0 lg:overflow-hidden lg:px-0
+            lg:overflow-hidden
           "
         >
           <ul
