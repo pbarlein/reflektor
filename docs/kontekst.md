@@ -327,11 +327,14 @@ Alle CTA-er peker til `/kontaktoss`. Varianter i bruk: «Ta kontakt», «Få et
 strategiforslag», «Book en uforpliktende prat», «Gratis strategiforslag»,
 «Ta en prat».
 
-Sider med reelt innhold, etter omfang:
+Sider med reelt innhold, etter omfang. **Kolonnen er ORD, ikke visninger** —
+presisert 16.09.2026 etter at jeg selv leste den som trafikktall og ga det
+videre til Pål. Prosjektet har ingen målte visningstall per side; GSC er
+ikke koblet til. Se A41.
 
 | Side | Ord | Merknad |
 |---|---|---|
-| `/faq` | 2330 | Størst. 18 spørsmål, FAQPage-schema |
+| `/faq` | 2330 | Størst. **19** spørsmål (ikke 18 — talt i sidens egen JSON-LD 16.09.2026), FAQPage-schema |
 | `/innholdsproduksjon` | 1606 | FAQPage-schema |
 | `/` og `/hjem` | 1068 | Identiske |
 | `/eventfotograf-eventvideo` | 1014 | |

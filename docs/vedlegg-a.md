@@ -585,7 +585,28 @@ Hentet og telt fra sidens egen JSON-LD 16.09.2026:
 > · Er det bindingstid — og kan vi prøve først? · Hvem eier innholdet? · Kan
 > dere levere mer enn 8–10 videoer i måneden?
 
-`kontekst.md` fører `/faq` som sidens STØRSTE med 2 330 visninger.
+**RETTELSE, samme dag.** Her sto først at `kontekst.md` fører `/faq` som
+sidens største med «2 330 visninger». Pål reagerte: «over 2000 visninger på
+faq-siden? det må være en feil». Han har rett, og feilen var min lesing.
+
+Kolonnen i `kontekst.md` heter **«Ord»**, og tabellen har overskriften
+«Sider med reelt innhold, etter omfang». 2 330 er ANTALL ORD. `/faq` er
+den største siden målt i tekstmengde, ikke i trafikk.
+
+Tallet stemmer: nitten svar på 460–900 tegn er rundt 2 100 ord, pluss
+spørsmål og sidetekst. Det var etiketten som var feil, ikke tallet.
+
+**Vi har ingen trafikktall for `/faq`.** Ingen steder i prosjektet finnes
+visninger eller klikk for den siden. GSC er ikke koblet til, og Ahrefs-tall
+er estimater. Argumentet for å migrere siden må derfor stå på innholdet
+alene — og det gjør det: 2 330 ord publisert, godkjent og på tema, som
+ikke finnes på den nye siden.
+
+Dette er andre gang `kontekst.md` har ført til en feilslutning; A39 var
+navigasjonen. Dokumentet er skrevet fra en crawl, og det skal leses med
+forbehold.
+
+Merk også: `kontekst.md` sier «18 spørsmål». Den live siden har **19**.
 
 **Dette er ikke et copy-problem.** Tekstene finnes, de er Reflektors egne,
 og de ligger live. Migrering er mekanisk arbeid, ikke skriving — i motsetning
