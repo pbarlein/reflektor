@@ -101,40 +101,52 @@ mener å registrere en konvertering.**
 
 ## Målt ytelse
 
-På den deployede siden 16.09.2026, Chromium, 1440 px:
+På den deployede siden, Chromium, 1440 px, varm cache:
 
 | | Ved sidelast | Etter full scroll |
 |---|---|---|
-| Overført | **0,99 MB** | 7,98 MB |
-| Forespørsler | 55 | 82 |
+| Overført | 2,18 MB | 10,15 MB |
+| Forespørsler | 58 | 88 |
 
-**LCP 996 ms**, TTFB 704 ms. LCP-elementet er H1 — altså tekst, ikke et
-bilde. Det er ønsket: teksten over folden skal komme først.
+| Metrikk | Målt |
+|---|---|
+| **LCP** | **1 264 ms** — LCP-elementet er heroklippet |
+| TTFB | 560 ms |
+| DOMContentLoaded | 747 ms |
 
-Av de 7,98 MB er 6,74 MB video og 0,70 MB bilder. Atten bilder koster altså
-under en megabyte fordi `next/image` leverer AVIF. Video lastes bare når et
-klipp kommer i synsfeltet, og bare synlige klipp spiller.
+### Hva heroklippet koster
 
-Utviklingen gjennom arbeidet, samme måling:
+Før klippet kom inn i heroen var LCP 996 ms med H1 som LCP-element, og
+førstelasten 0,99 MB. Etter: 1 264 ms og 2,18 MB.
 
-| | Først | Etter AVIF + riktig videobredde | Etter trimming |
-|---|---|---|---|
-| Totalt | 11,03 MB | 8,33 MB | **7,98 MB** |
-| Video | 9,72 MB | 7,28 MB | **6,74 MB** |
-| Bilder | 0,77 MB | 0,51 MB | 0,70 MB |
+Klippet autospiller over folden, så det lastes umiddelbart og maler før H1
+rekker det. **Prisen er omtrent 270 ms LCP og 1,2 MB.** LCP ligger fortsatt
+godt under Googles «god»-grense på 2 500 ms, men det er verdt å vite at
+tallet nå henger på en videofil og ikke på tekst — på en treg forbindelse
+slår det ut sterkere enn en overskrift ville gjort.
 
-Siste kolonne har **tre flere klipp og en ny seksjon** enn den første, og
-veier likevel mindre. Bildene gikk litt opp fordi arbeidsseksjonen nå viser
-større flater.
+Klippet er derfor kodet hardere enn de andre: CRF 33 og åtte sekunder, mot
+CRF 31 ellers. Byttet er verifisert ved å sammenligne samme bilderute ved
+faktisk visningsbredde — ingen synlig forskjell. **Endres heroklippet, må
+LCP måles på nytt.**
 
-Tre grep bærer forskjellen: AVIF i stedet for WebP, klipp kodet i 640 px
-i stedet for 720 (cellen er ~285 CSS px, så 720 var overdimensjonert), og
-klipp trimmet til åtte sekunder. Det siste er trygt fordi klippene looper —
-ingen ser dem ut.
+### Fordelingen
+
+Av 10,15 MB etter full scroll er 8,80 MB video fordelt på ni klipp, og 0,82
+MB bilder. Nitten bilder koster altså under én megabyte fordi `next/image`
+leverer AVIF. Video lastes bare når et klipp kommer i synsfeltet, og bare
+synlige klipp spiller — unntaket er heroklippet, som er over folden fra
+første sekund.
 
 **Én forespørsel feiler:** `aplo-evnt.com/api/v1/intent_pixel/track_request`
 svarer 400. Det er en tredjeparts besøkspiksel som lastes gjennom GTM, ikke
 noe siden selv gjør. Den hører sammen med sporingsspørsmålet over.
+
+### Målt med kaldstart
+
+Første forespørsel etter en deploy gir TTFB rundt 3 400 ms og LCP over
+4 000 ms. Det er Vercels kaldstart, ikke en egenskap ved siden — send én
+forespørsel før du måler.
 
 ---
 
