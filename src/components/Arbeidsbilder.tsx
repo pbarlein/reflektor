@@ -59,7 +59,22 @@ function Klipp({
   return (
     <video
       ref={festRef}
-      className="size-full object-cover"
+      /*
+        ABSOLUTT POSISJONERT, og det er ikke kosmetikk. Et `<video>` uten
+        width/height har en egen naturlig størrelse fra fila — 640x1136 for
+        et stående klipp. I normalflyt blir `height: 100%` mot en forelder
+        med auto høyde behandlet som auto, og da bestemmer VIDEOEN hvor høy
+        rammen blir.
+
+        Det kostet en runde i prisseksjonen: teksten skulle bestemme høyden
+        og klippet fylle den, men klippet dyttet raden til 540 px — nøyaktig
+        9:16 av spaltebredden — og teksten fikk 68 px dødplass under seg.
+
+        Absolutt posisjonering gjør at klippet ikke bidrar med høyde noe
+        sted. Alle tre bruksstedene har `relative` på rammen, og der rammen
+        har et fast format er dette identisk med `size-full` i flyt.
+      */
+      className="absolute inset-0 size-full object-cover"
       poster={`${sti}/${medie.fil}.jpg`}
       preload="none"
       muted

@@ -300,3 +300,44 @@ minutter og sparer en runde med «hvorfor ser den cellen rar ut».
 Sunkost er nå representert med to klipp (matcha og kakao) og null bilder.
 Det er den ene kunden veggen viser i dybden. De to filmene er visuelt ulike
 nok — grønn te mot brun kakao — til at det leser som en serie.
+
+## Tre bytter 16.09.2026 (kveld)
+
+### Egon flyttet til prisseksjonen, BTS flyttet til rutenettet
+
+Egon-klippet lå i arbeidsrutenettet. Det står nå i prisseksjonen, der
+REFLEKTOR × EGON-merkingen gjør mest nytte — det er der kunden bestemmer
+seg. BTS-klippet fra produksjonsdagen tok plassen i rutenettet, og hører
+egentlig bedre hjemme der: seksjonen heter «Slik ser det ut når vi filmer
+hos andre».
+
+Klippet er **flyttet, ikke kopiert**. Samme klipp to steder på én side leser
+som at vi ikke har mer å vise. Ingen ny enkoding: `egon.mp4` er 640×1136,
+som passer en spalte på 304 px ved 2x.
+
+### The Well: bassengannonsen ut, spaavdelingen inn
+
+**Pass på filnavnene i Dropbox.** Fila som heter `TheWell_Spa_9-16.mov` er
+IKKE spaavdelingen — det er bassengklippet med teksten «Hos oss er det
+alltid 30 grader i vannet», et prisoverlegg og et logokort. Det var det som
+allerede lå på siden, og det er en annonse med nesten ingen bevegelse.
+
+Spaavdelingen ligger i **`Meditation Reel Short.mov`**: gongbad,
+klangboller, behandlinger og hvilerommet. 19,7 sekunder å velge fra.
+Vinduet er 0,3–8,3 s, som dekker gongen og behandlingen — den delen med
+mest bevegelse. 640×1138, CRF 31, 380 kB.
+
+Begge ble sjekket ved å legge ti rammer fra hver ved siden av rammene fra
+klippet som allerede lå der. Da var det åpenbart at «Spa»-fila var samme
+film. Det tok to minutter.
+
+### Klippene bidrar ikke lenger med høyde
+
+`<video>` uten `width`/`height` har en naturlig størrelse fra fila. I
+normalflyt blir `height: 100%` mot en forelder med auto høyde behandlet som
+auto, og da bestemmer videoen hvor høy rammen blir.
+
+Det kostet en runde i prisseksjonen: teksten skulle bestemme høyden og
+klippet fylle den, men klippet dyttet raden til nøyaktig 9:16 av
+spaltebredden og teksten fikk 68 px dødplass under seg. Klippene er nå
+absolutt posisjonert overalt, så de aldri bidrar med høyde.

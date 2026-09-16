@@ -60,7 +60,16 @@ export const reels: Reel[] = [
     fil: "thewell",
     kunde: "The Well",
     kontekst: "Spa og hotell",
-    alt: "Vertikalt klipp fra spaanlegg",
+    alt: "Vertikalt klipp fra spaavdelingen: gongbad og behandling",
+    // BYTTET 16.09.2026. Her lå bassengklippet: en nesten stillestående
+    // vannflate med teksten «Hos oss er det alltid 30 grader i vannet», et
+    // prisoverlegg og et logokort på slutten. Det er en annonse, ikke et
+    // arbeidsprøve, og det var det roligste klippet i veggen.
+    //
+    // MERK for den som leter i Dropbox: fila som HETER
+    // «TheWell_Spa_9-16.mov» er nettopp det bassengklippet. Spaavdelingen
+    // ligger i «Meditation Reel Short.mov» — gongbad, klangboller,
+    // behandlinger og hvilerommet. Filnavnet lyver, innholdet ikke.
   },
 
   {

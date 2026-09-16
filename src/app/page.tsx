@@ -328,22 +328,38 @@ export default function Forside() {
           hvorfor det peker hit og ikke på /sosiale-medier-byra. */}
       <section id="pris" className="scroll-mt-4 pb-28 sm:pb-36">
         <Container>
-          <Eyebrow>{hentTekst(front, "front.price.eyebrow")}</Eyebrow>
-          <h2 className="mt-4 max-w-2xl text-3xl sm:text-4xl">
-            {hentTekst(front, "front.price.h2") ?? <Tbd id="front.price.h2" />}
-          </h2>
-
           {/*
-            Tallet, vilkårene og tallraden i venstre spalte; bildet fyller
-            høyre i full høyde.
+            ALT SAMMEN STÅR I FLUKT MED KLIPPET.
 
-            Første forsøk satte de to spaltene side om side med items-end, og
-            da ble tallet bunnjustert mot et høyt bilde — med et stort tomrom
-            over. Bildet skal ramme inn spalten, ikke bestemme hvor teksten
-            begynner.
+            Før lå eyebrow og overskrift over rutenettet, og bare tallet og
+            tallraden ved siden av videoen. Venstrespalten var da rundt 400 px
+            innhold mot en video på nesten 1 000, og `justify-between` dro
+            hullene fra hverandre for å fylle forskjellen. Resultatet var to
+            store tomrom midt i seksjonen som skal virke mest sikker.
+
+            Nå er de fire blokkene — merkelapp og overskrift, tallet og
+            vilkårene, tallraden — én spalte, og klippet fyller den andre i
+            nøyaktig samme høyde. Høyden bestemmes av teksten, ikke av
+            videoens format: figuren er `h-full` og beskjærer seg selv. Da
+            kan det ikke oppstå luft, uansett hvor lang overskriften blir
+            eller hvor bred skjermen er.
+
+            Spalten er 19rem fordi det er bredden som gjør klippet omtrent
+            9:16 ved den teksthøyden. Blir teksten lengre, blir klippet
+            smalere i formatet — men aldri kortere enn spalten, og aldri
+            med et hull under.
           */}
-          <div className="mt-12 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
-            <div className="flex flex-col justify-between gap-12">
+          <div className="grid gap-10 lg:grid-cols-[1fr_19rem] lg:items-stretch lg:gap-14">
+            <div className="flex flex-col gap-10">
+              <div>
+                <Eyebrow>{hentTekst(front, "front.price.eyebrow")}</Eyebrow>
+                <h2 className="mt-4 max-w-xl text-3xl sm:text-4xl">
+                  {hentTekst(front, "front.price.h2") ?? (
+                    <Tbd id="front.price.h2" />
+                  )}
+                </h2>
+              </div>
+
               <div>
                 {/* Verdien leses fra tilbud, aldri skrevet inn her. Prisen
                     står flere steder på siden, og de skal ikke kunne gli fra
@@ -389,27 +405,25 @@ export default function Forside() {
             </div>
 
             {/*
-              Her sto et stillbilde, og det pekte på en fil jeg selv slettet
-              dagen før — seksjonen viste en tom boks. Feilen er rettet i
-              lenkesjekken også: den sjekket bare href, ikke mediefiler.
+              EGON, IKKE BTS-KLIPPET. Klippet åpner med REFLEKTOR ×
+              EGON-merkingen, og prisseksjonen er der kunden bestemmer seg —
+              da er det den sterkeste merkevaren som skal stå der.
 
-              Stillbildet er ikke gjenopprettet. Seksjonen selger ÉN
-              produksjonsdag, og et klipp fra en produksjonsdag viser hva
-              det er: lampe, reflektor, monitor med opptaket på, kunden foran
-              kamera. Et stillbilde av det samme er en påstand; klippet er
-              dokumentasjon.
+              Klippet er FLYTTET, ikke kopiert. Det lå i arbeidsrutenettet
+              lenger opp; der står nå BTS-klippet i stedet. Samme klipp to
+              steder på én side leser som at vi ikke har mer å vise.
 
-              `preload="none"`: seksjonen ligger godt under folden, og
-              plakatbildet står til klippet er i synsfeltet.
+              Ingen ny enkoding: 640x1136 er allerede riktig for en spalte på
+              304 px ved 2x.
             */}
             <Enkeltklipp
               sti="/reels"
               medie={{
                 type: "video",
-                fil: "produksjonsdag",
-                alt: "Klipp fra en produksjonsdag: lampe, reflektor og monitor",
+                fil: "egon",
+                alt: "Klipp fra Reflektor x Egon: servering og gjester",
               }}
-              className="relative aspect-[4/3] overflow-hidden rounded-flate bg-flate-dempet sm:aspect-[3/2] lg:aspect-auto"
+              className="relative aspect-[3/4] overflow-hidden rounded-flate bg-flate-dempet sm:aspect-[4/5] lg:aspect-auto lg:h-full"
             />
           </div>
 

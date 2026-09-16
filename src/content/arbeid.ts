@@ -55,7 +55,14 @@ export const arbeidskolonner: Celle[][] = [
     { type: "video", fil: "battery", alt: "Vertikalt klipp fra industri", enheter: 2 },
   ],
   [
-    { type: "video", fil: "egon", alt: "Vertikalt klipp fra serveringssted", enheter: 2 },
+    // Egon-klippet lå her. Det er flyttet til prisseksjonen, der
+    // REFLEKTOR × EGON-merkingen gjør mest nytte — prisseksjonen er der
+    // kunden bestemmer seg. Klippet skal ikke stå to steder på samme side.
+    //
+    // BTS-klippet erstatter det, og hører egentlig bedre hjemme her:
+    // seksjonen heter «Slik ser det ut når vi filmer hos andre», og dette
+    // er nettopp det — lampe, reflektor og monitor på en produksjonsdag.
+    { type: "video", fil: "produksjonsdag", alt: "Vertikalt klipp fra en produksjonsdag", enheter: 2 },
     { type: "foto", fil: "peppes1", alt: "Gjest med pizzastykke foran et neonskilt", enheter: 2 },
   ],
 ];
