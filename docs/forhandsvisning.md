@@ -159,6 +159,12 @@ Mediefilene, som er de eneste eksakte tallene: 11,7 MB video og 4,3 MB
 plakater og foto på disk. Veggens syv klipp er 1,81 MB av det,
 produksjonsdagklippet i prisseksjonen 382 kB.
 
+> Klippet i prisseksjonen er siden byttet til Egon-klippet, som veier
+> 999 kB pluss 93 kB plakat. Tallene i tabellen over gjelder målingen slik
+> den ble gjort, og er ikke målt på nytt etter byttet. LCP-elementet er
+> uansett heroklippet, som ligger over folden — prisklippet har
+> `preload="none"` og lastes først når det kommer i synsfeltet.
+
 **Ingenting av veggen lastes før den er i synsfeltet.** Alle klippene har
 `preload="none"` og plakatbilde, og bare de som er synlige spiller.
 
