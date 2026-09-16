@@ -123,7 +123,47 @@ for (const r of reels)
   for (const f of [`public/reels/${r.fil}.mp4`, `public/reels/${r.fil}.jpg`])
     if (!existsSync(f)) mangler.push({ fil: "src/content/reels.ts", lenke: f });
 
+/*
+ * MOTSATT VEI: mediefiler som ingen refererer til.
+ *
+ * Sjekken over fanger referanser uten fil. Denne fanger fil uten referanse.
+ * Begge oppstår av samme grunn — media byttes ut — men de koster ulikt: en
+ * manglende fil er et synlig hull, en foreldreløs fil er bare bortkastede
+ * bytes i deployen. Derfor er dette en ADVARSEL og ikke en feil.
+ *
+ * Den er også en advarsel fordi heuristikken kan ta feil: den leter etter
+ * filstammen som streng i src/, og en fil som refereres på en måte den ikke
+ * kjenner igjen ville blitt meldt uten grunn. Å felle bygget på den
+ * usikkerheten er ikke verdt det.
+ *
+ * Fant fire filer første gang den kjørte — to klipp som ble byttet ut med
+ * et stillbilde i kontaktseksjonen.
+ */
+const MEDIEMAPPER = ["public/reels", "public/arbeid"];
+const foreldrelose: string[] = [];
+const allKilde = finnFiler("src")
+  .map((f) => readFileSync(f, "utf8"))
+  .join("\n");
+
+for (const mappe of MEDIEMAPPER) {
+  if (!existsSync(mappe)) continue;
+  for (const navn of readdirSync(mappe)) {
+    const stamme = navn
+      .replace(/\.[a-z0-9]+$/i, "")
+      .replace(/-(vegg|1600|640)$/, "");
+    if (allKilde.includes(`"${stamme}"`)) continue;
+    if (allKilde.includes(`/${navn}`)) continue;
+    foreldrelose.push(`${mappe}/${navn}`);
+  }
+}
+
 console.log(`\nlenkesjekk\n\n  ${ruter.size} ruter, ${redirectKilder.size} redirects\n`);
+
+if (foreldrelose.length > 0) {
+  console.warn(`⚠ ${foreldrelose.length} mediefiler uten referanse (advarsel):\n`);
+  for (const f of foreldrelose) console.warn(`  ${f}`);
+  console.warn("");
+}
 
 if (doede.length > 0) {
   console.error(`✗ ${doede.length} døde interne lenker:\n`);

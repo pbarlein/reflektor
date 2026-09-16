@@ -424,6 +424,11 @@ registerskifte: det er der man bestemmer seg, og en pause er bedre enn mer
 bevegelse. Det fjerner samtidig innvendingen som ble notert da klippene kom
 inn — bevegelse ved siden av et skjema kan trekke blikket.
 
+**Bildet er Reflektors eget**, bekreftet av Pål 16.09.2026. Det var verdt å
+spørre: på en side som ellers bare viser eget arbeid, ville et stockbilde av
+en fotograf vært en troverdighetsfeil ingen ville oppdaget før noen kjente
+det igjen.
+
 **Utsnittet er valgt, ikke standard.** Bildet ligger i to formater i
 Dropbox: `Untitled design (13).png` er 1920×1080 og `Untitled design
 (14).png` er 1080×1080. **1:1 er valgt**, fordi 16:9-varianten allerede er
@@ -453,3 +458,18 @@ Skulle montasjen brukes, måtte den hatt full kortbredde (981 px, panel på
 245 px, lesbar co-branding) — og da oppstår tomrommet i venstrespalten på
 nytt, som var hele grunnen til at seksjonen ble bygget om. **Montasjene
 hører hjemme et sted som er bredt, ikke i en spalte som er høy.**
+
+De to enkodede klippene (`reels/gira.*` og `reels/bjorvika.*`) er slettet
+etter at bildet overtok. Originalene ligger i Dropbox som før.
+
+### Lenkesjekken går nå begge veier
+
+Den fanget allerede referanse uten fil. Den advarer nå også om **fil uten
+referanse**, som er det som oppstår når media byttes ut. De fire
+klippfilene over var det første den fant.
+
+Det er en advarsel og ikke en feil, av to grunner: en foreldreløs fil er
+bare bortkastede bytes i deployen, mens en manglende fil er et synlig hull
+— og heuristikken (leter etter filstammen som streng i `src/`) kan ta feil
+på en fil som refereres på en måte den ikke kjenner igjen. Å felle bygget
+på den usikkerheten er ikke verdt det.
