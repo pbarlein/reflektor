@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { Container } from "./Container";
+import { Klipp } from "./Klipp";
 import type { Reel } from "@/content/reels";
+import { useSpillNarSynlig } from "@/lib/videosynlighet";
 
 /**
  * Reel-vegg: 9:16-innhold i telefonformat, fire bransjer i én rad.
@@ -33,40 +34,17 @@ import type { Reel } from "@/content/reels";
  *   siden ga nedskaleringen 9,72 → 7,28 MB, og en ramme fra hvert klipp vist
  *   ved faktisk størrelse er ikke til å skille fra originalen.
  * - `poster` lastes, video gjør det ikke. `preload="none"`.
- * - Bare klippet som er i viewport spiller. IntersectionObserver pauser
- *   resten. Fire samtidige autoplay er målbar LCP- og batteriskade.
+ * - Bare klippet som er i synsfeltet spiller. Se useSpillNarSynlig — den
+ *   lå tidligere her med terskel 0,6, og det var en feil: på mobil peeker
+ *   neste klipp inn med rundt en tredjedel, så det nådde aldri 0,6 og
+ *   spilte aldri. Nå avgjøres det av overlapp, ikke av andel.
  * - `aspect-ratio` på containeren reserverer høyden. Uten den får vi CLS.
  * - Klippene er dekorative: `aria-hidden` og `tabindex={-1}`. Informasjonen
  *   ligger i bildeteksten, ikke i videoen.
  * - `prefers-reduced-motion` stopper autospill helt. Da står posterbildet.
  */
 export function ReelVegg({ reels }: { reels: Reel[] }) {
-  const refs = useRef<(HTMLVideoElement | null)[]>([]);
-
-  useEffect(() => {
-    const roligere = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (roligere) return;
-
-    const iakt = new IntersectionObserver(
-      (poster) => {
-        for (const p of poster) {
-          const v = p.target as HTMLVideoElement;
-          if (p.isIntersecting) {
-            // play() avvises hvis fanen er skjult. Det er ikke en feil.
-            void v.play().catch(() => {});
-          } else {
-            v.pause();
-          }
-        }
-      },
-      { threshold: 0.6 },
-    );
-
-    for (const v of refs.current) if (v) iakt.observe(v);
-    return () => iakt.disconnect();
-  }, []);
+  const fest = useSpillNarSynlig();
 
   return (
     <Container>
@@ -78,26 +56,10 @@ export function ReelVegg({ reels }: { reels: Reel[] }) {
           lg:grid-cols-4 lg:gap-4
         "
       >
-        {reels.map((reel, i) => (
+        {reels.map((reel) => (
           <li key={reel.fil} className="w-[70vw] shrink-0 snap-start sm:w-auto">
-            <div className="aspect-[8/16] overflow-hidden rounded-medie bg-flate-dempet">
-              <video
-                ref={(el) => {
-                  refs.current[i] = el;
-                }}
-                className="size-full object-cover"
-                poster={`/reels/${reel.fil}.jpg`}
-                preload="none"
-                muted
-                loop
-                playsInline
-                aria-hidden="true"
-                tabIndex={-1}
-                disablePictureInPicture
-                controlsList="nodownload noremoteplayback nofullscreen"
-              >
-                <source src={`/reels/${reel.fil}.mp4`} type="video/mp4" />
-              </video>
+            <div className="relative aspect-[8/16] overflow-hidden rounded-medie bg-flate-dempet">
+              <Klipp sti={`/reels/${reel.fil}`} festRef={fest(reel.fil)} />
             </div>
             <p className="mt-3 text-sm tracking-[0.02em]">
               {reel.kunde ? (

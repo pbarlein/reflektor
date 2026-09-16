@@ -56,6 +56,21 @@ export const tilbud = {
   /** Ekstra produksjonsdag for reklamefilm, produktfoto o.l. */
   ekstraProduksjonsdag: 30000,
 
+  /**
+   * STILLBILDER, lagt til 16.09.2026 på Påls instruks, ordrett gjengitt:
+   * «stillbilder ved behov bør komme frem på forsiden, men ikke som en fast
+   * leveranse. fokuset er video, som det burde være, men flere bedrifter har
+   * behovet, og da dekker vi det. det betyr at kapasiteten tas noe fra video,
+   * og derfor er 8-10 videoer et produksjonsmål og ikke en garanti.»
+   *
+   * Derfor står de IKKE i `inngar` som et sjuende punkt likt de andre — det
+   * ville lest som fast leveranse. De ligger i `stillbilder` under, og
+   * rendres som en egen, bredere merknad under de seks.
+   *
+   * Dette lukker samtidig avviket i A41: tre av FAQ-svarene sa at leveransen
+   * inneholder stillbilder, mens `inngar` ikke nevnte dem. Nå sier begge det
+   * samme, og begge sier det med forbeholdet.
+   */
   inngar: [
     "Produksjon av SoMe-strategi og produksjonsplaner",
     "Én produksjonsdag per måned hos dere, hos oss eller ute på lokasjon",
@@ -64,6 +79,14 @@ export const tilbud = {
     "Teksting og fargekorrigering",
     "Fri bruk av alt innhold – annonser, nettsider, skjermer, presentasjoner",
   ],
+
+  /**
+   * Betingelsen som knytter stillbilder til videotallet. Står som egen
+   * merknad og ikke som et punkt i `inngar`, fordi «ved behov» og «fast
+   * leveranse» er to ulike løfter.
+   */
+  stillbilder:
+    "Stillbilder når dere trenger dem. Si fra i planleggingen, så dekkes det på samme produksjonsdag. Kapasiteten deles med video – derfor er 8–10 et produksjonsmål og ikke en garanti.",
 
   /**
    * Like viktig som hva som inngår. Dagens side er eksplisitt på dette, og

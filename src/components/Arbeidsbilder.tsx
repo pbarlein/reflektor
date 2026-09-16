@@ -1,94 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Image from "next/image";
+
 import { Container } from "./Container";
+import { Klipp } from "./Klipp";
 import type { Celle, Medie, Veggcelle } from "@/content/arbeid";
-
-/**
- * Spiller bare klippene som er i synsfeltet, og bare hvis brukeren tåler
- * bevegelse. Refene er nøklet på filnavn, ikke på en teller: en teller ville
- * måttet muteres under render, og det er ikke lov.
- *
- * Siden har tretten klipp til sammen. Uten denne pausingen ville alle spilt
- * samtidig etter første scroll — målbar batteri- og dekoderkostnad, og ingen
- * ser mer enn én seksjon om gangen uansett.
- */
-function useSynligeKlipp(terskel: number) {
-  const refs = useRef<Record<string, HTMLVideoElement | null>>({});
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const iakt = new IntersectionObserver(
-      (poster) => {
-        for (const p of poster) {
-          const v = p.target as HTMLVideoElement;
-          // play() avvises hvis fanen er skjult. Det er ikke en feil.
-          if (p.isIntersecting) void v.play().catch(() => {});
-          else v.pause();
-        }
-      },
-      { threshold: terskel },
-    );
-    for (const v of Object.values(refs.current)) if (v) iakt.observe(v);
-    return () => iakt.disconnect();
-  }, [terskel]);
-
-  // Returnerer en festefunksjon, ikke selve refen. React-kompilatoren tillater
-  // ikke at en ref som er sendt inn som prop, muteres i mottakeren.
-  return (fil: string) => (el: HTMLVideoElement | null) => {
-    refs.current[fil] = el;
-  };
-}
-
-/**
- * Klippene er dekorative. Informasjonen ligger i bildene rundt og i teksten,
- * så videoen er `aria-hidden` og utenfor tabrekkefølgen. `preload="none"`
- * betyr at ingenting hentes før klippet er i synsfeltet; fram til da står
- * plakatbildet.
- */
-function Klipp({
-  medie,
-  sti,
-  festRef,
-}: {
-  medie: Medie;
-  sti: string;
-  festRef: (el: HTMLVideoElement | null) => void;
-}) {
-  return (
-    <video
-      ref={festRef}
-      /*
-        ABSOLUTT POSISJONERT, og det er ikke kosmetikk. Et `<video>` uten
-        width/height har en egen naturlig størrelse fra fila — 640x1136 for
-        et stående klipp. I normalflyt blir `height: 100%` mot en forelder
-        med auto høyde behandlet som auto, og da bestemmer VIDEOEN hvor høy
-        rammen blir.
-
-        Det kostet en runde i prisseksjonen: teksten skulle bestemme høyden
-        og klippet fylle den, men klippet dyttet raden til 540 px — nøyaktig
-        9:16 av spaltebredden — og teksten fikk 68 px dødplass under seg.
-
-        Absolutt posisjonering gjør at klippet ikke bidrar med høyde noe
-        sted. Alle tre bruksstedene har `relative` på rammen, og der rammen
-        har et fast format er dette identisk med `size-full` i flyt.
-      */
-      className="absolute inset-0 size-full object-cover"
-      poster={`${sti}/${medie.fil}.jpg`}
-      preload="none"
-      muted
-      loop
-      playsInline
-      aria-hidden="true"
-      tabIndex={-1}
-      disablePictureInPicture
-      controlsList="nodownload noremoteplayback nofullscreen"
-    >
-      <source src={`${sti}/${medie.fil}.mp4`} type="video/mp4" />
-    </video>
-  );
-}
+import { useSpillNarSynlig } from "@/lib/videosynlighet";
 
 /**
  * Arbeidsseksjonen: foto og stående video om hverandre, i fire like høye
@@ -109,17 +26,22 @@ function Klipp({
  * - `next/image` med `fill` gir AVIF og responsive størrelser fra én kildefil.
  * - Video har `preload="none"` og posterbilde. Ingenting lastes før klippet
  *   er i synsfeltet.
- * - Bare klipp som er synlige spiller. Se useSynligeKlipp.
+ * - Bare klipp som er synlige spiller. Se useSpillNarSynlig i lib/.
  * - Høyden er reservert av containeren, så ingen CLS.
  * - `prefers-reduced-motion` slår av autospill helt. Da står posterbildet.
  */
 export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
-  const fest = useSynligeKlipp(0.3);
+  const fest = useSpillNarSynlig();
 
   const celle = (c: Celle, mobilFormat: string) => (
     <figure
       key={c.fil}
-      className={`relative overflow-hidden rounded-flate bg-flate-dempet ${mobilFormat} lg:aspect-auto ${
+      /*
+        `break-inside-avoid` og `mb-3` hører til spaltemodusen under lg — se
+        rutenettet nedenfor. De nullstilles fra lg, der cellene igjen er
+        flex-barn med egen høyde.
+      */
+      className={`relative mb-3 break-inside-avoid overflow-hidden rounded-flate bg-flate-dempet ${mobilFormat} lg:mb-0 lg:aspect-auto ${
         c.enheter === 2 ? "lg:flex-[2]" : "lg:flex-1"
       }`}
     >
@@ -132,14 +54,39 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
           className="object-cover"
         />
       ) : (
-        <Klipp medie={c} sti="/reels" festRef={fest(c.fil)} />
+        <Klipp sti={`/reels/${c.fil}`} festRef={fest(c.fil)} />
       )}
     </figure>
   );
 
   return (
     <Container>
-      <div className="grid grid-cols-2 gap-3 lg:h-[60.5rem] lg:grid-cols-4 lg:gap-4">
+      {/*
+        TO LAYOUTMOTORER, fordi oppgaven er to forskjellige.
+
+        FRA lg: fire flex-spalter med fast totalhøyde. Cellene får 1 eller 2
+        enheter av høyden, og blokken blir rektangulær — komposisjonen er
+        kuratert, se arbeid.ts.
+
+        UNDER lg: CSS-SPALTER, ikke rutenett. Dette er en RETTELSE. Her sto
+        `grid-cols-2` med celler i 9:16 og 4:5 om hverandre. Et rutenett gir
+        hver rad høyden til den høyeste cellen i raden, så en 4:5-celle ved
+        siden av en 9:16 etterlot rundt 280 px tomt under seg. Det var det
+        Pål så som at «grids blir litt off».
+
+        `columns-2` pakker i stedet cellene nedover og balanserer spaltene
+        selv. Et rutenett KAN ikke gjøre det uten masonry, som ennå ikke er
+        i nettleserne.
+
+        TRE SPALTER FRA sm. Med to spalter ble blokken 3 233 px på en iPad
+        Mini — bildene blir bredere, men antallet er det samme, så høyden
+        løper. Tre spalter holder den på samme høyde som på telefon.
+
+        Leserekkefølgen blir spalte for spalte i stedet for rad for rad. For
+        et kuratert galleri uten bildetekster er det uten betydning — det
+        finnes ingen rekkefølge å miste.
+      */}
+      <div className="columns-2 gap-3 sm:columns-3 sm:gap-4 lg:grid lg:h-[60.5rem] lg:grid-cols-4 lg:gap-4 lg:[column-count:auto]">
         {kolonner.map((kol, k) => (
           <div key={k} className="contents lg:flex lg:h-full lg:flex-col lg:gap-4">
             {kol.map((c) =>
@@ -193,7 +140,7 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
  * som ser ut som en feil.
  */
 export function Arbeidsvegg({ rader }: { rader: Veggcelle[][] }) {
-  const fest = useSynligeKlipp(0.15);
+  const fest = useSpillNarSynlig();
 
   const format: Record<Veggcelle["format"], string> = {
     "9/16": "aspect-[9/16]",
@@ -243,7 +190,7 @@ export function Arbeidsvegg({ rader }: { rader: Veggcelle[][] }) {
                     className="object-cover"
                   />
                 ) : (
-                  <Klipp medie={c} sti="/arbeid" festRef={fest(c.fil)} />
+                  <Klipp sti={`/arbeid/${c.fil}`} festRef={fest(c.fil)} />
                 )}
               </li>
             ))}
@@ -272,10 +219,10 @@ export function Enkeltklipp({
   sti: string;
   className?: string;
 }) {
-  const fest = useSynligeKlipp(0.3);
+  const fest = useSpillNarSynlig();
   return (
     <figure className={className}>
-      <Klipp medie={medie} sti={sti} festRef={fest(medie.fil)} />
+      <Klipp sti={`${sti}/${medie.fil}`} festRef={fest(medie.fil)} />
     </figure>
   );
 }

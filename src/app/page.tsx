@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { Container } from "@/components/Container";
+import { Klipp } from "@/components/Klipp";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Logorad } from "@/components/Logorad";
 import { ReelVegg } from "@/components/ReelVegg";
@@ -13,6 +15,7 @@ import {
   FaqSchema,
 } from "@/components/Schema";
 import { front } from "@/content/sider/front";
+import { faqSporsmal, forsidensTillegg, hentFaq } from "@/content/faq";
 import { klarerteAnmeldelser } from "@/content/anmeldelser";
 import { reels } from "@/content/reels";
 import { arbeidskolonner, veggrader } from "@/content/arbeid";
@@ -58,6 +61,28 @@ import { site, tilbud } from "@/content/site";
  * siden av en tekstspalte på en telefon ville gitt 40 % av bredden til noe
  * som er tre ord langt.
  */
+/**
+ * Forsidens ti spørsmål: de seks godkjente slot-svarene, så de fire som
+ * hentes fra /faq.
+ *
+ * REKKEFØLGEN ER IKKE TILFELDIG. De seks først er skrevet for posisjonen
+ * rett før skjemaet og er korte. De fire fra /faq er 640–900 tegn og
+ * besvarer alternativene — de hører hjemme etter, ikke foran, fordi den som
+ * bare skummer skal møte de korte først.
+ *
+ * Et slot uten godkjent tekst faller ut i stedet for å rendres som et tomt
+ * trekkspill. Det skjuler ingenting: seksjonens slots står fortsatt i
+ * front.ts og fanges av content:check.
+ */
+const forsidensFaq: { sporsmal: string; svar: string }[] = [
+  ...slotsISeksjon(front, 6).flatMap((slot) => {
+    if (!slot.verdi) return [];
+    const [sporsmal, ...resten] = slot.verdi.split("|");
+    return [{ sporsmal: sporsmal.trim(), svar: resten.join("|").trim() }];
+  }),
+  ...forsidensTillegg.map(hentFaq),
+];
+
 function Rad({
   merkelapp,
   children,
@@ -217,21 +242,7 @@ export default function Forside() {
               dem side om side.
             */}
             <figure className="relative h-[26rem] overflow-hidden rounded-flate bg-flate-dempet sm:h-[32rem] lg:h-auto">
-              <video
-                className="absolute inset-0 size-full object-cover"
-                poster="/reels/antonburst.jpg"
-                preload="metadata"
-                autoPlay
-                muted
-                loop
-                playsInline
-                aria-hidden="true"
-                tabIndex={-1}
-                disablePictureInPicture
-                controlsList="nodownload noremoteplayback nofullscreen"
-              >
-                <source src="/reels/antonburst.mp4" type="video/mp4" />
-              </video>
+              <Klipp sti="/reels/antonburst" ivrig />
             </figure>
           </div>
         </Container>
@@ -277,7 +288,7 @@ export default function Forside() {
       {/* 3 · SLIK FUNGERER DET — mørk blokk som kapittelskille */}
       <section className="pb-20">
         <Container>
-          <div className="rounded-flate bg-dyp px-8 py-14 text-pa-dyp sm:px-14">
+          <div className="rounded-flate bg-dyp px-6 py-12 text-pa-dyp sm:px-14 sm:py-14">
             <Eyebrow variant="dyp">
               {hentTekst(front, "front.how.eyebrow")}
             </Eyebrow>
@@ -293,27 +304,67 @@ export default function Forside() {
               Skillene er strukturelle, ikke dekor — de sier at dette er tre
               trinn i rekkefølge, ikke tre likestilte påstander.
             */}
-            <ol className="mt-12 grid gap-10 sm:grid-cols-3 sm:gap-0">
+            {/*
+              TO GEOMETRIER FOR SAMME BUDSKAP: «dette er tre trinn i
+              rekkefølge, ikke tre likestilte påstander.»
+
+              Desktop sier det med LODDRETTE hårstreker mellom spaltene, i
+              samme språk som prisarket. --kant-pa-dyp er en egen verdi: den
+              vanlige hårstreken er regnet mot beige og forsvinner på brunt.
+
+              Mobil sier det med en TIDSLINJE. Her var seksjonen 1 005 px
+              ren tekst uten et eneste bilde — den lengste sammenhengende
+              tekststrekningen på siden, og en av dem Pål meldte som «for
+              mye tekst». Stablet med 40 px mellomrom var de tre stegene tre
+              like avsnitt; nummeret sto på egen linje over tittelen og kostet
+              en linje per steg.
+
+              Nummeret er nå en sirkel i en skinne til venstre, med en strek
+              som binder stegene sammen. Det tar bort tre linjer, gjør
+              rekkefølgen synlig uten å forklare den, og fjerner ingen copy.
+              Streken stopper på siste steg — den peker framover, og etter
+              det siste er det ingenting å peke på.
+            */}
+            <ol className="mt-12 grid gap-0 sm:grid-cols-3">
               {slotsISeksjon(front, 3)
                 .filter((s) => s.id.includes("steps"))
-                .map((slot, i) => {
+                .map((slot, i, alle) => {
                   const delt = slot.verdi?.split("|") ?? null;
+                  const sist = i === alle.length - 1;
                   return (
                     <li
                       key={slot.id}
-                      className={`sm:px-8 ${i === 0 ? "sm:pl-0" : ""} ${
-                        i < 2 ? "sm:border-r sm:border-[color:var(--kant-pa-dyp)]" : "sm:pr-0"
+                      className={`relative pb-9 pl-14 last:pb-0 sm:pb-0 sm:pl-0 sm:px-8 ${
+                        i === 0 ? "sm:pl-0" : ""
+                      } ${
+                        sist
+                          ? "sm:pr-0"
+                          : "sm:border-r sm:border-[color:var(--kant-pa-dyp)]"
                       }`}
                     >
-                      <span className="font-mono text-sm text-aksent-pa-dyp">
+                      {/*
+                        Skinna finnes bare under sm. Fra sm overtar de
+                        loddrette skillene, og da ville en sirkel til venstre
+                        vært to systemer som sier det samme.
+                      */}
+                      <span
+                        aria-hidden
+                        className="absolute top-0 left-0 flex size-9 items-center justify-center rounded-full border border-[color:var(--kant-pa-dyp)] font-[family-name:var(--font-display-serif)] text-lg leading-none text-aksent-pa-dyp sm:static sm:size-auto sm:block sm:rounded-none sm:border-0 sm:text-base"
+                      >
                         {i + 1}
                       </span>
+                      {!sist && (
+                        <span
+                          aria-hidden
+                          className="absolute top-11 bottom-2 left-[1.125rem] w-px bg-[color:var(--kant-pa-dyp)] sm:hidden"
+                        />
+                      )}
                       {delt ? (
                         <>
-                          <h3 className="mt-3 text-lg font-medium">
+                          <h3 className="text-lg font-medium sm:mt-3">
                             {delt[0].trim()}
                           </h3>
-                          <p className="mt-2 text-pa-dyp-dempet">
+                          <p className="mt-2 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet sm:text-base">
                             {delt.slice(1).join("|").trim()}
                           </p>
                         </>
@@ -465,31 +516,63 @@ export default function Forside() {
                   </h2>
 
                   {/*
-                    TO LAYOUTER. Under sm står tallene i en stabel, med tallet
-                    og ordet på samme linje. Tre spalter på 390 px gir
-                    kolonner på rundt 100 px, og «produksjonsdag» er bredere
-                    enn det — i første versjon rant ordet inn i nabospalten.
-                    Fra sm er det tre spalter, som er der tallene gjør mest
-                    nytte.
+                    TRE SPALTER OGSÅ PÅ MOBIL — omgjort 16.09.2026.
+
+                    Her sto tallene stablet under sm, med tallet og ordet på
+                    samme linje. Grunnen var at tre spalter på 390 px gir
+                    rundt 100 px hver, og «produksjonsdag» er bredere enn
+                    det. Løsningen den gang var å legge ordet VED SIDEN av
+                    tallet, med `min-w-[5.25rem]` på tallet så de tre
+                    ordene flukter.
+
+                    Det ga en 84 px tom kolonne etter et ettsifret tall, og
+                    tre nesten tomme rader etter hverandre. Pål: prisseksjonen
+                    «blir litt rart komprimert» på mobil. Det var dette.
+
+                    Riktig grep var å krympe TYPOGRAFIEN, ikke å bytte
+                    layout: tallet fra 2,75 til 2 rem og merkelappen fra 14
+                    til 12 px. Da får ordet plass i en 100 px spalte, og
+                    mobil og desktop har samme struktur — ett oppsett å
+                    vedlikeholde i stedet for to.
                   */}
-                  <dl className="mt-10 flex flex-col gap-5 sm:mt-12 sm:grid sm:grid-cols-3 sm:gap-x-8">
+                  <dl className="mt-10 grid grid-cols-3 gap-x-4 sm:mt-12 sm:gap-x-8">
                     {[
-                      [tilbud.produksjonsdagerPerManed, "produksjonsdag", "i måneden"],
+                      /*
+                        MYKE BINDESTREKER (U+00AD) i «produksjonsdag» og
+                        «publiseringer». Begge er lengre enn spalten på de
+                        smaleste telefonene: på en iPhone SE er spalten 80 px
+                        og ordene måler 89.
+
+                        `hyphens: auto` alene holdt ikke — den krever at
+                        nettleseren har en orddelingsordbok for språket, og
+                        det kan vi ikke garantere i alle miljøer. Delepunkter
+                        vi setter selv er deterministiske, og de er usynlige
+                        når ordet får plass.
+
+                        Delt på stavelser: pro-duk-sjons-dag,
+                        pu-bli-se-rin-ger. Ett delepunkt var ikke nok — «pro-
+                        duksjons-» er fortsatt 89 px.
+                      */
+                      [tilbud.produksjonsdagerPerManed, "pro\u00ADduk\u00ADsjons\u00ADdag", "i måneden"],
                       [tilbud.videoerPerManed, "ferdige videoer", "hver måned"],
-                      [tilbud.posterPerUke, "publiseringer", "i uken"],
+                      [tilbud.posterPerUke, "pu\u00ADbli\u00ADse\u00ADrin\u00ADger", "i uken"],
                     ].map(([tall, ord, nar]) => (
-                      <div
-                        key={ord}
-                        className="flex items-baseline gap-4 sm:block"
-                      >
+                      <div key={ord}>
                         <dt className="sr-only">{`${ord} ${nar}`}</dt>
-                        <dd className="contents sm:block">
-                          <span className="min-w-[5.25rem] font-[family-name:var(--font-display-serif)] text-[2.75rem] leading-none tracking-[-0.02em] sm:block sm:min-w-0 sm:text-[3.25rem]">
+                        <dd>
+                          <span className="block font-[family-name:var(--font-display-serif)] text-[2rem] leading-none tracking-[-0.02em] sm:text-[3.25rem]">
                             {tall}
                           </span>
-                          <span className="text-sm leading-snug tracking-[0.02em] text-blekk-dempet sm:mt-3 sm:block">
-                            {ord}{" "}
-                            <br className="hidden sm:block" />
+                          {/*
+                            `hyphens-auto` er nødvendig, ikke pynt.
+                            «produksjonsdag» er 14 tegn og måler rundt 92 px
+                            ved 12 px — bredere enn spalten på en iPhone SE,
+                            der den er 80 px. Uten orddeling renner ordet ut
+                            av spalten sin. Nettleseren deler på norsk fordi
+                            <html lang="nb"> er satt.
+                          */}
+                          <span className="mt-2 block hyphens-auto text-xs leading-snug tracking-[0.02em] text-blekk-dempet sm:mt-3 sm:text-sm">
+                            {ord} <br />
                             {nar}
                           </span>
                         </dd>
@@ -593,6 +676,19 @@ export default function Forside() {
             </ul>
 
             {/*
+              STILLBILDER — egen, bred merknad og ikke et sjuende kort.
+              Forskjellen er ikke kosmetisk: de seks kortene er fast
+              leveranse, stillbilder er «ved behov». Et likt kort ville lest
+              som et likt løfte. Merknaden er derfor bredere, roligere og
+              uten løpenummer, og den bærer betingelsen som knytter den til
+              videotallet over. Se `tilbud.stillbilder` i site.ts for Påls
+              instruks ordrett.
+            */}
+            <p className="mt-3 rounded-flate border border-dashed border-kant-pa-dyp/70 p-5 text-[1.0625rem] leading-relaxed text-pretty text-pa-dyp-dempet sm:p-6">
+              {tilbud.stillbilder}
+            </p>
+
+            {/*
               De to siste kortene deler bredden 1:2. «Inngår ikke» skal være
               en LITEN dose — se research-konvertering.md om
               blemishing-effekten: negativ informasjon løfter inntrykket bare
@@ -671,28 +767,82 @@ export default function Forside() {
         <Arbeidsvegg rader={veggrader} />
       </section>
 
-      {/* 6 · FAQ — native details, ingen JavaScript */}
-      <section className="pb-24">
+      {/*
+        6 · FAQ — bygget om 16.09.2026.
+
+        TO ENDRINGER, og den ene betinger den andre.
+
+        FLERE SPØRSMÅL. Seks ble ti. De fire nye er hentet ved referanse fra
+        /faq, ikke kopiert — se `forsidensTillegg` i faq.ts for hvilke og
+        hvorfor. Kort: de seks godkjente svarene dekket ikke de to reelle
+        alternativene en kunde veier oss mot (ansette selv, annonsere i
+        stedet), og heller ikke de to som avgjør om prisen føles forsvarlig.
+
+        DET GJORDE DESIGNET TIL ET PROBLEM. Ti trekkspill i én spalte er en
+        liste; seks var en kort liste. Derfor:
+
+        - SKINNE OG BRED SPALTE, samme grep som prisarket. Overskriften står
+          i skinna, spørsmålene i den brede spalten. Seksjonen leser som en
+          del av samme dokument i stedet for som enda en stablet blokk.
+        - EKSKLUSIVT TREKKSPILL via `name` på <details>. Nettleseren lukker
+          det forrige når du åpner et nytt — null JavaScript. Uten det kunne
+          ti åpne svar bli 4 000 tegn i én kolonne.
+        - MYK ÅPNING via `::details-content` og `interpolate-size`. Ren CSS,
+          se globals.css. Feiler den, åpner svaret momentant — altså slik
+          <details> alltid har oppført seg.
+
+        SVARENE LIGGER I DOM-EN OGSÅ NÅR DE ER LUKKET. Det er grunnen til at
+        <details> er trygt her og en JavaScript-løsning ikke ville vært det:
+        språkmodeller klikker ikke.
+      */}
+      <section className="pb-24 sm:pb-32">
         <Container>
-          <h2 className="max-w-2xl text-3xl sm:text-4xl">
-            Det folk lurer på før de tar kontakt
-          </h2>
-          <div className="mt-10 max-w-2xl divide-y divide-kant border-y border-kant">
-            {slotsISeksjon(front, 6).map((slot) => {
-              const delt = slot.verdi?.split("|") ?? null;
-              return (
-                <details key={slot.id} className="group py-5">
-                  <summary className="cursor-pointer font-medium">
-                    {delt ? delt[0].trim() : <Tbd id={slot.id} />}
-                  </summary>
-                  {delt && (
-                    <p className="mt-3 text-blekk-dempet">
-                      {delt.slice(1).join("|").trim()}
+          <div className="grid gap-x-10 gap-y-8 lg:grid-cols-[9rem_1fr]">
+            <p className="text-xs font-medium tracking-[0.08em] text-blekk-dempet uppercase lg:pt-3">
+              Spørsmål
+            </p>
+
+            <div>
+              <h2 className="max-w-xl text-3xl text-balance sm:text-4xl">
+                Det folk lurer på før de tar kontakt
+              </h2>
+
+              <div className="mt-9 max-w-2xl border-t border-kant">
+                {forsidensFaq.map((p) => (
+                  <details
+                    key={p.sporsmal}
+                    name="forside-faq"
+                    className="faq-rad group border-b border-kant"
+                  >
+                    <summary className="flex cursor-pointer list-none items-start gap-5 py-5 text-[1.0625rem] leading-snug font-medium [&::-webkit-details-marker]:hidden">
+                      <span className="flex-1 text-pretty">{p.sporsmal}</span>
+                      {/*
+                        Pluss som blir minus. To streker som krysser
+                        hverandre, der den loddrette skaleres til null når
+                        raden er åpen — ingen ikonfil, ingen rotasjon som
+                        ser skjev ut på halve piksler.
+                      */}
+                      <span
+                        aria-hidden
+                        className="relative mt-2 block size-3 shrink-0 text-blekk-dempet"
+                      >
+                        <span className="absolute top-1/2 left-0 h-px w-3 -translate-y-1/2 bg-current" />
+                        <span className="absolute top-0 left-1/2 h-3 w-px -translate-x-1/2 bg-current transition-transform duration-200 group-open:scale-y-0 motion-reduce:transition-none" />
+                      </span>
+                    </summary>
+                    <p className="pr-8 pb-6 leading-relaxed text-pretty text-blekk-dempet">
+                      {p.svar}
                     </p>
-                  )}
-                </details>
-              );
-            })}
+                  </details>
+                ))}
+              </div>
+
+              <p className="mt-8 text-[1.0625rem]">
+                <Link href="/faq" className="underline hover:text-aksent">
+                  Alle {faqSporsmal.length} spørsmål og svar
+                </Link>
+              </p>
+            </div>
           </div>
         </Container>
       </section>

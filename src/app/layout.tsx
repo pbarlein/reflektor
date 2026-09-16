@@ -72,7 +72,12 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="no">
+    /*
+     * `nb` og ikke `no`. «no» er makrospråkkoden og treffer ingen
+     * orddelingsordbok i Chrome; bokmål gjør det. Skjermlesere velger også
+     * riktigere stemme på `nb`.
+     */
+    <html lang="nb">
       <body className={`${poppins.variable} ${displaySerif.variable} font-sans`}>
         <GtmNoscript />
         <Sporing />

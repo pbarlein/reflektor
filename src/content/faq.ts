@@ -19,14 +19,18 @@
  * TO FORHOLD SOM MÅ AVKLARES MED PÅL — begge er notert i A41 og er IKKE
  * rettet her, fordi begge er innholdsbeslutninger:
  *
- * 1. STILLBILDER. Spørsmål 1, 4 og 11 sier at leveransen inneholder
- *    stillbilder. `tilbud.inngar` i site.ts nevner dem ikke. Én av de to
- *    stedene er feil, og det gjelder hva kunden får for 30 000 i måneden.
+ * 1. STILLBILDER — AVKLART 16.09.2026. Spørsmål 1, 4 og 11 sa at
+ *    leveransen inneholder stillbilder, mens `tilbud.inngar` ikke nevnte
+ *    dem. Pål har avgjort: stillbilder dekkes VED BEHOV, ikke som fast
+ *    leveranse, og det er nettopp derfor 8–10 videoer er et produksjonsmål
+ *    og ikke en garanti. Forsiden sier nå det samme — se
+ *    `tilbud.stillbilder` i site.ts. FAQ-teksten er ikke endret; den var
+ *    ikke feil, den manglet forbeholdet som nå står på forsiden.
  *
- * 2. OPPSIGELSESFRIST. Spørsmål 17 sier «kun ordinær oppsigelsesfrist»
- *    uten å tallfeste den. AGENTS.md krever at tre måneders oppsigelse
- *    står EKSPLISITT. Ikke en selvmotsigelse, men vagere enn vår egen
- *    låste ramme.
+ * 2. OPPSIGELSESFRIST — AVKLART 16.09.2026. Spørsmål 17 sto med «kun
+ *    ordinær oppsigelsesfrist», uten tall. AGENTS.md krever at tre måneder
+ *    står eksplisitt. Pål: «legg til 3 måneder i FAQ». Gjort to steder i
+ *    svar 17; ingenting annet i teksten er rørt.
  *
  * REKKEFØLGEN ER BEHOLDT fra dagens side. Den går fra definisjon til
  * avgrensning til pris til innvendinger til praktisk — altså fra «hva er
@@ -104,7 +108,7 @@ export const faqSporsmal: FaqPunkt[] = [
   },
   {
     sporsmal: "Er det bindingstid — og kan vi prøve først?",
-    svar: "Ingen bindingstid, kun ordinær oppsigelsesfrist. Vi mener dere skal bli fordi arbeidet virker, ikke fordi en kontrakt hindrer dere i å gå. Vi selger derimot ikke prøvepakker eller enkeltoppdrag. Samarbeidet er løpende, fordi det er konsistensen som gir resultater — ett innhold gir sjelden effekt uansett hvor godt det er. I praksis fungerer de første månedene som en prøveperiode uansett: dere ser hvordan produksjonsdagen går, hvordan innholdet blir og hvordan det presterer, og kan si opp med ordinær frist. Vil dere se hvordan vi tenker før dere bestemmer dere, lager vi et komplett strategiforslag gratis — med research på deres egne kanaler og konkrete innholdsserier, uten forpliktelser.",
+    svar: "Ingen bindingstid, kun ordinær oppsigelsesfrist på tre måneder. Vi mener dere skal bli fordi arbeidet virker, ikke fordi en kontrakt hindrer dere i å gå. Vi selger derimot ikke prøvepakker eller enkeltoppdrag. Samarbeidet er løpende, fordi det er konsistensen som gir resultater — ett innhold gir sjelden effekt uansett hvor godt det er. I praksis fungerer de første månedene som en prøveperiode uansett: dere ser hvordan produksjonsdagen går, hvordan innholdet blir og hvordan det presterer, og kan si opp med tre måneders frist. Vil dere se hvordan vi tenker før dere bestemmer dere, lager vi et komplett strategiforslag gratis — med research på deres egne kanaler og konkrete innholdsserier, uten forpliktelser.",
   },
   {
     sporsmal: "Hvem eier innholdet?",
@@ -115,3 +119,50 @@ export const faqSporsmal: FaqPunkt[] = [
     svar: "Ja. Leveransen skalerer med antall produksjonsdager. Én produksjonsdag i måneden gir 8–10 ferdige videoer til 30 000 kr/mnd. Trenger dere mer, legger vi til flere produksjonsdager til samme pris per dag, og publiseringsfrekvensen økes tilsvarende. Har dere flere lokasjoner eller avdelinger, kan produksjonsdagene fordeles på ulike steder. Trenger dere flere varianter av åpningen på en video til testing i annonsering, lager vi det når det er et konkret behov.",
   },
 ];
+
+/**
+ * De fire spørsmålene fra denne lista som ALSO skal stå på forsiden.
+ *
+ * Forsiden har seks egne, kortere svar i front.ts. De er godkjent copy,
+ * skrevet for posisjonen rett før skjemaet, og de dekker: hva om det ikke
+ * virker, hva må vi gjøre selv, hva koster det, vi har lite å vise fram,
+ * hva er Reflektor, hvor fort kommer vi i gang.
+ *
+ * Det de IKKE dekker, er de to reelle alternativene en kunde veier oss mot,
+ * og de to spørsmålene som avgjør om prisen føles forsvarlig. Pål:
+ * forsiden er «både merkevaresiden og tjenestesiden som skal hente inn
+ * trafikk til konvertering», og da må de stå der.
+ *
+ * VALGT, MED BEGRUNNELSE:
+ *
+ * - «Bør vi heller ansette en SoMe-ansvarlig selv?» — det største
+ *   konkurrerende alternativet. En kunde som ikke får svar på dette,
+ *   utsetter beslutningen.
+ * - «Hva om vi heller bruker pengene på annonsering?» — det nest største.
+ * - «Er 30 000 kroner i måneden mye eller lite?» — forsvarer tallet som
+ *   står med 176 px rett over.
+ * - «Hvilke resultater kan vi forvente?» — begynner med at vi ikke lover
+ *   tall. Det er det mest tillitsbyggende avsnittet Reflektor har, og det
+ *   hører hjemme der beslutningen tas.
+ *
+ * REFERANSE OG IKKE KOPI. Teksten ligger bare ett sted. Kopierte vi den
+ * inn i front.ts, ville de to stedene kunne gli fra hverandre uten at noen
+ * sjekk fanget det.
+ */
+export const forsidensTillegg = [
+  "Bør vi heller ansette en SoMe-ansvarlig selv?",
+  "Hva om vi heller bruker pengene på annonsering?",
+  "Er 30 000 kroner i måneden mye eller lite?",
+  "Hvilke resultater kan vi forvente?",
+] as const;
+
+/**
+ * Slår opp et spørsmål ved navn. Kaster hvis det ikke finnes — en stille
+ * `undefined` ville blitt et tomt trekkspill på forsiden, og den feilen
+ * ville ingen oppdaget før en kunde klikket på den.
+ */
+export function hentFaq(sporsmal: string): FaqPunkt {
+  const treff = faqSporsmal.find((p) => p.sporsmal === sporsmal);
+  if (!treff) throw new Error(`Ukjent FAQ-spørsmål: «${sporsmal}»`);
+  return treff;
+}

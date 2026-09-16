@@ -145,22 +145,35 @@ html {
   view-timeline-axis: block;
 }
 
-@media (min-width: 1024px) {
-  .vegg-drift-venstre,
-  .vegg-drift-hoyre {
-    animation-timeline: --vegg;
-    animation-fill-mode: both;
-    animation-timing-function: linear;
-    will-change: transform;
-  }
+/*
+ * DRIFTEN GJELDER OGSÅ MOBIL — endret 16.09.2026.
+ *
+ * Den var låst til `min-width: 1024px`. Konsekvensen på telefon var at
+ * veggen sto helt stille, og siden den er to rader à ni celler og langt
+ * bredere enn en telefon, betydde det at de fleste klippene ALDRI kom i
+ * synsfeltet. Målt: fem av veggens klipp nådde intersectionRatio 0,00
+ * gjennom en hel gjennomrulling på iPhone 13. De lastet aldri, spilte
+ * aldri, og fantes i praksis ikke.
+ *
+ * Driften er scroll-drevet, ikke en loop: den beveger seg bare mens
+ * brukeren ruller. Det er billigere enn en marquee på mobil — ingen
+ * animasjon når siden står stille — og det er samme mekanikk som på
+ * desktop. Den er fortsatt av under prefers-reduced-motion.
+ */
+.vegg-drift-venstre,
+.vegg-drift-hoyre {
+  animation-timeline: --vegg;
+  animation-fill-mode: both;
+  animation-timing-function: linear;
+  will-change: transform;
+}
 
-  .vegg-drift-venstre {
-    animation-name: vegg-venstre;
-  }
+.vegg-drift-venstre {
+  animation-name: vegg-venstre;
+}
 
-  .vegg-drift-hoyre {
-    animation-name: vegg-hoyre;
-  }
+.vegg-drift-hoyre {
+  animation-name: vegg-hoyre;
 }
 
 /* Ingen bevegelse betyr ingen bevegelse. Radene står der de står. */
@@ -195,8 +208,28 @@ html {
   animation: logorad-drift 55s linear infinite;
 }
 
-/* WCAG 2.2.2: bevegelse over fem sekunder må kunne stanses. */
-.logorad-maske:hover .logorad-spor,
+/*
+ * WCAG 2.2.2: bevegelse over fem sekunder må kunne stanses.
+ *
+ * HOVER-REGELEN ER GJERDET INNE I `(hover: hover)`, og det er en RETTELSE.
+ * På berøringsskjerm blir :hover hengende igjen etter et trykk — Safari på
+ * iOS holder tilstanden til du trykker et annet sted. Ruller man siden med
+ * fingeren over logoraden, er det nok til å sette animasjonen på pause, og
+ * den blir stående. Det var trolig det Pål så: «logoene beveger seg ikke
+ * automatisk» på mobil, mens den samme koden drifter fint i en
+ * desktop-nettleser og i emulert mobil, der :hover ikke henger igjen.
+ *
+ * Berøringsbrukere mister ingen kontroll av dette. Wrapperen har
+ * `overflow-x: auto`, så raden kan dras — og å dra i den er en sterkere
+ * form for kontroll enn å pause den.
+ */
+@media (hover: hover) and (pointer: fine) {
+  .logorad-maske:hover .logorad-spor {
+    animation-play-state: paused;
+  }
+}
+
+/* Tastaturfokus gjelder uansett pekerenhet. */
 .logorad-maske:focus-within .logorad-spor {
   animation-play-state: paused;
 }
@@ -325,6 +358,45 @@ h3 {
       animation-timeline: view();
       /* Ferdig innhentet godt før kortet står midt på skjermen. */
       animation-range: entry 10% cover 34%;
+    }
+  }
+}
+
+/*
+ * TREKKSPILLET PÅ FORSIDEN OG /faq.
+ *
+ * Høyden på et <details> lar seg ikke animere med vanlig CSS, fordi
+ * `height: auto` ikke er en animerbar verdi. To nye egenskaper løser det:
+ * `interpolate-size: allow-keywords` gjør `auto` interpolerbar, og
+ * `::details-content` gir et handtak på innholdet som skjules.
+ *
+ * Alt ligger bak `@supports`. Der det ikke støttes, åpner svaret momentant
+ * — altså nøyaktig slik <details> alltid har oppført seg. Ingen JavaScript,
+ * ingen tilstand å holde styr på, og ingen mulighet for at innholdet blir
+ * stående usynlig hvis noe feiler.
+ *
+ * `content-visibility` må med i overgangen. Uten den hopper innholdet inn
+ * ved åpning i stedet for å tone ut fra null høyde.
+ */
+@supports (interpolate-size: allow-keywords) and selector(::details-content) {
+  @media (prefers-reduced-motion: no-preference) {
+    .faq-rad {
+      interpolate-size: allow-keywords;
+    }
+
+    .faq-rad::details-content {
+      height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition:
+        height 260ms ease,
+        content-visibility 260ms allow-discrete,
+        opacity 200ms ease;
+    }
+
+    .faq-rad[open]::details-content {
+      height: auto;
+      opacity: 1;
     }
   }
 }
