@@ -70,6 +70,23 @@ export const reels: Reel[] = [
     // «TheWell_Spa_9-16.mov» er nettopp det bassengklippet. Spaavdelingen
     // ligger i «Meditation Reel Short.mov» — gongbad, klangboller,
     // behandlinger og hvilerommet. Filnavnet lyver, innholdet ikke.
+    //
+    // PLAKATEN ER VALGT FOR HÅND HER, og det er første gang. Regelen ellers
+    // er «skarpeste ramme inne i klippet», og den er god — men den
+    // optimaliserer for det STILLESTÅENDE. Bevegelsesuskarphet fjerner
+    // kanter, så på et klipp som er valgt nettopp fordi det har bevegelse,
+    // plukker regelen systematisk den minst representative ramma. Her ga
+    // den et arkitekturbilde av hvilerommet: skarpest i klippet, og det
+    // stikk motsatte av hvorfor klippet ble byttet inn.
+    //
+    // Valgt ramme er gongen i det slaget treffer. Sjekket ved å legge ni
+    // kandidater ved siden av hverandre i FAKTISK visningsstørrelse —
+    // 285x570 px, 8:16, slik reel-veggen beskjærer. Ved den størrelsen var
+    // det tydelig at rammene rett etter er ubrukelige: gongen svinger inn
+    // i forgrunnen og er ute av fokus. I en miniatyr så de skarpe ut.
+    //
+    // Lærdommen, for neste gang: skarphet er et GULV, ikke et mål. Og
+    // kandidater skal alltid vurderes i den størrelsen de faktisk vises i.
   },
 
   {

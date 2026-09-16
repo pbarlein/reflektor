@@ -324,8 +324,25 @@ allerede lå på siden, og det er en annonse med nesten ingen bevegelse.
 
 Spaavdelingen ligger i **`Meditation Reel Short.mov`**: gongbad,
 klangboller, behandlinger og hvilerommet. 19,7 sekunder å velge fra.
-Vinduet er 0,3–8,3 s, som dekker gongen og behandlingen — den delen med
-mest bevegelse. 640×1138, CRF 31, 380 kB.
+Vinduet er 0,2–6,2 s. Første forsøk tok åtte sekunder, men den siste
+tredjedelen er hvilerommet og gjester som ligger stille — pent, og det
+stikk motsatte av det som var bestilt. 640×1138, CRF 31, 305 kB.
+
+**Plakatregelen sviktet her, og det er lærerikt.** «Skarpeste ramme inne i
+klippet» optimaliserer for det STILLESTÅENDE: bevegelsesuskarphet fjerner
+kanter. På et klipp valgt nettopp fordi det har bevegelse, plukker regelen
+derfor systematisk den minst representative ramma — her et arkitekturbilde
+av hvilerommet, med kantvarians 3 022 mot 1 300–2 200 for
+behandlingsrammene.
+
+Plakaten er valgt for hånd: gongen i det slaget treffer. Kandidatene ble
+vurdert i **faktisk visningsstørrelse** — 285×570 px i 8:16, slik
+reel-veggen beskjærer — og da var det tydelig at rammene rett etter er
+ubrukelige, fordi gongen svinger inn i forgrunnen og er ute av fokus. I en
+miniatyr så de skarpe ut.
+
+Skarphet er et gulv, ikke et mål. Og kandidater skal vurderes i den
+størrelsen de faktisk vises i.
 
 Begge ble sjekket ved å legge ti rammer fra hver ved siden av rammene fra
 klippet som allerede lå der. Da var det åpenbart at «Spa»-fila var samme
