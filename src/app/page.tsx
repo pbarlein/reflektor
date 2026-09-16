@@ -3,10 +3,7 @@ import Image from "next/image";
 import { Container } from "@/components/Container";
 import { Eyebrow } from "@/components/Eyebrow";
 import { ReelVegg } from "@/components/ReelVegg";
-import {
-  AnmeldelseFremhevet,
-  Anmeldelsesrutenett,
-} from "@/components/Anmeldelser";
+import { Anmeldelsesrad } from "@/components/Anmeldelser";
 import { Kontaktskjema } from "@/components/Kontaktskjema";
 import { hentTekst, slotsISeksjon, TbdMarkor } from "@/components/Slot";
 import {
@@ -324,7 +321,9 @@ export default function Forside() {
         Det som inngår er beholdt som bord, men nedtonet: det er
         dokumentasjon, ikke argument.
       */}
-      <section className="pb-28 sm:pb-36">
+      {/* id="pris" er målet for menypunktet «Pris». Se navigasjon.ts for
+          hvorfor det peker hit og ikke på /sosiale-medier-byra. */}
+      <section id="pris" className="scroll-mt-4 pb-28 sm:pb-36">
         <Container>
           <Eyebrow>{hentTekst(front, "front.price.eyebrow")}</Eyebrow>
           <h2 className="mt-4 max-w-2xl text-3xl sm:text-4xl">
@@ -435,27 +434,27 @@ export default function Forside() {
       {/*
         5 · ANMELDELSER
 
-        Seksjonen var ren tekst på beige, i samme register som alt rundt, og
-        leste som dokumentasjon i stedet for som bevis. Den er nå delt i to:
-        det sterkeste sitatet på mørk flate i full bredde, resten i
-        hårstreksrutenett på lys.
+        Seksjonen har vært gjennom to omskrivinger. Først var den ren tekst
+        på beige og leste som dokumentasjon. Så ble den et løftet sitat pluss
+        åtte glasskort i tre rader — riktig i uttrykk, men 1 500 piksler høy,
+        og den brøt rytmen i siden.
 
-        Flatebyttet gjør jobben ord ikke kan gjøre her — det markerer at det
-        er noen andre enn Reflektor som snakker.
+        Nå er den én rad: Googles egen vurdering som tall, og sitatene som en
+        rad man kan dra i. Se Anmeldelser.tsx for hva som er byttet mot hva.
+
+        Flaten forblir mørk. Ikke for variasjonens skyld — glasskortene
+        trenger noe å bryte mot, og flatebyttet markerer at det er noen andre
+        enn Reflektor som snakker.
       */}
       <section className="bg-dyp text-pa-dyp">
-        <AnmeldelseFremhevet
+        <Anmeldelsesrad
           eyebrow={hentTekst(front, "front.reviews.eyebrow")}
           overskrift={
             hentTekst(front, "front.reviews.h2") ?? (
               <Tbd id="front.reviews.h2" />
             )
           }
-          anmeldelse={klarerteAnmeldelser[0]}
-        />
-        <Anmeldelsesrutenett
-          anmeldelser={klarerteAnmeldelser.slice(1)}
-          antallTotalt={klarerteAnmeldelser.length}
+          anmeldelser={klarerteAnmeldelser}
         />
       </section>
 

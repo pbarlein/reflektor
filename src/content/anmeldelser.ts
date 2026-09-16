@@ -139,3 +139,36 @@ export const anmeldelser: Anmeldelse[] = [
 
 /** Kun de som er klarert for visning. */
 export const klarerteAnmeldelser = anmeldelser.filter((a) => a.klarert);
+
+/**
+ * Google Business Profile — tallene slik Google selv viser dem.
+ *
+ * HENTET 16.09.2026 ved å rendre kartoppføringen i Chromium og lese panelet:
+ *   https://www.google.com/maps/place/?q=place_id:ChIJv6K0bydvQUYRKCndqlmZMpk
+ * Panelet viste «Reflektor AS · 5,0 ★★★★★ (11) · Markedsføringsbyrå»,
+ * Tvetenveien 162, 0671 Oslo, +47 47 60 50 70, reflektor.no.
+ *
+ * DETTE OPPHEVER DELER AV FORBEHOLDET OVER. Forbeholdet gjaldt at
+ * Elfsight-widgeten filtrerer på `min_rating=5`, så de ni tekstene kan ikke
+ * brukes til å regne ut et snitt. Men Google publiserer selv snittet og
+ * antallet, og det er en annen og bedre kilde enn en slutning fra ni sitater.
+ *
+ * At snittet er 5,0 over 11 betyr dessuten at alle elleve er femstjerners:
+ * én firestjerners ville gitt 54/11 = 4,909, som Google viser som 4,9.
+ * De to som mangler her er altså uten tekst, ikke lavere vurdert.
+ *
+ * TALLENE MÅ ETTERSES. De endrer seg når noen legger igjen en ny anmeldelse.
+ * Sjekk lenken over før lansering, og ved hver gjennomgang av forsiden.
+ * Står det noe annet enn 5,0 og 11 der, er siden feil.
+ *
+ * FORTSATT INGEN AggregateRating-schema. At tallet er sant gjør det ikke
+ * lovlig å merke opp: Google regner anmeldelser av en enhet, på enhetens
+ * egen side, som self-serving. Se A33.
+ */
+export const googleProfil = {
+  snitt: "5,0",
+  antall: 11,
+  medTekst: 9,
+  url: "https://www.google.com/maps/place/?q=place_id:ChIJv6K0bydvQUYRKCndqlmZMpk",
+  hentet: "2026-09-16",
+} as const;

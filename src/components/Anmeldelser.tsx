@@ -1,155 +1,224 @@
 import { Container } from "./Container";
 import type { Anmeldelse } from "@/content/anmeldelser";
+import { googleProfil } from "@/content/anmeldelser";
 
 /**
- * Anmeldelser i to registre: ett løftet sitat på mørk flate, resten i et
- * hårstreksatt rutenett på lys.
+ * Anmeldelser på én rad.
  *
- * Hvorfor delt: den sterkeste anmeldelsen er kvalitativt forskjellig fra de
- * andre. Thomas Messel oppgir et tall — 70 % vekst — og et forbehold som gjør
- * tallet troverdig: «selv i et krevende marked med generell nedgang for alle
- * i vår bransje». Å legge den i et rutenett med sju andre gjør den til én av
- * åtte.
+ * FORRIGE VERSJON TOK 1 500 PIKSLER. Et løftet sitat i 3,4 rem serif, og
+ * under det åtte glasskort i tre rader. Til sammen rundt 1 500 tekstegn i én
+ * seksjon. Den var ikke feil — den var bare så lang at den brøt rytmen i
+ * siden, og leseren måtte ta stilling til ni anmeldelser på rad før hun kom
+ * videre. Nå er den én rad høy.
  *
- * Hvorfor MØRK flate: seksjonen var tidligere ren tekst på beige, i samme
- * register som alt rundt. Den leste som dokumentasjon. Et flatebytte i full
- * bredde gir det som mangler — en pause, og et øyeblikk der noe annet enn
- * Reflektor snakker. Det er sidens tredje mørke blokk, og det er grensen:
- * kadensen er prosess, bevis, kontakt, med lange lyse strekk imellom.
+ * TALLET GJØR JOBBEN SITATENE GJORDE. Google publiserer selv 5,0 av 5 fra
+ * elleve anmeldelser. Det er det komprimerte beviset: én linje sier det ni
+ * sitater brukte en skjermhøyde på å si. Sitatene står fortsatt der — de
+ * forklarer HVA som er bra — men de trenger ikke lenger å bære beviset alene.
  *
- * HELE seksjonen ligger på den mørke flaten, ikke bare det løftede sitatet.
- * Grunnen er glasskortene under: gjennomskinnelighet trenger noe å bryte
- * mot. Et glasskort på flat beige har ingenting bak seg og blir bare en
- * lysere boks — effekten kommer av at flaten under skinner gjennom.
+ * Se src/content/anmeldelser.ts for hvordan tallet er verifisert, hvorfor
+ * stjernene nå er forsvarlige når de ikke var det før, og hvorfor de må
+ * etterses.
  *
- * Tallet blir stående INNE i sitatet, ikke løftet ut som en egen overskrift.
- * Forskjellen er ikke kosmetisk: «70 %» i display-grad leser som noe Reflektor
- * leverer, mens det samme tallet i et attribuert sitat leser som noe én kunde
- * sier om seg selv. Det siste er det som faktisk er tilfellet.
+ * KORTBREDDEN FØLGER TEKSTLENGDEN. Ingen anmeldelse er kuttet for å passe i
+ * en form. Sitatene er allerede utdrag, og utdraget kutter bare — det legger
+ * aldri til et ord og fjerner aldri et forbehold, som Thomas Messels «selv i
+ * et krevende marked». Å kutte dem hardere for å få like kort ville brutt
+ * den regelen. I stedet får det lange sitatet et bredt kort og det korte et
+ * smalt, og raden får en rytme uniforme kort ikke kan ha.
  *
- * Ingen stjerner og ingen totalvurdering — se merknaden i
- * src/content/anmeldelser.ts om hvordan kilden er filtrert.
+ * INGEN FAST HØYDE. Kortene strekkes av det høyeste. Et tall her ville måttet
+ * gjettes på nytt hver gang en anmeldelse endres.
  *
- * MERK — ingen Review- eller AggregateRating-schema. Googles retningslinjer
- * regner anmeldelser av en enhet, på enhetens egen side, som «self-serving».
- * Det gir null stjerner i søkeresultatet OG er et regelbrudd. Se A33.
+ * RADEN SKJULER NOE, OG DET ER ET VALG. Fra kort fem må man rulle. Det er
+ * prisen for å ikke ta en skjermhøyde. Den er betalbar fordi: de to sterkeste
+ * står først, ingenting er skjult for søk eller språkmodeller — alle ni
+ * ligger i HTML-en — og raden roterer ikke av seg selv. Den er en rad man
+ * drar i, ikke en karusell som flytter på seg mens man leser.
+ *
+ * DETTE ER NY SYNLIGHET, IKKE BEVART. Dagens reflektor.no viser anmeldelsene
+ * gjennom en Elfsight-widget som henter dem med JavaScript etter at siden er
+ * lastet. Tekstene finnes ikke i HTML-en, og AI-crawlerne kjører ikke
+ * JavaScript (Vercels måling på eget nett, 17.12.2024: ingen av de store
+ * gjør det). Her er de servergjengitt ren tekst. Det er hele
+ * synlighetsgevinsten — og den kommer av hvor teksten ligger, ikke av
+ * markup.
+ *
+ * MERK — ingen Review eller AggregateRating. Google regner anmeldelser av en
+ * enhet, på enhetens egen side, som self-serving. Det gir null stjerner i
+ * søkeresultatet OG er et regelbrudd. Se A33.
  */
-export function AnmeldelseFremhevet({
-  anmeldelse,
-  overskrift,
-  eyebrow,
-}: {
-  anmeldelse?: Anmeldelse;
-  overskrift: React.ReactNode;
-  eyebrow: React.ReactNode;
-}) {
+function Stjerner() {
   return (
-    <div className="pt-20 sm:pt-28">
-      <Container>
-        <p className="flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.08em] text-pa-dyp-dempet">
-          <span
-            className="size-1.5 shrink-0 rounded-full bg-aksent-pa-dyp"
-            aria-hidden="true"
-          />
-          {eyebrow}
-        </p>
-        <h2 className="mt-4 max-w-3xl text-3xl sm:text-4xl">{overskrift}</h2>
-
-        {anmeldelse && (
-          <figure className="mt-14 max-w-5xl">
-            <blockquote className="font-[family-name:var(--font-display-serif)] text-[1.75rem] leading-[1.2] tracking-[-0.015em] text-balance sm:text-[2.6rem] sm:leading-[1.15] lg:text-[3.4rem] lg:leading-[1.08]">
-              {anmeldelse.sitat}
-            </blockquote>
-            <figcaption className="mt-9 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[color:var(--kant-pa-dyp)] pt-6 text-sm tracking-[0.02em]">
-              <span className="font-medium">{anmeldelse.navn}</span>
-              {anmeldelse.selskap && (
-                <>
-                  <span
-                    className="h-3.5 w-px bg-[color:var(--kant-pa-dyp)]"
-                    aria-hidden="true"
-                  />
-                  <span className="text-pa-dyp-dempet">
-                    {anmeldelse.selskap}
-                  </span>
-                </>
-              )}
-            </figcaption>
-          </figure>
-        )}
-      </Container>
-    </div>
+    <span className="flex gap-0.5" aria-hidden="true">
+      {[0, 1, 2, 3, 4].map((i) => (
+        <svg
+          key={i}
+          viewBox="0 0 24 24"
+          className="size-[1.125rem] fill-aksent-pa-dyp"
+        >
+          <path d="M12 2.5l2.9 6.05 6.6.88-4.82 4.6 1.2 6.57L12 17.5l-5.88 3.1 1.2-6.57L2.5 9.43l6.6-.88L12 2.5z" />
+        </svg>
+      ))}
+    </span>
   );
 }
 
 /**
- * De øvrige, i hårstreksrutenett.
- *
- * Styrken i navngitte anmeldelser ligger i ANTALLET avsendere som sier det
- * samme, og den effekten forsvinner når man ser ett av gangen — som er
- * nettopp det casesiden gjorde. Derfor tett, i samme blikk.
- *
- * Ingen kort, ingen skygger, ingen avatarer. Sitatet skal leses, ikke
- * innrammes.
+ * Bredden bøtteinndeles fra tegnlengden. Tre bøtter, ikke en glidende skala:
+ * en beregnet bredde per kort ville gitt like mange bredder som kort, og
+ * raden ville sett tilfeldig ut i stedet for satt.
  */
-export function Anmeldelsesrutenett({
+function bredde(tegn: number) {
+  if (tegn > 200) return "w-[21rem] sm:w-[25rem]";
+  if (tegn > 140) return "w-[19rem] sm:w-[21rem]";
+  return "w-[16rem]";
+}
+
+export function Anmeldelsesrad({
   anmeldelser,
-  antallTotalt,
+  overskrift,
+  eyebrow,
 }: {
   anmeldelser: Anmeldelse[];
-  antallTotalt: number;
+  overskrift: React.ReactNode;
+  eyebrow: React.ReactNode;
 }) {
   return (
-    <div className="pb-20 sm:pb-28">
+    <div className="py-20 sm:py-28">
+      <Container>
+        <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
+          <div>
+            <p className="flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.08em] text-pa-dyp-dempet">
+              <span
+                className="size-1.5 shrink-0 rounded-full bg-aksent-pa-dyp"
+                aria-hidden="true"
+              />
+              {eyebrow}
+            </p>
+            <h2 className="mt-4 max-w-2xl text-3xl text-balance sm:text-4xl">
+              {overskrift}
+            </h2>
+          </div>
+
+          {/*
+            Tallet står som et tall, ikke som en påstand i en setning.
+            «5,0» i display-grad ved siden av stjernene leses på et blikk;
+            «vi har 5,0 i snitt på Google» må leses som språk og veier
+            mindre. Kilden står under, slik at det ikke er Reflektor som
+            sier det.
+          */}
+          <p className="flex shrink-0 items-center gap-5">
+            <span
+              className="font-[family-name:var(--font-display-serif)] text-[3.25rem] leading-none tracking-[-0.02em]"
+              aria-hidden="true"
+            >
+              {googleProfil.snitt}
+            </span>
+            <span className="flex flex-col gap-2">
+              <Stjerner />
+              <span className="text-sm tracking-[0.02em] text-pa-dyp-dempet">
+                {googleProfil.antall} anmeldelser på Google
+              </span>
+            </span>
+            <span className="sr-only">
+              {googleProfil.snitt} av 5 på Google, basert på{" "}
+              {googleProfil.antall} anmeldelser.
+            </span>
+          </p>
+        </div>
+      </Container>
+
+      {/*
+        Raden starter på containerens venstrekant og fortsetter ut av
+        skjermen til høyre. Den avkuttede kanten ER rulleanvisningen — en
+        gradient eller en pil ville lagt til pynt for å si det samme.
+
+        `calc(50% - 34.5rem)` treffer containerens venstrekant: halve
+        bredden minus halve maksbredden (36rem) pluss containerens egen
+        luft (1,5rem). Prosenten regnes mot elementets egen bredde, ikke mot
+        100vw — rullefeltet ville ellers forskjøvet raden noen piksler mot
+        containeren. Understrekene i klassenavnet blir mellomrom: `calc()`
+        krever luft rundt minus, og uten den er hele regelen ugyldig og
+        raden starter på null.
+
+        `scroll-padding-left` må ha samme verdi. `snap-start` innretter mot
+        rullefeltets snapport, ikke mot innholdskanten — uten den ville
+        kortene man ruller til lagt seg helt inntil skjermkanten mens det
+        første står pent på containerlinjen.
+
+        `tabIndex` fordi et rullbart felt uten fokuserbart innhold ikke kan
+        rulles med tastatur i Chrome. Firefox gjør det av seg selv; Chrome
+        gjør det ikke, og da er hele raden utilgjengelig uten mus.
+      */}
+      <ul
+        tabIndex={0}
+        aria-label="Anmeldelser hentet fra Google"
+        className="
+          mt-14 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto
+          scroll-pl-[max(1.5rem,calc(50%_-_34.5rem))] pr-6 pb-3
+          pl-[max(1.5rem,calc(50%_-_34.5rem))]
+          [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
+          focus-visible:outline focus-visible:outline-2
+          focus-visible:outline-offset-4 focus-visible:outline-aksent-pa-dyp
+        "
+      >
+        {anmeldelser.map((a) => (
+          <li
+            key={a.navn}
+            className={`flex shrink-0 snap-start flex-col rounded-flate border border-[rgba(245,240,232,0.14)] bg-[rgba(245,240,232,0.10)] p-6 backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)] ${bredde(a.sitat.length)}`}
+          >
+            {/*
+              GLASSKORT. Fyll på 6 % bone over den brune flaten gir målt
+              effektiv bakgrunn #3a2921: bone-tekst 12,19 og dempet tekst
+              7,52, altså AAA på begge. `backdrop-blur` er det som gjør det
+              til glass — uten uskarpheten er kortet bare en lysere firkant.
+              Kanten på 14 % er det øyet leser som glasskant.
+
+              `supports-[backdrop-filter]` senker fyllet der uskarphet
+              STØTTES. Der den ikke gjør det, beholdes det kraftigere fyllet,
+              slik at kortet fortsatt leser som et kort.
+            */}
+            <blockquote className="text-[0.9375rem] leading-[1.6] text-pretty">
+              {a.sitat}
+            </blockquote>
+            {/* Attribusjonen skyves til bunnen, slik at navnene står på
+                samme høyde i hele raden selv om sitatene er ulikt lange. */}
+            <p className="mt-auto pt-6 text-sm tracking-[0.02em]">
+              <span className="font-medium">{a.navn}</span>
+              {a.selskap && (
+                <span className="block text-pa-dyp-dempet">{a.selskap}</span>
+              )}
+            </p>
+          </li>
+        ))}
+      </ul>
+
       <Container>
         {/*
-          GLASSKORT. Tre lag, og alle tre trengs:
+          To opplysninger, og begge er nødvendige:
 
-          1. Fyll på 6 % bone over den brune flaten. Målt effektiv bakgrunn
-             #3a2921: bone-tekst gir 12,19 og dempet tekst 7,52, altså AAA på
-             begge. Glass er ofte et lesbarhetsproblem; her er det ikke det,
-             fordi flaten under er mørk og jevn.
-          2. `backdrop-blur` — det er DETTE som gjør det til glass. Uten
-             uskarpheten er kortet bare en lysere firkant.
-          3. En kant på 14 % — den lyse kanten er det øyet leser som
-             «glasskant». Kontrast 1,50 mot flaten: synlig, men ikke en strek
-             som roper.
-
-          `supports-[backdrop-filter]` senker fyllet der uskarphet STØTTES.
-          Der den ikke gjør det, beholdes det kraftigere fyllet, slik at
-          kortet fortsatt leser som et kort og ikke forsvinner.
+          1. Elleve mot ni. Uten den setningen ser det ut som to anmeldelser
+             mangler. De har bare ingen tekst.
+          2. Oppdragstype. Anmeldelsene kommer fra både produksjonsoppdrag og
+             månedsabonnement, og uten den opplysningen leser man hele raden
+             som abonnenter. Flere av selskapene her har aldri hatt abonnement.
+             Dette er en betingelse fra Pål, ikke en formulering som kan
+             forsvinne i en opprydding.
         */}
-        <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {anmeldelser.map((a) => (
-            <li
-              key={a.navn}
-              className="flex flex-col rounded-flate border border-[rgba(245,240,232,0.14)] bg-[rgba(245,240,232,0.10)] p-6 backdrop-blur-xl sm:p-7 supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)]"
-            >
-              <blockquote className="leading-relaxed text-pretty">
-                {a.sitat}
-              </blockquote>
-              {/* Attribusjonen skyves til bunnen. Kortene i en rad er like
-                  høye, og uten dette havner navnene på ulik høyde — da leser
-                  raden som rotete i stedet for som et system. */}
-              <p className="mt-auto pt-6 text-sm tracking-[0.02em]">
-                <span className="font-medium">{a.navn}</span>
-                {a.selskap && (
-                  <span className="text-pa-dyp-dempet"> · {a.selskap}</span>
-                )}
-              </p>
-            </li>
-          ))}
-        </ul>
-        {/*
-          Kildeattribusjon én gang, ikke per sitat.
-
-          Setningen om oppdragstype er ikke pynt. Anmeldelsene kommer fra både
-          produksjonsoppdrag og månedsabonnement, og uten den opplysningen
-          leser man hele veggen som abonnenter. Flere av selskapene her har
-          aldri hatt abonnement.
-        */}
-        <p className="mt-8 max-w-2xl text-sm tracking-[0.02em] text-pa-dyp-dempet">
-          Alle {antallTotalt} er hentet fra Reflektors anmeldelser på Google. De
-          dekker både enkeltstående produksjonsoppdrag og løpende månedsavtaler.
+        <p className="mt-8 max-w-2xl text-sm leading-relaxed tracking-[0.02em] text-pa-dyp-dempet">
+          {googleProfil.medTekst} av de {googleProfil.antall} anmeldelsene har
+          tekst. De står her, ordrett, og dekker både enkeltstående
+          produksjonsoppdrag og løpende månedsavtaler.{" "}
+          <a
+            href={googleProfil.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-aksent-pa-dyp underline decoration-from-font underline-offset-4"
+          >
+            Se dem på Google
+          </a>
+          .
         </p>
       </Container>
     </div>
