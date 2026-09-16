@@ -147,6 +147,32 @@ aldri lastet ferdig — tallet «etter full scroll» varierte mellom 2,5 og
 9,2 MB video og 3,7 MB plakater og foto på disk. De fire nye båndklippene
 utgjør **795 kB** av det.
 
+### Etter veggen og prisklippet (16.09.2026, andre måling)
+
+| Metrikk | Målt |
+|---|---|
+| **LCP** | **904 ms** — heroklippet |
+| TTFB | 455 ms |
+| CLS | 0,0112 — uendret, samme fontbytte som over |
+
+Mediefilene, som er de eneste eksakte tallene: 11,7 MB video og 4,3 MB
+plakater og foto på disk. Veggens syv klipp er 1,81 MB av det,
+produksjonsdagklippet i prisseksjonen 382 kB.
+
+**Ingenting av veggen lastes før den er i synsfeltet.** Alle klippene har
+`preload="none"` og plakatbilde, og bare de som er synlige spiller.
+
+### Vannrett rulling — sjekk denne på nytt hvis veggen endres
+
+Første versjon av veggen ga 20 px vannrett rulling på HELE dokumentet ved
+390 og 768 px. Årsaken var `-mx-5` på radwrapperen, kopiert fra reel-veggen
+— men den ligger inne i en Container, og veggen gjør ikke det.
+
+Målingen er enkel og verdt å gjenta: sammenlign
+`document.documentElement.scrollWidth` med `window.innerWidth` på 390, 768,
+1024, 1440 og 2560 px. Er den første større, finnes det et element som
+stikker utenfor. Feilen er usynlig på desktop og åpenbar på telefon.
+
 ### Hva heroklippet koster
 
 Før klippet kom inn i heroen var LCP 996 ms med H1 som LCP-element, og
