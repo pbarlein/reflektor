@@ -45,25 +45,28 @@ export const front: Side = {
           maksOrd: 8,
         }),
         /*
-         * ENDRET 16.09.2026 UTENFOR COPY-PROTOKOLLEN, med Påls uttrykkelige
-         * tillatelse: «du kan overstyre med min tillatelse på punktet du
-         * stoppet på». Dette er det ENESTE feltet den tillatelsen gjelder.
+         * FORMULERT AV PÅL 16.09.2026. Copy-protokollen er fulgt: setningen
+         * er hans, ikke min.
          *
-         * Her sto «8–10 videoer på Instagram og Facebook, to ganger i uken».
-         * «To ganger i uken» sto etter plattformene og kunne leses som to
-         * ganger på HVER, altså fire poster. Det leveres to i uken totalt:
-         * `posterPerUke` er 2, til Instagram med krysspublisering til
-         * Facebook. 2 x 52 = 104 i året = 8,7 i måneden, som lander midt i
-         * «8–10 videoer».
+         * Den løser kadens-tvetydigheten bedre enn mitt eget forsøk gjorde.
+         * Opprinnelig sto «8–10 videoer på Instagram og Facebook, to ganger
+         * i uken», der «to ganger i uken» kom ETTER plattformene og kunne
+         * feste seg til dem — altså fire poster. Jeg satte inn punktum, som
+         * gjorde feillesningen grammatisk umulig, men lot tallet stå etter
+         * plattformene. Påls versjon flytter det foran: «Publisering 2
+         * ganger per uke til Instagram og Facebook». Da er kadensen knyttet
+         * til publiseringen, og plattformene er adressen den går til.
          *
-         * Punktumet er hele rettelsen. Med plattformene i en LUKKET setning
-         * kan ikke «to nye hver uke» feste seg til dem — det kan bare telle
-         * videoer. En komma-variant («…og Facebook, to nye i uken») fjerner
-         * mesteparten av tvetydigheten, men ikke all.
+         * Det stemmer med leveransen: posterPerUke er 2, til Instagram med
+         * krysspublisering til Facebook. 2 x 52 = 104 i året = 8,7 i
+         * måneden, midt i «8–10 videoer». Ordlyden ligger nær
+         * tilbud.inngar[3], som sier det samme på prisseksjonen.
          *
-         * 177 av 180 tegn. Ingenting annet i setningen er rørt.
+         * ÉN MEKANISK ENDRING FRA PÅLS ORDLYD: «og publisering» er strøket
+         * fra oppramsingen foran. Rett inn ble setningen 191 av 180 tegn,
+         * og ordet sto nå to ganger i samme avsnitt. Uten det: 178.
          */
-        "front.hero.sub": tekst("Én produksjonsdag hos dere i måneden. Reflektor gjør resten: idé, opptak, klipp og publisering. 8–10 videoer på Instagram og Facebook. To nye hver uke. Fast pris, ingen binding.", {
+        "front.hero.sub": tekst("Én produksjonsdag hos dere i måneden. Reflektor gjør resten: idé, opptak og klipp. 8–10 videoer. Publisering 2 ganger per uke til Instagram og Facebook. Fast pris, ingen binding.", {
           maksTegn: 180,
           jobb: "Arbeidsmengden for kunden. Den er innvendingen, ikke prisen.",
         }),
