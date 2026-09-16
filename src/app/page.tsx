@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Container } from "@/components/Container";
 import { Eyebrow } from "@/components/Eyebrow";
 import { ReelVegg } from "@/components/ReelVegg";
@@ -586,29 +587,50 @@ export default function Forside() {
                   </p>
                 </div>
 
-                {/* `flex-1` + `min-h-0` er det som gjør at raden tar
-                    NØYAKTIG resten. Uten `min-h-0` nekter en flex-item å
-                    krympe under sitt eget innhold, og klippene ville dyttet
-                    spalten høyere enn skjemaet. */}
-                <div className="mt-8 flex gap-3 lg:mt-10 lg:min-h-0 lg:flex-1">
-                  {[
-                    {
-                      fil: "gira",
-                      alt: "Vertikalt klipp fra et treningssenter",
-                    },
-                    {
-                      fil: "bjorvika",
-                      alt: "Vertikalt klipp fra et byområde i Oslo",
-                    },
-                  ].map((k) => (
-                    <Enkeltklipp
-                      key={k.fil}
-                      sti="/reels"
-                      medie={{ type: "video", ...k }}
-                      className="relative aspect-[9/16] flex-1 overflow-hidden rounded-medie bg-flate-dempet lg:aspect-auto lg:h-full"
-                    />
-                  ))}
-                </div>
+                {/*
+                  ETT BILDE, IKKE TO KLIPP.
+
+                  Her sto to stående klipp side om side. De fylte plassen
+                  fint, men de var det femte og sjette bevegelige elementet
+                  på siden — etter heroklippet, reel-veggen,
+                  arbeidsrutenettet, prisklippet og arbeidsveggen. Et
+                  stillbilde akkurat her er et REGISTERSKIFTE, og det er
+                  poenget: det er her man bestemmer seg, og en pause er
+                  bedre enn mer bevegelse.
+
+                  Det fjerner også den ene innvendingen jeg noterte da
+                  klippene kom inn — bevegelse ved siden av et skjema kan
+                  trekke blikket. Nå finnes ikke problemet.
+
+                  HVORFOR AKKURAT DETTE BILDET: overskriften spør «se hva vi
+                  ville filmet hos dere». Bildet svarer på hvem som dukker
+                  opp — stativ på ryggen, kamera i hånda, koffert etter seg.
+                  Det er hele leveransen i ett bilde.
+
+                  De to montasjevideoene som også lå ved er ikke brukt. De
+                  er 2,4:1, bygget for å være brede, og i denne rammen
+                  (429x315) overlever bare to av fire paneler. Skulle de
+                  brukes, måtte de hatt full kortbredde — og da oppstår
+                  tomrommet i venstrespalten på nytt.
+
+                  UTSNITTET ER VALGT, IKKE STANDARD. `object-position` på
+                  12 % fra toppen: senter kutter hodet, topp gir for mye
+                  tak. Bildet finnes i to formater i Dropbox; 1:1 er valgt
+                  fordi 16:9-varianten allerede er beskåret så hodet er ute.
+
+                  `flex-1` + `min-h-0` er det som gjør at rammen tar
+                  NØYAKTIG resten av spalten. Uten `min-h-0` nekter en
+                  flex-item å krympe under sitt eget innhold.
+                */}
+                <figure className="relative mt-8 aspect-[4/3] overflow-hidden rounded-medie bg-flate-dempet lg:mt-10 lg:aspect-auto lg:min-h-0 lg:flex-1">
+                  <Image
+                    src="/arbeid/pa-vei.jpg"
+                    alt="Fotograf på vei inn til opptak med stativ, kamera og utstyrskoffert"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 30vw"
+                    className="object-cover object-[center_12%]"
+                  />
+                </figure>
               </div>
 
               {/* Skjemaet på lys flate — kontrast mot den mørke blokken, og

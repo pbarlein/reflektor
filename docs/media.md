@@ -411,3 +411,45 @@ Det er andre gang på én kveld. Mønsteret er tydelig nok til å slås fast:
 **på klipp med mennesker og bevegelse velger skarphetsregelen nesten alltid
 arkitektur eller stillbilde-lignende rammer.** Bruk den som et filter mot
 uskarpe rammer, og velg deretter selv — i faktisk visningsstørrelse.
+
+## Kontaktseksjonen fikk et stillbilde i stedet (16.09.2026, natt)
+
+De to klippene under e-postadressen er byttet ut med ett bilde:
+`public/arbeid/pa-vei.jpg` — fotograf på vei inn til opptak, stativ på
+ryggen, kamera i hånda, koffert etter seg.
+
+**Hvorfor stillbilde.** Klippene var det femte og sjette bevegelige
+elementet på forsiden. Et stillbilde akkurat ved skjemaet er et
+registerskifte: det er der man bestemmer seg, og en pause er bedre enn mer
+bevegelse. Det fjerner samtidig innvendingen som ble notert da klippene kom
+inn — bevegelse ved siden av et skjema kan trekke blikket.
+
+**Utsnittet er valgt, ikke standard.** Bildet ligger i to formater i
+Dropbox: `Untitled design (13).png` er 1920×1080 og `Untitled design
+(14).png` er 1080×1080. **1:1 er valgt**, fordi 16:9-varianten allerede er
+beskåret så tett at hodet er utenfor bildet. I rammen (429×315) gir
+sentrert beskjæring av 1:1 også et hodeløst motiv. `object-position:
+center 12%` er riktig: hele figuren med tak over.
+
+Testet fire posisjoner — 0 %, 12 %, 25 % og 50 % — i faktisk
+visningsstørrelse før valget.
+
+### Montasjevideoene ble ikke brukt, og hvorfor
+
+To videoer lå ved: `Untitled design (2).mp4` (990×412) og `Untitled design
+(13).mp4` (1486×618). Begge er montasjer med fire stående paneler side om
+side, altså 2,4:1.
+
+`nr2` er den sterkeste av dem — den viser prosessen (stativ, lyssetting,
+kamera i bruk, rigging) og bærer co-branding for «vindu butikken +
+reflektor» og «Baker Brun + reflektor», begge kunder som allerede er
+klarert på siden.
+
+Men rammen i venstrespalten er 429×315, altså 1,36. En 2,4:1-montasje
+beskåret til 1,36 mister nesten halvparten av bredden, og da står to av
+fire paneler igjen, avkuttet. Verifisert visuelt før konklusjonen.
+
+Skulle montasjen brukes, måtte den hatt full kortbredde (981 px, panel på
+245 px, lesbar co-branding) — og da oppstår tomrommet i venstrespalten på
+nytt, som var hele grunnen til at seksjonen ble bygget om. **Montasjene
+hører hjemme et sted som er bredt, ikke i en spalte som er høy.**
