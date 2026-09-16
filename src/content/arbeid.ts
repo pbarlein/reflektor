@@ -32,9 +32,11 @@
  * kunde uten å gjette. Det navngitte beviset ligger i hero.proof,
  * reel-veggen og anmeldelsene.
  */
-export type Celle =
-  | { type: "foto"; fil: string; alt: string; enheter: 1 | 2 }
-  | { type: "video"; fil: string; alt: string; enheter: 1 | 2 };
+/** Foto eller klipp. Båndet bruker dette direkte; rutenettet utvider det. */
+export type Medie = { type: "foto" | "video"; fil: string; alt: string };
+
+/** Én celle i rutenettet: samme felter som båndet, pluss høydevekten. */
+export type Celle = Medie & { enheter: 1 | 2 };
 
 export const arbeidskolonner: Celle[][] = [
   [
@@ -63,20 +65,49 @@ export const arbeidskolonner: Celle[][] = [
   ],
 ];
 
-/** Båndet bruker et enklere skjema — bare fil og alt-tekst. */
-export type Bilde = { fil: string; alt: string };
-
-export const band: Bilde[] = [
-  { fil: "dag2", alt: "Ansatte samlet i en butikk" },
-  { fil: "dag3", alt: "Lykkehjul under et arrangement" },
-  { fil: "dag4", alt: "Opptak med kamera under et arrangement" },
-  { fil: "dag5", alt: "Kunder med handleposer" },
-  { fil: "dag6", alt: "Bakverk i en disk" },
-  { fil: "peppes2", alt: "Gjest ved et bord med pizza" },
-  { fil: "goretex2", alt: "Nærbilde av en sko på asfalt" },
-  { fil: "sunkost", alt: "Produktbilde av pakninger og glass" },
-  { fil: "kafe2", alt: "Person i genser fotografert bakfra utendørs" },
-  { fil: "portrett", alt: "Portrett utendørs mot blå himmel" },
-  { fil: "industri", alt: "Nærbilde av slitt arbeidsutstyr" },
-  { fil: "mat2", alt: "Person om bord i en båt" },
+/**
+ * BÅNDET: fire klipp mot åtte stillbilder, i tolv like celler.
+ *
+ * Forrige versjon var tolv stillbilder, og fem av dem — dag2 til dag6 — kom
+ * fra samme arrangement. Rosa og gult fylte halve båndet, og det leste som
+ * én oppdrag, ikke som bredde. To er igjen: «dag4», som viser kamera i
+ * arbeid, og «dag6», som er et matmotiv. Resten er byttet ut.
+ *
+ * VIDEO ER HOVEDSAKEN, OGSÅ HER. Reel-veggen og arbeidsrutenettet viser
+ * bevegelse; et bånd med bare stillbilder motsa dem. Fire klipp gjør at
+ * øyet møter bevegelse i hver rad uansett hvor båndet brytes — seks, fire
+ * eller tre kolonner.
+ *
+ * PLASSERINGEN ER IKKE JEVN. Klippene ligger på 2, 5, 7 og 11. På seks
+ * kolonner gir det rad 1 kolonne 2 og 5, rad 2 kolonne 1 og 5; på fire
+ * kolonner 1-2, 2-1, 2-3, 3-3; på tre 1-2, 2-2, 3-1, 4-2. Et jevnt mønster
+ * (2, 5, 8, 11) ville lagt seg i to rette spalter på seks kolonner.
+ *
+ * TONE ANNENHVER. Rad 1 åpner lyst (aktivering), rad 2 åpner mørkt (kontor).
+ * Lyse og mørke celler veksler gjennom hele båndet, slik at ingen halvdel
+ * blir en klump.
+ *
+ * BREDDE OG DYBDE. Tolv celler dekker aktivering, kafé, sport, event,
+ * velvære, industri, næringsliv, bakeri, produkt, livsstil, servering og
+ * scene. Sunkost går igjen to ganger — produktbildet og matchaklippet — og
+ * det er med vilje: det er den eneste kunden båndet viser i dybden.
+ *
+ * KLIPPENE ER BESKÅRET TIL 4:5 VED ENKODING, ikke i CSS. Reel-klippene
+ * beholder 9:16 fordi de brukes to steder i ulik form; båndklippene brukes
+ * ett sted, i én form. Da er det billigere å kode bort de 30 prosentene
+ * som aldri vises: 480×600, ~6 sekunder, til sammen 794 kB for fire klipp.
+ */
+export const band: Medie[] = [
+  { type: "foto", fil: "aktivering", alt: "Utendørs aktivering med rosa stand og publikum" },
+  { type: "video", fil: "matcha", alt: "Vertikalt klipp av matcha som vispes" },
+  { type: "foto", fil: "goretex2", alt: "Nærbilde av en sko på asfalt" },
+  { type: "foto", fil: "dag4", alt: "Opptak med kamera under et arrangement" },
+  { type: "video", fil: "spa", alt: "Vertikalt klipp fra behandlingsrom" },
+  { type: "foto", fil: "fabrikk", alt: "Ansatte i arbeidstøy i et produksjonslokale" },
+  { type: "video", fil: "kontor", alt: "Vertikalt klipp fra en arbeidsplass" },
+  { type: "foto", fil: "dag6", alt: "Bakverk i en disk" },
+  { type: "foto", fil: "sunkost", alt: "Produktbilde av pakninger og glass" },
+  { type: "foto", fil: "mat2", alt: "Person om bord i en båt" },
+  { type: "video", fil: "servering", alt: "Vertikalt klipp fra et måltid" },
+  { type: "foto", fil: "scene", alt: "Foredragsholder foran en skjerm" },
 ];

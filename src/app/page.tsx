@@ -460,7 +460,7 @@ export default function Forside() {
       </section>
 
       <section className="pb-24" aria-label="Utvalg fra arbeidet">
-        <Arbeidsband bilder={band} />
+        <Arbeidsband medier={band} />
       </section>
 
       {/* 6 · FAQ — native details, ingen JavaScript */}

@@ -3,32 +3,18 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { Container } from "./Container";
-import type { Bilde, Celle } from "@/content/arbeid";
+import type { Celle, Medie } from "@/content/arbeid";
 
 /**
- * Arbeidsseksjonen: foto og stående video om hverandre, i fire like høye
- * kolonner.
+ * Spiller bare klippene som er i synsfeltet, og bare hvis brukeren tåler
+ * bevegelse. Refene er nøklet på filnavn, ikke på en teller: en teller ville
+ * måttet muteres under render, og det er ikke lov.
  *
- * Se src/content/arbeid.ts for hvorfor blokken er rektangulær, hvorfor
- * enhetene er som de er, og hvorfor klippene ligger i de høye cellene.
- *
- * TO LAYOUTER, ikke én responsiv. Under lg er det et vanlig tomkolonners
- * rutenett med faste formater per celle — fire kolonner à 288 px finnes ikke
- * på en telefon. Fra lg overtar flex-stablene med fast høyde, og det er DER
- * blokken blir rektangulær. Å presse den ene løsningen ned på mobil ville
- * gitt celler på under 90 px.
- *
- * YTELSE. Ytelse er prosjektets sterkest dokumenterte funn, og seksjonen har
- * både bilder og fire klipp:
- *
- * - `next/image` med `fill` gir AVIF og responsive størrelser fra én kildefil.
- * - Video har `preload="none"` og posterbilde. Ingenting lastes før klippet
- *   er i synsfeltet.
- * - Bare klipp som er synlige spiller. IntersectionObserver pauser resten.
- * - Høyden er reservert av containeren, så ingen CLS.
- * - `prefers-reduced-motion` slår av autospill helt. Da står posterbildet.
+ * Siden har tretten klipp til sammen. Uten denne pausingen ville alle spilt
+ * samtidig etter første scroll — målbar batteri- og dekoderkostnad, og ingen
+ * ser mer enn én seksjon om gangen uansett.
  */
-export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
+function useSynligeKlipp(terskel: number) {
   const refs = useRef<Record<string, HTMLVideoElement | null>>({});
 
   useEffect(() => {
@@ -42,11 +28,78 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
           else v.pause();
         }
       },
-      { threshold: 0.3 },
+      { threshold: terskel },
     );
     for (const v of Object.values(refs.current)) if (v) iakt.observe(v);
     return () => iakt.disconnect();
-  }, []);
+  }, [terskel]);
+
+  // Returnerer en festefunksjon, ikke selve refen. React-kompilatoren tillater
+  // ikke at en ref som er sendt inn som prop, muteres i mottakeren.
+  return (fil: string) => (el: HTMLVideoElement | null) => {
+    refs.current[fil] = el;
+  };
+}
+
+/**
+ * Klippene er dekorative. Informasjonen ligger i bildene rundt og i teksten,
+ * så videoen er `aria-hidden` og utenfor tabrekkefølgen. `preload="none"`
+ * betyr at ingenting hentes før klippet er i synsfeltet; fram til da står
+ * plakatbildet.
+ */
+function Klipp({
+  medie,
+  sti,
+  festRef,
+}: {
+  medie: Medie;
+  sti: string;
+  festRef: (el: HTMLVideoElement | null) => void;
+}) {
+  return (
+    <video
+      ref={festRef}
+      className="size-full object-cover"
+      poster={`${sti}/${medie.fil}.jpg`}
+      preload="none"
+      muted
+      loop
+      playsInline
+      aria-hidden="true"
+      tabIndex={-1}
+      disablePictureInPicture
+      controlsList="nodownload noremoteplayback nofullscreen"
+    >
+      <source src={`${sti}/${medie.fil}.mp4`} type="video/mp4" />
+    </video>
+  );
+}
+
+/**
+ * Arbeidsseksjonen: foto og stående video om hverandre, i fire like høye
+ * kolonner.
+ *
+ * Se src/content/arbeid.ts for hvorfor blokken er rektangulær, hvorfor
+ * enhetene er som de er, og hvorfor klippene ligger i de høye cellene.
+ *
+ * TO LAYOUTER, ikke én responsiv. Under lg er det et vanlig tokolonners
+ * rutenett med faste formater per celle — fire kolonner à 288 px finnes ikke
+ * på en telefon. Fra lg overtar flex-stablene med fast høyde, og det er DER
+ * blokken blir rektangulær. Å presse den ene løsningen ned på mobil ville
+ * gitt celler på under 90 px.
+ *
+ * YTELSE. Ytelse er prosjektets sterkest dokumenterte funn, og seksjonen har
+ * både bilder og fire klipp:
+ *
+ * - `next/image` med `fill` gir AVIF og responsive størrelser fra én kildefil.
+ * - Video har `preload="none"` og posterbilde. Ingenting lastes før klippet
+ *   er i synsfeltet.
+ * - Bare klipp som er synlige spiller. Se useSynligeKlipp.
+ * - Høyden er reservert av containeren, så ingen CLS.
+ * - `prefers-reduced-motion` slår av autospill helt. Da står posterbildet.
+ */
+export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
+  const fest = useSynligeKlipp(0.3);
 
   const celle = (c: Celle, mobilFormat: string) => (
     <figure
@@ -64,23 +117,7 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
           className="object-cover"
         />
       ) : (
-        <video
-          ref={(el) => {
-            refs.current[c.fil] = el;
-          }}
-          className="size-full object-cover"
-          poster={`/reels/${c.fil}.jpg`}
-          preload="none"
-          muted
-          loop
-          playsInline
-          aria-hidden="true"
-          tabIndex={-1}
-          disablePictureInPicture
-          controlsList="nodownload noremoteplayback nofullscreen"
-        >
-          <source src={`/reels/${c.fil}.mp4`} type="video/mp4" />
-        </video>
+        <Klipp medie={c} sti="/reels" festRef={fest(c.fil)} />
       )}
     </figure>
   );
@@ -105,22 +142,36 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
  *
  * Bryter containeren med vilje. Et bånd som stopper ved tekstbredden leser
  * som en illustrasjon; ett som går ut av skjermen leser som en strøm.
+ *
+ * Fire av de tolv cellene er klipp. Se src/content/arbeid.ts for hvorfor de
+ * ligger akkurat der de ligger, og hvorfor de er beskåret til 4:5 allerede
+ * ved enkoding — her er cellen 4:5 på alle bredder, så `object-cover` har
+ * ingenting å beskjære.
+ *
+ * Terskelen er lavere enn i rutenettet (0,15 mot 0,3). Cellene er små, og en
+ * hel rad er sjelden 30 % synlig samtidig på mobil.
  */
-export function Arbeidsband({ bilder }: { bilder: Bilde[] }) {
+export function Arbeidsband({ medier }: { medier: Medie[] }) {
+  const fest = useSynligeKlipp(0.15);
+
   return (
     <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4 lg:grid-cols-6 lg:gap-2">
-      {bilder.map((b) => (
+      {medier.map((m) => (
         <figure
-          key={b.fil}
+          key={m.fil}
           className="relative aspect-[4/5] overflow-hidden bg-flate-dempet"
         >
-          <Image
-            src={`/arbeid/${b.fil}-640.jpg`}
-            alt={b.alt}
-            fill
-            sizes="(max-width: 640px) 33vw, 17vw"
-            className="object-cover"
-          />
+          {m.type === "foto" ? (
+            <Image
+              src={`/arbeid/${m.fil}-640.jpg`}
+              alt={m.alt}
+              fill
+              sizes="(max-width: 640px) 33vw, 17vw"
+              className="object-cover"
+            />
+          ) : (
+            <Klipp medie={m} sti="/arbeid" festRef={fest(m.fil)} />
+          )}
         </figure>
       ))}
     </div>
