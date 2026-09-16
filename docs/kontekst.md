@@ -309,10 +309,19 @@ Tiltale: «dere» om kunden, «vi» om Reflektor. Korte hovedsetninger.
 
 ## Struktur
 
-Navigasjon: **Pris · Vårt Arbeid · Om oss · FAQ · Blogg · Ta kontakt**
+Navigasjon på dagens side, lest fra HTML-en 16.09.2026:
+**Sosiale medier · Vårt Arbeid · Om oss · FAQ · Blogg · Ta kontakt**
 
-At «Pris» er første menypunkt – og peker til `/sosiale-medier-byra` – er
-konsistent med åpenhetsposisjoneringen. Behold det. Ikke bytt til «Tjenester».
+RETTET 16.09.2026. Her sto det tidligere at første menypunkt heter «Pris»,
+og at det skulle beholdes. Det stemte ikke — punktet heter «Sosiale medier»,
+og ordet «Pris» finnes ikke i headeren. Se A39.
+
+Det står likevel «Pris» i den nye headeren, men som et valg begrunnet i
+prisåpenhetsposisjoneringen, ikke som en bevaring. Og det peker på forsidens
+prisseksjon, ikke på `/sosiale-medier-byra` — den skal 301-es bort ved
+cutover, og et menypunkt dit ville blitt et sidevis redirect-hopp.
+
+Ikke bytt til «Tjenester».
 
 Alle CTA-er peker til `/kontaktoss`. Varianter i bruk: «Ta kontakt», «Få et
 strategiforslag», «Book en uforpliktende prat», «Gratis strategiforslag»,

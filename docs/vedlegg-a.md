@@ -400,3 +400,95 @@ totalvurdering i designet — bare sitatene, med navn og selskap.
 Dette er verdt å vite også fordi en totalvurdering ville vært et sterkt
 visuelt element. Fristelsen er reell. Skal den brukes, må tallet hentes fra
 Google Business Profile direkte, og det endrer seg over tid.
+
+## A38 — Totalvurderingen er hentet, og A37s konsekvens er opphevet
+
+A37 sa at fristelsen til å vise en totalvurdering var reell, og at tallet
+i så fall måtte hentes fra Google Business Profile direkte. Det er gjort.
+
+**Hentet 16.09.2026** ved å rendre kartoppføringen i Chromium:
+
+    https://www.google.com/maps/place/?q=place_id:ChIJv6K0bydvQUYRKCndqlmZMpk
+
+Panelet viste: **Reflektor AS · 5,0 ★★★★★ (11) · Markedsføringsbyrå**,
+Tvetenveien 162, 0671 Oslo, +47 47 60 50 70, reflektor.no.
+
+A37 står fortsatt om Elfsight-kilden: de ni sitatene er filtrert, og de kan
+ikke brukes til å regne ut et snitt. Men Google publiserer snittet selv, og
+det er en annen og bedre kilde enn en slutning fra ni sitater.
+
+**En slutning til, som holder:** at snittet er 5,0 over elleve betyr at alle
+elleve er femstjerners. Én firestjerners ville gitt 54/11 = 4,909, som Google
+viser som 4,9. De to som ikke står på siden mangler altså tekst — de er ikke
+lavere vurdert.
+
+**Tallene må etterses.** De endrer seg når noen legger igjen en ny
+anmeldelse. Sjekk lenken over før lansering og ved hver gjennomgang av
+forsiden. Verdiene ligger samlet i `googleProfil` i
+`src/content/anmeldelser.ts`, ett sted.
+
+**Fortsatt ingen AggregateRating-schema.** At tallet er sant gjør det ikke
+lovlig å merke opp: Google regner anmeldelser av en enhet, på enhetens egen
+side, som self-serving. A33 står uendret.
+
+**Sidegevinst — NAP er verifisert mot kilden.** Adresse, telefon og domene i
+Googles oppføring stemmer nøyaktig med `site.kontakt` i `site.ts` og med
+`PostalAddress` i `Schema.tsx`. AGENTS.md lister NAP-konsistens som ett av
+fire krav til synlighet; det er nå kontrollert mot den autoritative kilden,
+ikke bare mot seg selv.
+
+## A39 — kontekst.md gjenga dagens navigasjon feil
+
+`docs/kontekst.md` sa:
+
+> Navigasjon: **Pris · Vårt Arbeid · Om oss · FAQ · Blogg · Ta kontakt**
+> At «Pris» er første menypunkt – og peker til `/sosiale-medier-byra` – er
+> konsistent med åpenhetsposisjoneringen. Behold det.
+
+Jeg hentet HTML-en fra www.reflektor.no 16.09.2026 og leste headeren:
+
+    /sosiale-medier-byra  ->  Sosiale medier
+    /vart-arbeid          ->  Vårt Arbeid
+    /om-oss               ->  Om oss
+    /faq                  ->  FAQ
+    /blogg                ->  Blogg
+    /kontaktoss           ->  Ta kontakt
+
+Første punkt heter **«Sosiale medier»**. Ordet «Pris» finnes ikke i
+headeren. Instruksen «behold det» ba altså om å bevare noe som ikke fantes.
+
+Dokumentet er rettet. Den nye headeren bruker likevel «Pris» — men som et
+valg begrunnet i prisåpenhetsposisjoneringen, ikke som en bevaring. Og den
+peker på forsidens prisseksjon, ikke på `/sosiale-medier-byra`, som etter
+`docs/cutover.md` skal 301-es til forsiden. Et menypunkt dit ville blitt et
+sidevis redirect-hopp i samme øyeblikk bryteren slås.
+
+Merk hva dette betyr for dokumentene generelt: `kontekst.md` er skrevet fra
+en crawl, ikke fra en avlesning. Andre detaljer derfra kan ha samme feil.
+Sjekk mot kilden før en instruks derfra brukes som premiss.
+
+## A40 — `/produktfoto` finnes ikke, men redirecten peker dit
+
+`next.config.ts` sender `/tjenester/produktfoto` til `/produktfoto`
+permanent (301). Begrunnelsen i filen er god: 1 935 visninger og posisjon
+15,8 på «produktfoto», 22 rangerende søkeord — den sterkeste
+enkeltposisjonen prosjektet har på et kommersielt søkeord.
+
+**Men `src/app/produktfoto/page.tsx` finnes ikke.** Redirecten lander i 404.
+
+Det er stikk i strid med regel 1 i AGENTS.md: redirects skal rette opp
+faktiske 404-er, ikke lage nye. Slik det står nå, sender den sterkeste
+posisjonen vi har rett i veggen.
+
+To utveier, og valget er ikke mitt:
+
+1. **Bygg `/produktfoto`.** Riktigst. Krever copy, og copy bestilles.
+2. **Pek redirecten på en eksisterende side** i mellomtiden —
+   `/innholdsproduksjon` er nærmest. Dårligere samsvar med søkeordet, men
+   uendelig mye bedre enn 404.
+
+Jeg har ikke gjort noen av delene. Ruting er ett av de fire tingene
+AGENTS.md ber om at ikke endres uten grunn, og «hvilken side skal arve
+produktfoto-posisjonen» er en innholdsbeslutning.
+
+**Dette er en lanseringssperre på linje med bloggmigreringen.**
