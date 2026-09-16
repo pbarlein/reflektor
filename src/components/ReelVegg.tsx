@@ -48,7 +48,22 @@ export function ReelVegg({ reels }: { reels: Reel[] }) {
 
   return (
     <Container>
+      {/*
+        `tabIndex={0}` gjelder bare den vannrette modusen under sm, men står
+        alltid — en tabindex på et rutenett som ikke ruller er et tomt
+        tabbestopp, ikke en feil, og alternativet er å speile breakpointet i
+        JavaScript. Fra sm ruller ikke raden, så stoppet gjør ingenting.
+
+        Uten den kunne en tastaturbruker på telefon bare se det første av de
+        fire klippene. axe fanget det.
+
+        INGEN `role="group"` her. Første forsøk satte det, og da mistet <ul>
+        sin listerolle — barna ble <li> uten liste, som axe meldte som et
+        nytt brudd. `aria-label` alene beholder rollen og gir navnet.
+      */}
       <ul
+        tabIndex={0}
+        aria-label="Klipp fra produksjonsdager, rull vannrett"
         className="
           -mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2
           [scrollbar-width:none] [&::-webkit-scrollbar]:hidden

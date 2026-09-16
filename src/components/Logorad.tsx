@@ -113,6 +113,25 @@ export function Logorad({ dekorativ = false }: { dekorativ?: boolean } = {}) {
         skjermen ut som en feil.
       */
       className="logorad-maske overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      /*
+        TASTATURTILGANG TIL RULLINGEN. axe fanget dette: en rullbar flate
+        uten tabindex og uten fokuserbart innhold kan ikke nås med tastatur
+        i det hele tatt. Musbrukeren kan dra, berøringsbrukeren kan sveipe,
+        og tastaturbrukeren satt igjen med den delen av raden som tilfeldigvis
+        var synlig.
+        `tabIndex={0}` gjør flaten til ett tabbestopp der piltastene ruller.
+
+        Den DEKORATIVE raden får det ikke. Den er aria-hidden i sin helhet og
+        viser nøyaktig de samme elleve logoene som raden over — et ekstra
+        tabbestopp til innhold brukeren allerede har passert, er støy.
+      */
+      {...(dekorativ
+        ? { "aria-hidden": true as const }
+        : {
+            tabIndex: 0,
+            role: "group" as const,
+            "aria-label": "Kundelogoer, rull vannrett",
+          })}
     >
       <div className="logorad-spor flex w-max">
         {Array.from({ length: SETT }, (_, i) => (

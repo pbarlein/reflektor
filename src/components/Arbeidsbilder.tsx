@@ -88,7 +88,10 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
       */}
       <div className="columns-2 gap-3 sm:columns-3 sm:gap-4 lg:grid lg:h-[60.5rem] lg:grid-cols-4 lg:gap-4 lg:[column-count:auto]">
         {kolonner.map((kol, k) => (
-          <div key={k} className="contents lg:flex lg:h-full lg:flex-col lg:gap-4">
+          <div
+            key={k}
+            className="contents lg:flex lg:h-full lg:flex-col lg:gap-4"
+          >
             {kol.map((c) =>
               celle(c, c.enheter === 2 ? "aspect-[9/16]" : "aspect-[4/5]"),
             )}
@@ -106,13 +109,29 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
  * bredde, og globals.css for hvorfor bevegelsen henger på rulleposisjonen og
  * ikke på en tidtaker.
  *
- * TO OPPFØRSLER, IKKE ÉN RESPONSIV. Under lg er raden et vanlig vannrett
- * rullefelt: fingeren gjør jobben, alt er nåbart, ingen animasjon. Fra lg
- * er den skjult overflow med drift. Grunnen er at drift OG fingerrulling i
- * samme felt gir to ting som flytter på innholdet samtidig, og da vet man
- * aldri hvem som styrer.
+ * ÉN OPPFØRSEL PÅ ALLE BREDDER: skjult overflow med scroll-drevet drift.
  *
- * `overflow-hidden` fra lg er nødvendig, ikke valgfritt: uten den ville en
+ * Det har vært tre varianter, og de to første var begge feil.
+ *
+ * FØRST: vannrett rullefelt under lg, drift fra lg. Begrunnelsen var at
+ * drift og fingerrulling i samme felt gir to ting som flytter innholdet
+ * samtidig. Riktig observasjon — men konsekvensen var at veggen sto helt
+ * stille på telefon, og siden den er ni celler bred, nådde fem av klippene
+ * intersectionRatio 0,00 gjennom en hel gjennomrulling. De lastet aldri.
+ * Innholdet var «nåbart» bare for den som gjettet at raden kunne dras i.
+ *
+ * SÅ: drift lagt til på mobil, men rullefeltet beholdt. Da hadde jeg
+ * innført nøyaktig konflikten begrunnelsen over advarte mot, og axe fanget
+ * en annen følge av det: et rullefelt uten fokuserbart innhold kan ikke nås
+ * med tastatur i det hele tatt.
+ *
+ * NÅ: `overflow-hidden` overalt. Driften avdekker raden mens man ruller
+ * siden, på telefon som på desktop. Ingen konkurranse om hvem som flytter
+ * innholdet, ingen utilgjengelig rulleflate, og på telefon forsvinner
+ * dessuten faren for at en vannrett dragning stjeler den loddrette
+ * rullingen.
+ *
+ * `overflow-hidden` er uansett nødvendig, ikke valgfritt: uten den ville en
  * rad på 2 900 px laget vannrett rulling på hele dokumentet. Den har også en
  * bieffekt som kostet en feilsøking: `overflow-x: hidden` med `overflow-y:
  * visible` beregnes til `overflow-y: auto`, så wrapperen blir en egen
@@ -124,11 +143,11 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
  * en telefonskjerm, og da ser man ett motiv om gangen i stedet for en vegg.
  * 176 px gir 313 px, og to og en halv celle i blikket.
  *
- * DET SKJULTE ER IKKE BORTE. Fra lg ser man rundt halve raden om gangen, og
- * driften avdekker resten mens man ruller. Alle cellene ligger i HTML-en med
+ * DET SKJULTE ER IKKE BORTE. Man ser rundt halve raden om gangen, og driften
+ * avdekker resten mens man ruller. Alle cellene ligger i HTML-en med
  * alt-tekst, så søk og språkmodeller får hele veggen uansett. Prisen er at
- * en museløs desktopbruker ikke kan dra i raden — cellene er dekorative og
- * uten lenker, så det koster ingen handling.
+ * ingen kan dra i raden — cellene er dekorative og uten lenker, så det
+ * koster ingen handling.
  *
  * DEKODERBUDSJETTET ER REGNET, IKKE GJETTET. Syv klipp kan spille samtidig
  * her. Fem stående à 440x782 og to liggende à 1024x576 er til sammen
@@ -163,11 +182,7 @@ export function Arbeidsvegg({ rader }: { rader: Veggcelle[][] }) {
             vinduet og ga vannrett rulling på HELE dokumentet, målt på
             390 og 768 px. Full bredde betyr at cellene starter på kanten.
           */
-          className="
-            overflow-x-auto
-            [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
-            lg:overflow-hidden
-          "
+          className="overflow-hidden"
         >
           <ul
             className={`
