@@ -312,18 +312,41 @@ Googles retningslinjer for review snippets sier at `Review` og
 that capture reviews about **other** ... organizations».
 
 En anmeldelse av Reflektor, plassert på reflektor.no, er dermed
-«self-serving». Konsekvensen er todelt: siden blir **ikke kvalifisert** for
-stjerner i søkeresultatet, og markeringen er et brudd på retningslinjene.
-Det gjelder også om anmeldelsene kommer via en tredjepartswidget — altså
-også dagens Elfsight-løsning.
+«self-serving». Det gjelder også om anmeldelsene kommer via en
+tredjepartswidget — altså også dagens Elfsight-løsning.
 
-**Derfor:** anmeldelsene på forsiden er vanlig HTML uten schema.
-`src/components/Schema.tsx` skal ikke utvides med `aggregateRating`.
+### RETTET 16.09.2026 — «regelbrudd» var for sterkt
 
-Fristelsen er reell, for stjerner i SERP ser ut som gratis CTR. Den er det
-ikke — den gir null stjerner og en policyrisiko på samme tid.
+Her sto det at markeringen er **et brudd på retningslinjene**. Jeg hentet
+Googles side på nytt og leste ordlyden:
+
+> «If the entity that's being reviewed controls the reviews about itself,
+> their pages that use `LocalBusiness` or any other type of `Organization`
+> structured data are **ineligible** for star review feature.»
+
+«Ineligible», ikke «disallowed». Siden mister stjernene, ikke plasseringen.
+Det er ingen manuell straff knyttet til dette alene. Forskjellen er ikke
+akademisk: den avgjorde en beslutning, og den gale versjonen av A33 ville
+avgjort den motsatt vei.
+
+### Hva som faktisk er gjort
+
+**Ingen `Review`-objekter.** Ni anmeldelser i JSON-LD er den mest
+åpenbart selvtjenende varianten, og de gir ingenting.
+
+**`aggregateRating` er derimot lagt inn** (`Schema.tsx`, 16.09.2026), med
+5 av 5, `ratingCount` 11 og `reviewCount` 9. Begrunnelsen er ikke stjerner
+— de kommer aldri. Den er at JSON-LD leses av mer enn Googles
+rich-results-motor: språkmodellene henter entitetsfakta derfra, de kjører
+ikke JavaScript, og AGENTS.md lister entitetssignaler i markup som ett av
+fire krav til synlighet. Tallet er sant, verifisert mot kilden (A38), og
+kostnaden er null.
+
+**Forvent ikke stjerner i SERP.** Skulle noen senere spørre hvorfor de ikke
+dukker opp: det er ikke en feil, det er denne regelen.
 
 Kilde: developers.google.com/search/docs/appearance/structured-data/review-snippet
+(hentet og sitert 16.09.2026)
 
 ## A34 — Motsigelse i typografien som må avklares med kunden
 
@@ -427,9 +450,11 @@ anmeldelse. Sjekk lenken over før lansering og ved hver gjennomgang av
 forsiden. Verdiene ligger samlet i `googleProfil` i
 `src/content/anmeldelser.ts`, ett sted.
 
-**Fortsatt ingen AggregateRating-schema.** At tallet er sant gjør det ikke
-lovlig å merke opp: Google regner anmeldelser av en enhet, på enhetens egen
-side, som self-serving. A33 står uendret.
+**AggregateRating er lagt inn.** Da A38 ble skrevet sto det at markering
+ikke var lov. Det var basert på den gale versjonen av A33, som nå er rettet:
+Google sier «ineligible», ikke «disallowed». Tallet er derfor markert opp —
+ikke for stjerner, som aldri kommer, men fordi JSON-LD er der
+språkmodellene henter entitetsfakta. Se A33.
 
 **Sidegevinst — NAP er verifisert mot kilden.** Adresse, telefon og domene i
 Googles oppføring stemmer nøyaktig med `site.kontakt` i `site.ts` og med

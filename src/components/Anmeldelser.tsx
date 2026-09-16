@@ -44,9 +44,11 @@ import { googleProfil } from "@/content/anmeldelser";
  * synlighetsgevinsten — og den kommer av hvor teksten ligger, ikke av
  * markup.
  *
- * MERK — ingen Review eller AggregateRating. Google regner anmeldelser av en
- * enhet, på enhetens egen side, som self-serving. Det gir null stjerner i
- * søkeresultatet OG er et regelbrudd. Se A33.
+ * MERK — ingen Review-objekter i schema. Ni anmeldelser i JSON-LD er den
+ * mest åpenbart selvtjenende varianten, og de gir ingenting. En
+ * `aggregateRating` ligger derimot på Organization; se Schema.tsx for
+ * hvorfor, og A33 for rettelsen av påstanden om at slik markering er et
+ * regelbrudd. Den er «ineligible», ikke forbudt.
  */
 function Stjerner() {
   return (
