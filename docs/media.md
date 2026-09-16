@@ -358,3 +358,56 @@ Det kostet en runde i prisseksjonen: teksten skulle bestemme høyden og
 klippet fylle den, men klippet dyttet raden til nøyaktig 9:16 av
 spaltebredden og teksten fikk 68 px dødplass under seg. Klippene er nå
 absolutt posisjonert overalt, så de aldri bidrar med høyde.
+
+## Kontaktseksjonen og et bytte til (16.09.2026, sen kveld)
+
+### To klipp fyller dødplassen ved skjemaet
+
+Venstrespalten i kontaktblokken hadde overskrift, ingress og NAP — rundt
+300 px — mot et skjema på nesten 700. Resten var tom brun flate, akkurat
+der kunden skal bestemme seg.
+
+| Fil | Format | Kilde | Vindu | Størrelse |
+|---|---|---|---|---|
+| `reels/gira.mp4` | 480×854 | Gira kort ny tekst.mov | 3,0–10,0 s | 469 kB |
+| `reels/bjorvika.mp4` | 480×854 | Bjørvika Post 4.mp4 | 6,0–13,0 s | 343 kB |
+
+Begge er trimmet unna sluttkortene: Gira ender i et PREMIUM PT-kort med et
+tilbud fra ca. 13,8 s, og åpner med et «2. JANUAR»-kort de første to.
+
+Raden har `flex-1` og `min-h-0`, så den tar nøyaktig det skjemaet ikke
+bruker. Målt: venstrespalte 716 px, skjema 716 px, avstand fra klippenes
+underkant til spaltens bunn 0 px. Blir skjemaet høyere eller overskriften
+lengre, justerer klippene seg — det kan ikke oppstå nytt tomrom.
+
+**Ingen bildetekster.** Klippene er fra Premium PT og Bjørvika, og ingen av
+dem står på den bekreftede kundelisten som brukes ellers på siden. Samme
+regel som i arbeidsrutenettet.
+
+### The Well byttet plass med seg selv
+
+Rhassoul-klippet lå i arbeidsveggen og gongklippet i reel-veggen. Pål ville
+ha Rhassoul i reel-veggen. De byttet plass i stedet for at Rhassoul skulle
+stå to steder:
+
+| Hvor | Før | Nå |
+|---|---|---|
+| Reel-veggen (`reels/thewell`) | gongbad | Rhassoul, 640×1138, 0,5–8,5 s, 385 kB |
+| Arbeidsveggen (`arbeid/spa`) | Rhassoul | gongbad, 440×782, 0,2–6,2 s, 162 kB |
+
+The Well er dermed representert begge steder, med ulikt materiale.
+
+**Filnavnene i Dropbox, én gang til:** `TheWell_Spa_9-16.mov` er
+bassengannonsen. Rhassoul ligger i `Rhassoul 9x16 Reel.mov`, gongbadet i
+`Meditation Reel Short.mov`.
+
+### Plakatregelen bommet igjen, på samme måte
+
+`bjorvika` fikk automatisk et arkitekturbilde av en tom gate med trikk —
+mest kanter, minst innhold. Valgt for hånd i stedet: to som går nedover en
+trerekke i høstlys, ved 1,2 s.
+
+Det er andre gang på én kveld. Mønsteret er tydelig nok til å slås fast:
+**på klipp med mennesker og bevegelse velger skarphetsregelen nesten alltid
+arkitektur eller stillbilde-lignende rammer.** Bruk den som et filter mot
+uskarpe rammer, og velg deretter selv — i faktisk visningsstørrelse.

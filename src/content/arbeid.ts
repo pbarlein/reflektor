@@ -111,7 +111,10 @@ export const veggrader: Veggcelle[][] = [
     { type: "foto", fil: "dag4", alt: "Opptak med kamera under et arrangement", format: "3/4" },
     { type: "video", fil: "matcha", alt: "Vertikalt klipp av matcha som vispes", format: "9/16" },
     { type: "foto", fil: "fabrikk", alt: "Ansatte i arbeidstøy i et produksjonslokale", format: "1/1" },
-    { type: "video", fil: "spa", alt: "Vertikalt klipp fra behandlingsrom", format: "9/16" },
+    // Gongbadet. Lå i reel-veggen et par timer; byttet med Rhassoul, som
+    // Pål ville ha der. Filnavnet er fortsatt «spa» — det beskriver
+    // avdelingen, ikke filmen, og begge klippene er fra The Well.
+    { type: "video", fil: "spa", alt: "Vertikalt klipp fra gongbad i spaavdelingen", format: "9/16" },
     { type: "foto", fil: "goretex2", alt: "Nærbilde av en sko på asfalt", format: "1/1" },
     { type: "video", fil: "bekkestua", alt: "Vertikalt klipp fra et treningslokale", format: "9/16" },
     { type: "foto", fil: "peppes2", alt: "Gjest ved et bord med pizza", format: "4/5" },
