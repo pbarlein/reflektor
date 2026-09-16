@@ -269,3 +269,38 @@ element som flyttes av en CSS-animasjon inne i en rullecontainer er ikke noe
 Det siste er poenget: slår man av bevegelsen, forsvinner ikke innholdet.
 Raden kan fortsatt dras i, og glasskortene står ferdig innhentet.
 
+### Logoraden tømtes til høyre på brede skjermer (rettet 16.09.2026)
+
+Pål: «logoraden forsvinner når den har kjørt gjennom». Feilen var ekte, og
+den var usynlig på alle bredder jeg hadde målt på.
+
+Sporet besto av TO sett, og animasjonen flytter -50 %. Perioden var altså
+ETT sett. Ved loopslutt viser vinduet `[settbredde, settbredde +
+vindusbredde]` — og er vinduet bredere enn settet, peker halen utenfor
+sporet.
+
+| Vindu | Tomt til høyre ved loopslutt |
+|---|---|
+| 1 440 | 0 px |
+| 1 728 | 0 px |
+| 1 920 | 0 px |
+| **2 560** | **558 px** |
+| **3 440** | **1 438 px** |
+
+Settet er 2 002 px, så feilen slår inn nøyaktig der vinduet passerer det.
+Jeg målte på 390, 768, 1024, 1440 og 2560 da raden ble bygget — og fikk
+null siderulling på alle, som var det jeg lette etter. Hullet ved loopslutt
+er en annen sjekk, og den fantes ikke.
+
+**Rettet med fire sett i stedet for to.** Perioden blir da to sett, 4 004
+px, og raden er sømløs så lenge vinduet er smalere enn det. Pro Display XDR
+er 3 008 logiske piksler.
+
+Det koster ingenting på nettverket: 44 `<img>` peker på elleve unike
+URL-er, så nettleseren henter fortsatt elleve filer. Bare DOM-noder.
+
+Verifisert ved å fryse sporet på `translateX(-50%)`, altså nøyaktig
+loopslutt, og måle høyrekanten på siste logo mot vindusbredden: 622 px tomt
+før, 0 px etter, på 2 560. Null hull på 390, 768, 1 440, 2 560, 3 440 og
+4 004.
+

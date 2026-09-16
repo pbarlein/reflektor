@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Image from "next/image";
 
 import { kundelogoer } from "@/content/logoer";
@@ -21,15 +22,38 @@ import { kundelogoer } from "@/content/logoer";
  * 3. `prefers-reduced-motion` slår driften helt av. Da står raden stille og
  *    er ren rulling — samme innhold, ingen bevegelse.
  *
- * SPORET ER DUPLISERT. Animasjonen flytter -50 %, og med to identiske sett
- * betyr det at sporet er nøyaktig tilbake der det startet når animasjonen
- * looper. Uten duplikatet ville det oppstått et tomrom før den hoppet.
- * Duplikatet er `aria-hidden`, så skjermleser hører hver kunde én gang.
+ * SPORET GJENTAS FIRE GANGER. Animasjonen flytter -50 %, altså lengden av
+ * to sett, og da står sporet nøyaktig der det startet når loopen slår om.
+ *
+ * FIRE OG IKKE TO — dette var en ekte feil, meldt av Pål: «logoraden
+ * forsvinner når den har kjørt gjennom». Med to sett er perioden ETT sett,
+ * og ved loopslutt vises vinduet [settbredde, settbredde + vindusbredde].
+ * Er vinduet bredere enn settet, peker halen utenfor sporet og det blir
+ * tomt til høyre. Målt: 0 px hull til og med 1 920, 558 px på 2 560,
+ * 1 438 px på 3 440. Usynlig på en laptop, åpenbart på en stor skjerm.
+ *
+ * Med fire sett er perioden TO sett — 4 004 px — og kravet blir at vinduet
+ * er smalere enn det. Det dekker alt opp til 4 004 px logiske piksler, og
+ * Pro Display XDR er 3 008. Skal raden tåle mer, må SETT økes, ikke
+ * animasjonen endres.
+ *
+ * Det koster ingenting på nettverket: 44 <img> peker på elleve unike
+ * URL-er, så nettleseren henter fortsatt elleve filer. Bare DOM-noder.
+ *
+ * Bare det første settet har alt-tekst; de tre andre er `aria-hidden`, så
+ * skjermleser hører hver kunde én gang.
  *
  * INGEN OVERSKRIFT. Se logoer.ts: en merkelapp over raden ville måttet si
  * hva forholdet er, og enhver formulering som antyder abonnement ville brutt
  * regelen i AGENTS.md. Raden viser; den påstår ikke.
  */
+/**
+ * Antall repetisjoner av logolista i sporet. Animasjonen flytter -50 %, så
+ * perioden er SETT/2 sett. Raden er sømløs så lenge vinduet er smalere enn
+ * perioden: 4 x 2 002 / 2 = 4 004 px.
+ */
+const SETT = 4;
+
 export function Logorad() {
   const sett = (skjult: boolean) => (
     <ul
@@ -82,8 +106,9 @@ export function Logorad() {
       className="logorad-maske overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
       <div className="logorad-spor flex w-max">
-        {sett(false)}
-        {sett(true)}
+        {Array.from({ length: SETT }, (_, i) => (
+          <Fragment key={i}>{sett(i > 0)}</Fragment>
+        ))}
       </div>
     </div>
   );
