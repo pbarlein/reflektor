@@ -114,6 +114,39 @@ På den deployede siden, Chromium, 1440 px, varm cache:
 | TTFB | 560 ms |
 | DOMContentLoaded | 747 ms |
 
+### Etter header, anmeldelsesrad og båndklipp (16.09.2026)
+
+Målt på nytt, varm, to kjøringer:
+
+| Metrikk | Målt |
+|---|---|
+| **LCP** | **1 020 og 1 108 ms** — fortsatt heroklippet |
+| TTFB | 478 og 524 ms |
+| **CLS** | **0,0112** — ny, se under |
+
+**CLS kom fra null til 0,0112.** Den er godt innenfor Googles «god»-grense
+på 0,1, men den var null før, så den skal forklares. Jeg målte skiftene med
+kilde og rektangel: ved 952 ms vokser ordmerket fra 88 til 102 px bredt og
+CTA-gruppa i headeren fra 108 til 120, og ved 917 ms flytter H1 seg 6 px
+opp. Det er Poppins og Instrument Serif som byttes inn — `display: swap`.
+
+Headeren har gjort den synlig. Før var headeren logoen alene; nå er det
+tekst i en `justify-between`-rad, og da blir breddeendringen ved
+fontbyttet et sidelengs skift i stedet for ingenting.
+
+`next/font` justerer allerede reservefontens vertikale metrikker. Det finnes
+ingen tilsvarende justering for glyffbredde, så et sidelengs skift ved swap
+er iboende. Alternativet er `display: optional`, som betyr at merkevarefonten
+kan utebli helt på trege forbindelser. Det er en dårligere handel for
+0,0112.
+
+**Videovekten kan jeg ikke måle i dette verktøyet.** Playwrights Chromium
+mangler H.264, så klipp som `preload="none"` aldri får spilt av, blir heller
+aldri lastet ferdig — tallet «etter full scroll» varierte mellom 2,5 og
+3,4 MB mellom kjøringer og betyr ingenting. Det som ER eksakt, er filene:
+9,2 MB video og 3,7 MB plakater og foto på disk. De fire nye båndklippene
+utgjør **795 kB** av det.
+
 ### Hva heroklippet koster
 
 Før klippet kom inn i heroen var LCP 996 ms med H1 som LCP-element, og
