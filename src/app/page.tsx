@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Container } from "@/components/Container";
 import { Eyebrow } from "@/components/Eyebrow";
 import { ReelVegg } from "@/components/ReelVegg";
-import { Anmeldelser } from "@/components/Anmeldelser";
+import {
+  AnmeldelseFremhevet,
+  Anmeldelsesrutenett,
+} from "@/components/Anmeldelser";
 import { Kontaktskjema } from "@/components/Kontaktskjema";
 import { hentTekst, slotsISeksjon, TbdMarkor } from "@/components/Slot";
 import {
@@ -154,17 +158,6 @@ export default function Forside() {
           <ReelVegg reels={reels} />
         </div>
 
-        {/*
-          Stillbildene ligger i SAMME seksjon som klippene, under samme
-          overskrift, uten eget mellomtittel-nivå.
-
-          To grunner. Copy-protokollen: en ny seksjon ville krevd ny
-          overskrift, og den skriver ikke jeg. Og innholdsmessig er det
-          riktig — abonnementet leverer foto og video fra samme
-          produksjonsdag, så å skille dem i to seksjoner ville antydet to
-          leveranser der det er én.
-        */}
-        <Arbeidsnett bilder={redaksjonelt} />
       </section>
 
       {/* 3 · SLIK FUNGERER DET — mørk blokk som kapittelskille */}
@@ -224,21 +217,53 @@ export default function Forside() {
       </section>
 
       {/*
+        Stillbildene står nå som EGEN seksjon etter prosessblokken, ikke rett
+        under klippene.
+
+        Grunnen er rytme: reel-veggen og åtte store bilder rett etter
+        hverandre ble en vegg av bildeflate uten pusterom, og leseren mistet
+        argumentet mellom dem. Prosessblokken deler dem — video, tekst, foto —
+        og fotonettet får da også fungere som bevis PÅ det blokken nettopp
+        påsto, i stedet for som mer av det samme.
+
+        Ingen egen overskrift, med vilje. Seksjonen er et visuelt pustehull i
+        argumentet, ikke et nytt kapittel, og en overskrift ville gjort den
+        til det siste.
+      */}
+      <section className="pb-28 sm:pb-36" aria-label="Bilder fra produksjonsdager">
+        <Arbeidsnett bilder={redaksjonelt} />
+      </section>
+
+      {/*
         4 · PRIS
 
-        Prisen er kvalifiseringsøyeblikket. Første versjon var venstrestilt
-        løpende tekst — tallet, vilkårene, listen og forbeholdet under
-        hverandre i én spalte — og den leste som nok et avsnitt i stedet for
-        som et tilbud.
+        Prisen er kvalifiseringsøyeblikket. Den var tidligere en venstrestilt
+        tekstspalte, og leste som en prisliste i stedet for som et tilbud.
 
-        Nå har den en egen flate med hårstrek rundt. Ikke et kort med skygge,
-        som er 2020-språket: en ramme og et flatebytte. Tallet og vilkårene
-        står i samme blikk øverst, listen under en delelinje, og forbeholdet
-        nederst i sin egen celle.
+        Tre grep, alle basert på at seksjonen manglet visuelt uttrykk og ikke
+        informasjon:
 
-        At det som IKKE inngår står like tydelig som det som inngår, er et
-        valg. Å tie om det ville gjort tilbudet lettere å love og vanskeligere
-        å tro på.
+        1. TALLET I SERIFF, i display-grad. Det var satt i Poppins fordi det
+           ligger i en <p>. Et seksifret beløp i høykontrast-seriff på 8rem er
+           forskjellen på at prisen leses som en opplysning og at den leses
+           som et løfte. Skalakontrast er det billigste wow-grepet som finnes,
+           og det eneste som ikke er dekor.
+
+        2. ET BILDE. Seksjonen solgte en produksjonsdag uten å vise en. Bildet
+           viser nettopp opptak, og står i samme rad som tallet — det binder
+           prisen til det man får for den.
+
+        3. TALLRAD. De tre tellbare størrelsene — 1 produksjonsdag, 8–10
+           videoer, 2 publiseringer i uken — lå begravet i kulepunkter. De er
+           tall, og tall skal se ut som tall. Verdiene leses fra `tilbud`, og
+           ordene er de samme som står i den godkjente copyen.
+
+        Tallraden ligger i venstre spalte og ikke under begge, slik at bildet
+        får fylle sin spalte i full høyde. Ellers oppstår et tomrom som gjør
+        at seksjonen ser uferdig ut nettopp der den skal virke mest sikker.
+
+        Det som inngår er beholdt som bord, men nedtonet: det er
+        dokumentasjon, ikke argument.
       */}
       <section className="pb-28 sm:pb-36">
         <Container>
@@ -247,53 +272,98 @@ export default function Forside() {
             {hentTekst(front, "front.price.h2") ?? <Tbd id="front.price.h2" />}
           </h2>
 
-          <div className="mt-10 rounded-flate border border-kant-regel">
-            {/* Tallet og vilkårene i samme blikk */}
-            <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-5 p-7 sm:p-10">
-              <p className="text-6xl leading-[0.9] tracking-[-0.03em] sm:text-7xl">
-                {tilbud.prisPerManed.toLocaleString("nb-NO")}
-                <span className="text-3xl tracking-normal text-blekk-dempet">
-                  {" "}
-                  kr/mnd
-                </span>
-              </p>
-              <p className="text-lg text-balance">
-                Tre måneders oppsigelse.
-                <br className="hidden sm:block" /> Ingen bindingstid.
-              </p>
+          {/*
+            Tallet, vilkårene og tallraden i venstre spalte; bildet fyller
+            høyre i full høyde.
+
+            Første forsøk satte de to spaltene side om side med items-end, og
+            da ble tallet bunnjustert mot et høyt bilde — med et stort tomrom
+            over. Bildet skal ramme inn spalten, ikke bestemme hvor teksten
+            begynner.
+          */}
+          <div className="mt-12 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+            <div className="flex flex-col justify-between gap-12">
+              <div>
+                {/* Verdien leses fra tilbud, aldri skrevet inn her. Prisen
+                    står flere steder på siden, og de skal ikke kunne gli fra
+                    hverandre. */}
+                <p className="font-[family-name:var(--font-display-serif)] text-[5.5rem] leading-[0.82] tracking-[-0.03em] sm:text-[8rem] lg:text-[8.5rem]">
+                  {tilbud.prisPerManed.toLocaleString("nb-NO")}
+                </p>
+                <p className="mt-5 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-lg">
+                  <span className="text-blekk-dempet">kr/mnd</span>
+                  <span
+                    className="hidden h-4 w-px bg-kant-regel sm:block"
+                    aria-hidden="true"
+                  />
+                  <span>Tre måneders oppsigelse. Ingen bindingstid.</span>
+                </p>
+              </div>
+
+              {/* Tallrad — de tellbare størrelsene, hentet fra tilbud */}
+              <dl className="grid grid-cols-3 border-t border-kant-regel pt-8">
+                {[
+                  [tilbud.produksjonsdagerPerManed, "produksjonsdag", "i måneden"],
+                  [tilbud.videoerPerManed, "ferdige videoer", "hver måned"],
+                  [tilbud.posterPerUke, "publiseringer", "i uken"],
+                ].map(([tall, ord, nar], i) => (
+                  <div
+                    key={ord}
+                    className={i > 0 ? "border-l border-kant pl-5" : "pr-5"}
+                  >
+                    <dt className="sr-only">{`${ord} ${nar}`}</dt>
+                    <dd>
+                      <span className="block font-[family-name:var(--font-display-serif)] text-4xl leading-none tracking-[-0.02em] sm:text-5xl">
+                        {tall}
+                      </span>
+                      <span className="mt-3 block text-sm leading-snug tracking-[0.02em] text-blekk-dempet">
+                        {ord}
+                        <br />
+                        {nar}
+                      </span>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
             </div>
 
-            {/*
-              Ingen kolonnemellomrom. Første versjon hadde gap-x-12, og da
-              brøt hårstrekene i mellomrommet — to korte streker per rad i
-              stedet for én. Det leste som en feil, ikke som et valg.
+            <figure className="relative aspect-[4/3] overflow-hidden rounded-flate bg-flate-dempet lg:aspect-auto">
+              <Image
+                src="/arbeid/dag4-1600.jpg"
+                alt="Opptak med kamera under en produksjonsdag"
+                fill
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                className="object-cover"
+              />
+            </figure>
+          </div>
 
-              Nå møtes de: skillet mellom kolonnene er en loddrett strek, og
-              radskillene går ubrutt tvers over. Panelet leser som et bord.
-            */}
-            <ul className="grid border-t border-kant sm:grid-cols-2">
+          {/* Dokumentasjonen: hva som inngår, og hva som ikke gjør det */}
+          <div className="mt-14 rounded-flate border border-kant">
+            <ul className="grid sm:grid-cols-2">
               {tilbud.inngar.map((punkt, i) => (
                 <li
                   key={punkt}
-                  className={`flex gap-3.5 border-b border-kant px-7 py-4 sm:px-10 ${
-                    i % 2 === 0 ? "sm:border-r sm:border-r-kant" : ""
-                  }`}
+                  className={`flex gap-3.5 px-6 py-4 text-[0.9rem] leading-relaxed text-blekk-dempet sm:px-8 ${
+                    i < tilbud.inngar.length - (tilbud.inngar.length % 2 === 0 ? 2 : 1)
+                      ? "border-b border-kant"
+                      : ""
+                  } ${i % 2 === 0 ? "sm:border-r sm:border-r-kant" : ""}`}
                 >
                   <span
-                    className="mt-2 size-1.5 shrink-0 rounded-full bg-aksent"
+                    className="mt-1.5 size-1 shrink-0 rounded-full bg-aksent"
                     aria-hidden="true"
                   />
-                  <span className="text-[0.95rem] leading-relaxed">{punkt}</span>
+                  <span>{punkt}</span>
                 </li>
               ))}
             </ul>
-
-            <div className="grid gap-x-12 gap-y-4 bg-flate-dempet/60 p-7 sm:grid-cols-2 sm:p-10">
-              <p className="text-[0.95rem] leading-relaxed text-blekk-dempet">
+            <div className="grid gap-x-12 gap-y-4 border-t border-kant bg-flate-dempet/60 px-6 py-6 text-[0.9rem] leading-relaxed text-blekk-dempet sm:grid-cols-2 sm:px-8">
+              <p>
                 <span className="font-medium text-blekk">Inngår ikke: </span>
                 {tilbud.inngarIkke.join(", ").toLowerCase()}.
               </p>
-              <p className="text-[0.95rem] leading-relaxed text-blekk-dempet">
+              <p>
                 {hentTekst(front, "front.price.note") ?? (
                   <Tbd id="front.price.note" />
                 )}
@@ -303,34 +373,32 @@ export default function Forside() {
         </Container>
       </section>
 
-      {/* 5 · ANMELDELSER — navngitt bevis, stram form */}
-      <section className="pb-20">
-        <Container>
-          <Eyebrow>{hentTekst(front, "front.reviews.eyebrow")}</Eyebrow>
-          <h2 className="mt-4 max-w-2xl text-3xl sm:text-4xl">
-            {hentTekst(front, "front.reviews.h2") ?? (
-              <Tbd id="front.reviews.h2" />
-            )}
-          </h2>
-        </Container>
-        <Anmeldelser
-          fremhevet={klarerteAnmeldelser[0]}
-          ovrige={klarerteAnmeldelser.slice(1)}
+      {/*
+        5 · ANMELDELSER
+
+        Seksjonen var ren tekst på beige, i samme register som alt rundt, og
+        leste som dokumentasjon i stedet for som bevis. Den er nå delt i to:
+        det sterkeste sitatet på mørk flate i full bredde, resten i
+        hårstreksrutenett på lys.
+
+        Flatebyttet gjør jobben ord ikke kan gjøre her — det markerer at det
+        er noen andre enn Reflektor som snakker.
+      */}
+      <AnmeldelseFremhevet
+        eyebrow={hentTekst(front, "front.reviews.eyebrow")}
+        overskrift={
+          hentTekst(front, "front.reviews.h2") ?? <Tbd id="front.reviews.h2" />
+        }
+        anmeldelse={klarerteAnmeldelser[0]}
+      />
+
+      <section className="pt-20 pb-28 sm:pt-24 sm:pb-36">
+        <Anmeldelsesrutenett
+          anmeldelser={klarerteAnmeldelser.slice(1)}
+          antallTotalt={klarerteAnmeldelser.length}
         />
       </section>
 
-      {/*
-        Tett bånd i full bredde, mellom beviset og innvendingene.
-
-        Plasseringen er valgt: anmeldelsene sier at folk er fornøyde, båndet
-        viser hvor mye de faktisk får. Rekkefølgen er «andre mener dette» →
-        «her er mengden» → «her er det du lurer på» → skjema.
-
-        Bryter containeren med vilje, og har ingen overskrift. Et bånd som
-        stopper ved tekstbredden leser som en illustrasjon; ett som går ut av
-        skjermen leser som en strøm. Uten overskrift leser det som en pause i
-        argumentet, ikke som en ny seksjon — og det er nøyaktig jobben.
-      */}
       <section className="pb-24" aria-label="Utvalg fra arbeidet">
         <Arbeidsband bilder={band} />
       </section>

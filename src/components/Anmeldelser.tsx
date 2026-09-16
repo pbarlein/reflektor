@@ -2,88 +2,126 @@ import { Container } from "./Container";
 import type { Anmeldelse } from "@/content/anmeldelser";
 
 /**
- * Anmeldelser i to former: én løftet, resten i et hårstreksatt rutenett.
+ * Anmeldelser i to registre: ett løftet sitat på mørk flate, resten i et
+ * hårstreksatt rutenett på lys.
  *
  * Hvorfor delt: den sterkeste anmeldelsen er kvalitativt forskjellig fra de
- * andre. Thomas Messel oppgir et tall — 70 % vekst — og et forbehold som
- * gjør tallet troverdig: «selv i et krevende marked med generell nedgang for
- * alle i vår bransje». Å legge den i et rutenett med åtte andre gjør den til
- * én av ni. Å løfte den gir den vekten den fortjener.
+ * andre. Thomas Messel oppgir et tall — 70 % vekst — og et forbehold som gjør
+ * tallet troverdig: «selv i et krevende marked med generell nedgang for alle
+ * i vår bransje». Å legge den i et rutenett med sju andre gjør den til én av
+ * åtte.
  *
- * Resten står tett, i samme blikk. Styrken i navngitte anmeldelser ligger i
- * ANTALLET avsendere som sier det samme, og den effekten forsvinner når man
- * ser ett sitat av gangen — som er nettopp det casesiden gjør.
+ * Hvorfor MØRK flate: seksjonen var tidligere ren tekst på beige, i samme
+ * register som alt rundt. Den leste som dokumentasjon. Et flatebytte i full
+ * bredde gir det som mangler — en pause, og et øyeblikk der noe annet enn
+ * Reflektor snakker. Det er sidens tredje mørke blokk, og det er grensen:
+ * kadensen er prosess, bevis, kontakt, med lange lyse strekk imellom.
  *
- * Ingen kort, ingen skygger, ingen avatarer, ingen stjernerad per sitat. At
- * alle er 5 av 5 sies én gang, ikke ni ganger. Skiller er hårstreker.
+ * Tallet blir stående INNE i sitatet, ikke løftet ut som en egen overskrift.
+ * Forskjellen er ikke kosmetisk: «70 %» i display-grad leser som noe Reflektor
+ * leverer, mens det samme tallet i et attribuert sitat leser som noe én kunde
+ * sier om seg selv. Det siste er det som faktisk er tilfellet.
  *
- * Pull-quoten settes i display-seriffen, ikke i Poppins. Den er et
- * overskriftsnivå i praksis — den har samme grad og samme jobb — og et
- * display-snitt som bare brukes på h1 og h2 leser som en inkonsekvens når
- * sidens største tekst står i brødtekstsnittet.
+ * Ingen stjerner og ingen totalvurdering — se merknaden i
+ * src/content/anmeldelser.ts om hvordan kilden er filtrert.
  *
- * MERK — ingen Review- eller AggregateRating-schema på disse.
- * Googles retningslinjer for review snippets sier at anmeldelser av en enhet,
- * plassert på enhetens egen side, er «self-serving». Det gir null stjerner i
- * søkeresultatet OG er et regelbrudd. Se docs/vedlegg-a.md.
+ * MERK — ingen Review- eller AggregateRating-schema. Googles retningslinjer
+ * regner anmeldelser av en enhet, på enhetens egen side, som «self-serving».
+ * Det gir null stjerner i søkeresultatet OG er et regelbrudd. Se A33.
  */
-export function Anmeldelser({
-  fremhevet,
-  ovrige,
+export function AnmeldelseFremhevet({
+  anmeldelse,
+  overskrift,
+  eyebrow,
 }: {
-  fremhevet?: Anmeldelse;
-  ovrige: Anmeldelse[];
+  anmeldelse?: Anmeldelse;
+  overskrift: React.ReactNode;
+  eyebrow: React.ReactNode;
 }) {
   return (
-    <>
-      {fremhevet && (
-        <Container>
-          <figure className="mt-12 max-w-4xl">
-            <blockquote className="font-[family-name:var(--font-display-serif)] text-[1.75rem] leading-[1.2] tracking-[-0.015em] text-balance sm:text-4xl sm:leading-[1.15] lg:text-[2.75rem] lg:leading-[1.1]">
-              {fremhevet.sitat}
+    <div className="bg-dyp py-20 text-pa-dyp sm:py-28">
+      <Container>
+        <p className="flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.08em] text-pa-dyp-dempet">
+          <span
+            className="size-1.5 shrink-0 rounded-full bg-aksent-pa-dyp"
+            aria-hidden="true"
+          />
+          {eyebrow}
+        </p>
+        <h2 className="mt-4 max-w-3xl text-3xl sm:text-4xl">{overskrift}</h2>
+
+        {anmeldelse && (
+          <figure className="mt-14 max-w-5xl">
+            <blockquote className="font-[family-name:var(--font-display-serif)] text-[1.75rem] leading-[1.2] tracking-[-0.015em] text-balance sm:text-[2.6rem] sm:leading-[1.15] lg:text-[3.4rem] lg:leading-[1.08]">
+              {anmeldelse.sitat}
             </blockquote>
-            <figcaption className="mt-7 text-sm tracking-[0.02em]">
-              <span className="font-medium">{fremhevet.navn}</span>
-              {fremhevet.selskap && (
-                <span className="text-blekk-dempet"> · {fremhevet.selskap}</span>
+            <figcaption className="mt-9 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[color:var(--kant-pa-dyp)] pt-6 text-sm tracking-[0.02em]">
+              <span className="font-medium">{anmeldelse.navn}</span>
+              {anmeldelse.selskap && (
+                <>
+                  <span
+                    className="h-3.5 w-px bg-[color:var(--kant-pa-dyp)]"
+                    aria-hidden="true"
+                  />
+                  <span className="text-pa-dyp-dempet">
+                    {anmeldelse.selskap}
+                  </span>
+                </>
               )}
             </figcaption>
           </figure>
-        </Container>
-      )}
-
-      <Container>
-        <ul className="mt-16 grid gap-x-12 border-t border-kant-regel sm:grid-cols-2 lg:grid-cols-3">
-          {ovrige.map((a) => (
-            <li key={a.navn} className="border-b border-kant py-7">
-              <blockquote className="text-[0.95rem] leading-relaxed text-pretty">
-                {a.sitat}
-              </blockquote>
-              <p className="mt-4 text-sm tracking-[0.02em]">
-                <span className="font-medium">{a.navn}</span>
-                {a.selskap && (
-                  <span className="text-blekk-dempet"> · {a.selskap}</span>
-                )}
-              </p>
-            </li>
-          ))}
-        </ul>
-        {/*
-          Kildeattribusjon én gang, ikke per sitat.
-
-          Setningen om oppdragstype er ikke pynt. Anmeldelsene kommer fra
-          både produksjonsoppdrag og månedsabonnement, og uten den
-          opplysningen leser en leser hele veggen som abonnenter. Det ville
-          vært villedende: flere av selskapene her har aldri hatt abonnement.
-          Å si det generelt — uten å knytte noe navn til noen av delene —
-          er både sant og tilstrekkelig.
-        */}
-        <p className="mt-6 max-w-2xl text-sm tracking-[0.02em] text-blekk-svak">
-          Alle {ovrige.length + (fremhevet ? 1 : 0)} er hentet fra Reflektors
-          anmeldelser på Google, og alle er 5 av 5. De dekker både enkeltstående
-          produksjonsoppdrag og løpende månedsavtaler.
-        </p>
+        )}
       </Container>
-    </>
+    </div>
+  );
+}
+
+/**
+ * De øvrige, i hårstreksrutenett.
+ *
+ * Styrken i navngitte anmeldelser ligger i ANTALLET avsendere som sier det
+ * samme, og den effekten forsvinner når man ser ett av gangen — som er
+ * nettopp det casesiden gjorde. Derfor tett, i samme blikk.
+ *
+ * Ingen kort, ingen skygger, ingen avatarer. Sitatet skal leses, ikke
+ * innrammes.
+ */
+export function Anmeldelsesrutenett({
+  anmeldelser,
+  antallTotalt,
+}: {
+  anmeldelser: Anmeldelse[];
+  antallTotalt: number;
+}) {
+  return (
+    <Container>
+      <ul className="grid gap-x-12 border-t border-kant-regel sm:grid-cols-2 lg:grid-cols-3">
+        {anmeldelser.map((a) => (
+          <li key={a.navn} className="border-b border-kant py-8">
+            <blockquote className="leading-relaxed text-pretty">
+              {a.sitat}
+            </blockquote>
+            <p className="mt-5 text-sm tracking-[0.02em]">
+              <span className="font-medium">{a.navn}</span>
+              {a.selskap && (
+                <span className="text-blekk-dempet"> · {a.selskap}</span>
+              )}
+            </p>
+          </li>
+        ))}
+      </ul>
+      {/*
+        Kildeattribusjon én gang, ikke per sitat.
+
+        Setningen om oppdragstype er ikke pynt. Anmeldelsene kommer fra både
+        produksjonsoppdrag og månedsabonnement, og uten den opplysningen leser
+        man hele veggen som abonnenter. Flere av selskapene her har aldri hatt
+        abonnement.
+      */}
+      <p className="mt-7 max-w-2xl text-sm tracking-[0.02em] text-blekk-svak">
+        Alle {antallTotalt} er hentet fra Reflektors anmeldelser på Google. De
+        dekker både enkeltstående produksjonsoppdrag og løpende månedsavtaler.
+      </p>
+    </Container>
   );
 }
