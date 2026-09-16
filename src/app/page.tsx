@@ -41,6 +41,39 @@ import { site, tilbud } from "@/content/site";
  * bevis for. Vi utelater den fordi den koster skjermplass på mobil og prisen
  * allerede står i heroen. Det er en designvurdering, ikke et forskningsfunn.
  */
+/**
+ * Én rad i prisseksjonens spesifikasjonsark.
+ *
+ * Skinnen til venstre bærer merkelappen, innholdet står i den brede
+ * spalten, og hårstreken går tvers over begge. Det er den hårstreken som
+ * gjør at radene leser som ÉN tabell i stedet for som fem moduler stablet
+ * oppå hverandre — og det var stablingen som fikk seksjonen til å virke
+ * generert.
+ *
+ * 9rem på skinnen er bestemt av «Dette inngår», den lengste merkelappen:
+ * den skal stå på én linje. Blir en merkelapp lengre, må tallet opp.
+ *
+ * Under lg legger merkelappen seg over innholdet. En skinne på 9rem ved
+ * siden av en tekstspalte på en telefon ville gitt 40 % av bredden til noe
+ * som er tre ord langt.
+ */
+function Rad({
+  merkelapp,
+  children,
+}: {
+  merkelapp: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="grid gap-x-10 gap-y-5 border-t border-kant py-9 sm:py-11 lg:grid-cols-[9rem_1fr]">
+      <p className="text-xs font-medium tracking-[0.08em] text-blekk-dempet uppercase lg:pt-1.5">
+        {merkelapp}
+      </p>
+      <div>{children}</div>
+    </div>
+  );
+}
+
 export const metadata: Metadata = {
   title: hentTekst(front, "front.meta.title") ?? undefined,
   description: hentTekst(front, "front.meta.description") ?? undefined,
@@ -327,195 +360,166 @@ export default function Forside() {
       */}
       {/* id="pris" er målet for menypunktet «Pris». Se navigasjon.ts for
           hvorfor det peker hit og ikke på /sosiale-medier-byra. */}
+      {/*
+        4 · PRIS — bygget om 16.09.2026 fordi den leste som generert.
+
+        DIAGNOSEN, MED TALL. Den gamle versjonen var 14 stablede blokker med
+        8 ulike typografiske grader (3xl, 4xl, 5xl, 1,0625rem, 8,5rem, lg,
+        sm, xs). Hver blokk hadde samme form: etikett, overskrift, innhold.
+        To eyebrow-er i samme seksjon. Og en hakeliste, som er den mest
+        maltypiske komponenten som finnes — jeg la den inn selv i forrige
+        runde, og det var den som utløste reaksjonen.
+
+        Det er ikke innholdet som leser som mal. Det er den JEVNE TRAPPEN av
+        typografiske grader og de like rektanglene i stabel. Referansene jeg
+        hentet ned og så på — Designjoy, Basecamp, Linear, Bakken & Bæck —
+        har det motsatte: ekstrem kontrast mellom FÅ grader. Designjoy har i
+        praksis to, en overskrift på rundt 100 px og brødtekst på 16.
+
+        GREPET: seksjonen er ett spesifikasjonsark, ikke elleve moduler.
+
+        En smal etikettskinne til venstre bærer alle merkelappene, og
+        innholdet står i den brede spalten. Det er et redaksjonelt grep —
+        datablad, kolofon, teknisk spesifikasjon — og det er ærlig mot
+        innholdet, for dette ER en spesifikasjon. Tre ting følger av det:
+
+        - Den gjentatte «eyebrow → h2 → innhold»-formen forsvinner, fordi
+          merkelappene blir et system i stedet for en komponent som gjentas.
+        - Asymmetrien blir ekte (9rem mot resten), ikke 50/50 eller 60/40.
+        - Radskillene går tvers over begge spaltene, så seksjonen leser som
+          ÉN ting.
+
+        TYPOGRAFIEN ER KUTTET FRA ÅTTE GRADER TIL FIRE: display (tallet og
+        de tre nøkkeltallene), overskrift, brødtekst, merkelapp. Tallet er
+        gjort større, ikke mindre — når skalaen er få og langt fra hverandre,
+        leser den som satt.
+
+        HAKENE ER UTE. Hårstrek mellom punktene i stedet. En hake sier
+        «SaaS-prisplan»; en hårstrek sier «spesifikasjon».
+
+        «Tre måneders oppsigelse» sto BÅDE ved prisen og i vilkårslinja.
+        Dublett fjernet — den står i vilkårsraden, der den hører hjemme.
+      */}
       <section id="pris" className="scroll-mt-4 pb-28 sm:pb-36">
         <Container>
-          {/*
-            ALT SAMMEN STÅR I FLUKT MED KLIPPET.
+          <div className="border-b border-kant">
+            {/* RAD 1 — PRIS. Tallet og klippet deler raden. */}
+            <Rad merkelapp="Pris">
+              <div className="grid gap-8 lg:grid-cols-[1fr_16.5rem] lg:items-end lg:gap-12">
+                <div>
+                  {/* Verdien leses fra tilbud, aldri skrevet inn her. Prisen
+                      står flere steder på siden, og de skal ikke kunne gli
+                      fra hverandre. */}
+                  <p className="flex items-baseline gap-4 font-[family-name:var(--font-display-serif)] text-[5.5rem] leading-[0.8] tracking-[-0.03em] sm:text-[9rem] lg:text-[11rem]">
+                    {tilbud.prisPerManed.toLocaleString("nb-NO")}
+                    <span className="font-sans text-base font-normal tracking-[0.02em] text-blekk-dempet sm:text-lg">
+                      kr/mnd
+                    </span>
+                  </p>
+                  <h2 className="mt-7 max-w-md text-2xl text-balance sm:text-[1.75rem]">
+                    {hentTekst(front, "front.price.h2") ?? (
+                      <Tbd id="front.price.h2" />
+                    )}
+                  </h2>
+                </div>
 
-            Før lå eyebrow og overskrift over rutenettet, og bare tallet og
-            tallraden ved siden av videoen. Venstrespalten var da rundt 400 px
-            innhold mot en video på nesten 1 000, og `justify-between` dro
-            hullene fra hverandre for å fylle forskjellen. Resultatet var to
-            store tomrom midt i seksjonen som skal virke mest sikker.
-
-            Nå er de fire blokkene — merkelapp og overskrift, tallet og
-            vilkårene, tallraden — én spalte, og klippet fyller den andre i
-            nøyaktig samme høyde. Høyden bestemmes av teksten, ikke av
-            videoens format: figuren er `h-full` og beskjærer seg selv. Da
-            kan det ikke oppstå luft, uansett hvor lang overskriften blir
-            eller hvor bred skjermen er.
-
-            Spalten er 19rem fordi det er bredden som gjør klippet omtrent
-            9:16 ved den teksthøyden. Blir teksten lengre, blir klippet
-            smalere i formatet — men aldri kortere enn spalten, og aldri
-            med et hull under.
-          */}
-          <div className="grid gap-10 lg:grid-cols-[1fr_19rem] lg:items-stretch lg:gap-14">
-            <div className="flex flex-col gap-10">
-              <div>
-                <Eyebrow>{hentTekst(front, "front.price.eyebrow")}</Eyebrow>
-                <h2 className="mt-4 max-w-xl text-3xl sm:text-4xl">
-                  {hentTekst(front, "front.price.h2") ?? (
-                    <Tbd id="front.price.h2" />
-                  )}
-                </h2>
+                {/*
+                  Klippet er flyttet ned til bunnlinja av raden i stedet for
+                  å fylle hele høyden. Da rammer det tallet i stedet for å
+                  konkurrere med det, og «30 000» får stå alene øverst.
+                */}
+                <Enkeltklipp
+                  sti="/reels"
+                  medie={{
+                    type: "video",
+                    fil: "egon",
+                    alt: "Klipp fra Reflektor x Egon: servering og gjester",
+                  }}
+                  className="relative aspect-[4/3] overflow-hidden rounded-medie bg-flate-dempet sm:aspect-[16/9] lg:aspect-[4/5]"
+                />
               </div>
+            </Rad>
 
-              <div>
-                {/* Verdien leses fra tilbud, aldri skrevet inn her. Prisen
-                    står flere steder på siden, og de skal ikke kunne gli fra
-                    hverandre. */}
-                <p className="font-[family-name:var(--font-display-serif)] text-[5.5rem] leading-[0.82] tracking-[-0.03em] sm:text-[8rem] lg:text-[8.5rem]">
-                  {tilbud.prisPerManed.toLocaleString("nb-NO")}
-                </p>
-                <p className="mt-5 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-lg">
-                  <span className="text-blekk-dempet">kr/mnd</span>
-                  <span
-                    className="hidden h-4 w-px bg-kant-regel sm:block"
-                    aria-hidden="true"
-                  />
-                  <span>Tre måneders oppsigelse. Ingen bindingstid.</span>
-                </p>
-              </div>
-
-              {/* Tallrad — de tellbare størrelsene, hentet fra tilbud */}
-              <dl className="grid grid-cols-3 border-t border-kant-regel pt-8">
+            {/* RAD 2 — OMFANG. De tre tellbare størrelsene. */}
+            <Rad merkelapp="Omfang">
+              {/*
+                TO LAYOUTER. Under sm står tallene i en stabel, med tallet og
+                ordet på samme linje. Tre spalter på 390 px gir kolonner på
+                rundt 100 px, og «produksjonsdag» er bredere enn det — i
+                første versjon rant ordet inn i nabospalten. Fra sm er det
+                tre spalter, som er der tallene gjør mest nytte.
+              */}
+              <dl className="flex flex-col gap-5 sm:grid sm:grid-cols-3 sm:gap-x-8">
                 {[
                   [tilbud.produksjonsdagerPerManed, "produksjonsdag", "i måneden"],
                   [tilbud.videoerPerManed, "ferdige videoer", "hver måned"],
                   [tilbud.posterPerUke, "publiseringer", "i uken"],
-                ].map(([tall, ord, nar], i) => (
+                ].map(([tall, ord, nar]) => (
                   <div
                     key={ord}
-                    className={i > 0 ? "border-l border-kant pl-5" : "pr-5"}
+                    className="flex items-baseline gap-4 sm:block"
                   >
                     <dt className="sr-only">{`${ord} ${nar}`}</dt>
-                    <dd>
-                      <span className="block font-[family-name:var(--font-display-serif)] text-4xl leading-none tracking-[-0.02em] sm:text-5xl">
+                    <dd className="contents sm:block">
+                      <span className="min-w-[5.25rem] font-[family-name:var(--font-display-serif)] text-[2.75rem] leading-none tracking-[-0.02em] sm:block sm:min-w-0 sm:text-[3.5rem]">
                         {tall}
                       </span>
-                      <span className="mt-3 block text-sm leading-snug tracking-[0.02em] text-blekk-dempet">
-                        {ord}
-                        <br />
+                      <span className="text-sm leading-snug tracking-[0.02em] text-blekk-dempet sm:mt-3 sm:block">
+                        {ord}{" "}
+                        <br className="hidden sm:block" />
                         {nar}
                       </span>
                     </dd>
                   </div>
                 ))}
               </dl>
-            </div>
+            </Rad>
 
-            {/*
-              EGON, IKKE BTS-KLIPPET. Klippet åpner med REFLEKTOR ×
-              EGON-merkingen, og prisseksjonen er der kunden bestemmer seg —
-              da er det den sterkeste merkevaren som skal stå der.
-
-              Klippet er FLYTTET, ikke kopiert. Det lå i arbeidsrutenettet
-              lenger opp; der står nå BTS-klippet i stedet. Samme klipp to
-              steder på én side leser som at vi ikke har mer å vise.
-
-              Ingen ny enkoding: 640x1136 er allerede riktig for en spalte på
-              304 px ved 2x.
-            */}
-            <Enkeltklipp
-              sti="/reels"
-              medie={{
-                type: "video",
-                fil: "egon",
-                alt: "Klipp fra Reflektor x Egon: servering og gjester",
-              }}
-              className="relative aspect-[3/4] overflow-hidden rounded-flate bg-flate-dempet sm:aspect-[4/5] lg:aspect-auto lg:h-full"
-            />
-          </div>
-
-          {/*
-            SPESIFIKASJONEN.
-
-            Dette var en tabell: seks like rader i en innrammet boks, alt i
-            0,9 rem dempet tekst. Altså sidens minste og lyseste typografi,
-            for innholdet som ER produktet. Den forrige begrunnelsen var at
-            «det er dokumentasjon, ikke argument» — og det var feil vei rundt.
-            En kunde som vurderer 30 000 i måneden leser nettopp dette før
-            hun fyller ut skjemaet.
-
-            TRE GREP, ingen av dem dekor:
-
-            1. Boksen er borte. En innrammet boks med tolv hårstreker leser
-               som en tabell. En hårstrek på toppen og luft under leser som
-               en spesifikasjon. Samme språk som tallraden over, så de to
-               henger sammen i stedet for å konkurrere.
-            2. Størrelse og kontrast opp: 1,0625 rem i full blekkfarge mot
-               0,9 rem dempet. Ingenting er lagt til, det er bare lesbart.
-            3. Hakene gjør lista skannbar. Prikker sier «punkt»; haker sier
-               «dette får du».
-
-            «INNGÅR IKKE» BLE IKKE LØFTET TIL LIKE STOR VEKT, og det er et
-            bevisst valg mot min egen første idé. Jeg ville gjøre de to
-            spaltene like store, siden ærligheten er selve salgsargumentet.
-            Men Ein-Gar, Shiv & Tormala (Journal of Consumer Research 38:5,
-            2012, «When Blemishing Leads to Blossoming», fire studier i lab
-            og felt) fant at negativ informasjon løfter inntrykket bare når
-            den er en LITEN dose som kommer ETTER det positive, og gjelder
-            noe perifert. Tre unntak etter seks punkter, om kommentarfelt,
-            stories og annonsebudsjett, treffer den beskrivelsen presist.
-            Blåser man dem opp til halve blokken, er det ikke lenger en liten
-            dose. De er derfor gjort LESBARE, ikke store.
-
-            Avslutningslinja er løftet ut av grå småtekst. «Fungerer det
-            ikke, sier dere opp. Så enkelt er det» er den sterkeste setningen
-            i seksjonen, og den sto i sidens laveste kontrast.
-          */}
-          <div className="mt-16 border-t border-kant-regel pt-10">
-            <h3 className="flex items-center gap-2.5 text-xs font-medium tracking-[0.08em] text-blekk-dempet uppercase">
-              <span
-                className="size-1.5 shrink-0 rounded-full bg-aksent"
-                aria-hidden="true"
-              />
-              Dette inngår
-            </h3>
-
-            {/*
-              `grid-flow-col` + `grid-rows-3` gjør at punktene går NEDOVER
-              venstre spalte først, ikke bortover. Standard radflyt ga
-              1-2 / 3-4 / 5-6, og den som leser en tospaltet liste nedover
-              fikk da 1, 3, 5 — altså rekkefølgen brutt. Nå står 1-2-3 til
-              venstre og 4-5-6 til høyre, som også grupperer seg selv: det
-              vi lager til venstre, det som skjer med det til høyre.
-            */}
-            <ul className="mt-8 grid gap-x-12 gap-y-5 sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-3">
-              {tilbud.inngar.map((punkt) => (
-                <li key={punkt} className="flex gap-3.5">
-                  {/* Haken er dekor for en skjermleser — lista er allerede
-                      merket «Dette inngår» av overskriften over. */}
-                  <svg
-                    viewBox="0 0 20 20"
-                    className="mt-1 size-[1.05rem] shrink-0 stroke-aksent-tekst"
-                    fill="none"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
+            {/* RAD 3 — DETTE INNGÅR. Hårstrek mellom punktene, ingen haker. */}
+            <Rad merkelapp="Dette inngår">
+              <ul className="-my-3">
+                {tilbud.inngar.map((punkt) => (
+                  <li
+                    key={punkt}
+                    className="border-b border-kant py-3 text-[1.0625rem] leading-relaxed last:border-0"
                   >
-                    <path d="M4 10.5l4 4 8-9" />
-                  </svg>
-                  <span className="text-[1.0625rem] leading-relaxed text-balance">
                     {punkt}
-                  </span>
-                </li>
-              ))}
-            </ul>
+                  </li>
+                ))}
+              </ul>
+            </Rad>
 
-            <div className="mt-10 grid gap-x-12 gap-y-6 border-t border-kant pt-8 sm:grid-cols-2">
-              <p className="text-sm leading-relaxed text-blekk-dempet">
-                <span className="font-medium text-blekk">Inngår ikke: </span>
-                {tilbud.inngarIkke.join(", ").toLowerCase()}.
+            {/*
+              RAD 4 — INNGÅR IKKE. Liten dose, etter det positive, om noe
+              perifert. Se research-konvertering.md om blemishing-effekten:
+              den virker bare når unntakene er akkurat det. Derfor lesbare,
+              ikke store.
+            */}
+            <Rad merkelapp="Inngår ikke">
+              {/*
+                Punktene i `inngarIkke` er skrevet med stor forbokstav hver
+                for seg, fordi de tidligere sto etter en innledning
+                («Inngår ikke: …»). Nå er merkelappen flyttet ut i skinnen,
+                så de danner sin egen setning — og da må alle ned i små
+                bokstaver bortsett fra den første. Uten dette sto det
+                «… meldinger, Stories, Betalt annonsering».
+              */}
+              <p className="text-[1.0625rem] leading-relaxed text-blekk-dempet">
+                {((t) => t.charAt(0).toUpperCase() + t.slice(1))(
+                  tilbud.inngarIkke.join(", ").toLowerCase(),
+                )}
+                .
               </p>
-              <p className="text-[1.0625rem] leading-relaxed text-pretty">
+            </Rad>
+
+            {/* RAD 5 — VILKÅR. Seksjonens sterkeste setning står her. */}
+            <Rad merkelapp="Vilkår">
+              <p className="max-w-2xl text-[1.0625rem] leading-relaxed text-pretty">
                 {hentTekst(front, "front.price.note") ?? (
                   <Tbd id="front.price.note" />
                 )}
               </p>
-            </div>
+            </Rad>
           </div>
         </Container>
       </section>

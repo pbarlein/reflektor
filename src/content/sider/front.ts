@@ -44,7 +44,26 @@ export const front: Side = {
         "front.hero.h1": tekst("Sosiale medier – nesten på autopilot.", {
           maksOrd: 8,
         }),
-        "front.hero.sub": tekst("Én produksjonsdag hos dere i måneden. Reflektor gjør resten: idé, opptak, klipp og publisering. 8–10 videoer på Instagram og Facebook, to ganger i uken. Fast pris, ingen binding.", {
+        /*
+         * ENDRET 16.09.2026 UTENFOR COPY-PROTOKOLLEN, med Påls uttrykkelige
+         * tillatelse: «du kan overstyre med min tillatelse på punktet du
+         * stoppet på». Dette er det ENESTE feltet den tillatelsen gjelder.
+         *
+         * Her sto «8–10 videoer på Instagram og Facebook, to ganger i uken».
+         * «To ganger i uken» sto etter plattformene og kunne leses som to
+         * ganger på HVER, altså fire poster. Det leveres to i uken totalt:
+         * `posterPerUke` er 2, til Instagram med krysspublisering til
+         * Facebook. 2 x 52 = 104 i året = 8,7 i måneden, som lander midt i
+         * «8–10 videoer».
+         *
+         * Punktumet er hele rettelsen. Med plattformene i en LUKKET setning
+         * kan ikke «to nye hver uke» feste seg til dem — det kan bare telle
+         * videoer. En komma-variant («…og Facebook, to nye i uken») fjerner
+         * mesteparten av tvetydigheten, men ikke all.
+         *
+         * 177 av 180 tegn. Ingenting annet i setningen er rørt.
+         */
+        "front.hero.sub": tekst("Én produksjonsdag hos dere i måneden. Reflektor gjør resten: idé, opptak, klipp og publisering. 8–10 videoer på Instagram og Facebook. To nye hver uke. Fast pris, ingen binding.", {
           maksTegn: 180,
           jobb: "Arbeidsmengden for kunden. Den er innvendingen, ikke prisen.",
         }),
