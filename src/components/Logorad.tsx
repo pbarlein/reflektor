@@ -44,10 +44,26 @@ export function Logorad() {
             width={l.bredde}
             height={l.hoyde}
             /*
-              Filene ligger på 2x av visningsstørrelsen, så `sizes` er ikke i
-              bruk — bredden er fast. `unoptimized` ville vært feil her;
-              next/image serverer dem som webp og halverer vekten.
+              EAGER, IKKE LAZY. Målt på deployet lastet ni av elleve: Happis
+              og Soul Cake ligger utenfor skjermen til høyre, og lat lasting
+              utsatte dem. Med drift betyr det at de to hadde poppet inn
+              mens raden beveget seg — og en IntersectionObserver på et
+              element som flyttes av en CSS-animasjon inne i en
+              rullecontainer er ikke noe å stole på.
+
+              fetchPriority="low" er den andre halvdelen. Uten den ville 22
+              bilder rett under folden kappes om båndbredden med
+              heroklippet, som ER LCP-elementet. Lav prioritet setter dem
+              bakerst i køen uten å gjøre dem late. Til sammen rundt 88 kB
+              AVIF.
+
+              `sizes` er ikke i bruk — bredden er fast, og filene ligger på
+              2x visningsstørrelse. next/image serverer 256w til 1x og hele
+              kilden til 2x; verifisert ved å hente begge kandidatene og
+              måle dem (422x44 mot en visning på 211x22, altså nøyaktig 2x).
             */
+            loading="eager"
+            fetchPriority="low"
             className="h-auto w-auto max-w-none object-contain"
             style={{ width: l.bredde, height: l.hoyde }}
           />
