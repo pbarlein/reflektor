@@ -11,7 +11,18 @@
  * Fremgangsmåten står i docs/media.md.
  *
  * Alle ni er 5 av 5. `sitat` er et utdrag; `fulltekst` er ordrett hele
- * anmeldelsen. Utdraget kutter bare — det legger aldri til et ord, og det
+ * anmeldelsen.
+ *
+ * VIKTIG FORBEHOLD — ingen totalvurdering skal vises på siden.
+ * Forespørselen widgeten gjør inneholder `min_rating=5` og
+ * `filter_content=text_required`. Kilden er altså FILTRERT til femstjerners
+ * anmeldelser med tekst. At disse ni er 5 av 5 er derfor ikke bevis på at
+ * Reflektor har 5,0 i snitt — det kan finnes lavere vurderinger, med eller
+ * uten tekst, som widgeten aldri hentet.
+ *
+ * Derfor står det ingen stjernerad og ingen «5,0 av 5» noe sted i designet.
+ * Skal en totalvurdering vises, må den hentes fra Google Business Profile
+ * direkte og oppdateres når den endrer seg. Utdraget kutter bare — det legger aldri til et ord, og det
  * fjerner aldri et forbehold. Sammenlign selv: begge står i denne filen.
  *
  * `selskap` er hentet fra anmeldelsen selv der den nevner det, ellers fra

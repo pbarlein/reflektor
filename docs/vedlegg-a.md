@@ -383,3 +383,20 @@ navngir ingen abonnent.
 
 Alle ni Google-anmeldelser er nå i bruk. Åtte vises på forsiden: én løftet
 til pull-quote, sju i rutenettet.
+
+## A37 — Anmeldelseskilden er filtrert til 5 stjerner
+
+Elfsight-widgeten på dagens side henter anmeldelser med
+`min_rating=5&filter_content=text_required` i forespørselen.
+
+De ni anmeldelsene er altså ikke «alle anmeldelser» — de er alle
+femstjerners anmeldelser med tekst. Det kan finnes lavere vurderinger, med
+eller uten tekst, som widgeten aldri spurte etter.
+
+**Konsekvens:** at alle ni er 5 av 5 er ikke grunnlag for å påstå at
+Reflektor har 5,0 i snitt. Derfor står det ingen stjernerad og ingen
+totalvurdering i designet — bare sitatene, med navn og selskap.
+
+Dette er verdt å vite også fordi en totalvurdering ville vært et sterkt
+visuelt element. Fristelsen er reell. Skal den brukes, må tallet hentes fra
+Google Business Profile direkte, og det endrer seg over tid.
