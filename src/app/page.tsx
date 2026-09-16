@@ -389,10 +389,17 @@ export default function Forside() {
         - Radskillene går tvers over begge spaltene, så seksjonen leser som
           ÉN ting.
 
-        TYPOGRAFIEN ER KUTTET FRA ÅTTE GRADER TIL FIRE: display (tallet og
-        de tre nøkkeltallene), overskrift, brødtekst, merkelapp. Tallet er
-        gjort større, ikke mindre — når skalaen er få og langt fra hverandre,
-        leser den som satt.
+        TYPOGRAFIEN. Jeg skrev først at den var kuttet «fra åtte grader til
+        fire». Det holdt ikke da jeg målte det: seksjonen rendrer 176, 56,
+        28, 20, 17, 15 og 13 px på 1440 — sju grader, ikke fire. Fire er
+        antallet ROLLER (display, overskrift, brødtekst, merkelapp), og
+        roller er ikke grader.
+
+        Det som faktisk er endret, er AVSTANDEN mellom dem. Før gikk
+        skalaen i jevne trinn; nå er spranget fra display til brødtekst
+        10,4x (176/17) mot 8x før, og alt annet enn tallene ligger i et
+        smalt bånd på 13-20 px. Tallet er gjort større, ikke mindre — når
+        gradene er få og langt fra hverandre, leser skalaen som satt.
 
         HAKENE ER UTE. Hårstrek mellom punktene i stedet. En hake sier
         «SaaS-prisplan»; en hårstrek sier «spesifikasjon».
@@ -403,9 +410,23 @@ export default function Forside() {
       <section id="pris" className="scroll-mt-4 pb-28 sm:pb-36">
         <Container>
           <div className="border-b border-kant">
-            {/* RAD 1 — PRIS. Tallet og klippet deler raden. */}
+            {/*
+              RAD 1 — PRIS. Tallet, løftet, omfanget og klippet i samme rad.
+
+              Omfang var en egen rad. Den er slått sammen hit, og det løser et
+              hull jeg selv laget: et stående klipp er alltid høyere enn to
+              linjer tekst. Klippet er 330 px, tallet og overskriften 201, og
+              de 129 px i forskjell sto tomme — først over tallet, som løsnet
+              det fra hårstreken, siden under overskriften. Nå fyller
+              nøkkeltallene dem, og venstrespalten møter klippet på 1 px.
+
+              Sammenslåingen er også riktig lest: «30 000 kr/mnd» og «1 dag,
+              8–10 videoer, 2 publiseringer» er det samme utsagnet. Delt i to
+              rader måtte man holde tallet i hodet mens man leste hva det
+              dekker.
+            */}
             <Rad merkelapp="Pris">
-              <div className="grid gap-8 lg:grid-cols-[1fr_16.5rem] lg:items-end lg:gap-12">
+              <div className="grid gap-8 lg:grid-cols-[1fr_16.5rem] lg:items-start lg:gap-12">
                 <div>
                   {/* Verdien leses fra tilbud, aldri skrevet inn her. Prisen
                       står flere steder på siden, og de skal ikke kunne gli
@@ -421,12 +442,45 @@ export default function Forside() {
                       <Tbd id="front.price.h2" />
                     )}
                   </h2>
+
+                  {/*
+                    TO LAYOUTER. Under sm står tallene i en stabel, med tallet
+                    og ordet på samme linje. Tre spalter på 390 px gir
+                    kolonner på rundt 100 px, og «produksjonsdag» er bredere
+                    enn det — i første versjon rant ordet inn i nabospalten.
+                    Fra sm er det tre spalter, som er der tallene gjør mest
+                    nytte.
+                  */}
+                  <dl className="mt-10 flex flex-col gap-5 sm:mt-12 sm:grid sm:grid-cols-3 sm:gap-x-8">
+                    {[
+                      [tilbud.produksjonsdagerPerManed, "produksjonsdag", "i måneden"],
+                      [tilbud.videoerPerManed, "ferdige videoer", "hver måned"],
+                      [tilbud.posterPerUke, "publiseringer", "i uken"],
+                    ].map(([tall, ord, nar]) => (
+                      <div
+                        key={ord}
+                        className="flex items-baseline gap-4 sm:block"
+                      >
+                        <dt className="sr-only">{`${ord} ${nar}`}</dt>
+                        <dd className="contents sm:block">
+                          <span className="min-w-[5.25rem] font-[family-name:var(--font-display-serif)] text-[2.75rem] leading-none tracking-[-0.02em] sm:block sm:min-w-0 sm:text-[3.25rem]">
+                            {tall}
+                          </span>
+                          <span className="text-sm leading-snug tracking-[0.02em] text-blekk-dempet sm:mt-3 sm:block">
+                            {ord}{" "}
+                            <br className="hidden sm:block" />
+                            {nar}
+                          </span>
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
                 </div>
 
                 {/*
-                  Klippet er flyttet ned til bunnlinja av raden i stedet for
-                  å fylle hele høyden. Da rammer det tallet i stedet for å
-                  konkurrere med det, og «30 000» får stå alene øverst.
+                  Klippet toppstilles med tallet. Bunnstilt — som det var —
+                  presset de 129 px opp over «30 000», og da mistet tallet
+                  kontakten med både hårstreken og merkelappen sin.
                 */}
                 <Enkeltklipp
                   sti="/reels"
@@ -440,42 +494,7 @@ export default function Forside() {
               </div>
             </Rad>
 
-            {/* RAD 2 — OMFANG. De tre tellbare størrelsene. */}
-            <Rad merkelapp="Omfang">
-              {/*
-                TO LAYOUTER. Under sm står tallene i en stabel, med tallet og
-                ordet på samme linje. Tre spalter på 390 px gir kolonner på
-                rundt 100 px, og «produksjonsdag» er bredere enn det — i
-                første versjon rant ordet inn i nabospalten. Fra sm er det
-                tre spalter, som er der tallene gjør mest nytte.
-              */}
-              <dl className="flex flex-col gap-5 sm:grid sm:grid-cols-3 sm:gap-x-8">
-                {[
-                  [tilbud.produksjonsdagerPerManed, "produksjonsdag", "i måneden"],
-                  [tilbud.videoerPerManed, "ferdige videoer", "hver måned"],
-                  [tilbud.posterPerUke, "publiseringer", "i uken"],
-                ].map(([tall, ord, nar]) => (
-                  <div
-                    key={ord}
-                    className="flex items-baseline gap-4 sm:block"
-                  >
-                    <dt className="sr-only">{`${ord} ${nar}`}</dt>
-                    <dd className="contents sm:block">
-                      <span className="min-w-[5.25rem] font-[family-name:var(--font-display-serif)] text-[2.75rem] leading-none tracking-[-0.02em] sm:block sm:min-w-0 sm:text-[3.5rem]">
-                        {tall}
-                      </span>
-                      <span className="text-sm leading-snug tracking-[0.02em] text-blekk-dempet sm:mt-3 sm:block">
-                        {ord}{" "}
-                        <br className="hidden sm:block" />
-                        {nar}
-                      </span>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </Rad>
-
-            {/* RAD 3 — DETTE INNGÅR. Hårstrek mellom punktene, ingen haker. */}
+            {/* RAD 2 — DETTE INNGÅR. Hårstrek mellom punktene, ingen haker. */}
             <Rad merkelapp="Dette inngår">
               <ul className="-my-3">
                 {tilbud.inngar.map((punkt) => (
@@ -490,7 +509,7 @@ export default function Forside() {
             </Rad>
 
             {/*
-              RAD 4 — INNGÅR IKKE. Liten dose, etter det positive, om noe
+              RAD 3 — INNGÅR IKKE. Liten dose, etter det positive, om noe
               perifert. Se research-konvertering.md om blemishing-effekten:
               den virker bare når unntakene er akkurat det. Derfor lesbare,
               ikke store.
@@ -512,7 +531,7 @@ export default function Forside() {
               </p>
             </Rad>
 
-            {/* RAD 5 — VILKÅR. Seksjonens sterkeste setning står her. */}
+            {/* RAD 4 — VILKÅR. Seksjonens sterkeste setning står her. */}
             <Rad merkelapp="Vilkår">
               <p className="max-w-2xl text-[1.0625rem] leading-relaxed text-pretty">
                 {hentTekst(front, "front.price.note") ?? (
