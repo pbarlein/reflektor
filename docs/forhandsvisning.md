@@ -235,6 +235,8 @@ stopper publisering ved TBD-er, for lange tekster eller døde interne lenker.
 - [ ] Apollo og Clarity enten fjernet fra containeren eller ført inn i
       personvernerklæringen — **blokkerer lansering**, se A42
 - [ ] De tre uutfylte stedene i personvernerklæringen fylt ut (A42)
+- [ ] Alle URL-er i dagens sitemap finnes i den nye siden — A40 og A45 var
+      begge av denne typen, og ingen automatisk sjekk fanger dem i dag
 - [ ] `/sosiale-medier-byra` → `/` 301, etter Ads-URL-bytte (`docs/cutover.md`)
 - [ ] `NEXT_PUBLIC_TILLAT_INDEKSERING=true` satt i Vercel
 - [ ] Sporingskjeden verifisert ende-til-ende: skjema → `/takk` → GA4-hendelse,

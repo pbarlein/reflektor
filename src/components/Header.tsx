@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 import { Container } from "./Container";
+import { knappeklasser } from "./Knapp";
 import { Logo } from "./Logo";
 import { hovedmeny, hovedCta } from "@/content/navigasjon";
 
@@ -248,7 +249,7 @@ export function Header() {
               sti={ctaSti}
               navn={hovedCta.navn}
               lukk={() => setApen(false)}
-              className="rounded-interaktiv bg-aksent px-4 py-2.5 text-[0.9375rem] font-medium text-[#0D0D0D] transition-colors hover:bg-aksent-hover sm:px-5"
+              className={knappeklasser("primar", "kompakt")}
             />
 
             {/*

@@ -272,21 +272,17 @@ export const eldreLandingssider: Landingsside[] = [
 
 export const alleLandingssider = [...landingssider, ...eldreLandingssider];
 
-export type Case = { slug: string; kunde: string; ingress: string };
-
-/** Publiserte kundecaser på /vart-arbeid. */
-export const caser: Case[] = [
-  {
-    slug: "egon",
-    kunde: "Egon",
-    ingress: "Foto og video på månedlig basis.",
-  },
-  {
-    slug: "anton-sport",
-    kunde: "Anton Sport",
-    ingress: "Foto og video på månedlig basis.",
-  },
-];
+/*
+ * KUNDECASENE LIGGER I src/content/caser.ts, ikke her.
+ *
+ * Listen som sto her var feil på begge oppføringene, og feilen var dyr:
+ * den hadde `anton-sport`, som er en 404 på dagens side, og manglet
+ * `soulcake`, som er live og står i dagens sitemap. Den nye siden var
+ * altså i ferd med å slette en levende URL og publisere en oppdiktet.
+ *
+ * Ingressen var dessuten den samme setningen på begge — «Foto og video på
+ * månedlig basis.» — der de levende sidene har hver sin. Se A45.
+ */
 
 /**
  * Bloggslugs. MÅ IKKE ENDRES.

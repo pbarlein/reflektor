@@ -1,4 +1,5 @@
 import { Container } from "@/components/Container";
+import { knappeklasser } from "@/components/Knapp";
 import { Klipp } from "@/components/Klipp";
 import { TbdMarkor, hentTekst } from "@/components/Slot";
 
@@ -63,7 +64,7 @@ export function Hero() {
                 {hentTekst(front, "front.hero.cta") ? (
                   <a
                     href="#kontakt"
-                    className="rounded-interaktiv bg-aksent px-7 py-3.5 font-medium text-[color:var(--text-on-accent)] transition-colors hover:bg-aksent-hover"
+                    className={knappeklasser()}
                   >
                     {hentTekst(front, "front.hero.cta")}
                   </a>

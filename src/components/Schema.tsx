@@ -1,6 +1,7 @@
 import { site, tilbud } from "@/content/site";
 import { basisUrl } from "@/lib/miljo";
 import { googleProfil } from "@/content/anmeldelser";
+import { omoss } from "@/content/omoss";
 
 /**
  * JSON-LD (brief 8.3).
@@ -207,6 +208,139 @@ export function FaqSchema({
       name: p.sporsmal,
       acceptedAnswer: { "@type": "Answer", text: p.svar },
     })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+/**
+ * BreadcrumbList.
+ *
+ * DETTE ER DEN ENE MARKERINGEN PÅ SIDEN SOM FAKTISK GIR ET RICH RESULT.
+ * Google viser fortsatt brødsmuler i søkeresultatet — de erstatter den grå
+ * URL-linja med en klikkbar sti. FAQ-funksjonen er død (se A41), men denne
+ * lever, og den er dokumentert i Googles egen strukturerte data-oversikt.
+ *
+ * Den gjør to ting for et kundecase: den forteller Google at
+ * `/vart-arbeid/egon` hører til `/vart-arbeid`, og den gir en språkmodell
+ * hierarkiet uten å måtte gjette det ut av URL-en.
+ *
+ * `item` utelates på siste ledd. Det er Googles egen anbefaling — det siste
+ * leddet ER den aktuelle siden, og en lenke til seg selv er støy.
+ */
+export function BrodsmuleSchema({
+  ledd,
+}: {
+  ledd: { navn: string; sti?: string }[];
+}) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: ledd.map((l, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: l.navn,
+      ...(l.sti ? { item: `${basisUrl()}${l.sti}` } : {}),
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+/**
+ * Ett kundecase som Article.
+ *
+ * SCHEMA.ORG HAR INGEN «CaseStudy»-TYPE. Article er det nærmeste som
+ * finnes og som faktisk blir lest. Alternativet — CreativeWork — er så
+ * generisk at det ikke sier noe.
+ *
+ * `about` er kunden som egen Organization. Det er hele poenget for AEO:
+ * spørsmålet en språkmodell får er «hvem lager innhold for Egon», ikke
+ * «hva heter Reflektors caser». Uten `about` er kundenavnet bare et ord i
+ * en overskrift; med den er det en entitet knyttet til vår.
+ *
+ * `author` og `publisher` peker på Reflektor via @id, så entiteten ikke
+ * gjentas. Det er samme grep som TjenesteSchema bruker.
+ *
+ * INGEN aggregateRating, ingen oppdiktet dato. Vi vet når vi hentet
+ * tallene, ikke når siden ble skrevet, og en `datePublished` vi ikke kan
+ * belegge ville vært en påstand for maskiner vi ikke ville tort å skrive
+ * for mennesker.
+ */
+export function KundecaseSchema({
+  tittel,
+  beskrivelse,
+  sti,
+  kunde,
+}: {
+  tittel: string;
+  beskrivelse: string;
+  sti: string;
+  kunde: string;
+}) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: tittel,
+    description: beskrivelse,
+    url: `${basisUrl()}${sti}`,
+    inLanguage: "nb-NO",
+    author: { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
+    about: { "@type": "Organization", name: kunde },
+    isPartOf: {
+      "@type": "CollectionPage",
+      name: "Vårt arbeid",
+      url: `${basisUrl()}/vart-arbeid`,
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+/**
+ * Folkene, som `Person` knyttet til Reflektor.
+ *
+ * DETTE ER ET ENTITETSSIGNAL, ikke et rich result. Google viser ingen
+ * ansattliste i søkeresultatet, og det er ikke poenget. Poenget er at
+ * `employee` er den eneste maskinlesbare måten å si at disse fire menneskene
+ * hører til dette selskapet — og «hvem jobber i Reflektor» er nøyaktig den
+ * typen spørsmål en svarmotor får og besvarer fra JSON-LD, ikke fra HTML.
+ *
+ * `jobTitle` er rollene slik de står synlig på siden. Ingen e-post, ingen
+ * bilder, ingen profilsider: markeringen skal ikke påstå mer enn siden viser.
+ *
+ * Markeringen henger på Organization via @id, så entiteten ikke gjentas.
+ */
+export function TeamSchema() {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    url: `${basisUrl()}/om-oss`,
+    mainEntity: {
+      "@id": ORG_ID,
+      employee: omoss.team.ansatte.map((a) => ({
+        "@type": "Person",
+        name: a.navn,
+        jobTitle: a.rolle,
+        worksFor: { "@id": ORG_ID },
+      })),
+    },
   };
 
   return (

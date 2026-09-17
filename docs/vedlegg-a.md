@@ -1021,3 +1021,58 @@ aldri.
 Det betyr at **ingen påstand om at videoene spiller, kan komme herfra.** Den
 målingen må gjøres på en ekte telefon. Symptomet «0 av 17 klipp spiller» i
 testloggene er miljøet, ikke siden.
+
+## A45 — Den nye siden slettet en levende case og publiserte en oppdiktet. 17.09.2026
+
+Funnet mens jeg bygget /vart-arbeid på bestilling fra Pål. Det er samme
+klasse feil som A40 (`/produktfoto`), og det er regel én i AGENTS.md som
+brytes: levende URL-er flyttes ikke.
+
+### Hva som faktisk finnes
+
+Hentet fra dagens sitemap og verifisert med HTTP-status 17.09.2026:
+
+| URL | Dagens side | Sto i `site.ts` |
+|---|---|---|
+| `/vart-arbeid/egon` | **200**, i sitemapet | ja |
+| `/vart-arbeid/soulcake` | **200**, i sitemapet | **nei** |
+| `/vart-arbeid/anton-sport` | **404** | **ja** |
+
+Den nye siden var altså i ferd med å gjøre begge deler galt samtidig:
+publisere en side som ikke finnes, og la en som finnes bli borte ved
+cutover.
+
+Soulcake-casen er ikke en bagatell. Den er 1 100 ord, har fire målte tall
+med kildehenvisning, og dokumenterer et samarbeid siden 2022 — nøyaktig den
+typen side som bærer et kundenavn i søk.
+
+### Hvordan feilen så ut
+
+```ts
+export const caser: Case[] = [
+  { slug: "egon",        kunde: "Egon",        ingress: "Foto og video på månedlig basis." },
+  { slug: "anton-sport", kunde: "Anton Sport", ingress: "Foto og video på månedlig basis." },
+];
+```
+
+Samme ingress på begge. Det er signaturen til en plassholder som aldri ble
+sjekket mot virkeligheten — de levende sidene har hver sin.
+
+Anton Sport står omtalt på dagens oversiktsside, men uten lenke og uten
+side. Navnet er altså et kundenavn, ikke et kundecase, og det lever videre
+i logorekka og i reel-veggen der det hører hjemme.
+
+### Rettet
+
+Innholdet ligger nå i `src/content/caser.ts`, migrert ordrett fra de to
+levende sidene. `site.ts` har ingen caseliste lenger, og `sitemap.ts` leser
+fra den nye kilden.
+
+### Hva det burde ha vært fanget av
+
+Ingenting fanget det, og det er verdt å si rett ut. `lenkesjekk` sjekker at
+interne lenker treffer en rute — den kan ikke vite at en rute vi *ikke* har
+bygget, finnes på dagens side. Sjekken går bare i én retning.
+
+En sjekk som sammenligner dagens sitemap mot rutene i repoet ville tatt både
+denne og A40. Den finnes ikke, og den bør bygges før cutover.

@@ -1,5 +1,6 @@
 "use client";
 
+import { Knapp } from "./Knapp";
 import { useEffect, useRef } from "react";
 import { site, tilbud } from "@/content/site";
 
@@ -128,12 +129,9 @@ export function Kontaktskjema({ side }: { side: string }) {
         prosenttall sier det – de tallene er usporbare – men fordi det er
         klarere.
       */}
-      <button
-        type="submit"
-        className="mt-1 justify-self-start rounded-interaktiv bg-aksent px-7 py-3.5 font-medium text-[color:var(--text-on-accent)] transition-colors hover:bg-aksent-hover"
-      >
+      <Knapp type="submit" className="mt-1 justify-self-start">
         Få et strategiforslag
-      </button>
+      </Knapp>
 
       {/* Risikodemping ved knappen, ikke 400 px lenger ned. */}
       <p className="text-sm text-blekk-dempet">

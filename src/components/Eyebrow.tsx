@@ -47,18 +47,30 @@ const PRIKK: Record<Flate, string> = {
 export function Eyebrow({
   children,
   variant = "lys",
+  som: Som = "p",
 }: {
   children: React.ReactNode;
   variant?: Flate;
+  /**
+   * `som="h2"` når eyebrowen ER seksjonens overskrift og ikke bare en
+   * etikett over en. Lagt til 17.09.2026 fordi /om-oss hoppet fra h1 rett
+   * til h3 — seksjonstittelen «Slik jobber vi» sto som <p>, og de tre
+   * prinsippene under som <h3>. axe meldte det, og den hadde rett: en
+   * overskriftsrekke med hull er vanskelig å navigere med skjermleser, og
+   * den gir en dårligere dokumentstruktur til det som leser siden.
+   *
+   * Utseendet er identisk. Dette er semantikk, ikke typografi.
+   */
+  som?: "p" | "h2";
 }) {
   return (
-    <p className={`flex items-center gap-2.5 ${GRUNN} ${TEKST[variant]}`}>
+    <Som className={`flex items-center gap-2.5 ${GRUNN} ${TEKST[variant]}`}>
       <span
         className={`size-1.5 shrink-0 rounded-full ${PRIKK[variant]}`}
         aria-hidden="true"
       />
       {children}
-    </p>
+    </Som>
   );
 }
 
