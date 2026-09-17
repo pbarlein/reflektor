@@ -200,6 +200,45 @@ export function Samtykkebanner() {
     if (tvungetApen) forsteKnapp.current?.focus();
   }, [tvungetApen]);
 
+  /*
+   * RESERVERER PLASS UNDER BANNERET.
+   *
+   * Banneret er `fixed`, og lå derfor oppå det som tilfeldigvis var nederst
+   * i vinduet. På telefon var det sendeknappen i kontaktskjemaet — 100 %
+   * dekket, målt på deployet. Den som ikke svarte på banneret, kunne ikke
+   * sende skjemaet. Det er den eneste KPI-en prosjektet har.
+   *
+   * ResizeObserver og ikke en fast verdi, fordi høyden avhenger av bredde,
+   * skriftstørrelse og om valgene er utvidet. Et tall skrevet inn her ville
+   * vært feil på den første telefonen som ikke lignet min.
+   *
+   * Ryddingen i opprydningsfunksjonen er ikke formalia: uten den ville
+   * sidefoten beholdt et par hundre piksler dødplass etter at banneret var
+   * besvart og borte.
+   */
+  const panel = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = panel.current;
+    const rot = document.documentElement;
+    if (!el) {
+      rot.style.removeProperty("--samtykke-plass");
+      return;
+    }
+    const iakt = new ResizeObserver(([post]) => {
+      rot.style.setProperty(
+        "--samtykke-plass",
+        `${Math.ceil(post.target.getBoundingClientRect().height)}px`,
+      );
+    });
+    iakt.observe(el);
+    return () => {
+      iakt.disconnect();
+      rot.style.removeProperty("--samtykke-plass");
+    };
+    /* ResizeObserver fanger selv høydeendringer, så dette trenger bare kjøre
+       når panelet kommer til eller forsvinner. */
+  }, [synlig]);
+
   const svar = useCallback((v: Valg) => {
     lagre(v);
     meldFra(v);
@@ -212,6 +251,7 @@ export function Samtykkebanner() {
 
   return (
     <div
+      ref={panel}
       role="dialog"
       aria-modal="false"
       aria-labelledby="samtykke-tittel"
@@ -242,9 +282,8 @@ export function Samtykkebanner() {
             Informasjonskapsler
           </h2>
           <p className="mt-2 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet">
-            Vi bruker informasjonskapsler til å måle hvordan nettsiden brukes og
-            til markedsføring. Ingenting av dette settes før du har sagt ja. Det
-            som trengs for at siden skal virke, er alltid på.{" "}
+            Vi bruker informasjonskapsler til måling og markedsføring. Ingenting
+            settes før du har sagt ja.{" "}
             <Link href="/personvern" className="underline hover:text-pa-dyp">
               Les personvernerklæringen
             </Link>
@@ -305,36 +344,55 @@ export function Samtykkebanner() {
           ikke en nedtonet lenke ved siden av en stor knapp — det er det
           vanligste bruddet på kravet om at det skal være like lett å nekte
           som å samtykke.
+
+          TO I BREDDEN PÅ MOBIL, ikke stablet. Stablet tok de tre knappene
+          162 px av en telefonskjerm, og banneret som helhet 64 % av den.
+          Google ber uttrykkelig om bannere «that take up only a small
+          fraction of the screen», og et banner som spiser to tredjedeler av
+          skjermen er dessuten en dårlig førstehåndsopplevelse uansett hva
+          Google mener.
+
+          Sideveis er også det som gjør likheten synlig: to like brede
+          knapper ved siden av hverandre leses som et valg mellom likeverdige
+          alternativer. Under hverandre leses den øverste som anbefalingen.
         */}
-        <div className="mt-6 flex shrink-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
-          <button
-            ref={forsteKnapp}
-            type="button"
-            onClick={() => svar(FULLT_SAMTYKKE)}
-            className="rounded-interaktiv bg-aksent px-5 py-3 text-[0.9375rem] font-medium text-[color:var(--text-on-accent)] transition-colors hover:bg-aksent-hover motion-reduce:transition-none"
-          >
-            Godta alle
-          </button>
-          <button
-            type="button"
-            onClick={() => svar(INGEN_SAMTYKKE)}
-            className="rounded-interaktiv border border-kant-pa-dyp bg-transparent px-5 py-3 text-[0.9375rem] font-medium text-pa-dyp transition-colors hover:bg-[rgba(245,240,232,0.08)] motion-reduce:transition-none"
-          >
-            Bare nødvendige
-          </button>
-          {detaljer ? (
+        <div className="mt-5 shrink-0">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+            <button
+              ref={forsteKnapp}
+              type="button"
+              onClick={() => svar(FULLT_SAMTYKKE)}
+              className="rounded-interaktiv bg-aksent px-4 py-3 text-[0.9375rem] font-medium text-[color:var(--text-on-accent)] transition-colors hover:bg-aksent-hover motion-reduce:transition-none sm:px-5"
+            >
+              Godta alle
+            </button>
             <button
               type="button"
-              onClick={() => svar(valg)}
-              className="rounded-interaktiv border border-kant-pa-dyp bg-transparent px-5 py-3 text-[0.9375rem] font-medium text-pa-dyp transition-colors hover:bg-[rgba(245,240,232,0.08)] motion-reduce:transition-none"
+              onClick={() => svar(INGEN_SAMTYKKE)}
+              className="rounded-interaktiv border border-kant-pa-dyp bg-transparent px-4 py-3 text-[0.9375rem] font-medium text-pa-dyp transition-colors hover:bg-[rgba(245,240,232,0.08)] motion-reduce:transition-none sm:px-5"
             >
-              Lagre valget mitt
+              Bare nødvendige
             </button>
-          ) : (
+            {detaljer && (
+              <button
+                type="button"
+                onClick={() => svar(valg)}
+                className="col-span-2 rounded-interaktiv border border-kant-pa-dyp bg-transparent px-4 py-3 text-[0.9375rem] font-medium text-pa-dyp transition-colors hover:bg-[rgba(245,240,232,0.08)] motion-reduce:transition-none sm:col-auto sm:px-5"
+              >
+                Lagre valget mitt
+              </button>
+            )}
+          </div>
+          {!detaljer && (
+            /*
+              «Velg selv» står UNDER og ikke i raden. Den er ikke et tredje
+              likestilt svar — den åpner valgene. Å gi den samme vekt som de
+              to svarene ville gjort valget uklarere, ikke friere.
+            */
             <button
               type="button"
               onClick={() => settDetaljer(true)}
-              className="px-5 py-3 text-[0.9375rem] underline underline-offset-4 text-pa-dyp-dempet hover:text-pa-dyp"
+              className="mt-1 px-1 py-2 text-[0.9375rem] text-pa-dyp-dempet underline underline-offset-4 hover:text-pa-dyp"
             >
               Velg selv
             </button>

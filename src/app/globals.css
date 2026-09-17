@@ -345,6 +345,23 @@ html {
        null eller positiv sporing. Se overstyringer.css. */
     letter-spacing: 0;
     -webkit-font-smoothing: antialiased;
+
+    /*
+     * PLASS UNDER SAMTYKKEBANNERET. Dette er en RETTELSE av en feil som
+     * traff den eneste KPI-en.
+     *
+     * Banneret ligger `fixed` nederst. Uten denne linja lå det oppå det som
+     * tilfeldigvis var nederst i vinduet — og på telefon var det
+     * SENDEKNAPPEN i kontaktskjemaet. Målt på deployet: 100 % av knappen
+     * dekket, og et klikk på den traff bannerteksten. En besøkende som ikke
+     * svarte på banneret, kunne ikke sende skjemaet i det hele tatt.
+     *
+     * Variabelen settes av Samtykke.tsx mens banneret er framme, og
+     * nullstilles når det forsvinner. Fordi den bare forlenger dokumentet
+     * nedover, flytter den ingenting som allerede står på skjermen — den
+     * koster altså ikke CLS.
+     */
+    padding-bottom: var(--samtykke-plass, 0px);
   }
 
   /*

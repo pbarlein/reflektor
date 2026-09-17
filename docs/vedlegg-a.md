@@ -902,3 +902,113 @@ scrim-verdier for et design som uttrykkelig ikke bruker skygger («Ingen
 skygge — skiller lages med flate og linje»). Det er rundt 600 byte som
 motsier sin egen designbeslutning. Ikke fjernet, fordi mappa er vernet, men
 det er det eneste stedet i tokens der «ubrukt» også betyr «selvmotsigende».
+
+## A44 — Hva samtykkebanneret koster, målt. 17.09.2026
+
+Pål spurte om løsningen er teknisk og juridisk i orden, og om den skader
+trafikk, synlighet eller noe annet. Svaret krevde måling på fire felt. Tre
+var i orden. To feil kom fram, og bare én av dem skyldtes banneret.
+
+### 1. Tolv bunntekstlenker lå permanent bak banneret
+
+Dette er den ekte feilen. Banneret er `fixed` nederst. Når man ruller helt
+til bunns på en hvilken som helst side, lå **tolv lenker i bunnteksten under
+det, uten noen måte å nå dem på** — siden kunne ikke rulles lenger.
+
+Blant dem: lenkene til `/innholdsproduksjon` og `/reklamefilm`. Bunnteksten
+er det eneste stedet på siden som lenker til tjenestesidene — headeren bærer
+dem ikke, og begrunnelsen står i `navigasjon.ts`. Og verst av alt lå
+«Informasjonskapsler»-lenka der selv: måten å trekke tilbake samtykket på
+var utilgjengelig så lenge banneret sto.
+
+| Side | Utilgjengelige lenker før | etter |
+|---|---|---|
+| `/takk`, `/om-oss`, `/vart-arbeid`, `/kontaktoss`, `/blogg`, `/gratis-strategimote`, `/personvern`, `/faq` | **12** | **0** |
+
+Rettet med `padding-bottom: var(--samtykke-plass)` på `body`, satt av en
+ResizeObserver på banneret. Fordi den bare forlenger dokumentet nedover,
+flytter den ingenting som allerede står på skjermen, og koster derfor ikke
+CLS.
+
+**En påstand jeg tok feil om underveis:** jeg meldte først at banneret
+dekket sendeknappen i kontaktskjemaet slik at skjemaet ikke kunne sendes.
+Det var galt. Knappen ble dekket når man rullet til den, men 30 piksler
+ekstra rulling frigjorde den — med og uten rettelsen. Målefeilen var min:
+`scrollIntoViewIfNeeded` ruller minimalt, og jeg leste det som brukerens
+ytterpunkt. Bunntekstlenkene var det ekte tilfellet, og det er verifisert i
+begge retninger.
+
+### 2. Banneret tok 64 % av en telefonskjerm
+
+Googles egen veiledning ber om bannere «that take up only a small fraction
+of the screen». 64 % er ikke det. Google fritar riktignok juridisk påkrevde
+dialoger fra de harde feilene — «unless they're legally mandatory» — og et
+samtykkebanner i EØS er påkrevd, så dette var ingen rankingtrussel. Men det
+er en dårlig førstehåndsopplevelse uansett hva Google mener.
+
+| | før | etter |
+|---|---|---|
+| iPhone, sammenslått | 64 % | **46 %** |
+| desktop, sammenslått | 28 % | 32 % |
+
+Knappene står nå to i bredden på mobil i stedet for stablet, og
+innledningen er kortet inn. Sideveis er dessuten det som gjør likheten
+mellom «Godta alle» og «Bare nødvendige» synlig: under hverandre leses den
+øverste som anbefalingen.
+
+### 3. Datatilsynets ti råd, punkt for punkt
+
+Veiledningen fra 2025 er den gjeldende. Ekomloven av 1. januar 2025 krever
+et samtykke som er gyldig etter personvernforordningen.
+
+| Krav | Status |
+|---|---|
+| Samtykke før noe settes | ✅ målt: 0 cookies, 0 tredjepartskall før valg |
+| Avvisning skal ikke kreve flere klikk | ✅ ett klikk, samme lag |
+| Ingen forhåndsavkryssede bokser | ✅ begge står av |
+| Avvisning skal ikke ha lavere oppmerksomhetsverdi | ✅ samme rad, samme størrelse |
+| Klare formuleringer i knappene | ✅ «Godta alle» / «Bare nødvendige» |
+| Valg per formål | ✅ to kategorier under «Velg selv» |
+| Enkelt å trekke tilbake | ✅ bunntekstlenka — som altså måtte være nåbar, se punkt 1 |
+| Utfyllende informasjon utover banneret | ⚠️ **ikke oppfylt** |
+
+Det siste punktet er det samme hullet som A42 punkt 2: erklæringen nevner
+Google og Meta, men containeren kjører også Apollo, HubSpot, Clarity og
+Microsoft Ads. Et samtykke kan ikke være informert om det som informeres om,
+ikke er det som kjører.
+
+### 4. Et kontrastbrudd som IKKE kommer fra banneret
+
+Da markøren for første gang ble stående over en knapp under en axe-kjøring,
+meldte den brudd. Det gjelder hele siden:
+
+| Tilstand | Kontrast | AA (4,5:1) |
+|---|---|---|
+| `#0d0d0d` på `#de4826` (normal) | 4,68:1 | ✅ så vidt |
+| `#0d0d0d` på `#b93a1d` (hover) | **3,41:1** | ❌ |
+
+Hover-fargen er mørkere enn grunnfargen, mens teksten blir stående mørk. Det
+rammer alle fem aksentknapper på forsiden og «Ta kontakt» i headeren på hver
+side — ikke bare banneret. Det gjelder kun mus: Tailwind legger
+hover-reglene i `@media (hover: hover)`, så berøringsskjermer får aldri
+tilstanden.
+
+**Ikke rettet, fordi det er en merkevarebeslutning.** `src/styles/tokens/` er
+vernet i AGENTS.md. To utveier: gjøre hover-fargen lysere enn grunnfargen i
+stedet for mørkere, eller la teksten bli hvit på hover — hvit på `#b93a1d`
+gir 5,70:1. Det andre er minst inngripende, men snur tekstfargen synlig.
+
+**Testhullet er verdt å merke seg:** alle tidligere axe-kjøringer hadde
+markøren utenfor siden, så hover-tilstanden ble aldri målt. En tilstand som
+ikke testes, er ikke testet.
+
+### 5. Det jeg IKKE kan måle i dette miljøet
+
+Playwrights Chromium er bygget uten proprietære kodeker. `canPlayType` for
+`avc1` — altså H.264, som alle klippene bruker — returnerer tom streng.
+Nettleseren får `networkState: 3`, «ingen brukbar kilde», og `play()` svarer
+aldri.
+
+Det betyr at **ingen påstand om at videoene spiller, kan komme herfra.** Den
+målingen må gjøres på en ekte telefon. Symptomet «0 av 17 klipp spiller» i
+testloggene er miljøet, ikke siden.
