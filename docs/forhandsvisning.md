@@ -304,3 +304,33 @@ loopslutt, og måle høyrekanten på siste logo mot vindusbredden: 622 px tomt
 før, 0 px etter, på 2 560. Null hull på 390, 768, 1 440, 2 560, 3 440 og
 4 004.
 
+### Etter kodegjennomgangen (17.09.2026, fjerde måling)
+
+Målt mot deployet, med oppvarming først.
+
+| Metrikk | Målt |
+|---|---|
+| **LCP** | **628 og 952 ms** — fortsatt heroklippet |
+| TTFB | 131 og 405 ms |
+| **CLS** | **0,0075** — laveste målte |
+| axe-brudd | **0** på fem sider i to visninger |
+
+CLS har gått 0,0112 → 0,0085 → 0,0075 gjennom økta uten at noe er gjort for
+å jage tallet. Det følger av at elementer har fått eksplisitte mål.
+
+**H1-en gjør endelig det koden sier.** 44 px skrift gir 45,76 px linje på
+mobil, altså 1,04. Før lag-rettelsen var det 50,6 px (1,15). Se A-punktene
+og commit-loggen for hvorfor.
+
+### Fast sjekkliste før hver lansering
+
+Kjør disse, i denne rekkefølgen. Alle er kjørt og grønne per 17.09.2026.
+
+1. `npm test` — vernet rundt skjemaruta. Åtte tester, ingen nettverk.
+2. `npm run content:check` — copy innenfor tegngrensene.
+3. `npm run lenkesjekk` — døde lenker, manglende OG foreldreløse mediefiler.
+4. `npx tsc --noEmit` og `npm run lint`.
+5. axe mot `/`, `/faq`, `/personvern`, `/takk`, `/kontaktoss` i to visninger.
+6. Vannrett siderulling på 320, 390, 768, 1024, 1440, 2560 — skal være 0.
+7. `<meta name="robots">` skal si `noindex, nofollow` til DNS peker hit.
+
