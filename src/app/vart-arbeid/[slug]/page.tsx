@@ -379,7 +379,15 @@ export default async function CaseSide({ params }: Props) {
             <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-10 gap-y-4 border-t border-kant pt-6">
               <Link
                 href={`/vart-arbeid/${neste.slug}`}
-                className="group text-2xl text-balance sm:text-3xl"
+                /*
+                  `font-display-serif` STÅR EKSPLISITT. Lenken ser ut som en
+                  overskrift, men er en <a> — og overstyringer.css gir bare
+                  h1/h2/h3 display-serifen. Uten denne rendres den i sans og
+                  blir den eneste overskriftsstore teksten på siden som ikke
+                  matcher de andre. Samme felle som `Merkelapp` løser med
+                  `font-sans`, bare motsatt vei.
+                */
+                className="group font-[family-name:var(--font-display-serif)] text-2xl text-balance sm:text-3xl"
               >
                 <span className="underline decoration-kant decoration-1 underline-offset-[0.3em] transition-colors group-hover:decoration-aksent motion-reduce:transition-none">
                   {neste.h1}
