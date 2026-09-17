@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Merkelapp } from "@/components/Eyebrow";
 
 import { Container } from "@/components/Container";
 import { faqSporsmal, forsidensSporsmal } from "@/content/faq";
@@ -37,9 +38,7 @@ export function Faq() {
       <section className="pb-24 sm:pb-32">
         <Container>
           <div className="grid gap-x-10 gap-y-8 lg:grid-cols-[9rem_1fr]">
-            <p className="text-xs font-medium tracking-[0.08em] text-blekk-dempet uppercase lg:pt-3">
-              Spørsmål
-            </p>
+            <Merkelapp className="lg:pt-3">Spørsmål</Merkelapp>
 
             <div>
               <h2 className="max-w-xl text-3xl text-balance sm:text-4xl">

@@ -3,14 +3,36 @@
 /*
  * Designtokens fra Claude Design. Se src/styles/tokens/LES-MEG.md.
  * Ingen vilkårlige verdier i komponenter (brief 8.1.1).
+ *
+ * `layer(base)` ER IKKE KOSMETIKK, og filene selv er urørt.
+ *
+ * `@import "tailwindcss"` legger alt i lag: theme, base, components,
+ * utilities. CSS utenfor et lag slår ALLE lag, uansett spesifisitet. Disse
+ * filene ble importert ulaget fram til 16.09.2026, og overstyringer.css
+ * inneholder ikke bare tokens — den setter `h1`, `h2`, `h3`, `body` og
+ * `figcaption` direkte.
+ *
+ * Følgen var at enhver Tailwind-klasse for sporing, linjeavstand eller
+ * tekstbryting på en overskrift var uten virkning. Fjorten overskrifter i
+ * prosjektet setter slike klasser. Ingen av dem gjorde noe.
+ *
+ * Verst rammet: heroens H1 setter tre linjeavstander for tre bredder, og
+ * alle tre ble erstattet. Målt før rettelsen ga 68 px skrift 78,2 px linje
+ * (1,15) der koden ba om 1,04. Etter: 70,72 px, altså nøyaktig 1,04.
+ *
+ * ALLE SJU IMPORTERES I SAMME LAG, i uendret rekkefølge. Det er poenget:
+ * de overstyrer fortsatt hverandre nøyaktig som før — overstyringer.css
+ * slår colors.css, som den skal — men de taper nå mot en komponentklasse.
+ * Legger man bare én av dem i et lag, snus forholdet mellom dem, og
+ * merkevarefargene ryker.
  */
-@import "../styles/tokens/colors.css";
-@import "../styles/tokens/typography.css";
-@import "../styles/tokens/spacing.css";
-@import "../styles/tokens/radius.css";
-@import "../styles/tokens/motion.css";
-@import "../styles/tokens/elevation.css";
-@import "../styles/tokens/overstyringer.css";
+@import "../styles/tokens/colors.css" layer(base);
+@import "../styles/tokens/typography.css" layer(base);
+@import "../styles/tokens/spacing.css" layer(base);
+@import "../styles/tokens/radius.css" layer(base);
+@import "../styles/tokens/motion.css" layer(base);
+@import "../styles/tokens/elevation.css" layer(base);
+@import "../styles/tokens/overstyringer.css" layer(base);
 
 /*
  * Broen mellom tokens og Tailwind. Tailwind-klassene skal alltid ende opp i
@@ -292,26 +314,64 @@ html {
     );
 }
 
-body {
-  background: var(--surface-page);
-  color: var(--text-body);
-  font-size: var(--type-body-size);
-  line-height: var(--leading-normal);
-  /* Ikke --tracking-body: den er negativ (-0.005em), og små grader skal ha
-     null eller positiv sporing. Se overstyringer.css. */
-  letter-spacing: 0;
-  -webkit-font-smoothing: antialiased;
+/*
+ * GRUNNSTILENE LIGGER I @layer base. DET ER IKKE PYNT.
+ *
+ * `@import "tailwindcss"` legger alt Tailwind gjør i lag: theme, base,
+ * components, utilities. Regler UTENFOR et lag slår alle lag, uansett
+ * spesifisitet — det er cascade-layer-regelen, og den er lett å gå i.
+ *
+ * Disse to reglene sto ulaget fram til 16.09.2026. Konsekvensen var at
+ * `h1, h2, h3` overstyrte ENHVER Tailwind-klasse for sporing, linjeavstand
+ * og tekstbryting på en overskrift. Fjorten overskrifter i prosjektet setter
+ * slike klasser, og ingen av dem virket.
+ *
+ * Verst rammet var heroens H1, som setter tre linjeavstander for tre
+ * bredder — leading-[1.04], sm:leading-[1.02], lg:leading-[1.0]. Alle tre
+ * ble erstattet av --leading-snug (1,15). Målt før rettelsen: 68 px skrift
+ * med 78,2 px linje på desktop, altså 1,15 og ikke 1,0. Det er sidens mest
+ * bevisst satte typografi, og den hadde aldri gjort det koden sa.
+ *
+ * I @layer base gjør reglene fortsatt jobben sin — de gir en overskrift uten
+ * klasser riktig utgangspunkt — men en klasse vinner når den finnes.
+ */
+@layer base {
+  body {
+    background: var(--surface-page);
+    color: var(--text-body);
+    font-size: var(--type-body-size);
+    line-height: var(--leading-normal);
+    /* Ikke --tracking-body: den er negativ (-0.005em), og små grader skal ha
+       null eller positiv sporing. Se overstyringer.css. */
+    letter-spacing: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /*
+   * INGEN h1/h2/h3-REGEL HER. Den sto her til 16.09.2026 og satte sporing,
+   * linjeavstand og tekstbryting under ett.
+   *
+   * `overstyringer.css` setter allerede alt dette, men PER ELEMENT og
+   * finere: h1 får -0,02em, h2 får -0,015em. Forskjellen er hele poenget
+   * med optisk størrelse — mindre grad tåler mindre negativ sporing. Den
+   * felles regelen her ga begge h1-verdien og visket ut skillet.
+   *
+   * Så lenge begge lå ULAGET vant overstyringer.css likevel. Da begge kom
+   * i @layer base, avgjorde kildeorden i stedet, og denne — som kommer
+   * sist — begynte å vinne. Det var ikke en forbedring, det var en
+   * duplikat som endelig fikk virke.
+   *
+   * h3 mister sporing og linjeavstand herfra, og det er riktig:
+   * overstyringer.css sier selv at sporingen skal snu fortegn, og en h3 er
+   * en liten grad.
+   */
 }
 
-h1,
-h2,
-h3 {
-  letter-spacing: var(--tracking-heading);
-  line-height: var(--leading-snug);
-  text-wrap: balance;
-}
-
-/* Synlig fokusmarkering på alt interaktivt (brief 8.6). */
+/*
+ * Fokusmarkeringen står ULAGET MED VILJE (brief 8.6). Den skal vinne over
+ * alt annet — en Tailwind-klasse som fjerner omrisset på en knapp, skal ikke
+ * kunne gjøre den usynlig for tastaturbrukere.
+ */
 :focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;

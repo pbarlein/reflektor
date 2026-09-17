@@ -1,4 +1,5 @@
 import { Container } from "./Container";
+import { Eyebrow } from "./Eyebrow";
 import type { Anmeldelse } from "@/content/anmeldelser";
 import { googleProfil } from "@/content/anmeldelser";
 
@@ -91,13 +92,7 @@ export function Anmeldelsesrad({
       <Container>
         <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
           <div>
-            <p className="flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.08em] text-pa-dyp-dempet">
-              <span
-                className="size-1.5 shrink-0 rounded-full bg-aksent-pa-dyp"
-                aria-hidden="true"
-              />
-              {eyebrow}
-            </p>
+            <Eyebrow variant="dyp">{eyebrow}</Eyebrow>
             <h2 className="mt-4 max-w-2xl text-3xl text-balance sm:text-4xl">
               {overskrift}
             </h2>

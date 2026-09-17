@@ -1,4 +1,5 @@
 import { Enkeltklipp } from "@/components/Arbeidsbilder";
+import { Merkelapp } from "@/components/Eyebrow";
 import { Container } from "@/components/Container";
 
 import { TbdMarkor, hentTekst } from "@/components/Slot";
@@ -22,9 +23,7 @@ function Rad({
 }) {
   return (
     <div className="grid gap-x-10 gap-y-5 border-t border-kant py-9 sm:py-11 lg:grid-cols-[9rem_1fr]">
-      <p className="text-xs font-medium tracking-[0.08em] text-blekk-dempet uppercase lg:pt-1.5">
-        {merkelapp}
-      </p>
+      <Merkelapp className="lg:pt-1.5">{merkelapp}</Merkelapp>
       <div>{children}</div>
     </div>
   );
@@ -243,9 +242,7 @@ export function Pris() {
       */}
         <Container>
           <div className="glassflate mt-16 rounded-medie px-6 py-12 text-pa-dyp sm:mt-20 sm:px-10 sm:py-16 lg:px-14">
-            <p className="text-xs font-medium tracking-[0.08em] text-pa-dyp-dempet uppercase">
-              Dette inngår
-            </p>
+            <Merkelapp variant="dyp">Dette inngår</Merkelapp>
 
             {/*
             SEKS KORT I BREDDEN. Tre spalter fra lg, to fra sm, én under.
@@ -306,9 +303,7 @@ export function Pris() {
           */}
             <div className="mt-3 grid gap-3 lg:grid-cols-3">
               <div className="kort-inn rounded-flate border border-kant-pa-dyp/70 bg-[rgba(245,240,232,0.10)] p-5 backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)] sm:p-6">
-                <p className="text-xs font-medium tracking-[0.08em] text-pa-dyp-dempet uppercase">
-                  Inngår ikke
-                </p>
+                <Merkelapp variant="dyp">Inngår ikke</Merkelapp>
                 {/*
                 Punktene i `inngarIkke` er skrevet med stor forbokstav hver
                 for seg, fordi de tidligere sto etter en innledning
@@ -326,9 +321,7 @@ export function Pris() {
               </div>
 
               <div className="kort-inn rounded-flate border border-kant-pa-dyp/70 bg-[rgba(245,240,232,0.10)] p-5 backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)] sm:p-6 lg:col-span-2">
-                <p className="text-xs font-medium tracking-[0.08em] text-pa-dyp-dempet uppercase">
-                  Vilkår
-                </p>
+                <Merkelapp variant="dyp">Vilkår</Merkelapp>
                 <p className="mt-4 text-[1.0625rem] leading-relaxed text-pretty">
                   {hentTekst(front, "front.price.note") ?? (
                     <TbdMarkor id="front.price.note" />

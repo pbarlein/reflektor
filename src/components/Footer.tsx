@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Merkelapp } from "./Eyebrow";
 import { Container } from "./Container";
 import { Logo } from "./Logo";
 import { site } from "@/content/site";
@@ -60,9 +61,7 @@ export function Footer() {
           >
             {bunnmeny.map((spalte) => (
               <div key={spalte.tittel}>
-                <h2 className="text-xs font-medium tracking-[0.08em] text-blekk-dempet uppercase">
-                  {spalte.tittel}
-                </h2>
+                <Merkelapp som="h2">{spalte.tittel}</Merkelapp>
                 <ul className="mt-4 flex flex-col gap-2.5 text-sm">
                   {spalte.lenker.map((l) => (
                     <li key={l.sti}>
