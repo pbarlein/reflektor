@@ -71,9 +71,9 @@ export default function VartArbeid() {
             Vårt arbeid
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-pretty text-blekk-dempet">
-            Reflektor jobber tett med selskaper innen restaurant og mat,
-            eiendom og finans, retail og teknologi. Her er et utvalg av
-            prosjekter innen foto, video og sosiale medier.
+            Reflektor jobber tett med selskaper innen restaurant og mat, eiendom
+            og finans, retail og teknologi. Her er et utvalg av prosjekter innen
+            foto, video og sosiale medier.
           </p>
         </Container>
       </section>
@@ -125,7 +125,19 @@ export default function VartArbeid() {
                       <span>{k.siden}</span>
                     </p>
 
-                    <h3 className="mt-4 text-2xl text-balance sm:text-3xl">
+                    {/*
+                      `display` OG IKKE BARE h3. Designsystemet gir
+                      display-serifen til h1 og h2; h3 er en underoverskrift
+                      i sans. Dette er strukturelt en h3 — seksjonen over
+                      har allerede sin h2 — men typografisk er den sidens
+                      nest største tekst. Uten klassen ble den 38 px Poppins
+                      ved siden av 48 px Instrument Serif, og det var den
+                      eneste store overskriften på siden som ikke matchet.
+
+                      `.display` er systemets egen utgang for akkurat dette,
+                      og står i overstyringer.css sammen med h1-regelen.
+                    */}
+                    <h3 className="display mt-4 text-2xl sm:text-3xl">
                       <span className="underline decoration-transparent decoration-1 underline-offset-[0.25em] transition-colors group-hover:decoration-aksent motion-reduce:transition-none">
                         {k.h1}
                       </span>
