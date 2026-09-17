@@ -272,7 +272,7 @@ export function Samtykkebanner() {
         Rullingen ligger på teksten, ikke på hele panelet: knappene skal
         alltid være synlige. Det er dem seksjonen finnes for.
       */}
-      <div className="mx-auto flex max-h-[80dvh] max-w-4xl flex-col rounded-medie border border-kant-pa-dyp/70 bg-dyp p-5 text-pa-dyp shadow-xl sm:p-7">
+      <div className="mx-auto flex max-h-[80dvh] max-w-4xl flex-col rounded-medie border border-kant-pa-dyp/70 bg-dyp p-4 text-pa-dyp shadow-xl sm:p-7">
         {/*
           `-mx-1 px-1` gir fokusringen på avkrysningsboksene plass til å bli
           tegnet inne i rulleområdet i stedet for å bli klippet av det.
@@ -357,19 +357,25 @@ export function Samtykkebanner() {
           alternativer. Under hverandre leses den øverste som anbefalingen.
         */}
         <div className="mt-5 shrink-0">
-          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+          <div className="grid grid-cols-1 gap-2 min-[380px]:grid-cols-2 sm:flex sm:flex-wrap">
             <button
               ref={forsteKnapp}
               type="button"
               onClick={() => svar(FULLT_SAMTYKKE)}
-              className="rounded-interaktiv bg-aksent px-4 py-3 text-[0.9375rem] font-medium text-[color:var(--text-on-accent)] transition-colors hover:bg-aksent-hover motion-reduce:transition-none sm:px-5"
+              /*
+                `border border-transparent` er ikke overflødig. «Bare
+                nødvendige» har en ekte ramme og ble derfor 2 px høyere.
+                To px er lite, men kravet er at de to svarene skal ha SAMME
+                vekt, og da skal de ha nøyaktig samme mål.
+              */
+              className="rounded-interaktiv border border-transparent bg-aksent px-3 py-3 text-[0.9375rem] font-medium text-[color:var(--text-on-accent)] transition-colors hover:bg-aksent-hover motion-reduce:transition-none sm:px-5"
             >
               Godta alle
             </button>
             <button
               type="button"
               onClick={() => svar(INGEN_SAMTYKKE)}
-              className="rounded-interaktiv border border-kant-pa-dyp bg-transparent px-4 py-3 text-[0.9375rem] font-medium text-pa-dyp transition-colors hover:bg-[rgba(245,240,232,0.08)] motion-reduce:transition-none sm:px-5"
+              className="rounded-interaktiv border border-kant-pa-dyp bg-transparent px-3 py-3 text-[0.9375rem] font-medium text-pa-dyp transition-colors hover:bg-[rgba(245,240,232,0.08)] motion-reduce:transition-none sm:px-5"
             >
               Bare nødvendige
             </button>
@@ -377,7 +383,7 @@ export function Samtykkebanner() {
               <button
                 type="button"
                 onClick={() => svar(valg)}
-                className="col-span-2 rounded-interaktiv border border-kant-pa-dyp bg-transparent px-4 py-3 text-[0.9375rem] font-medium text-pa-dyp transition-colors hover:bg-[rgba(245,240,232,0.08)] motion-reduce:transition-none sm:col-auto sm:px-5"
+                className="min-[380px]:col-span-2 rounded-interaktiv border border-kant-pa-dyp bg-transparent px-3 py-3 text-[0.9375rem] font-medium text-pa-dyp transition-colors hover:bg-[rgba(245,240,232,0.08)] motion-reduce:transition-none sm:col-auto sm:px-5"
               >
                 Lagre valget mitt
               </button>

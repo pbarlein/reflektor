@@ -946,13 +946,22 @@ dialoger fra de harde feilene — «unless they're legally mandatory» — og et
 samtykkebanner i EØS er påkrevd, så dette var ingen rankingtrussel. Men det
 er en dårlig førstehåndsopplevelse uansett hva Google mener.
 
-| | før | etter |
+| Skjerm | før | etter |
 |---|---|---|
-| iPhone, sammenslått | 64 % | **46 %** |
-| desktop, sammenslått | 28 % | 32 % |
+| iPhone 13 og nyere (390 px+) | 64 % | **39 %** |
+| iPhone SE / eldre (≤375 px) | 64 % | **47–51 %** |
+| desktop | 28 % | 32 % |
 
 Knappene står nå to i bredden på mobil i stedet for stablet, og
-innledningen er kortet inn. Sideveis er dessuten det som gjør likheten
+innledningen er kortet inn. Under 380 px er det ikke plass til to på én
+linje, og der stables de igjen — det er derfor de smaleste telefonene
+kommer dårligere ut. Alternativet var å la begge knappene brekke til to
+linjer, og en knapp som brekker ser uferdig ut.
+
+Målt på 320, 360, 375, 390 og 414 px: begge svarknappene er 46 px høye og
+står på én linje overalt. `border border-transparent` på «Godta alle» er
+ikke overflødig — uten den ble den 2 px lavere enn «Bare nødvendige», som
+har en ekte ramme. Sideveis er dessuten det som gjør likheten
 mellom «Godta alle» og «Bare nødvendige» synlig: under hverandre leses den
 øverste som anbefalingen.
 
