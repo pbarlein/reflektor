@@ -179,6 +179,17 @@ export const prinsipper = [
   },
 ] as const;
 
+/**
+ * RENDRES IKKE NOE STED per 17.09.2026, og det er bevisst beholdt.
+ *
+ * `/om-oss` er fortsatt en stubb. Når den bygges, er dette dataene den
+ * trenger, og de er hentet fra dagens side. Å slette dem for å få en
+ * «ubrukt eksport»-teller ned ville betydd å hente dem inn igjen senere —
+ * og da med risiko for at en rolle eller et navn blir feil.
+ *
+ * Samme forbehold som for `prosess` og `prinsipper`: dette er råmateriale
+ * fra crawlen, ikke copy som har vært gjennom protokollen.
+ */
 export const team = [
   { navn: "Pål Barlein", rolle: "CEO" },
   { navn: "Magne Finseth da Fonseca", rolle: "Produsent & kundeansvarlig" },
@@ -328,6 +339,7 @@ export const kundelogoer = [
 ] as const;
 
 /** Kontaktperson på /kontaktoss. Navn og direktenummer bygger tillit. */
+/** Samme forbehold som `team`: ikke i bruk ennå, beholdt til /om-oss bygges. */
 export const kontaktperson = {
   navn: "Pål Barlein",
   rolle: "CEO",

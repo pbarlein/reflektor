@@ -716,3 +716,62 @@ Merket med TBD-markører så de er synlige i forhåndsvisningen.
 3. «kan du kontakte oss på **[e-postadresse]**» — uutfylt maltekst, og den
    alvorligste: erklæringen oppgir ingen adresse for å utøve rettighetene
    sine. Adressen står i punkt 1, men punkt 9 er der en leser ser etter den.
+
+## A43 — Kodegjennomgangen. Sider som ikke kan lanseres som de er. 17.09.2026
+
+Pål ba om en full gjennomgang av koden: «ikke et lappeteppe eller AI-slop,
+men kun best practice og et solid håndverk». Funnene som krever en
+beslutning fra ham, står i A41 og A42. Dette punktet er lista over ruter som
+finnes, men ikke har innhold.
+
+### Seks ruter viser «Under arbeid»
+
+`/sosiale-medier-byra` · `/innholdsproduksjon` · `/reklamefilm` ·
+`/videoproduksjon-i-oslo` · `/eventfotograf-eventvideo` ·
+`/employer-branding-video-oslo`
+
+Tre av dem er i AGENTS.md ført opp som **live sider det annonseres mot**.
+`/sosiale-medier-byra` er Final URL i Google Ads.
+
+Rutene er holdt i live med vilje — en rute som forsvinner blir en 404 som
+må ryddes senere, og redirect-kartet peker på dem. Men **betalt trafikk som
+lander på «Under arbeid» er verre enn en 404**: den koster penger per klikk
+og leverer ingenting.
+
+`/sosiale-medier-byra` skal uansett 301-es til `/` ved cutover (se
+`docs/cutover.md`), så den løses av den planen. De fem andre gjør det ikke.
+
+### Fire ruter har overskrift uten innhold
+
+`/om-oss` (23 linjer) · `/vart-arbeid` (32) · `/blogg` (37) ·
+`/kontaktoss` (28)
+
+`/kontaktoss` er også ført som live og annonsert mot i AGENTS.md.
+
+`/blogg` er dessuten den kjente lanseringssperren: bloggtekstene er ikke
+migrert fra Squarespace, og bloggen bærer rundt 481 refererende domener.
+
+### To som er løst i denne økta
+
+`/faq` og `/personvern` var begge stubber. Begge er nå migrert ordrett fra
+dagens side. Se A41 og A42.
+
+### Ubrukt innhold som IKKE er slettet
+
+`team`, `kontaktperson`, `prosess` og `prinsipper` i `site.ts` rendres ingen
+steder. De er merket, ikke fjernet: alle fire er hentet fra dagens side og
+er dataene `/om-oss` trenger når den bygges. Å slette dem for å få en teller
+ned ville bare betydd å hente dem inn igjen senere, med risiko for at et
+navn eller en rolle blir feil underveis.
+
+### Designtokens: 71 av 132 er ubrukt, og det er riktig
+
+En palett er et system. At `--rf-ink-300` ikke brukes i dag, gjør den ikke
+til søppel — den er et trinn i en skala. AGENTS.md verner dessuten mappa
+uttrykkelig.
+
+Ett unntak er verdt å nevne: `elevation.css` definerer sju skygge- og
+scrim-verdier for et design som uttrykkelig ikke bruker skygger («Ingen
+skygge — skiller lages med flate og linje»). Det er rundt 600 byte som
+motsier sin egen designbeslutning. Ikke fjernet, fordi mappa er vernet, men
+det er det eneste stedet i tokens der «ubrukt» også betyr «selvmotsigende».
