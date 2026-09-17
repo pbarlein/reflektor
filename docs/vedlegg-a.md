@@ -741,12 +741,25 @@ Målt på den bygde siden, ikke antatt:
 
 | Tilstand | Tredjepartskall | Cookies |
 |---|---|---|
-| Før valg | **0** | ingen |
-| Etter «Bare nødvendige» | Google-taggene laster cookieløst; de fire andre fyrer fortsatt | ingen `_ga`, ingen `_gcl_au` |
-| Etter «Godta alle» | alt fyrer | som før |
+| Før valg | **0** | **0** |
+| Etter «Bare nødvendige» | Google-taggene laster cookieløst; de andre fyrer fortsatt | ingen `_ga`, ingen `_gcl_au` — men se under |
+| Etter «Godta alle» | alt fyrer | som før, pluss Googles |
 
-At de fire fortsatt fyrer etter «Bare nødvendige», er containerens ansvar og
-ikke kodens. Det er nettopp det punkt 1 under retter.
+**Hva som settes selv når besøkende har sagt nei** — målt på deployet
+17.09.2026, i både desktop og mobil:
+
+| Kilde | Cookies |
+|---|---|
+| Microsoft (Clarity og Ads) | `CLID`, `MUID`, `MR`, `SRM_B`, `SM`, `ANONCHK` |
+| HubSpot | `__hstc`, `hubspotutk`, `__hssrc`, `__hssc` |
+| Cloudflare (leverer skriptene over) | `__cf_bm` |
+| Google | **ingen** |
+
+Det er selve beviset, i én tabell: Consent Mode virker — Google setter
+ingenting — og de andre bryr seg ikke. Dette er containerens ansvar, ikke
+kodens, og det er nøyaktig det punkt 1 under retter. Listen er også
+huskelista over hva som må stå i personvernerklæringen hvis taggene blir
+værende.
 
 Dessuten: `consent default` er det første consent-kallet på siden og kommer
 før GTM i markeringen; valget huskes over sidelastinger uten at banneret
