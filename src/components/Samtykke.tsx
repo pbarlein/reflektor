@@ -217,65 +217,88 @@ export function Samtykkebanner() {
       aria-labelledby="samtykke-tittel"
       className="fixed inset-x-0 bottom-0 z-50 p-3 sm:p-5"
     >
-      <div className="mx-auto max-w-4xl rounded-medie border border-kant-pa-dyp/70 bg-dyp p-5 text-pa-dyp shadow-xl sm:p-7">
-        <h2 id="samtykke-tittel" className="text-lg font-medium">
-          Informasjonskapsler
-        </h2>
-        <p className="mt-2 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet">
-          Vi bruker informasjonskapsler til å måle hvordan nettsiden brukes og
-          til markedsføring. Ingenting av dette settes før du har sagt ja. Det
-          som trengs for at siden skal virke, er alltid på.{" "}
-          <Link href="/personvern" className="underline hover:text-pa-dyp">
-            Les personvernerklæringen
-          </Link>
-          .
-        </p>
+      {/*
+        HØYDETAKET ER EN RETTELSE, ikke pynt. Med valgene utvidet ble panelet
+        høyere enn en telefonskjerm, og et `fixed`-element som er høyere enn
+        vinduet kan ikke rulles: overskriften og hele innledningen lå bak
+        headeren, utenfor rekkevidde. Målt på iPhone 13 mot deployet.
 
-        {detaljer && (
-          <ul className="mt-5 space-y-3">
-            {(
-              [
+        `dvh` og ikke `vh`, fordi det er nettopp på mobil dette gjelder, og
+        `vh` regner med adresselinja som om den aldri er der.
+
+        Taket er 80 % slik at panelet stopper godt under headeren — begge er
+        `z-50`, og headeren ligger sist i DOM-en og vinner ved likhet.
+
+        Rullingen ligger på teksten, ikke på hele panelet: knappene skal
+        alltid være synlige. Det er dem seksjonen finnes for.
+      */}
+      <div className="mx-auto flex max-h-[80dvh] max-w-4xl flex-col rounded-medie border border-kant-pa-dyp/70 bg-dyp p-5 text-pa-dyp shadow-xl sm:p-7">
+        {/*
+          `-mx-1 px-1` gir fokusringen på avkrysningsboksene plass til å bli
+          tegnet inne i rulleområdet i stedet for å bli klippet av det.
+        */}
+        <div className="-mx-1 min-h-0 overflow-y-auto px-1">
+          <h2 id="samtykke-tittel" className="font-sans text-lg font-medium">
+            Informasjonskapsler
+          </h2>
+          <p className="mt-2 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet">
+            Vi bruker informasjonskapsler til å måle hvordan nettsiden brukes og
+            til markedsføring. Ingenting av dette settes før du har sagt ja. Det
+            som trengs for at siden skal virke, er alltid på.{" "}
+            <Link href="/personvern" className="underline hover:text-pa-dyp">
+              Les personvernerklæringen
+            </Link>
+            .
+          </p>
+
+          {detaljer && (
+            <ul className="mt-5 space-y-3">
+              {(
                 [
-                  "analyse",
-                  "Analyse",
-                  "Google Analytics. Hvilke sider som besøkes, og hvor besøkende kommer fra.",
-                ],
-                [
-                  "markedsforing",
-                  "Markedsføring",
-                  "Google Ads og Meta. Måling av annonser, og målgrupper for markedsføring.",
-                ],
-              ] as const
-            ).map(([nokkel, tittel, beskrivelse]) => (
-              <li
-                key={nokkel}
-                className="rounded-flate border border-kant-pa-dyp/70 p-4"
-              >
-                <label className="flex cursor-pointer items-start gap-3">
-                  <input
-                    type="checkbox"
-                    checked={valg[nokkel]}
-                    onChange={(e) =>
-                      settValg({ ...valg, [nokkel]: e.target.checked })
-                    }
-                    className="mt-1 size-4 shrink-0 accent-[color:var(--aksent-pa-dyp)]"
-                  />
-                  <span>
-                    <span className="block font-medium">{tittel}</span>
-                    <span className="mt-1 block text-sm leading-relaxed text-pa-dyp-dempet">
-                      {beskrivelse}
+                  [
+                    "analyse",
+                    "Analyse",
+                    "Google Analytics. Hvilke sider som besøkes, og hvor besøkende kommer fra.",
+                  ],
+                  [
+                    "markedsforing",
+                    "Markedsføring",
+                    "Google Ads og Meta. Måling av annonser, og målgrupper for markedsføring.",
+                  ],
+                ] as const
+              ).map(([nokkel, tittel, beskrivelse]) => (
+                <li
+                  key={nokkel}
+                  className="rounded-flate border border-kant-pa-dyp/70 p-4"
+                >
+                  <label className="flex cursor-pointer items-start gap-3">
+                    <input
+                      type="checkbox"
+                      checked={valg[nokkel]}
+                      onChange={(e) =>
+                        settValg({ ...valg, [nokkel]: e.target.checked })
+                      }
+                      className="mt-1 size-4 shrink-0 accent-[color:var(--aksent-pa-dyp)]"
+                    />
+                    <span>
+                      <span className="block font-medium">{tittel}</span>
+                      <span className="mt-1 block text-sm leading-relaxed text-pa-dyp-dempet">
+                        {beskrivelse}
+                      </span>
                     </span>
-                  </span>
-                </label>
+                  </label>
+                </li>
+              ))}
+              <li className="rounded-flate border border-dashed border-kant-pa-dyp/70 p-4 text-sm leading-relaxed text-pa-dyp-dempet">
+                <span className="block font-medium text-pa-dyp">
+                  Nødvendige
+                </span>
+                Kreves for at siden skal virke, og for å huske dette valget. Kan
+                ikke slås av.
               </li>
-            ))}
-            <li className="rounded-flate border border-dashed border-kant-pa-dyp/70 p-4 text-sm leading-relaxed text-pa-dyp-dempet">
-              <span className="block font-medium text-pa-dyp">Nødvendige</span>
-              Kreves for at siden skal virke, og for å huske dette valget. Kan
-              ikke slås av.
-            </li>
-          </ul>
-        )}
+            </ul>
+          )}
+        </div>
 
         {/*
           KNAPPENE HAR SAMME VEKT OG SAMME STØRRELSE. «Bare nødvendige» er
@@ -283,7 +306,7 @@ export function Samtykkebanner() {
           vanligste bruddet på kravet om at det skal være like lett å nekte
           som å samtykke.
         */}
-        <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+        <div className="mt-6 flex shrink-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
           <button
             ref={forsteKnapp}
             type="button"

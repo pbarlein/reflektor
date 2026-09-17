@@ -763,7 +763,20 @@ værende.
 
 Dessuten: `consent default` er det første consent-kallet på siden og kommer
 før GTM i markeringen; valget huskes over sidelastinger uten at banneret
-blinker; 0 axe-brudd på ni sider i to visningsbredder med banneret framme.
+blinker; 0 axe-brudd på ni sider i to visningsbredder med banneret framme,
+og 0 i alle tre bannertilstandene — sammenslått, utvidet og gjenåpnet.
+
+**Én feil ble funnet i skjermbildene og rettet.** Med valgene utvidet ble
+panelet høyere enn en telefonskjerm. Et `fixed`-element som er høyere enn
+vinduet kan ikke rulles, så overskriften og hele innledningen lå bak
+headeren, utenfor rekkevidde. Panelet har nå tak på 80 % av vindushøyden, og
+rullingen ligger på teksten slik at knappene alltid står. Verifisert på
+iPhone SE, iPhone 13 og en desktop på 600 px høyde.
+
+Det er verdt å merke seg hvordan den ble funnet: alle de automatiske
+sjekkene sa «rent». axe måler ikke om noe ligger utenfor skjermen, og
+Playwright klikker på knapper den finner uansett hvor de er. Feilen var
+synlig med det blotte øye i ett skjermbilde.
 
 ### Det som gjenstår, og som bare kan gjøres i GTM-grensesnittet
 
