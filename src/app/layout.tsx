@@ -3,7 +3,8 @@ import { Poppins, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Sporing, GtmNoscript } from "@/components/Sporing";
+import { Samtykkebanner } from "@/components/Samtykke";
+import { Samtykkestandard, Sporing } from "@/components/Sporing";
 import { Ankerhopp } from "@/components/Ankerhopp";
 import { site } from "@/content/site";
 import { basisUrl, tillatIndeksering } from "@/lib/miljo";
@@ -77,9 +78,35 @@ export default function RootLayout({
      * orddelingsordbok i Chrome; bokmål gjør det. Skjermlesere velger også
      * riktigere stemme på `nb`.
      */
-    <html lang="nb">
-      <body className={`${poppins.variable} ${displaySerif.variable} font-sans`}>
-        <GtmNoscript />
+    /*
+      `suppressHydrationWarning` gjelder KUN <html>-elementets egne
+      attributter, ikke innholdet i treet. Den er nødvendig her, ikke en
+      unnskyldning: samtykkeskriptet setter `data-samtykke` på <html> før
+      React kjører, så klienten har et attributt serveren ikke skrev, og
+      React melder det som en hydreringsfeil.
+
+      Det er samme grunn biblioteker for mørk modus bruker den. Alternativet
+      — å sette attributtet etter hydrering — ville gitt nettopp blinkingen
+      hele konstruksjonen er laget for å unngå.
+    */
+    <html lang="nb" suppressHydrationWarning>
+      <body
+        className={`${poppins.variable} ${displaySerif.variable} font-sans`}
+      >
+        {/*
+          REKKEFØLGEN HER ER HELE POENGET, og den er ikke tilfeldig.
+
+          1. Samtykkestandard setter Consent Mode til «nektet» med et
+             synkront skript i <head>. Det kjører før alt annet.
+          2. GTM lastes FØRST NÅR besøkende har svart — se Sporing.tsx for
+             hvorfor, og hva containeren faktisk inneholder.
+          3. Banneret rendres til slutt. Det leser bare hva skriptet i punkt
+             1 allerede fant ut.
+
+          Bytter man om på 1 og 2, rekker taggene å kjøre før samtykket er
+          satt, og hele løsningen er teater. Se A42 og samtykke.ts.
+        */}
+        <Samtykkestandard />
         <Sporing />
         <Ankerhopp />
         {/*
@@ -101,6 +128,24 @@ export default function RootLayout({
         >
           Hopp til innholdet
         </a>
+        {/*
+          BANNERET STÅR ETTER HOPPELENKEN, IKKE FØR. Begge deler er målt.
+
+          Først lå det øverst i <body>. Da ble hoppelenken ikke lenger den
+          første lenken på siden, og axe meldte at innhold lå utenfor et
+          landemerke — fordi unntaket for hoppelenker bare gjelder når de
+          faktisk kommer først. Det var ikke en teknikalitet: en
+          tastaturbruker møtte banneret før muligheten til å hoppe over
+          headeren.
+
+          Så vurderte jeg å legge det sist, etter bunnteksten. Det fjerner
+          bruddet, men da må man tabbe gjennom hele siden for å komme til et
+          valg man skal kunne ta med én gang.
+
+          Her, som ANDRE element, er begge deler i orden: hoppelenken er
+          fortsatt først, og samtykkevalget er neste tabbestopp.
+        */}
+        <Samtykkebanner />
         <Header />
         {/* tabIndex=-1 slik at hoppelenken faktisk FLYTTER fokus hit, og
             ikke bare ruller. Uten den blir neste Tab stående i headeren. */}

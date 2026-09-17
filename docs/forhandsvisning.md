@@ -230,9 +230,15 @@ stopper publisering ved TBD-er, for lange tekster eller døde interne lenker.
 ## Sjekkliste før lansering
 
 - [ ] Bloggtekstene migrert fra Squarespace — **blokkerer lansering**
+- [ ] GTM-utløsere satt på Meta, Apollo, HubSpot, Clarity og Microsoft Ads,
+      så de venter på `samtykke_oppdatert` — **blokkerer lansering**, se A42
+- [ ] Apollo og Clarity enten fjernet fra containeren eller ført inn i
+      personvernerklæringen — **blokkerer lansering**, se A42
+- [ ] De tre uutfylte stedene i personvernerklæringen fylt ut (A42)
 - [ ] `/sosiale-medier-byra` → `/` 301, etter Ads-URL-bytte (`docs/cutover.md`)
 - [ ] `NEXT_PUBLIC_TILLAT_INDEKSERING=true` satt i Vercel
-- [ ] Sporingskjeden verifisert ende-til-ende: skjema → `/takk` → GA4-hendelse
+- [ ] Sporingskjeden verifisert ende-til-ende: skjema → `/takk` → GA4-hendelse,
+      **etter at samtykke er gitt** — uten samtykke lastes ikke GTM
 - [ ] DNS flyttet — **det er den eneste handlingen som faktisk flytter siden**
 
 ### Etter logoraden og glasspanelet (16.09.2026, tredje måling)

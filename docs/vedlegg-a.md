@@ -635,21 +635,25 @@ markup og ikke kjører JavaScript. Det skillet er verdt å holde rett.
 
 **Lanseringssperre**, på linje med bloggmigreringen og `/produktfoto`.
 
-## A42 — Siden har ingen samtykkeløsning. Dagens side har det. 16.09.2026
+## A42 — Samtykke. Funnet 16.09.2026, bygget 17.09.2026
 
-Funnet under kodegjennomgangen Pål ba om, og det er den alvorligste tingen
-jeg fant. Han kan ikke se det selv: det er usynlig i nettleseren, og det ser
-ut som at alt virker.
+Det alvorligste funnet i kodegjennomgangen Pål ba om. Han kunne ikke se det
+selv: det er usynlig i nettleseren, og det så ut som at alt virket.
 
-### Hva som skjer nå
+Notatet er skrevet i to lag. De fire første avsnittene er funnet slik det
+sto — de er beholdt fordi de forklarer hvorfor løsningen ser ut som den gjør.
+Fra «Bygget 17.09.2026» og ut beskriver de hva som nå faktisk står i koden,
+og hva som gjenstår.
 
-`Sporing.tsx` laster Google Tag Manager umiddelbart ved hver sidelasting,
-uten noen form for samtykke. Inne i containeren fyrer GA4 og en
-Meta-piksel — sistnevnte er synlig i konsollen som
-`[Meta pixel] 572759520853896`. Informasjonskapsler settes og data sendes til
-Google og Meta før brukeren har tatt stilling til noe.
+### Hva som skjedde før 17.09.2026
 
-Det finnes ingen banner, ingen samtykkelagring, ingen Consent Mode.
+`Sporing.tsx` lastet Google Tag Manager umiddelbart ved hver sidelasting,
+uten noen form for samtykke. Inne i containeren fyrte GA4 og en
+Meta-piksel — sistnevnte synlig i konsollen som
+`[Meta pixel] 572759520853896`. Informasjonskapsler ble satt og data sendt
+til Google og Meta før brukeren hadde tatt stilling til noe.
+
+Det fantes ingen banner, ingen samtykkelagring, ingen Consent Mode.
 
 ### Dagens reflektor.no har banner
 
@@ -668,7 +672,8 @@ Punkt 8, ordrett fra `/privacypolicy`:
 > via innstillingene på nettsiden, dersom dette er tilgjengelig.
 
 Erklæringen er nå migrert til `/personvern` og sier dette på den nye siden
-også. Det finnes ingen slike innstillinger.
+også. Det fantes ingen slike innstillinger. Lenka «Informasjonskapsler» i
+bunnteksten er det som dekker løftet nå.
 
 ### Hvorfor det også angår KPI-en
 
@@ -678,32 +683,128 @@ Google Ads, og konverteringsmodelleringen blir svakere. Dette er altså ikke
 bare en juridisk sak — det treffer måling av skjemaleads, som er prosjektets
 eneste KPI.
 
-### Hvorfor jeg ikke har bygget det
+### Bygget 17.09.2026, etter at Pål ba om det
 
-Tre grunner, og den siste er den viktigste:
+Da jeg skrev notatet over, lot jeg være å bygge løsningen — begrunnelsen sto
+her, og den holdt ikke lenger da Pål ba om «GTM og samtykkeløsning». Det som
+faktisk var uavklart, var ett spørsmål: egen banner eller innkjøpt CMP.
+Svaret ligger nå i koden som egen banner, og begrunnelsen står nedenfor.
 
-1. **Valg av løsning er ikke mitt.** Egen banner eller et CMP (Cookiebot,
-   Iubenda, Axeptio) er en beslutning om kostnad, drift og juridisk ansvar.
-2. **GTM er LÅST** i AGENTS.md. Consent Mode v2 krever konfigurasjon inne i
-   containeren — utløsere som venter på samtykke — og containeren bærer 107+
-   historiske konverteringer.
-3. **Halvveis er verre enn ingenting.** Å legge inn
-   `gtag('consent','default', … denied)` uten en banner som kan gi samtykke,
-   ville satt alt til nektet permanent. Da faller GA4-hendelsen og
-   Ads-konverteringen bort, og Reflektor mister målingen av sin eneste KPI
-   uten å få noe igjen for det.
+**Egen banner, ikke Cookiebot eller Iubenda.** Et CMP koster fra rundt 1 000
+kr/mnd, legger et tredjepartsskript i den kritiske lastebanen på hver
+sidelasting, og løser et problem Reflektor ikke har: mange kategorier, mange
+språk, mange domener. Her er det to kategorier og ett domene. Løsningen er
+under 500 linjer, har ingen avhengigheter, og ingen andre kan slå den av.
+Byttes den senere ut, er det `Samtykke.tsx` og `samtykke.ts` som går.
 
-### Hva som må skje før lansering
+**Hva som ligger hvor:**
 
-Rekkefølgen er bindende — punkt 2 uten punkt 1 slår av målingen:
+| Fil | Ansvar |
+|---|---|
+| `src/lib/samtykke.ts` | Ren logikk. Cookieformat, Consent Mode-signaler, skriptet i `<head>`. Ingen React. |
+| `tests/samtykke.test.ts` | Ti tester. Feil her er usynlige — siden ser lik ut enten samtykket virker eller ikke. |
+| `src/components/Samtykke.tsx` | Banneret og lenka i bunnteksten. |
+| `src/components/Sporing.tsx` | Consent Mode-standarden, og GTM. |
 
-1. Velg samtykkeløsning og legg den inn slik at den laster FØR GTM.
-2. Sett Consent Mode v2 med `denied` som standard, og oppdater ved samtykke.
-3. Konfigurer GTM-utløserne til å vente på `consent granted`.
-4. Fyll ut de tre uutfylte stedene i personvernerklæringen (se under).
-5. Test at `takk_page_view` fortsatt fyrer etter at samtykke er gitt.
+### Containeren inneholder seks sporere, ikke to. Målt 17.09.2026
 
-**Lanseringssperre.**
+Notatet over sa «GA4 og en Meta-piksel». Det var det jeg så i konsollen. Da
+jeg målte nettverkskallene i stedet, sto det seks:
+
+| Sporer | Retter seg etter Consent Mode |
+|---|---|
+| GA4 | ja |
+| Google Ads | ja |
+| Meta-piksel | **nei** |
+| Apollo.io (`aplo-evnt.com`) | **nei** — identifiserer bedriften bak besøket |
+| HubSpot | **nei** — satte fire cookies før noe samtykke forelå |
+| Microsoft Clarity | **nei** — tar opp sesjonen, altså museflytting og klikk |
+| Microsoft Ads | **nei** |
+
+Consent Mode styrer bare Googles egne tagger. De fem andre bryr seg ikke, og
+de kan bare stanses inne i containeren — som koden i dette repoet ikke kan
+røre, og som er LÅST i AGENTS.md.
+
+**Det avgjorde arkitekturen.** Planen var å laste GTM alltid og la Consent
+Mode styre. Målingen viste at det ville latt sesjonsopptak og
+besøksidentifisering kjøre på folk som ikke har sagt ja til noe. Derfor
+lastes containeren nå **først når besøkende har svart**.
+
+**Det koster måling, og det skal sies rett ut.** En besøkende som ignorerer
+banneret og fyller ut skjemaet, blir ikke talt. Den som svarer — også den som
+svarer nei — blir det, fordi GA4 da sender cookieløse signaler som Google
+modellerer konverteringer fra.
+
+### Slik det er verifisert
+
+Målt på den bygde siden, ikke antatt:
+
+| Tilstand | Tredjepartskall | Cookies |
+|---|---|---|
+| Før valg | **0** | ingen |
+| Etter «Bare nødvendige» | Google-taggene laster cookieløst; de fire andre fyrer fortsatt | ingen `_ga`, ingen `_gcl_au` |
+| Etter «Godta alle» | alt fyrer | som før |
+
+At de fire fortsatt fyrer etter «Bare nødvendige», er containerens ansvar og
+ikke kodens. Det er nettopp det punkt 1 under retter.
+
+Dessuten: `consent default` er det første consent-kallet på siden og kommer
+før GTM i markeringen; valget huskes over sidelastinger uten at banneret
+blinker; 0 axe-brudd på ni sider i to visningsbredder med banneret framme.
+
+### Det som gjenstår, og som bare kan gjøres i GTM-grensesnittet
+
+Dette kan ikke gjøres fra koden. Kroken finnes allerede: ved hvert svar
+sendes hendelsen `samtykke_oppdatert` til dataLayer, med variablene
+`samtykke_analyse` og `samtykke_markedsforing`, hver satt til `granted`
+eller `denied`.
+
+1. **Sett utløsere på de fem taggene som ikke lytter til Consent Mode.**
+   I GTM: lag en datalagvariabel for `samtykke_markedsforing`, lag en
+   utløser av typen «Egendefinert hendelse» på `samtykke_oppdatert` med
+   betingelsen at variabelen er `granted`, og bytt utløseren på Meta,
+   Apollo, HubSpot, Clarity og Microsoft Ads til den. Analysetagger bruker
+   `samtykke_analyse` på samme måte.
+2. **Vurder om alle seks skal være der.** Clarity tar opp sesjoner og
+   Apollo identifiserer bedrifter — begge krever samtykke, begge må stå i
+   personvernerklæringen, og ingen av dem står der i dag. Erklæringen nevner
+   Google og Meta. Det er en avgjørelse for Pål, ikke for meg.
+3. **Når punkt 1 er gjort, snu GTM-lastingen tilbake.** Da kan containeren
+   lastes alltid, og vi får modellerte konverteringer også fra dem som ikke
+   svarer. Ett `if` i `Sporing.tsx`, og begrunnelsen står i kommentaren der.
+4. **Fyll ut de tre uutfylte stedene i personvernerklæringen** (se under).
+
+### Slik sjekker Pål at det virker, uten å kunne kode
+
+Fire ting, i denne rekkefølgen, i et **privat vindu** (ellers husker
+nettleseren et valg du allerede har tatt):
+
+1. Åpne forsiden. Banneret skal komme opp nederst. Ikke trykk på noe.
+2. Bla nedover og bruk siden som vanlig. Banneret skal ikke stenge noe —
+   det er med vilje at det kan ignoreres.
+3. Trykk «Bare nødvendige». Banneret forsvinner. Last siden på nytt: det
+   skal **ikke** komme tilbake.
+4. Bla helt ned til bunnteksten og trykk «Informasjonskapsler». Banneret
+   skal komme opp igjen med de to avkrysningsboksene. Det er beviset på at
+   et samtykke kan trekkes tilbake — som personvernerklæringens punkt 8
+   lover.
+
+**Ikke fyll ut skjemaet for å teste.** Sporingen går mot den ekte
+Ads-konverteringskontoen.
+
+### Copy-forbeholdet
+
+Teksten i banneret er skrevet av meg, ikke av Pål. Det er et bevisst brudd
+på copy-protokollen: et `TBD(...)` i et samtykkebanner ville vært ubrukelig,
+og teksten er funksjonell og juridisk, ikke markedsføring. Men den bør leses
+gjennom, og noen med juridisk ansvar bør bekrefte at de to kategoriene dekker
+det som faktisk kjører — se punkt 2 over, der de ennå ikke gjør det.
+
+### Lanseringssperren står, men er flyttet
+
+Sperren er ikke lenger «det finnes ingen samtykkeløsning». Den er nå
+**punkt 1 og 2 over**: fire sporere fyrer fortsatt uten samtykke, og to av
+dem står ikke i personvernerklæringen. Begge deler løses i GTM, ikke her.
 
 ### Tre defekter i personvernerklæringen, live nå
 

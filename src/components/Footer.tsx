@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Merkelapp } from "./Eyebrow";
+import { Samtykkelenke } from "./Samtykke";
 import { Container } from "./Container";
 import { Logo } from "./Logo";
 import { site } from "@/content/site";
@@ -70,6 +71,17 @@ export function Footer() {
                       </Link>
                     </li>
                   ))}
+                  {/*
+                    Samtykkelenka henger på den siste spalta, ikke i en egen
+                    rad. Den hører hjemme sammen med Personvern — det er der
+                    folk leter etter den — og en egen rad for én knapp ville
+                    gitt den mer vekt enn den skal ha.
+                  */}
+                  {spalte === bunnmeny[bunnmeny.length - 1] && (
+                    <li>
+                      <Samtykkelenke />
+                    </li>
+                  )}
                 </ul>
               </div>
             ))}
