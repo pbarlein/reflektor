@@ -8,443 +8,220 @@ import { front } from "@/content/sider/front";
 import { tilbud } from "@/content/site";
 
 /**
- * Prisen: spesifikasjonsark på beige, glasspanel under.
+ * Prisen: ett tilbudskort, og ett ord.
  *
- * Utskilt fra page.tsx 16.09.2026. Begrunnelsene for alt i denne seksjonen
- * står i kommentarene under — de fulgte med flyttingen og er ikke endret.
+ * BYGGET HELT OM 19.09.2026. Påls bestilling, ordrett: «jeg vil heller at
+ * prisseksjonen skal designes helt om, men beholde tallene og videoen.
+ * tellene kan stå på en linje. under kan det med stor font stå kontinuitet.
+ * som om alle disse faktorene skaper kontinuitet på sosiale medier, hvilket
+ * er hovedproblemet vi løser. ikke lag det så fysisk stort på siden. mindre
+ * skrolling er bedre.»
+ *
+ * HVA SOM BLE FORKASTET, OG HVORFOR HAN HAR RETT.
+ *
+ * Forrige versjon endte med en graf som viste arkivet vokse til «rundt
+ * hundre filmer» etter ett år. Pål: «jeg er usikker på om 100 videoer i et
+ * arkiv er et godt salgsargument. det høres for mange ut som om man har
+ * betalt for for mange videoer.»
+ *
+ * Det er en skarp observasjon. Stort volum er selgerens argument, ikke
+ * kjøperens. Hundre filer i en mappe er en kostnad man har pådratt seg.
+ * Det leseren vil ha, er at kontoen ikke står stille — og det er noe helt
+ * annet enn å eie mye.
+ *
+ * GREPET: FAKTORENE ER ET REGNESTYKKE SOM GÅR OPP I ETT ORD.
+ *
+ * De fire tallene står på én linje. Under dem en strek. Under streken står
+ * svaret, og svaret er verken en pris eller et arkiv — det er KONTINUITET.
+ * Formen er en sum, men det som summeres er ikke kroner: det er problemet
+ * abonnementet faktisk løser.
+ *
+ * Prisen står under igjen, i én rolig linje. Fortsatt tydelig —
+ * prisåpenhet er Reflektors ene dokumenterte posisjonering — men ikke
+ * lenger seksjonens største element. Måletallene står i
+ * docs/research-arbeidsside.md.
+ *
+ * ALT I ÉN BLOKK, og det er kompaktheten. Tilbudet, ordet, prisen og hva
+ * som inngår lå før i to store deler med luft imellom: 2 508 px på desktop,
+ * 3 463 på mobil — en fjerdedel av hele forsiden for én seksjon. Nå er det
+ * ett kort. Slik gjør Basecamp og Designjoy det også: pris og innhold i
+ * samme blokk, ikke som to kapitler.
+ *
+ * GLASSFLATEN ER VALGT, ikke arvet. Den er merkevarens egen flate — se
+ * .glassflate i globals.css — og gjør to ting her: gir det store ordet noe
+ * å gløde mot, og samler seksjonen til én gjenstand i stedet for en stabel.
  */
 
 /**
- * Tolv måneder, forkortet. De står som etiketter under søylene og skal
- * leses som en tidsakse, ikke som datoer — derfor tre bokstaver og ikke
- * fulle navn.
+ * Faktorene som legges sammen. Verdiene leses fra `tilbud`, aldri skrevet
+ * inn her — prisen og leveransen står flere steder og skal ikke gli fra
+ * hverandre.
+ *
+ * «52 uker i året» er ikke et nytt løfte: det står i FAQ-svaret om ferier og
+ * i prinsippene på /om-oss. Her er det faktoren som gjør de tre andre til
+ * noe som varer.
+ *
+ * MYKE BINDESTREKER (U+00AD) i de to lange ordene. På en 390 px skjerm er
+ * spalten 80 px og «produksjonsdag» måler 89. Delepunktene er
+ * deterministiske; `hyphens: auto` krever en ordbok nettleseren ikke alltid
+ * har, og de er usynlige når ordet får plass.
  */
-const MANEDER = [
-  "jan",
-  "feb",
-  "mar",
-  "apr",
-  "mai",
-  "jun",
-  "jul",
-  "aug",
-  "sep",
-  "okt",
-  "nov",
-  "des",
-];
+const FAKTORER = [
+  [tilbud.produksjonsdagerPerManed, "pro­duk­sjons­dag", "i måneden"],
+  [tilbud.videoerPerManed, "videoer", "hver måned"],
+  [tilbud.posterPerUke, "pu­bli­se­rin­ger", "i uken"],
+  [52, "uker", "i året"],
+] as const;
 
-/**
- * Streker per måned i grafen. Leveransen er 8–10; ni er tegningens enhet,
- * midt i intervallet. Tolv måneder gir 108 streker, som er «rundt hundre».
- */
-const FILMER_PER_MANED = 9;
-
-function Rad({
-  merkelapp,
-  children,
-}: {
-  merkelapp: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="grid gap-x-10 gap-y-5 border-t border-kant py-9 sm:py-11 lg:grid-cols-[9rem_1fr]">
-      <Merkelapp className="lg:pt-1.5">{merkelapp}</Merkelapp>
-      <div>{children}</div>
-    </div>
-  );
-}
 export function Pris() {
   return (
-    <>
-      {/* id="pris" er målet for menypunktet «Pris». Se navigasjon.ts for
-        hvorfor det peker hit og ikke på /sosiale-medier-byra. */}
-      {/*
-      4 · PRIS — bygget om 16.09.2026 fordi den leste som generert.
+    /* id="pris" er målet for menypunktet «Pris». Se navigasjon.ts for
+       hvorfor det peker hit og ikke på /sosiale-medier-byra. */
+    <section id="pris" className="scroll-mt-4 pb-24 sm:pb-32">
+      <Container>
+        <div className="glassflate rounded-medie px-6 py-10 text-pa-dyp sm:px-10 sm:py-12 lg:px-14 lg:py-14">
+          <Merkelapp variant="dyp" som="h2">
+            {hentTekst(front, "front.price.eyebrow") ?? "Pris"}
+          </Merkelapp>
 
-      DIAGNOSEN, MED TALL. Den gamle versjonen var 14 stablede blokker med
-      8 ulike typografiske grader (3xl, 4xl, 5xl, 1,0625rem, 8,5rem, lg,
-      sm, xs). Hver blokk hadde samme form: etikett, overskrift, innhold.
-      To eyebrow-er i samme seksjon. Og en hakeliste, som er den mest
-      maltypiske komponenten som finnes — jeg la den inn selv i forrige
-      runde, og det var den som utløste reaksjonen.
+          {/*
+            KLIPPET SPENNER HELE TILBUDET, ikke bare båndet under streken.
 
-      Det er ikke innholdet som leser som mal. Det er den JEVNE TRAPPEN av
-      typografiske grader og de like rektanglene i stabel. Referansene jeg
-      hentet ned og så på — Designjoy, Basecamp, Linear, Bakken & Bæck —
-      har det motsatte: ekstrem kontrast mellom FÅ grader. Designjoy har i
-      praksis to, en overskrift på rundt 100 px og brødtekst på 16.
+            Et forsøk la det i raden under sumstreken. Et 9:16-klipp i en
+            14 rem spalte er 394 px høyt, mens teksten ved siden av er rundt
+            220 — og da sto 175 px tomt midt i kortet. Det er samme feil som
+            kostet en runde i forrige versjon av seksjonen.
 
-      GREPET: seksjonen er ett spesifikasjonsark, ikke elleve moduler.
-
-      En smal etikettskinne til venstre bærer alle merkelappene, og
-      innholdet står i den brede spalten. Det er et redaksjonelt grep —
-      datablad, kolofon, teknisk spesifikasjon — og det er ærlig mot
-      innholdet, for dette ER en spesifikasjon. Tre ting følger av det:
-
-      - Den gjentatte «eyebrow → h2 → innhold»-formen forsvinner, fordi
-        merkelappene blir et system i stedet for en komponent som gjentas.
-      - Asymmetrien blir ekte (9rem mot resten), ikke 50/50 eller 60/40.
-      - Radskillene går tvers over begge spaltene, så seksjonen leser som
-        ÉN ting.
-
-      TYPOGRAFIEN. Jeg skrev først at den var kuttet «fra åtte grader til
-      fire». Det holdt ikke da jeg målte det: seksjonen rendrer 176, 56,
-      28, 20, 17, 15 og 13 px på 1440 — sju grader, ikke fire. Fire er
-      antallet ROLLER (display, overskrift, brødtekst, merkelapp), og
-      roller er ikke grader.
-
-      Det som faktisk er endret, er AVSTANDEN mellom dem. Før gikk
-      skalaen i jevne trinn; nå er spranget fra display til brødtekst
-      10,4x (176/17) mot 8x før, og alt annet enn tallene ligger i et
-      smalt bånd på 13-20 px. Tallet er gjort større, ikke mindre — når
-      gradene er få og langt fra hverandre, leser skalaen som satt.
-
-      HAKENE ER UTE. Hårstrek mellom punktene i stedet. En hake sier
-      «SaaS-prisplan»; en hårstrek sier «spesifikasjon».
-
-      «Tre måneders oppsigelse» sto BÅDE ved prisen og i vilkårslinja.
-      Dublett fjernet — den står i vilkårsraden, der den hører hjemme.
-    */}
-      <section id="pris" className="scroll-mt-4 pb-28 sm:pb-36">
-        <Container>
-          <div className="border-b border-kant">
-            {/*
-            RAD 1 — PRIS. Tallet, løftet, omfanget og klippet i samme rad.
-
-            Omfang var en egen rad. Den er slått sammen hit, og det løser et
-            hull jeg selv laget: et stående klipp er alltid høyere enn to
-            linjer tekst. Klippet er 330 px, tallet og overskriften 201, og
-            de 129 px i forskjell sto tomme — først over tallet, som løsnet
-            det fra hårstreken, siden under overskriften. Nå fyller
-            nøkkeltallene dem, og venstrespalten møter klippet på 1 px.
-
-            Sammenslåingen er også riktig lest: «30 000 kr/mnd» og «1 dag,
-            8–10 videoer, 2 publiseringer» er det samme utsagnet. Delt i to
-            rader måtte man holde tallet i hodet mens man leste hva det
-            dekker.
+            Nå setter VENSTRE SPALTE høyden: faktorer, strek, svar og pris
+            til sammen. Klippet fyller den med `h-full` og lander av seg
+            selv tett opp mot 9:16. Dødplass kan ikke oppstå, uansett hvor
+            lang copyen blir.
           */}
-            <Rad merkelapp="Pris">
+          <div className="lg:grid lg:grid-cols-[1fr_15rem] lg:items-stretch lg:gap-14">
+            <div>
+              {/* FAKTORENE PÅ ÉN LINJE. Fire på rad fra sm, to og to under. */}
+              <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-7 sm:mt-10 sm:grid-cols-4 sm:gap-x-10">
+                {FAKTORER.map(([tall, ord, nar]) => (
+                  <div key={ord}>
+                    <dt className="sr-only">{`${ord} ${nar}`}</dt>
+                    <dd>
+                      <span className="display block text-[2.5rem] leading-none tabular-nums sm:text-[3rem] lg:text-[3.5rem]">
+                        {tall}
+                      </span>
+                      <span className="mt-2.5 block hyphens-auto text-[0.8125rem] leading-snug tracking-[0.02em] text-pa-dyp-dempet sm:text-sm">
+                        {ord}
+                        <br />
+                        {nar}
+                      </span>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+
               {/*
-                BYGGET OM 19.09.2026. Pål: «prisen er uforholdsmessig stor i
-                forhold til hva kunden får for prisen», og «det kunne vært
-                noe mer struktur i presentasjonen av tallene». Begge deler
-                stemte, og det første lot seg måle: tallet sto på 176 px,
-                leveransetallene på 52. Prisen var 3,4x større enn det den
-                kjøper, og det STØRSTE elementet i hele seksjonen.
-
-                MÅLT MOT ANDRE, på prisens grad delt på sidens største:
-                Linear 0,24 · Framer 0,33 · Tripletex 0,57 · Basecamp 0,60 ·
-                Awesomic 0,80 · ManyPixels 0,86 · Fiken 1,00 · oss 1,00.
-                Åtte sider, én gjorde som oss — og den ene er Fiken, som
-                koster 219 kroner.
-
-                Der er prinsippet: EN STOR PRIS ER EN PÅSTAND OM AT TALLET
-                ER LITE. Fiken roper 219 fordi 219 er argumentet deres.
-                30 000 er ikke vårt argument — forholdet mellom 30 000 og
-                det som leveres er det. I 176 px forsterket vi sjokket i
-                stedet for verdien. Se docs/research-arbeidsside.md.
-
-                GREPET: PRISEN KOMMER ETTER VARENE, SOM EN SUM.
-
-                Radene over er leveransen, oppstilt som poster med etikett
-                til venstre og tall til høyre. Prisen er siste rad, med en
-                tykkere strek over seg. Det er formen på en regning, og den
-                gjør to ting ingen typografisk justering kunne gjort alene:
-                tallet leses som et RESULTAT av det som står over, ikke som
-                en inngangsbillett man møter først — og de fire tallene får
-                en akse å flukte mot, som var det strukturen manglet.
-
-                Løftet er nå seksjonens største typografi. Det er det
-                Basecamp, ManyPixels og Linear gjør: overskriften bærer, og
-                prisen er en opplysning i den.
+                STREKEN ER SUMSTREKEN. Alt over er faktorer, alt under er
+                svaret. Vanlig hårstrek og ikke tykkere: en tykk strek ville
+                lest som en seksjonsdeler i stedet for et regnetegn.
               */}
-              <div className="grid gap-10 lg:grid-cols-[1fr_16.5rem] lg:items-stretch lg:gap-12">
-                <div>
-                  <h2 className="display max-w-lg text-[2.5rem] leading-[1.02] sm:text-[3.5rem] lg:text-[4rem]">
+              <div className="mt-9 border-t border-[color:var(--kant-pa-dyp)] pt-9 sm:mt-10 sm:pt-10">
+                {/*
+                  SVARET. Ett ord, satt så stort som flaten tåler.
+
+                  `leading-[0.85]` fordi Instrument Serif har rikelig luft
+                  innebygd; i display-grad blir standard linjeavstand til et
+                  hull over underteksten.
+
+                  Gradene er valgt så ordet fyller spalten uten å brekke på
+                  noen skjerm — målt på 320, 360, 390, 414 og 1440.
+                */}
+                <p className="display text-[2.75rem] leading-[0.85] tracking-[-0.035em] sm:text-[4.25rem] lg:text-[6.5rem]">
+                  Kontinuitet
+                </p>
+                <p className="mt-3 text-[1.0625rem] text-pretty text-pa-dyp-dempet sm:mt-4 sm:text-xl">
+                  i sosiale medier — hver uke, hele året.
+                </p>
+
+                {/*
+                  PRISEN, i én rolig linje. Fortsatt tydelig: 30 000 står i
+                  display-grad, og prisåpenhet er den ene posisjoneringen
+                  Reflektor har dokumentert. Men den er ikke lenger
+                  seksjonens største element, og det er hele rettelsen.
+                */}
+                <p className="mt-8 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-t border-[color:var(--kant-pa-dyp)] pt-6 sm:mt-10 sm:pt-7">
+                  <span className="display text-[2rem] leading-none tabular-nums sm:text-[2.5rem]">
+                    {tilbud.prisPerManed.toLocaleString("nb-NO")}
+                  </span>
+                  <span className="text-[0.9375rem] tracking-[0.02em] text-pa-dyp-dempet">
+                    kr/mnd
+                  </span>
+                  <span
+                    aria-hidden
+                    className="px-1 text-pa-dyp-dempet/60 select-none"
+                  >
+                    ·
+                  </span>
+                  <span className="text-[1.0625rem] text-pretty">
                     {hentTekst(front, "front.price.h2") ?? (
                       <TbdMarkor id="front.price.h2" />
                     )}
-                  </h2>
-
-                  {/*
-                    REGNSKAPSOPPSTILLINGEN.
-
-                    <dl> og ikke <table>: dette er ikke data man
-                    sammenligner på tvers av rader og kolonner, det er par
-                    av post og verdi. En tabell ville lovet en akse til som
-                    ikke finnes.
-
-                    `tabular-nums` er nødvendig, ikke pynt. Uten den har
-                    sifrene ulik bredde i Instrument Serif, og da flukter
-                    ikke «1», «8–10», «2», «52» og «30 000» mot samme
-                    høyrekant — som er hele poenget med oppstillingen.
-
-                    Etiketten er brødtekst, tallet er display. Det er den
-                    eneste kontrasten raden trenger; farge eller vekt i
-                    tillegg ville gjort den til en prisplan.
-                  */}
-                  <dl className="mt-10 sm:mt-12">
-                    {[
-                      [
-                        "Produksjonsdager i måneden",
-                        tilbud.produksjonsdagerPerManed,
-                      ],
-                      ["Ferdige videoer hver måned", tilbud.videoerPerManed],
-                      ["Publiseringer i uken", tilbud.posterPerUke],
-                      /*
-                        «52 uker i året» er ikke et nytt løfte. Det står
-                        allerede i FAQ-svaret om ferier og i prinsippene på
-                        /om-oss: «Publisering to ganger i uka, 52 uker i
-                        året.» Her gjør det en jobb til — det er tallet som
-                        gjør de tre over til et årsvolum i hodet på leseren,
-                        uten at vi regner det ut for ham.
-                      */
-                      ["Uker i året", 52],
-                    ].map(([post, verdi]) => (
-                      <div
-                        key={String(post)}
-                        className="flex items-baseline justify-between gap-6 border-t border-kant py-4"
-                      >
-                        <dt className="text-[1.0625rem] leading-snug text-pretty text-blekk-dempet">
-                          {post}
-                        </dt>
-                        <dd className="display shrink-0 text-[1.75rem] tabular-nums sm:text-[2.25rem]">
-                          {verdi}
-                        </dd>
-                      </div>
-                    ))}
-
-                    {/*
-                      SUMRADEN. Dobbel strek over, slik en sum settes.
-                      `border-t-2` er forskjellen mellom «enda en post» og
-                      «dette er totalen», og den koster én piksel.
-
-                      Verdien leses fra `tilbud`, aldri skrevet inn her.
-                      Prisen står flere steder på siden, og de skal ikke
-                      kunne gli fra hverandre.
-                    */}
-                    <div className="flex items-baseline justify-between gap-6 border-t-2 border-blekk pt-5">
-                      <dt className="font-medium text-[1.0625rem]">
-                        Pris per måned
-                      </dt>
-                      <dd className="flex shrink-0 items-baseline gap-2.5">
-                        <span className="display text-[2.75rem] tabular-nums sm:text-[3.25rem]">
-                          {tilbud.prisPerManed.toLocaleString("nb-NO")}
-                        </span>
-                        <span className="font-sans text-base font-normal tracking-[0.02em] text-blekk-dempet">
-                          kr/mnd
-                        </span>
-                      </dd>
-                    </div>
-                  </dl>
-                </div>
-
-                {/*
-                  Klippet STREKKER seg over hele radhøyden fra lg, i stedet
-                  for å ha et fast format. Med oppstillingen på rundt 540 px
-                  og et 4:5-klipp på 330 endte høyrespalten 200 px før
-                  venstre, og da så raden ut som om noe manglet. Nå møtes de
-                  på samme underkant uansett hvor mange poster
-                  oppstillingen får.
-
-                  Under lg beholder det et fast format, for der ligger det
-                  UNDER teksten og har ingen høyde å matche.
-
-                  Det er nå den eneste bevegelsen i en seksjon som ellers er
-                  tall og streker, og det er riktig balanse: oppstillingen
-                  skal lese som et dokument, klippet minner om hva
-                  dokumentet gjelder.
-                */}
-                <Enkeltklipp
-                  sti="/reels"
-                  medie={{
-                    type: "video",
-                    fil: "egon",
-                    alt: "Klipp fra Reflektor x Egon: servering og gjester",
-                  }}
-                  className="relative aspect-[4/3] overflow-hidden rounded-medie bg-flate-dempet sm:aspect-[16/9] lg:aspect-auto lg:h-full"
-                />
-              </div>
-            </Rad>
-
-            {/*
-              RAD 2 — KONTINUITET, bygget 19.09.2026 på Påls bestilling:
-              «kan vi få frem at kontinuitet er oppnådd ved en slik avtale?
-              på en grafisk og merkevarebyggende visuell måte.»
-
-              KONTINUITET ER IKKE NOE MAN SKRIVER. Det er en form. Grafen er
-              tolv søyler, én per måned, og hver søyle er bygget av tynne
-              streker der HVER STREK ER ÉN FERDIG FILM. Søylene er
-              kumulative: måned tolv bærer alt som er laget siden måned én.
-
-              Det er nøyaktig forskjellen på et abonnement og en
-              enkeltproduksjon, og her er den tegnet i stedet for påstått.
-              En enkeltproduksjon er den første søyla. Resten er det man
-              ikke får.
-
-              TALLENE ER IKKE NYE. «Rundt hundre filmer i arkivet» står
-              ordrett i FAQ-svaret om hva innholdet kan brukes til. Tolv
-              produksjonsdager og 104 publiseringer er 1×12 og 2×52 av tall
-              som allerede står i oppstillingen over.
-
-              NI STREKER PER MÅNED er tegningens enhet, ikke et løfte.
-              Leveransen er 8–10, og det står i teksten. Teller man
-              strekene, får man 108 — som er «rundt hundre».
-
-              GRAFEN ER `aria-hidden`. Alt den viser står som tall i
-              setningen under. En skjermleser skal ikke lese 108 tomme
-              <span>-er for å få vite noe som står skrevet rett ved siden
-              av.
-            */}
-            <Rad merkelapp="Kontinuitet">
-              <div className="max-w-2xl">
-                <h2 className="display text-[1.75rem] sm:text-[2.25rem]">
-                  Ett år ser slik ut
-                </h2>
-                <p className="mt-4 text-[1.0625rem] leading-relaxed text-pretty text-blekk-dempet">
-                  Én produksjonsdag i måneden, og arkivet vokser for hver. Hver
-                  strek er én ferdig film — deres å bruke fritt, også etter at
-                  den er publisert.
+                  </span>
                 </p>
               </div>
-
-              <div
-                aria-hidden
-                className="mt-10 flex items-end gap-1.5 sm:mt-12 sm:gap-2.5 lg:mt-14"
-              >
-                {MANEDER.map((maned, i) => (
-                  <div key={maned} className="flex-1">
-                    {/*
-                      Søyla vokser OPP fra grunnlinja mens man ruller, og
-                      hver søyle har sitt eget sluttpunkt så grafen bygger
-                      seg fra venstre. Forskyvningen ligger i
-                      `animation-range` og ikke i `animation-delay`, fordi
-                      en rulledrevet animasjon ikke har tid — den har
-                      posisjon. Se .kontinuitet-stolpe i globals.css.
-                    */}
-                    <div
-                      className="kontinuitet-stolpe flex flex-col-reverse gap-px"
-                      style={
-                        {
-                          "--stolpe-slutt": `${26 + i * 2.5}%`,
-                        } as React.CSSProperties
-                      }
-                    >
-                      {Array.from({ length: (i + 1) * FILMER_PER_MANED }).map(
-                        (_, n) => (
-                          <span
-                            key={n}
-                            className="block h-0.5 rounded-[1px] bg-aksent lg:h-[3px]"
-                            /*
-                              Eldre filmer tones svakt ned oppover i
-                              stabelen. Det gjør at man ser HVOR i året
-                              hvert lag kom, i stedet for én solid blokk —
-                              og det er nettopp lagene som er poenget.
-                              Gulvet på 0,35 er satt så den øverste
-                              måneden fortsatt leser som oransje.
-                            */
-                            style={{
-                              opacity:
-                                1 - (n / ((i + 1) * FILMER_PER_MANED)) * 0.65,
-                            }}
-                          />
-                        ),
-                      )}
-                    </div>
-                    <span className="mt-3 block text-center font-sans text-[0.625rem] tracking-[0.06em] text-blekk-svak uppercase sm:text-[0.6875rem]">
-                      {maned}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              <p className="mt-8 flex flex-wrap items-baseline gap-x-8 gap-y-3 border-t border-kant pt-6">
-                {[
-                  ["12", "produksjonsdager"],
-                  ["104", "publiseringer"],
-                  ["ca. 100", "filmer i arkivet"],
-                ].map(([tall, ord]) => (
-                  <span key={ord} className="flex items-baseline gap-2.5">
-                    <span className="display text-[1.75rem] tabular-nums sm:text-[2rem]">
-                      {tall}
-                    </span>
-                    <span className="text-[0.9375rem] text-blekk-dempet">
-                      {ord}
-                    </span>
-                  </span>
-                ))}
-              </p>
-            </Rad>
-          </div>
-        </Container>
-
-        {/*
-        GLASSPANELET — bygget 16.09.2026 på Påls bestilling: «seksjonere i
-        bredden», «rammer på seksjonene», «gjennomsiktig glass bak
-        teksten».
-
-        HVA SOM VAR GALT. De tre radene under prisen var seks like
-        tekstlinjer, så én, så tre — rundt 500 px sammenhengende sans i én
-        smal spalte, med halve bredden tom ved siden av. Det er sidens
-        eneste strekning uten bilde, bevegelse eller tall, og den ligger
-        rett før anmeldelsene. Pål har kalt den kjedelig to ganger; han har
-        rett begge gangene.
-
-        HVORFOR GLASSET MÅTTE FÅ EN MØRK FLATE. Et glasskort på lys, flat
-        bakgrunn er bare et lysere rektangel — `backdrop-blur` har
-        ingenting å gjøre uskarpt. Det var lærdommen fra anmeldelsesraden,
-        som ligger på mørk flate nettopp derfor. Strukturen her er to store
-        radialer i merkevareoransje, se .glassflate i globals.css.
-
-        HVORFOR IKKE ET KUNDEBILDE BAK. Det var førstevalget, og det er
-        forkastet. Et gjenkjennelig bilde fra en produksjon bak
-        spesifikasjonen av ABONNEMENTET leser som at den kunden er
-        abonnent. AGENTS.md forbyr det uttrykkelig. Gradienten påstår
-        ingenting.
-
-        PANELET ER INNFELT, IKKE FULL BREDDE. Anmeldelsesseksjonen rett
-        under er også mørk. Med beige luft rundt panelet og runde hjørner
-        leser de to som hver sin ting; i full bredde ville de smeltet
-        sammen til én lang mørk strekning.
-
-        KONTRAST, målt og ikke antatt — se tallene i docs/.
-      */}
-        <Container>
-          <div className="glassflate mt-16 rounded-medie px-6 py-12 text-pa-dyp sm:mt-20 sm:px-10 sm:py-16 lg:px-14">
-            <Merkelapp variant="dyp">Dette inngår</Merkelapp>
+            </div>
 
             {/*
-            SEKS KORT I BREDDEN. Tre spalter fra lg, to fra sm, én under.
-            Rekkefølgen flyter nedover spaltene og ikke bortover — den som
-            leser en tospaltet liste nedover skal ikke få 1, 3, 5.
+              Klippet er beholdt etter bestilling, og står som et loddrett
+              anker i høyrespalten gjennom hele tilbudet.
+
+              Under lg ligger det OVER teksten i et bredt, roligere format.
+              Der har det ingen høyde å matche, og et stående klipp ville
+              dyttet ordet langt ned på skjermen.
+            */}
+            <Enkeltklipp
+              sti="/reels"
+              medie={{
+                type: "video",
+                fil: "egon",
+                alt: "Klipp fra Reflektor x Egon: servering og gjester",
+              }}
+              className="relative order-first mt-8 aspect-[16/9] overflow-hidden rounded-flate bg-[rgba(245,240,232,0.06)] sm:aspect-[21/9] lg:order-none lg:mt-0 lg:aspect-auto lg:h-full"
+            />
+          </div>
+
+          {/*
+            DETTE INNGÅR — i samme kort, som en tett liste med hårstreker i
+            stedet for åtte glasskort.
+
+            Kortene var 1 264 px på desktop og 1 690 på mobil. Som liste er
+            den under 300. Innholdet er uendret; det var formen som kostet.
+            Et kort per punkt sier «dette er åtte ting»; en liste sier
+            «dette er én leveranse med åtte deler», og det siste er sant.
+
+            To spalter fra sm, og rekkefølgen flyter NEDOVER spaltene og
+            ikke bortover — den som leser en tospaltet liste nedover skal
+            ikke få 1, 3, 5.
           */}
-            <ul className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 border-t border-[color:var(--kant-pa-dyp)] pt-8 sm:mt-12 sm:pt-10">
+            <Merkelapp variant="dyp">Dette inngår</Merkelapp>
+            <ul className="mt-5 grid gap-x-12 sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-3">
               {tilbud.inngar.map((punkt, i) => (
                 <li
                   key={punkt}
-                  /*
-                  TO LAYOUTER. Fra sm står nummeret OVER teksten; under sm
-                  står det ved siden av. Stablet på telefon ga hvert kort
-                  en ekstra linjehøyde pluss et mellomrom, og med åtte kort
-                  ble panelet 1 690 px — 711 px lengre enn de tre
-                  tekstradene det erstattet. Sideveis er det 1 264 px.
-                */
-                  className="kort-inn flex gap-4 rounded-flate border border-kant-pa-dyp/70 bg-[rgba(245,240,232,0.10)] p-5 backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)] sm:flex-col sm:p-6"
+                  className="flex gap-4 border-b border-[color:var(--kant-pa-dyp)]/60 py-3.5 last:border-b-0 sm:[&:nth-child(3)]:border-b-0"
                 >
                   {/*
-                  Nummeret, ikke en hake. En hake sier «SaaS-prisplan» —
-                  det var den komponenten som utløste «AI-preget» i forrige
-                  runde. Et løpenummer sier «spesifikasjon», og det gjør
-                  samtidig omfanget tellbart: seks punkter, ikke «flere».
-                */}
+                    Løpenummer og ikke hake. En hake sier «SaaS-prisplan» —
+                    det var komponenten som utløste «AI-preget» i en
+                    tidligere runde. Et nummer sier spesifikasjon, og gjør
+                    omfanget tellbart.
+                  */}
                   <span
                     aria-hidden
-                    className="shrink-0 font-[family-name:var(--font-display-serif)] text-[1.5rem] leading-none text-aksent-pa-dyp sm:text-[1.75rem]"
+                    className="display shrink-0 text-[0.9375rem] tabular-nums text-aksent-pa-dyp"
                   >
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span className="text-[1.0625rem] leading-relaxed text-pretty">
+                  <span className="text-[0.9375rem] leading-relaxed text-pretty">
                     {punkt}
                   </span>
                 </li>
@@ -452,56 +229,49 @@ export function Pris() {
             </ul>
 
             {/*
-            STILLBILDER — egen, bred merknad og ikke et sjuende kort.
-            Forskjellen er ikke kosmetisk: de seks kortene er fast
-            leveranse, stillbilder er «ved behov». Et likt kort ville lest
-            som et likt løfte. Merknaden er derfor bredere, roligere og
-            uten løpenummer, og den bærer betingelsen som knytter den til
-            videotallet over. Se `tilbud.stillbilder` i site.ts for Påls
-            instruks ordrett.
-          */}
-            <p className="mt-3 rounded-flate border border-dashed border-kant-pa-dyp/70 p-5 text-[1.0625rem] leading-relaxed text-pretty text-pa-dyp-dempet sm:p-6">
+              Stillbilder står som egen merknad og ikke som et sjuende
+              punkt. Forskjellen er ikke kosmetisk: de seks er fast
+              leveranse, stillbilder er «ved behov», og et likt punkt ville
+              lest som et likt løfte. Se `tilbud.stillbilder` i site.ts for
+              Påls instruks ordrett.
+            */}
+            <p className="mt-5 rounded-flate border border-dashed border-[color:var(--kant-pa-dyp)]/70 px-4 py-3.5 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet">
               {tilbud.stillbilder}
             </p>
 
             {/*
-            De to siste kortene deler bredden 1:2. «Inngår ikke» skal være
-            en LITEN dose — se research-konvertering.md om
-            blemishing-effekten: negativ informasjon løfter inntrykket bare
-            når den er liten, perifer og kommer etter det positive. Like
-            stor som vilkårene ville gjort den til et argument.
-          */}
-            <div className="mt-3 grid gap-3 lg:grid-cols-3">
-              <div className="kort-inn rounded-flate border border-kant-pa-dyp/70 bg-[rgba(245,240,232,0.10)] p-5 backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)] sm:p-6">
-                <Merkelapp variant="dyp">Inngår ikke</Merkelapp>
+              «Inngår ikke» skal være en LITEN dose — se
+              research-konvertering.md om blemishing-effekten: negativ
+              informasjon løfter inntrykket bare når den er liten, perifer
+              og kommer etter det positive. Derfor deler de to bredden 1:2.
+            */}
+            <div className="mt-8 grid gap-6 text-[0.9375rem] leading-relaxed sm:mt-9 lg:grid-cols-3 lg:gap-10">
+              <p className="text-pa-dyp-dempet">
+                <span className="mb-1 block font-sans text-xs font-medium tracking-[0.08em] uppercase">
+                  Inngår ikke
+                </span>
                 {/*
-                Punktene i `inngarIkke` er skrevet med stor forbokstav hver
-                for seg, fordi de tidligere sto etter en innledning
-                («Inngår ikke: …»). Nå står merkelappen for seg, så de
-                danner sin egen setning — og da må alle ned i små bokstaver
-                bortsett fra den første. Uten dette sto det «… meldinger,
-                Stories, Betalt annonsering».
-              */}
-                <p className="mt-4 text-[1.0625rem] leading-relaxed text-pa-dyp-dempet">
-                  {((t) => t.charAt(0).toUpperCase() + t.slice(1))(
-                    tilbud.inngarIkke.join(", ").toLowerCase(),
-                  )}
-                  .
-                </p>
-              </div>
-
-              <div className="kort-inn rounded-flate border border-kant-pa-dyp/70 bg-[rgba(245,240,232,0.10)] p-5 backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)] sm:p-6 lg:col-span-2">
-                <Merkelapp variant="dyp">Vilkår</Merkelapp>
-                <p className="mt-4 text-[1.0625rem] leading-relaxed text-pretty">
-                  {hentTekst(front, "front.price.note") ?? (
-                    <TbdMarkor id="front.price.note" />
-                  )}
-                </p>
-              </div>
+                  Punktene er skrevet med stor forbokstav hver for seg, fordi
+                  de tidligere sto etter en innledning. Nå danner de sin egen
+                  setning, og da må alle ned bortsett fra den første.
+                */}
+                {((t) => t.charAt(0).toUpperCase() + t.slice(1))(
+                  tilbud.inngarIkke.join(", ").toLowerCase(),
+                )}
+                .
+              </p>
+              <p className="text-pretty lg:col-span-2">
+                <span className="mb-1 block font-sans text-xs font-medium tracking-[0.08em] text-pa-dyp-dempet uppercase">
+                  Vilkår
+                </span>
+                {hentTekst(front, "front.price.note") ?? (
+                  <TbdMarkor id="front.price.note" />
+                )}
+              </p>
             </div>
           </div>
-        </Container>
-      </section>
-    </>
+        </div>
+      </Container>
+    </section>
   );
 }

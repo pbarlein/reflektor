@@ -199,48 +199,65 @@ Fire grep, ingen av dem visuelle:
 
 ---
 
-## Kontinuitetsgrafen (19.09.2026)
+## Kontinuitet som svar, ikke som graf (19.09.2026)
 
-Pål: «kan vi få frem at kontinuitet er oppnådd ved en slik avtale? på en
-grafisk og merkevarebyggende visuell måte.»
+Pål ba først om å få fram kontinuitet «på en grafisk og merkevarebyggende
+visuell måte». Første forsøk var en kumulativ graf som viste arkivet vokse
+til «rundt hundre filmer» etter ett år.
 
-Det er det riktige spørsmålet å stille om denne siden. Kontinuitet ER
-produktet — FAQ-en sier det, /om-oss sier det, prisen forutsetter det — og
-det sto ingen steder visuelt.
+Han forkastet den, og begrunnelsen er verdt å skrive ned:
 
-**Kontinuitet er ikke noe man skriver, det er en form.** Grafen er tolv
-søyler, én per måned, og hver søyle er bygget av tynne streker der hver
-strek er én ferdig film. Søylene er kumulative: måned tolv bærer alt som er
-laget siden måned én.
+> «jeg er usikker på om 100 videoer i et arkiv er et godt salgsargument. det
+> høres for mange ut som om man har betalt for for mange videoer.»
 
-Det er nøyaktig forskjellen på et abonnement og en enkeltproduksjon, tegnet
-i stedet for påstått. **En enkeltproduksjon er den første søyla. Resten er
-det man ikke får.**
+**Stort volum er selgerens argument, ikke kjøperens.** Hundre filer i en
+mappe er en kostnad man har pådratt seg, ikke en gevinst man har fått. Det
+leseren vil ha, er at kontoen ikke står stille — og det er noe helt annet
+enn å eie mye.
 
-### Hvorfor dette ikke er et diagram fra en mal
+### Formen som erstattet grafen
 
-Et vanlig søylediagram viser en verdi per periode. Dette viser en BEHOLDNING
-som legger seg lagvis, og lagene er synlige — hver strek er tellbar. Det er
-formen som bærer argumentet, ikke tallene.
+De fire faktorene står på én linje. Under dem en strek. Under streken står
+svaret:
 
-Søylene bygges opp mens man ruller, fra venstre mot høyre. Teknikken er
-`animation-timeline: view()`, ren CSS uten JavaScript, samme som
-arbeidsveggen og glasskortene bruker. Forskyvningen ligger i
-`animation-range` og ikke i `animation-delay`: en rulledrevet animasjon har
-ingen tid, den har posisjon.
+```
+1 produksjonsdag   8–10 videoer   2 publiseringer   52 uker
+──────────────────────────────────────────────────────────
+Kontinuitet
+i sosiale medier — hver uke, hele året.
 
-Under `prefers-reduced-motion` og i nettlesere uten støtte står trappen
-ferdig bygget. Verifisert i begge tilstander.
+30 000 kr/mnd · Én pris. Alt inkludert. Ingen binding.
+```
 
-### Tallene er ikke nye
+Formen er en sum, men det som summeres er ikke kroner. Det er problemet
+abonnementet løser. Prisen kommer etter svaret, ikke før det.
 
-«Rundt hundre filmer i arkivet» står ordrett i FAQ-svaret om hva innholdet
-kan brukes til. Tolv produksjonsdager og 104 publiseringer er 1×12 og 2×52
-av tall som allerede står i oppstillingen rett over.
+### Kompaktheten er målt
 
-Ni streker per måned er tegningens enhet, ikke et løfte — leveransen er
-8–10, og det står i teksten. Teller man strekene får man 108, som er «rundt
-hundre».
+Pål: «ikke lag det så fysisk stort på siden. mindre skrolling er bedre.»
+
+| | før | etter |
+|---|---|---|
+| Prisseksjonen, desktop | 2 508 px | **1 310 px** |
+| Prisseksjonen, mobil | 3 463 px | **1 952 px** |
+| Andel av hele forsiden | 25 % | **15 %** |
+
+Det som ga plassen: de åtte glasskortene under «Dette inngår» ble til en
+tospaltet liste med hårstreker. Innholdet er uendret — det var formen som
+kostet 1 264 px på desktop og 1 690 på mobil.
+
+Alt ligger nå i ett kort på glassflaten. Det er også slik Basecamp og
+Designjoy gjør det: pris og innhold i samme blokk, ikke som to kapitler.
+
+### En felle som ble gjeninnført og rettet
+
+Klippet lå først i raden under sumstreken. Et 9:16-klipp i en 14 rem spalte
+er 394 px høyt, mens teksten ved siden av er rundt 220 — og da sto 175 px
+tomt midt i kortet. Nøyaktig samme feil som kostet en runde i forrige
+versjon av seksjonen.
+
+Nå setter venstre spalte høyden, og klippet fyller den med `h-full`.
+Dødplass kan ikke oppstå uansett hvor lang copyen blir.
 
 ---
 
