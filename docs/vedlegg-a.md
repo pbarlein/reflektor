@@ -1230,3 +1230,44 @@ Bildet i venstrespalten har `flex-1` og vokste 120 px av seg selv. Ingen
 dødplass oppsto — det var hele poenget med den konstruksjonen.
 
 Skal det stå noe der igjen, må copyen bestilles. Jeg skriver den ikke selv.
+
+---
+
+## A49 — Praten kom inn, men etter forslaget. 19.09.2026
+
+Pål foreslo å sette «send litt informasjon, så tar vi en uforpliktende
+prat» under overskriften i kontaktseksjonen, der ingressen nettopp var
+fjernet (A48). Tre funn før den ble satt inn:
+
+1. **«Uforpliktende» sto allerede i kortet**, på linja under send-knappen.
+   Setningen under h2-en ville gitt ordet to ganger med 400 px mellom seg.
+2. **«Send litt informasjon» er hjelpeteksten under meldingsfeltet**, som
+   sier det samme mer konkret («Kort om bedriften og hva dere vil oppnå»)
+   og står rett ved feltet. Nøyaktig gjentakelsen A48 fjernet.
+3. **Setningen lovet noe annet enn resten av kortet.** Knappen heter «Få
+   et strategiforslag», linja under den lovet «et konkret forslag, ikke en
+   generisk presentasjon», FAQ-svaret «Hvor fort kommer vi i gang?» sier
+   «Innen tre virkedager får dere et forslag», og
+   `tilbud.strategiforslagVirkedager` står på 3. En prat er ikke det samme
+   tilbudet som et dokument — og «du får en telefon» er en høyere terskel
+   enn «du får noe tilsendt».
+
+Det siste er ikke en smakssak. Terskelen på dette skjemaet er den eneste
+KPI-en siden har, så jeg spurte i stedet for å gjette.
+
+**Påls svar: forslag først, så en prat om det.** Da er setningen riktig,
+men rekkefølgen er poenget, og plasseringen følger av den. Linja under
+knappen sa allerede alt unntatt praten — svartid, at forslaget er
+konkret, at det er uforpliktende — så praten hører hjemme der og ikke
+under overskriften:
+
+> Svar innen 3 virkedager: et konkret forslag, ikke en generisk
+> presentasjon. Så tar vi en uforpliktende prat om det. Eller ring
+> +47 47605070.
+
+Ordlyden er Påls egen setning satt sammen med det som allerede sto der.
+Ingen nye påstander. «Uforpliktende» står nå én gang i kortet, verifisert
+i rendret HTML. Skjemaet brukes bare på forsiden, så ingen andre sider
+arver endringen.
+
+Venstrespalten står fortsatt uten ingress: overskrift, NAP, bilde.

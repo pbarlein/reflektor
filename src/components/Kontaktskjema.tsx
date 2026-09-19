@@ -133,10 +133,29 @@ export function Kontaktskjema({ side }: { side: string }) {
         Få et strategiforslag
       </Knapp>
 
-      {/* Risikodemping ved knappen, ikke 400 px lenger ned. */}
+      {/*
+        Risikodemping ved knappen, ikke 400 px lenger ned.
+
+        PRATEN KOM INN HER 19.09.2026, og ikke under overskriften der Pål
+        først foreslo den. Grunnen er at denne linja allerede sa alt unntatt
+        praten: svartid, at forslaget er konkret, og at det er
+        uforpliktende. La man setningen under h2-en i stedet, sto
+        «uforpliktende» to ganger i samme kort med 400 px mellom seg.
+
+        REKKEFØLGEN ER POENGET. Pål bekreftet at skjemaet gir et skriftlig
+        forslag først, og at praten kommer etterpå — om forslaget. «Så tar
+        vi en uforpliktende prat om det» sier nettopp det. Den motsatte
+        rekkefølgen ville byttet et lavterskelløfte (du får noe tilsendt)
+        mot et høyere (du får en telefon), og terskelen på dette skjemaet
+        er den eneste KPI-en siden har.
+
+        Ordlyden er Påls egen setning satt sammen med det som allerede sto
+        her. Ingen nye påstander er funnet på.
+      */}
       <p className="text-sm text-blekk-dempet">
-        Svar innen {tilbud.strategiforslagVirkedager} virkedager. Uforpliktende
-        — du får et konkret forslag, ikke en generisk presentasjon. Eller ring{" "}
+        Svar innen {tilbud.strategiforslagVirkedager} virkedager: et konkret
+        forslag, ikke en generisk presentasjon. Så tar vi en uforpliktende prat
+        om det. Eller ring{" "}
         <a
           href={`tel:${site.kontakt.telefon.replace(/\s/g, "")}`}
           className="underline underline-offset-2 hover:text-blekk"
