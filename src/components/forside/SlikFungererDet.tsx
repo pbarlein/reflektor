@@ -54,7 +54,7 @@ export function SlikFungererDet() {
             Streken stopper på siste steg — den peker framover, og etter
             det siste er det ingenting å peke på.
           */}
-            <ol className="mt-12 grid gap-0 sm:grid-cols-3">
+            <ol className="mt-12 grid gap-0 md:-mx-8 md:grid-cols-3 lg:-mx-12">
               {slotsISeksjon(front, 3)
                 .filter((s) => s.id.includes("steps"))
                 .map((slot, i, alle) => {
@@ -63,37 +63,71 @@ export function SlikFungererDet() {
                   return (
                     <li
                       key={slot.id}
-                      className={`relative pb-9 pl-14 last:pb-0 sm:pb-0 sm:pl-0 sm:px-8 ${
-                        i === 0 ? "sm:pl-0" : ""
-                      } ${
+                      /*
+                        LUFTA RUNDT HÅRSTREKEN VAR USYMMETRISK, og det var
+                        en klassekollisjon og ikke et designvalg: `sm:pl-0`
+                        og `sm:px-8` sto begge i samme klassestreng. Tailwind
+                        sorterer `pl` etter `px`, så `pl-0` vant på alle tre
+                        stegene og `px-8` ga padding bare mot høyre. Målt:
+                        33 px fra streken til teksten til venstre for den,
+                        0 px til teksten til høyre. Streken klistret seg til
+                        steget den innleder, og leste da som en ramme rundt
+                        ett steg i stedet for et skille mellom to.
+
+                        LØSNINGEN ER IKKE Å SETTE `pl-0` PÅ FØRSTE STEG
+                        IGJEN. Da blir de tre tekstspaltene ulikt brede —
+                        ytterste steg får padding på én side, midterste på
+                        to — og forskjellen er hele gutteren. Tre trinn som
+                        skal leses som likeverdige kan ikke ha ulik
+                        linjelengde.
+
+                        I stedet har ALLE tre lik padding, og hele <ol>
+                        trekkes ut i gutterbredden med negativ margin. Da
+                        flukter første steg med h2-en over og siste med
+                        høyre kant, samtidig som alle tre tekstspaltene er
+                        nøyaktig like brede og hårstrekene står midt i
+                        lufta. Den negative margen er alltid mindre enn
+                        kortets egen padding, så ingenting stikker ut.
+
+                        LIKE SPALTER KOSTER ÉN GUTTER PER SPALTE, og det
+                        flyttet bruddpunktet. På sm (640 px) ble de tre
+                        tekstspaltene 116 px brede — smalere enn ordet
+                        «produksjonsdag». Tre kolonner starter derfor først
+                        på md (768 px). Under det står den stablede
+                        tidslinja, som uansett er den bedre lesningen på
+                        den bredden. Målt på åtte bredder fra 640 til
+                        1920: spaltene er like brede overalt, ingenting
+                        stikker utenfor kortet, og ingen sidescroll.
+                      */
+                      className={`relative pb-9 pl-14 last:pb-0 md:px-8 md:pb-0 lg:px-12 ${
                         sist
-                          ? "sm:pr-0"
-                          : "sm:border-r sm:border-[color:var(--kant-pa-dyp)]"
+                          ? ""
+                          : "md:border-r md:border-[color:var(--kant-pa-dyp)]"
                       }`}
                     >
                       {/*
-                      Skinna finnes bare under sm. Fra sm overtar de
+                      Skinna finnes bare under md. Fra md overtar de
                       loddrette skillene, og da ville en sirkel til venstre
                       vært to systemer som sier det samme.
                     */}
                       <span
                         aria-hidden
-                        className="absolute top-0 left-0 flex size-9 items-center justify-center rounded-full border border-[color:var(--kant-pa-dyp)] font-[family-name:var(--font-display-serif)] text-lg leading-none text-aksent-pa-dyp sm:static sm:size-auto sm:block sm:rounded-none sm:border-0 sm:text-base"
+                        className="absolute top-0 left-0 flex size-9 items-center justify-center rounded-full border border-[color:var(--kant-pa-dyp)] font-[family-name:var(--font-display-serif)] text-lg leading-none text-aksent-pa-dyp md:static md:size-auto md:block md:rounded-none md:border-0 md:text-base"
                       >
                         {i + 1}
                       </span>
                       {!sist && (
                         <span
                           aria-hidden
-                          className="absolute top-11 bottom-2 left-[1.125rem] w-px bg-[color:var(--kant-pa-dyp)] sm:hidden"
+                          className="absolute top-11 bottom-2 left-[1.125rem] w-px bg-[color:var(--kant-pa-dyp)] md:hidden"
                         />
                       )}
                       {delt ? (
                         <>
-                          <h3 className="text-lg font-medium sm:mt-3">
+                          <h3 className="text-lg font-medium md:mt-3">
                             {delt[0].trim()}
                           </h3>
-                          <p className="mt-2 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet sm:text-base">
+                          <p className="mt-2 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet md:text-base">
                             {delt.slice(1).join("|").trim()}
                           </p>
                         </>

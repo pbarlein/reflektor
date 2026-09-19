@@ -1146,3 +1146,87 @@ fjerne, og resten av gjentakelsene er FAQ-en som gjør jobben sin.
 Skal siden bli kortere, er det piksler og ikke ord som må vekk —
 seksjon 5 (arbeidsrutenettet, 1 112 px uten ett eneste ord) er
 åtte ganger så høy som noen setning jeg kunne strøket.
+
+---
+
+## A47 — Hårstreken mellom prosesstegene. Målt og rettet 19.09.2026
+
+Pål meldte at de loddrette strekene mellom de tre stegene i «Slik jobber
+vi» sto for tett på teksten. Det var ikke et smaksspørsmål.
+
+### Målt, 1440 px
+
+| | Til teksten venstre for streken | Til teksten høyre for |
+|---|---|---|
+| Strek 1 | 33 px | **0 px** |
+| Strek 2 | 33 px | **0 px** |
+
+Årsaken lå i én klassestreng: `sm:pl-0` og `sm:px-8` sto begge på samme
+`<li>`. Tailwind sorterer `pl` etter `px` i utdataen, så `pl-0` vant på
+alle tre stegene og `px-8` ga padding bare mot høyre. Streken klistret seg
+til steget den innleder, og leste som en ramme rundt ett steg i stedet for
+et skille mellom to.
+
+### Hvorfor `pl-0` på første steg ikke er løsningen
+
+Den nærliggende rettingen — gi bare første steg `pl-0` og siste `pr-0` —
+gir tre ulikt brede tekstspalter: ytterste steg får padding på én side,
+midterste på to. Forskjellen er hele gutteren, altså 96 px av en spalte
+på 331. Tre trinn som skal leses som likeverdige kan ikke ha ulik
+linjelengde.
+
+I stedet har alle tre lik padding, og hele `<ol>` trekkes ut i
+gutterbredden med negativ margin. Da flukter første steg med h2-en over
+og siste med høyre kant, samtidig som spaltene er nøyaktig like brede.
+
+### Bruddpunktet måtte flyttes
+
+Like spalter koster én gutter per spalte i stedet for to fordelt på tre.
+På `sm` (640 px) ble tekstspaltene 116 px — smalere enn ordet
+«produksjonsdag». Tre kolonner starter derfor først på `md` (768 px);
+under det står den stablede tidslinja, som uansett er den bedre lesningen
+på den bredden.
+
+### Etter
+
+Målt på åtte bredder fra 640 til 1920 px:
+
+| Bredde | Tekstspalter | Utenfor kortet | Sidescroll |
+|---|---|---|---|
+| 640, 700 | 424 / 424 / 424 (stablet) | nei | nei |
+| 768 | 159 / 159 / 160 | nei | nei |
+| 1024 | 223 / 223 / 224 | nei | nei |
+| 1280–1920 | 266 / 266 / 267 | nei | nei |
+
+Strekene står nå 49 px fra teksten til venstre og 48 px til høyre, første
+steg flukter med overskriften på 224 px, axe uendret på 0 brudd.
+
+**Gjenstår, uendret fra før:** i båndet 768–1023 px wrapper «Vi klipper og
+publiserer» til to linjer, så den tredje brødteksten starter én linje
+lavere enn de to andre. Det er en egenskap ved tre kolonner på nettbrett,
+ikke en følge av denne endringen.
+
+---
+
+## A48 — Kontaktingressen er fjernet, ikke omskrevet. 19.09.2026
+
+Pål om avsnittet under «Se hva vi ville filmet hos dere»: «omformuler.
+vanskelig å lese. trenger man egentlig å skrive noe her?»
+
+Jeg sjekket hvert av de tre utsagnene mot resten av siden før jeg svarte:
+
+| Utsagn | Står også | Hvor mye nærmere handlingen |
+|---|---|---|
+| Dere får et forslag tilbake | Knappen «Få et strategiforslag», og «Uforpliktende — du får et konkret forslag, ikke en generisk presentasjon» | Rett ved knappen |
+| Vi holder til i Oslo | NAP-en i samme spalte, med gateadresse | 40 px under |
+| jobber i hele Norge | FAQ-svaret «Hva er Reflektor?» på samme side, `areaServed: "NO"` i Organization- **og** Service-schema | I markeringen, som er der språkmodeller henter det |
+
+Ingenting gikk altså tapt — verken for leseren eller for SEO og AEO.
+Slotten `front.contact.sub` er fjernet, ikke satt til TBD: en TBD ville
+meldt siden som ufullstendig for noe som er et bevisst kutt.
+`content:check` går fra 27 til 26 slots på forsiden.
+
+Bildet i venstrespalten har `flex-1` og vokste 120 px av seg selv. Ingen
+dødplass oppsto — det var hele poenget med den konstruksjonen.
+
+Skal det stå noe der igjen, må copyen bestilles. Jeg skriver den ikke selv.

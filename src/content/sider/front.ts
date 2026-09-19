@@ -183,25 +183,28 @@ export const front: Side = {
       jobb: "Skjemaet. Eneste inbound-strøm siden jobber for.",
       slots: {
         "front.contact.h2": tekst("Se hva vi ville filmet hos dere", { maksTegn: 60 }),
-        /*
-         * KUTTET 19.09.2026, to setninger, begge fordi de sto en gang til
-         * i skjemaet ved siden av — og der nærmere handlingen:
+          /*
+         * INGRESSEN ER FJERNET 19.09.2026, ikke omskrevet.
          *
-         *   «Skriv hvem dere er og hva dere vil oppnå.» → hjelpeteksten
-         *   under meldingsfeltet sier «Kort om bedriften og hva dere vil
-         *   oppnå». Målingen fant det som eneste gjentatte frase INNE i
-         *   én seksjon. En instruksjon om hva man skal skrive, gitt før
-         *   feltet finnes, gjør ingen jobb.
+         * Den sa tre ting. Jeg sjekket hvert av dem mot resten av siden:
          *
-         *   «Dere bestemmer etterpå.» → «Uforpliktende» står under
-         *   send-knappen, altså i det sekundet innvendingen melder seg.
+         *   forslagsløftet   → knappen heter «Få et strategiforslag», og
+         *                      rett under den står «Uforpliktende — du får
+         *                      et konkret forslag, ikke en generisk
+         *                      presentasjon». Begge nærmere handlingen.
+         *   Oslo             → NAP-en står 40 px under, med gateadresse.
+         *   hele Norge       → FAQ-svaret «Hva er Reflektor?» på samme
+         *                      side, og `areaServed: "NO"` i både
+         *                      Organization- og Service-schema.
          *
-         * Beholdt: forslagsløftet (det er h2-ens løfte gjort konkret, og
-         * det eneste stedet på forsiden som sier hva man faktisk får
-         * tilbake) og Oslo/hele Norge (geografisk signal for SEO og AEO —
-         * NAP-en under gjentar adressen, men ikke nedslagsfeltet).
+         * Ingenting gikk altså tapt, verken for leseren eller for SEO og
+         * AEO. Det som sto igjen var tre linjer som utsatte skjemaet.
+         *
+         * Skal det stå noe her igjen, må copyen bestilles — jeg skriver
+         * den ikke selv. Slotten er borte, ikke satt til TBD, fordi en TBD
+         * ville meldt siden som ufullstendig for noe som er et bevisst
+         * kutt.
          */
-        "front.contact.sub": tekst("Dere får et forslag tilbake til hvordan en måned med Reflektor kan se ut hos dere. Vi holder til i Oslo og jobber i hele Norge.", { maksTegn: 200 }),
       },
     },
   ],

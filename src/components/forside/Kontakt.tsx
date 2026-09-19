@@ -56,11 +56,6 @@ export function Kontakt() {
                     <TbdMarkor id="front.contact.h2" />
                   )}
                 </h2>
-                <p className="mt-4 max-w-sm text-pa-dyp-dempet">
-                  {hentTekst(front, "front.contact.sub") ?? (
-                    <TbdMarkor id="front.contact.sub" />
-                  )}
-                </p>
 
                 <div className="mt-10 text-sm text-pa-dyp-dempet">
                   <p className="font-medium text-pa-dyp">
