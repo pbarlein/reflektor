@@ -75,6 +75,26 @@ export type Kundecase = {
   /** Klippet fra samarbeidet, i public/reels/. */
   klipp: { fil: string; alt: string; attribusjon: string };
 
+  /**
+   * Stillbildene på kortet i oversikten, i public/caser/.
+   *
+   * EGNE BILDER OG IKKE KLIPPETS PLAKAT. Kortene brukte posterbildet fra
+   * videoen — en 540×960 JPEG trukket ut av et komprimert 9:16-klipp — vist
+   * i en liggende ramme på 660 px. To feil samtidig: oppskalert
+   * videokomprimering, og hoder kuttet av fordi et stående motiv ble
+   * sentrert i en liggende ramme. Pål meldte begge.
+   *
+   * ETT ELLER TO BILDER. Rammen er 4:3. Begge kildene er 0,67 stående, og
+   * to av dem side om side fyller nøyaktig 4:3 — altså kan Egon vise to
+   * motiver uten å beskjære noen av dem. Der det bare finnes ett bilde,
+   * fyller det rammen alene, og da avgjør `fokus` hva som blir med.
+   *
+   * `fokus` er `object-position`. Ikke en smaksinnstilling: sentrert (50 %)
+   * kutter hodene på Soulcake-bildet. Verdien er valgt ved å sammenligne
+   * utsnitt i faktisk visningsstørrelse, slik docs/media.md foreskriver.
+   */
+  kortbilder: { fil: string; alt: string; fokus?: string }[];
+
   eksempler: { tittel: string; punkter: Eksempel[] };
 
   flater: {
@@ -210,6 +230,20 @@ export const kundecaser: Kundecase[] = [
       ],
     },
 
+    /*
+     * FREIA-BILDET ER BESTILT AV PÅL 19.09.2026. docs/media.md merket
+     * Freia-motivene som noe han måtte ta stilling til, fordi Freia eies av
+     * Orkla og Orkla er holdt utenfor kundelisten. Det er avklart nå, og
+     * casen navngir allerede samarbeidet i klartekst: «Freia x Soulcake».
+     */
+    kortbilder: [
+      {
+        fil: "soulcake",
+        alt: "Fire ansatte i hvite frakker og hårnett holder overdimensjonerte Freia-sjokolader i et fabrikklokale",
+        fokus: "50% 20%",
+      },
+    ],
+
     kortingress:
       "Én fast produksjonsdag i måneden siden 2022. Over 80 prosent av foto og video på @soulcake.oslo kommer fra oss.",
     korttall: {
@@ -246,8 +280,7 @@ export const kundecaser: Kundecase[] = [
       },
       {
         verdi: "323 000",
-        forklaring:
-          "reels-visninger på @egon_restauranter i perioden",
+        forklaring: "reels-visninger på @egon_restauranter i perioden",
       },
       {
         verdi: "4×",
@@ -345,6 +378,17 @@ export const kundecaser: Kundecase[] = [
         "Lansering",
       ],
     },
+
+    kortbilder: [
+      {
+        fil: "egon-bord",
+        alt: "Bord dekket med retter fra Egons meny: pizza, burger, pasta, nachos, tacos og pommes frites",
+      },
+      {
+        fil: "egon-rett",
+        alt: "Biff med pommes frites, brokkoli og saus på en mørk tallerken",
+      },
+    ],
 
     kortingress:
       "Menyfoto, reels, kampanjefilm og skjermreklame for nærmere 50 restauranter – fast produksjonsdag hver måned siden 2022.",

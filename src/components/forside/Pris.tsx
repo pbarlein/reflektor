@@ -99,102 +99,137 @@ export function Pris() {
             dekker.
           */}
             <Rad merkelapp="Pris">
-              <div className="grid gap-8 lg:grid-cols-[1fr_16.5rem] lg:items-start lg:gap-12">
+              {/*
+                BYGGET OM 19.09.2026. Pål: «prisen er uforholdsmessig stor i
+                forhold til hva kunden får for prisen», og «det kunne vært
+                noe mer struktur i presentasjonen av tallene». Begge deler
+                stemte, og det første lot seg måle: tallet sto på 176 px,
+                leveransetallene på 52. Prisen var 3,4x større enn det den
+                kjøper, og det STØRSTE elementet i hele seksjonen.
+
+                MÅLT MOT ANDRE, på prisens grad delt på sidens største:
+                Linear 0,24 · Framer 0,33 · Tripletex 0,57 · Basecamp 0,60 ·
+                Awesomic 0,80 · ManyPixels 0,86 · Fiken 1,00 · oss 1,00.
+                Åtte sider, én gjorde som oss — og den ene er Fiken, som
+                koster 219 kroner.
+
+                Der er prinsippet: EN STOR PRIS ER EN PÅSTAND OM AT TALLET
+                ER LITE. Fiken roper 219 fordi 219 er argumentet deres.
+                30 000 er ikke vårt argument — forholdet mellom 30 000 og
+                det som leveres er det. I 176 px forsterket vi sjokket i
+                stedet for verdien. Se docs/research-arbeidsside.md.
+
+                GREPET: PRISEN KOMMER ETTER VARENE, SOM EN SUM.
+
+                Radene over er leveransen, oppstilt som poster med etikett
+                til venstre og tall til høyre. Prisen er siste rad, med en
+                tykkere strek over seg. Det er formen på en regning, og den
+                gjør to ting ingen typografisk justering kunne gjort alene:
+                tallet leses som et RESULTAT av det som står over, ikke som
+                en inngangsbillett man møter først — og de fire tallene får
+                en akse å flukte mot, som var det strukturen manglet.
+
+                Løftet er nå seksjonens største typografi. Det er det
+                Basecamp, ManyPixels og Linear gjør: overskriften bærer, og
+                prisen er en opplysning i den.
+              */}
+              <div className="grid gap-10 lg:grid-cols-[1fr_16.5rem] lg:items-stretch lg:gap-12">
                 <div>
-                  {/* Verdien leses fra tilbud, aldri skrevet inn her. Prisen
-                    står flere steder på siden, og de skal ikke kunne gli
-                    fra hverandre. */}
-                  <p className="flex items-baseline gap-4 font-[family-name:var(--font-display-serif)] text-[5.5rem] leading-[0.8] tracking-[-0.03em] sm:text-[9rem] lg:text-[11rem]">
-                    {tilbud.prisPerManed.toLocaleString("nb-NO")}
-                    <span className="font-sans text-base font-normal tracking-[0.02em] text-blekk-dempet sm:text-lg">
-                      kr/mnd
-                    </span>
-                  </p>
-                  <h2 className="mt-7 max-w-md text-2xl text-balance sm:text-[1.75rem]">
+                  <h2 className="display max-w-lg text-[2.5rem] leading-[1.02] sm:text-[3.5rem] lg:text-[4rem]">
                     {hentTekst(front, "front.price.h2") ?? (
                       <TbdMarkor id="front.price.h2" />
                     )}
                   </h2>
 
                   {/*
-                  TRE SPALTER OGSÅ PÅ MOBIL — omgjort 16.09.2026.
+                    REGNSKAPSOPPSTILLINGEN.
 
-                  Her sto tallene stablet under sm, med tallet og ordet på
-                  samme linje. Grunnen var at tre spalter på 390 px gir
-                  rundt 100 px hver, og «produksjonsdag» er bredere enn
-                  det. Løsningen den gang var å legge ordet VED SIDEN av
-                  tallet, med `min-w-[5.25rem]` på tallet så de tre
-                  ordene flukter.
+                    <dl> og ikke <table>: dette er ikke data man
+                    sammenligner på tvers av rader og kolonner, det er par
+                    av post og verdi. En tabell ville lovet en akse til som
+                    ikke finnes.
 
-                  Det ga en 84 px tom kolonne etter et ettsifret tall, og
-                  tre nesten tomme rader etter hverandre. Pål: prisseksjonen
-                  «blir litt rart komprimert» på mobil. Det var dette.
+                    `tabular-nums` er nødvendig, ikke pynt. Uten den har
+                    sifrene ulik bredde i Instrument Serif, og da flukter
+                    ikke «1», «8–10», «2», «52» og «30 000» mot samme
+                    høyrekant — som er hele poenget med oppstillingen.
 
-                  Riktig grep var å krympe TYPOGRAFIEN, ikke å bytte
-                  layout: tallet fra 2,75 til 2 rem og merkelappen fra 14
-                  til 12 px. Da får ordet plass i en 100 px spalte, og
-                  mobil og desktop har samme struktur — ett oppsett å
-                  vedlikeholde i stedet for to.
-                */}
-                  <dl className="mt-10 grid grid-cols-3 gap-x-4 sm:mt-12 sm:gap-x-8">
+                    Etiketten er brødtekst, tallet er display. Det er den
+                    eneste kontrasten raden trenger; farge eller vekt i
+                    tillegg ville gjort den til en prisplan.
+                  */}
+                  <dl className="mt-10 sm:mt-12">
                     {[
-                      /*
-                      MYKE BINDESTREKER (U+00AD) i «produksjonsdag» og
-                      «publiseringer». Begge er lengre enn spalten på de
-                      smaleste telefonene: på en iPhone SE er spalten 80 px
-                      og ordene måler 89.
-
-                      `hyphens: auto` alene holdt ikke — den krever at
-                      nettleseren har en orddelingsordbok for språket, og
-                      det kan vi ikke garantere i alle miljøer. Delepunkter
-                      vi setter selv er deterministiske, og de er usynlige
-                      når ordet får plass.
-
-                      Delt på stavelser: pro-duk-sjons-dag,
-                      pu-bli-se-rin-ger. Ett delepunkt var ikke nok — «pro-
-                      duksjons-» er fortsatt 89 px.
-                    */
                       [
+                        "Produksjonsdager i måneden",
                         tilbud.produksjonsdagerPerManed,
-                        "pro\u00ADduk\u00ADsjons\u00ADdag",
-                        "i måneden",
                       ],
-                      [tilbud.videoerPerManed, "ferdige videoer", "hver måned"],
-                      [
-                        tilbud.posterPerUke,
-                        "pu\u00ADbli\u00ADse\u00ADrin\u00ADger",
-                        "i uken",
-                      ],
-                    ].map(([tall, ord, nar]) => (
-                      <div key={ord}>
-                        <dt className="sr-only">{`${ord} ${nar}`}</dt>
-                        <dd>
-                          <span className="block font-[family-name:var(--font-display-serif)] text-[2rem] leading-none tracking-[-0.02em] sm:text-[3.25rem]">
-                            {tall}
-                          </span>
-                          {/*
-                          `hyphens-auto` er nødvendig, ikke pynt.
-                          «produksjonsdag» er 14 tegn og måler rundt 92 px
-                          ved 12 px — bredere enn spalten på en iPhone SE,
-                          der den er 80 px. Uten orddeling renner ordet ut
-                          av spalten sin. Nettleseren deler på norsk fordi
-                          <html lang="nb"> er satt.
-                        */}
-                          <span className="mt-2 block hyphens-auto text-xs leading-snug tracking-[0.02em] text-blekk-dempet sm:mt-3 sm:text-sm">
-                            {ord} <br />
-                            {nar}
-                          </span>
+                      ["Ferdige videoer hver måned", tilbud.videoerPerManed],
+                      ["Publiseringer i uken", tilbud.posterPerUke],
+                      /*
+                        «52 uker i året» er ikke et nytt løfte. Det står
+                        allerede i FAQ-svaret om ferier og i prinsippene på
+                        /om-oss: «Publisering to ganger i uka, 52 uker i
+                        året.» Her gjør det en jobb til — det er tallet som
+                        gjør de tre over til et årsvolum i hodet på leseren,
+                        uten at vi regner det ut for ham.
+                      */
+                      ["Uker i året", 52],
+                    ].map(([post, verdi]) => (
+                      <div
+                        key={String(post)}
+                        className="flex items-baseline justify-between gap-6 border-t border-kant py-4"
+                      >
+                        <dt className="text-[1.0625rem] leading-snug text-pretty text-blekk-dempet">
+                          {post}
+                        </dt>
+                        <dd className="display shrink-0 text-[1.75rem] tabular-nums sm:text-[2.25rem]">
+                          {verdi}
                         </dd>
                       </div>
                     ))}
+
+                    {/*
+                      SUMRADEN. Dobbel strek over, slik en sum settes.
+                      `border-t-2` er forskjellen mellom «enda en post» og
+                      «dette er totalen», og den koster én piksel.
+
+                      Verdien leses fra `tilbud`, aldri skrevet inn her.
+                      Prisen står flere steder på siden, og de skal ikke
+                      kunne gli fra hverandre.
+                    */}
+                    <div className="flex items-baseline justify-between gap-6 border-t-2 border-blekk pt-5">
+                      <dt className="font-medium text-[1.0625rem]">
+                        Pris per måned
+                      </dt>
+                      <dd className="flex shrink-0 items-baseline gap-2.5">
+                        <span className="display text-[2.75rem] tabular-nums sm:text-[3.25rem]">
+                          {tilbud.prisPerManed.toLocaleString("nb-NO")}
+                        </span>
+                        <span className="font-sans text-base font-normal tracking-[0.02em] text-blekk-dempet">
+                          kr/mnd
+                        </span>
+                      </dd>
+                    </div>
                   </dl>
                 </div>
 
                 {/*
-                Klippet toppstilles med tallet. Bunnstilt — som det var —
-                presset de 129 px opp over «30 000», og da mistet tallet
-                kontakten med både hårstreken og merkelappen sin.
-              */}
+                  Klippet STREKKER seg over hele radhøyden fra lg, i stedet
+                  for å ha et fast format. Med oppstillingen på rundt 540 px
+                  og et 4:5-klipp på 330 endte høyrespalten 200 px før
+                  venstre, og da så raden ut som om noe manglet. Nå møtes de
+                  på samme underkant uansett hvor mange poster
+                  oppstillingen får.
+
+                  Under lg beholder det et fast format, for der ligger det
+                  UNDER teksten og har ingen høyde å matche.
+
+                  Det er nå den eneste bevegelsen i en seksjon som ellers er
+                  tall og streker, og det er riktig balanse: oppstillingen
+                  skal lese som et dokument, klippet minner om hva
+                  dokumentet gjelder.
+                */}
                 <Enkeltklipp
                   sti="/reels"
                   medie={{
@@ -202,7 +237,7 @@ export function Pris() {
                     fil: "egon",
                     alt: "Klipp fra Reflektor x Egon: servering og gjester",
                   }}
-                  className="relative aspect-[4/3] overflow-hidden rounded-medie bg-flate-dempet sm:aspect-[16/9] lg:aspect-[4/5]"
+                  className="relative aspect-[4/3] overflow-hidden rounded-medie bg-flate-dempet sm:aspect-[16/9] lg:aspect-auto lg:h-full"
                 />
               </div>
             </Rad>

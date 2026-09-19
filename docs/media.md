@@ -543,3 +543,63 @@ eksplisitt begge veier. Det siste er nødvendig fordi logoene refereres med
 malstreng (`` `/logoer/${l.id}.png` ``), og regexen som finner mediestier
 ser bare bokstavelige strenger — samme hull som tok prisseksjonen. Begge
 retninger er verifisert ved å fjerne en fil og ved å legge inn en ubrukt.
+
+## Kortbildene på /vart-arbeid (19.09.2026)
+
+Pål: «her har du brukt veldig lav kvalitet på bildene, og ansiktene er
+croppet ut». Begge deler stemte, og de hadde samme årsak.
+
+Kortene viste **posterbildet fra klippet** — en 540×960 JPEG trukket ut av
+en komprimert 9:16-video — strukket over en liggende ramme på 660 px. Altså
+oppskalert videokomprimering, og et stående motiv sentrert i en liggende
+ramme, som kutter hoder.
+
+### Kildene
+
+Hentet fra `/Reflektor/SALG/Claude Code/Bilder og videoer`, alle tre
+verifisert mot Dropbox' blokkhash.
+
+| Fil | Kilde | Format | Web |
+|---|---|---|---|
+| `caser/soulcake.jpg` | `soulcake+freia.jpg`, 3283×4924, 10,8 MB | 0,67 | 1600×2400, 352 kB |
+| `caser/egon-bord.jpg` | `Februar EGON2688 copy.jpg`, 3302×4953, 14,0 MB | 0,67 | 900×1350, 242 kB |
+| `caser/egon-rett.jpg` | `EGON jan 264697.jpg`, 3574×4467, 12,2 MB | 0,80 | 900×1125, 137 kB |
+
+De to Egon-bildene ble lastet opp av Pål 19.09.2026 kl. 11:36 og 11:37.
+
+### Rammen er 4:3, og tallet er regnet ut
+
+Alle tre kildene er stående. **To stående bilder på 0,67 side om side er
+1,33 — nøyaktig 4:3.** Derfor kan Egon vise to motiver i én ramme uten at
+noen av dem beskjæres, og det var også svaret på Påls «sett de to bildene
+fra egon ved siden av hverandre for å få bredde».
+
+Der det bare finnes ett bilde, fyller det rammen alene, og `fokus`
+(`object-position`) avgjør hva som blir med.
+
+### Fokuset er målt, ikke gjettet
+
+Fem forhold × tre posisjoner ble lagt ut side om side i **faktisk
+visningsstørrelse** (660 px kortbredde) og sett på:
+
+| | 20 % | 32 % | 45 % |
+|---|---|---|---|
+| Soulcake, 16:10 | hoder med, kuttet ved livet | **hoder kuttet** | **bare bein** |
+| Soulcake, 4:3 | hoder med, kuttet ved knærne | **hoder kuttet** | **bare bein** |
+| Soulcake, 4:5 | hele figurer, fabrikken med | hoder delvis | **hoder kuttet** |
+
+Sentrert (50 %) — som var det kortene hadde — kutter hodene i alle
+forholdene. `50% 20%` er valgt for Soulcake. Egon-bildene har ingen
+ansikter og trenger ingen fokusverdi.
+
+**Halve kortbredde gir halv kildebredde.** Diptykhalvdelene vises på rundt
+330 px, ikke 660, så de er lagret på 900 px og ikke 1600. `sizes` sier det
+samme til next/image; uten den serveres filer dobbelt så brede som rammen
+noen gang blir.
+
+### Freia-motivet er nå avklart
+
+Avsnittet «MÅ SJEKKES AV PÅL: gjenkjennelige tredjepartsmerker» over gjaldt
+blant annet Freia-bildene. Pål bestilte dette bildet uttrykkelig 19.09.2026.
+Casen navngir allerede samarbeidet i klartekst — «Freia x Soulcake» — så
+bildet sier ikke noe teksten ikke alt sier.

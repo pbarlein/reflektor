@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import Image from "next/image";
+
 import { Container } from "@/components/Container";
 import { Eyebrow, Merkelapp } from "@/components/Eyebrow";
-import { Klipp } from "@/components/Klipp";
 import { Knappelenke } from "@/components/Knapp";
 import { Logorad } from "@/components/Logorad";
 import { ReelVegg } from "@/components/ReelVegg";
@@ -104,12 +105,49 @@ export default function VartArbeid() {
                   className="group flex h-full flex-col overflow-hidden rounded-flate border border-kant transition-colors hover:border-blekk-svak motion-reduce:transition-none"
                 >
                   {/*
-                    Klippet ligger liggende her og stående på casesiden.
-                    Samme fil, to beskjæringer: kortet skal kunne stå ved
-                    siden av et annet kort uten å bli en tårnrekke.
+                    STILLBILDE, IKKE KLIPPETS PLAKAT. Kortene viste
+                    posterbildet fra videoen — en 540×960 JPEG hentet ut av
+                    et komprimert 9:16-klipp — strukket over en liggende
+                    ramme på 660 px. Det ga to synlige feil på én gang:
+                    oppskalert videokomprimering, og hoder kuttet av fordi
+                    et stående motiv ble sentrert i en liggende ramme.
+
+                    4:3 OG IKKE 16:10, og tallet er ikke valgt på øyemål.
+                    Begge kildebildene er 0,67 stående. To av dem side om
+                    side er 1,33 — nøyaktig 4:3 — og da kan Egon vise to
+                    motiver uten at noen av dem beskjæres i det hele tatt.
+                    Der det bare finnes ett bilde, fyller det rammen alene,
+                    og `fokus` avgjør hva som blir med.
+
+                    Fem utsnitt ble sammenlignet i faktisk visningsstørrelse
+                    — 16:10, 3:2, 4:3, 5:4 og 4:5 — før valget.
+
+                    `sizes` er ikke pynt: uten den antar next/image full
+                    vindusbredde og serverer filer dobbelt så brede som
+                    kortet noen gang blir. En diptykhalvdel er halvparten
+                    igjen, og det står i verdien.
                   */}
-                  <div className="relative aspect-[16/10] overflow-hidden bg-flate-dempet">
-                    <Klipp sti={`/reels/${k.klipp.fil}`} />
+                  <div className="relative flex aspect-[4/3] gap-px overflow-hidden bg-kant">
+                    {k.kortbilder.map((bilde) => (
+                      <div key={bilde.fil} className="relative flex-1">
+                        <Image
+                          src={`/caser/${bilde.fil}.jpg`}
+                          alt={bilde.alt}
+                          fill
+                          sizes={
+                            k.kortbilder.length > 1
+                              ? "(min-width: 1024px) 20vw, 50vw"
+                              : "(min-width: 1024px) 40vw, 100vw"
+                          }
+                          className="object-cover"
+                          style={
+                            bilde.fokus
+                              ? { objectPosition: bilde.fokus }
+                              : undefined
+                          }
+                        />
+                      </div>
+                    ))}
                   </div>
 
                   <div className="flex grow flex-col p-6 sm:p-8">
