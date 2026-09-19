@@ -120,7 +120,15 @@ export const front: Side = {
       slots: {
         "front.price.eyebrow": tekst("Pris", { maksTegn: 30 }),
         "front.price.h2": tekst("Én pris. Alt inkludert. Ingen binding.", { maksTegn: 60 }),
-        "front.price.note": tekst("Tre måneders oppsigelse, ingen bindingstid, ingen timepriser. Alt innhold er deres – fri bruk i annonser, på nettsider og skjermer. Fungerer det ikke, sier dere opp. Så enkelt er det.", {
+        /*
+         * KUTTET 19.09.2026: «– fri bruk i annonser, på nettsider og
+         * skjermer». Enumerasjonen var innholdet i tilbud.inngar[5] en gang
+         * til, i samme kort, omtrent 150 px lenger opp — og der står den
+         * mer komplett (den har «presentasjoner» med). Eierskapspåstanden
+         * «Alt innhold er deres» er beholdt: den sier noe inngar[5] ikke
+         * sier, siden bruksrett og eierskap ikke er det samme.
+         */
+        "front.price.note": tekst("Tre måneders oppsigelse, ingen bindingstid, ingen timepriser. Alt innhold er deres. Fungerer det ikke, sier dere opp. Så enkelt er det.", {
           maksTegn: 220,
           jobb: "Hva som gjør fastprisen mulig. Innvendingen bak innvendingen.",
         }),
@@ -175,7 +183,25 @@ export const front: Side = {
       jobb: "Skjemaet. Eneste inbound-strøm siden jobber for.",
       slots: {
         "front.contact.h2": tekst("Se hva vi ville filmet hos dere", { maksTegn: 60 }),
-        "front.contact.sub": tekst("Skriv hvem dere er og hva dere vil oppnå. Dere får et forslag tilbake til hvordan en måned med Reflektor kan se ut hos dere. Vi holder til i Oslo og jobber i hele Norge. Dere bestemmer etterpå.", { maksTegn: 200 }),
+        /*
+         * KUTTET 19.09.2026, to setninger, begge fordi de sto en gang til
+         * i skjemaet ved siden av — og der nærmere handlingen:
+         *
+         *   «Skriv hvem dere er og hva dere vil oppnå.» → hjelpeteksten
+         *   under meldingsfeltet sier «Kort om bedriften og hva dere vil
+         *   oppnå». Målingen fant det som eneste gjentatte frase INNE i
+         *   én seksjon. En instruksjon om hva man skal skrive, gitt før
+         *   feltet finnes, gjør ingen jobb.
+         *
+         *   «Dere bestemmer etterpå.» → «Uforpliktende» står under
+         *   send-knappen, altså i det sekundet innvendingen melder seg.
+         *
+         * Beholdt: forslagsløftet (det er h2-ens løfte gjort konkret, og
+         * det eneste stedet på forsiden som sier hva man faktisk får
+         * tilbake) og Oslo/hele Norge (geografisk signal for SEO og AEO —
+         * NAP-en under gjentar adressen, men ikke nedslagsfeltet).
+         */
+        "front.contact.sub": tekst("Dere får et forslag tilbake til hvordan en måned med Reflektor kan se ut hos dere. Vi holder til i Oslo og jobber i hele Norge.", { maksTegn: 200 }),
       },
     },
   ],

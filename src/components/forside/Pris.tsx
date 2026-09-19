@@ -99,20 +99,31 @@ export function Pris() {
           */}
           <div className="lg:grid lg:grid-cols-[1fr_15rem] lg:items-stretch lg:gap-14">
             <div>
-              {/* FAKTORENE PÅ ÉN LINJE. Fire på rad fra sm, to og to under. */}
+              {/*
+                FAKTORENE PÅ ÉN LINJE. Fire på rad fra sm, to og to under.
+
+                MARKERINGEN ER SNUDD 19.09.2026. Før lå etiketten inne i
+                <dd>, og <dt> var en sr-only kopi av den samme etiketten —
+                fire ganger fire ord som sto to ganger i DOM-en uten å gjøre
+                noe for noen. Skjermleseren leste dem dobbelt, og
+                språkmodeller, som leser HTML og ikke piksler, gjorde det
+                samme.
+
+                Nå står etiketten i <dt> og tallet i <dd>, som er det
+                <dl> faktisk betyr. `flex-col-reverse` gir den visuelle
+                rekkefølgen tilbake — tallet øverst, etiketten under — uten
+                å røre DOM-rekkefølgen, som er den hjelpemidler leser.
+              */}
               <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-7 sm:mt-10 sm:grid-cols-4 sm:gap-x-10">
                 {FAKTORER.map(([tall, ord, nar]) => (
-                  <div key={ord}>
-                    <dt className="sr-only">{`${ord} ${nar}`}</dt>
-                    <dd>
-                      <span className="display block text-[2.5rem] leading-none tabular-nums sm:text-[3rem] lg:text-[3.5rem]">
-                        {tall}
-                      </span>
-                      <span className="mt-2.5 block hyphens-auto text-[0.8125rem] leading-snug tracking-[0.02em] text-pa-dyp-dempet sm:text-sm">
-                        {ord}
-                        <br />
-                        {nar}
-                      </span>
+                  <div key={ord} className="flex flex-col-reverse">
+                    <dt className="mt-2.5 hyphens-auto text-[0.8125rem] leading-snug tracking-[0.02em] text-pa-dyp-dempet sm:text-sm">
+                      {ord}
+                      <br />
+                      {nar}
+                    </dt>
+                    <dd className="display text-[2.5rem] leading-none tabular-nums sm:text-[3rem] lg:text-[3.5rem]">
+                      {tall}
                     </dd>
                   </div>
                 ))}

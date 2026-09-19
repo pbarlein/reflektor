@@ -1076,3 +1076,73 @@ bygget, finnes på dagens side. Sjekken går bare i én retning.
 
 En sjekk som sammenligner dagens sitemap mot rutene i repoet ville tatt både
 denne og A40. Den finnes ikke, og den bør bygges før cutover.
+
+---
+
+## A46 — Tekstgjennomgangen av forsiden. Målt 19.09.2026
+
+Bestilt av Pål: «se igjennom hele forsiden og komprimer eller slett
+unødvendig tekst som ikke gi noe gevinst. ikke slett noe som beriker
+konteksten eller påvirker seo og aeo positivt».
+
+Jeg målte i stedet for å vurdere på øyemål. To målinger.
+
+### 1. Ord mot piksler, per seksjon
+
+Rendret på 1440 px, `innerText` per `<section>` i `<main>`:
+
+| # | Seksjon | Ord | Høyde | Ord per 100 px |
+|---|---|---|---|---|
+| 1 | Hero | 58 | 700 | 8,3 |
+| 3 | Arbeidet | 48 | 898 | 5,3 |
+| 4 | Slik jobber vi | 92 | 549 | **16,8** |
+| 6 | Pris | 176 | 1 310 | 13,4 |
+| 7 | Anmeldelser | 317 | 746 | **42,5** |
+| 9 | FAQ | 82 | 883 | 9,3 |
+| 10 | Kontakt | 99 | 926 | 10,7 |
+| | **Forsiden** | **872** | **8 106** | 10,8 |
+
+Det åpenbare kuttmålet — anmeldelsene, med 317 av 872 ord — er det
+dyreste å kutte og det billigste å beholde. Sitatene ligger i en rad man
+drar i, ikke i en spalte man skroller forbi: 42,5 ord per 100 px er
+laveste pikselpris på siden, og de er navngitt tredjepartsbevis, som er
+den best støttede AEO-formen som finnes. De står urørt.
+
+### 2. Gjentatte fraser, mekanisk
+
+Alle 4-gram og oppover i DOM-en, inkludert lukkede FAQ-svar (1 620 ord
+totalt). Tolv fraser forekom mer enn én gang. **Ti av dem involverte
+FAQ-svarene** — og de skal gjenta seg: et svar som ikke står alene er
+verdiløst for en språkmodell, som siterer svaret og ikke siden.
+
+Det etterlot tre reelle tilfeller:
+
+| Hva | Hvor | Gjort |
+|---|---|---|
+| «og hva dere vil oppnå» | Kontaktingressen **og** hjelpeteksten under meldingsfeltet — eneste gjentakelse inne i én seksjon | Ingressetningen kuttet. Hjelpeteksten står nærmere feltet. |
+| «Dere bestemmer etterpå» | Kontaktingressen; «Uforpliktende» står under send-knappen | Kuttet |
+| «fri bruk i annonser, på nettsider og skjermer» | `front.price.note`, ~150 px under `tilbud.inngar[5]`, som sier det mer komplett | Kuttet. Eierskapspåstanden «Alt innhold er deres» beholdt — bruksrett og eierskap er ikke det samme. |
+
+De to som ikke ble kuttet, og hvorfor: «Anton Sport, The Well» i både
+heroen og arbeidsseksjonen er to forskjellige påstander (hvem som er
+kunde / hvem klippene er fra), og «30 000 kr/mnd» tre steder er
+pristransparens, som AEO vekter tungt.
+
+### 3. Fire etiketter som sto to ganger i DOM-en
+
+Faktorraden i prisseksjonen hadde etiketten i `<dd>` og en `sr-only`
+`<dt>` med nøyaktig samme ord. Fire ganger fire ord, lest dobbelt av
+både skjermlesere og språkmodeller. Markeringen er snudd: etiketten i
+`<dt>`, tallet i `<dd>`, `flex-col-reverse` for den visuelle
+rekkefølgen. Ingen piksel flyttet seg, axe-brudd uendret på 0.
+
+### Resultat
+
+872 → 839 ord. Mobilhøyden falt 70 px, desktop null.
+
+**Konklusjonen er at forsiden ikke har et tekstproblem.** 872 ord på
+8 106 px er magert for en byråforside, gjennomgangen fant 33 ord å
+fjerne, og resten av gjentakelsene er FAQ-en som gjør jobben sin.
+Skal siden bli kortere, er det piksler og ikke ord som må vekk —
+seksjon 5 (arbeidsrutenettet, 1 112 px uten ett eneste ord) er
+åtte ganger så høy som noen setning jeg kunne strøket.
