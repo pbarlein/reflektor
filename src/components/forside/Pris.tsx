@@ -14,6 +14,32 @@ import { tilbud } from "@/content/site";
  * står i kommentarene under — de fulgte med flyttingen og er ikke endret.
  */
 
+/**
+ * Tolv måneder, forkortet. De står som etiketter under søylene og skal
+ * leses som en tidsakse, ikke som datoer — derfor tre bokstaver og ikke
+ * fulle navn.
+ */
+const MANEDER = [
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "mai",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "okt",
+  "nov",
+  "des",
+];
+
+/**
+ * Streker per måned i grafen. Leveransen er 8–10; ni er tegningens enhet,
+ * midt i intervallet. Tolv måneder gir 108 streker, som er «rundt hundre».
+ */
+const FILMER_PER_MANED = 9;
+
 function Rad({
   merkelapp,
   children,
@@ -240,6 +266,115 @@ export function Pris() {
                   className="relative aspect-[4/3] overflow-hidden rounded-medie bg-flate-dempet sm:aspect-[16/9] lg:aspect-auto lg:h-full"
                 />
               </div>
+            </Rad>
+
+            {/*
+              RAD 2 — KONTINUITET, bygget 19.09.2026 på Påls bestilling:
+              «kan vi få frem at kontinuitet er oppnådd ved en slik avtale?
+              på en grafisk og merkevarebyggende visuell måte.»
+
+              KONTINUITET ER IKKE NOE MAN SKRIVER. Det er en form. Grafen er
+              tolv søyler, én per måned, og hver søyle er bygget av tynne
+              streker der HVER STREK ER ÉN FERDIG FILM. Søylene er
+              kumulative: måned tolv bærer alt som er laget siden måned én.
+
+              Det er nøyaktig forskjellen på et abonnement og en
+              enkeltproduksjon, og her er den tegnet i stedet for påstått.
+              En enkeltproduksjon er den første søyla. Resten er det man
+              ikke får.
+
+              TALLENE ER IKKE NYE. «Rundt hundre filmer i arkivet» står
+              ordrett i FAQ-svaret om hva innholdet kan brukes til. Tolv
+              produksjonsdager og 104 publiseringer er 1×12 og 2×52 av tall
+              som allerede står i oppstillingen over.
+
+              NI STREKER PER MÅNED er tegningens enhet, ikke et løfte.
+              Leveransen er 8–10, og det står i teksten. Teller man
+              strekene, får man 108 — som er «rundt hundre».
+
+              GRAFEN ER `aria-hidden`. Alt den viser står som tall i
+              setningen under. En skjermleser skal ikke lese 108 tomme
+              <span>-er for å få vite noe som står skrevet rett ved siden
+              av.
+            */}
+            <Rad merkelapp="Kontinuitet">
+              <div className="max-w-2xl">
+                <h2 className="display text-[1.75rem] sm:text-[2.25rem]">
+                  Ett år ser slik ut
+                </h2>
+                <p className="mt-4 text-[1.0625rem] leading-relaxed text-pretty text-blekk-dempet">
+                  Én produksjonsdag i måneden, og arkivet vokser for hver. Hver
+                  strek er én ferdig film — deres å bruke fritt, også etter at
+                  den er publisert.
+                </p>
+              </div>
+
+              <div
+                aria-hidden
+                className="mt-10 flex items-end gap-1.5 sm:mt-12 sm:gap-2.5 lg:mt-14"
+              >
+                {MANEDER.map((maned, i) => (
+                  <div key={maned} className="flex-1">
+                    {/*
+                      Søyla vokser OPP fra grunnlinja mens man ruller, og
+                      hver søyle har sitt eget sluttpunkt så grafen bygger
+                      seg fra venstre. Forskyvningen ligger i
+                      `animation-range` og ikke i `animation-delay`, fordi
+                      en rulledrevet animasjon ikke har tid — den har
+                      posisjon. Se .kontinuitet-stolpe i globals.css.
+                    */}
+                    <div
+                      className="kontinuitet-stolpe flex flex-col-reverse gap-px"
+                      style={
+                        {
+                          "--stolpe-slutt": `${26 + i * 2.5}%`,
+                        } as React.CSSProperties
+                      }
+                    >
+                      {Array.from({ length: (i + 1) * FILMER_PER_MANED }).map(
+                        (_, n) => (
+                          <span
+                            key={n}
+                            className="block h-0.5 rounded-[1px] bg-aksent lg:h-[3px]"
+                            /*
+                              Eldre filmer tones svakt ned oppover i
+                              stabelen. Det gjør at man ser HVOR i året
+                              hvert lag kom, i stedet for én solid blokk —
+                              og det er nettopp lagene som er poenget.
+                              Gulvet på 0,35 er satt så den øverste
+                              måneden fortsatt leser som oransje.
+                            */
+                            style={{
+                              opacity:
+                                1 - (n / ((i + 1) * FILMER_PER_MANED)) * 0.65,
+                            }}
+                          />
+                        ),
+                      )}
+                    </div>
+                    <span className="mt-3 block text-center font-sans text-[0.625rem] tracking-[0.06em] text-blekk-svak uppercase sm:text-[0.6875rem]">
+                      {maned}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <p className="mt-8 flex flex-wrap items-baseline gap-x-8 gap-y-3 border-t border-kant pt-6">
+                {[
+                  ["12", "produksjonsdager"],
+                  ["104", "publiseringer"],
+                  ["ca. 100", "filmer i arkivet"],
+                ].map(([tall, ord]) => (
+                  <span key={ord} className="flex items-baseline gap-2.5">
+                    <span className="display text-[1.75rem] tabular-nums sm:text-[2rem]">
+                      {tall}
+                    </span>
+                    <span className="text-[0.9375rem] text-blekk-dempet">
+                      {ord}
+                    </span>
+                  </span>
+                ))}
+              </p>
             </Rad>
           </div>
         </Container>

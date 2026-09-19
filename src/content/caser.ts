@@ -106,7 +106,25 @@ export type Kundecase = {
 
   /** Kort oppsummering til kortet på oversiktssiden. */
   kortingress: string;
-  /** Tallet som løftes fram på kortet. */
+  /**
+   * Tallet som løftes fram på kortet i oversikten.
+   *
+   * ALDRI ET ABSOLUTT REKKEVIDDETALL. Kortene sto først med «6,8 mill.» og
+   * «323 000» ved siden av hverandre — begge totale visninger, begge siden
+   * 2022. Pål: «dette ser ikke veldig bra ut ved siden av hverandre når
+   * begge samarbeidene er like gamle.» Han har rett, og det er en
+   * saklighetsfeil og ikke en designfeil: Soulcake har 58 792 følgere og
+   * publiserer nesten daglig, Egon er en restaurantkjede med en helt annen
+   * kontoprofil. Tallene måler kundens publikum, ikke vårt arbeid, og
+   * stilt opp mot hverandre leser de som en rangering mellom to kunder.
+   *
+   * Kortet skal derfor bære et RELATIVT tall som beskriver Reflektors
+   * bidrag: en andel eller en vekst. Da kan ingen av de to gjøre den andre
+   * liten, og tallet sier faktisk noe om samarbeidet.
+   *
+   * De absolutte tallene står fortsatt på casesidene, der de har kilde,
+   * dato og forbehold rundt seg. Det er der de hører hjemme.
+   */
   korttall: Tall;
 };
 
@@ -247,8 +265,8 @@ export const kundecaser: Kundecase[] = [
     kortingress:
       "Én fast produksjonsdag i måneden siden 2022. Over 80 prosent av foto og video på @soulcake.oslo kommer fra oss.",
     korttall: {
-      verdi: "6,8 mill.",
-      forklaring: "visninger på 228 reels siden 2022",
+      verdi: "80 %+",
+      forklaring: "av foto og video på @soulcake.oslo kommer fra oss",
     },
   },
 
@@ -393,8 +411,8 @@ export const kundecaser: Kundecase[] = [
     kortingress:
       "Menyfoto, reels, kampanjefilm og skjermreklame for nærmere 50 restauranter – fast produksjonsdag hver måned siden 2022.",
     korttall: {
-      verdi: "323 000",
-      forklaring: "reels-visninger i samarbeidsperioden",
+      verdi: "4×",
+      forklaring: "flere reels-visninger i året, fra 2023 til 2025",
     },
   },
 ];

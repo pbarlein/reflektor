@@ -196,3 +196,76 @@ Fire grep, ingen av dem visuelle:
   siden som skal bygge tillit.
 - **Ingen tredje case.** Anton Sport står omtalt på dagens oversiktsside
   uten lenke — det er et kundenavn, ikke et kundecase. Se A45.
+
+---
+
+## Kontinuitetsgrafen (19.09.2026)
+
+Pål: «kan vi få frem at kontinuitet er oppnådd ved en slik avtale? på en
+grafisk og merkevarebyggende visuell måte.»
+
+Det er det riktige spørsmålet å stille om denne siden. Kontinuitet ER
+produktet — FAQ-en sier det, /om-oss sier det, prisen forutsetter det — og
+det sto ingen steder visuelt.
+
+**Kontinuitet er ikke noe man skriver, det er en form.** Grafen er tolv
+søyler, én per måned, og hver søyle er bygget av tynne streker der hver
+strek er én ferdig film. Søylene er kumulative: måned tolv bærer alt som er
+laget siden måned én.
+
+Det er nøyaktig forskjellen på et abonnement og en enkeltproduksjon, tegnet
+i stedet for påstått. **En enkeltproduksjon er den første søyla. Resten er
+det man ikke får.**
+
+### Hvorfor dette ikke er et diagram fra en mal
+
+Et vanlig søylediagram viser en verdi per periode. Dette viser en BEHOLDNING
+som legger seg lagvis, og lagene er synlige — hver strek er tellbar. Det er
+formen som bærer argumentet, ikke tallene.
+
+Søylene bygges opp mens man ruller, fra venstre mot høyre. Teknikken er
+`animation-timeline: view()`, ren CSS uten JavaScript, samme som
+arbeidsveggen og glasskortene bruker. Forskyvningen ligger i
+`animation-range` og ikke i `animation-delay`: en rulledrevet animasjon har
+ingen tid, den har posisjon.
+
+Under `prefers-reduced-motion` og i nettlesere uten støtte står trappen
+ferdig bygget. Verifisert i begge tilstander.
+
+### Tallene er ikke nye
+
+«Rundt hundre filmer i arkivet» står ordrett i FAQ-svaret om hva innholdet
+kan brukes til. Tolv produksjonsdager og 104 publiseringer er 1×12 og 2×52
+av tall som allerede står i oppstillingen rett over.
+
+Ni streker per måned er tegningens enhet, ikke et løfte — leveransen er
+8–10, og det står i teksten. Teller man strekene får man 108, som er «rundt
+hundre».
+
+---
+
+## Kortenes tall kan ikke sammenlignes (19.09.2026)
+
+Kortene på /vart-arbeid sto først med **«6,8 mill.»** og **«323 000»** ved
+siden av hverandre. Begge totale visninger, begge siden 2022.
+
+Pål: «dette ser ikke veldig bra ut ved siden av hverandre når begge
+samarbeidene er like gamle.»
+
+Det er en saklighetsfeil, ikke en designfeil. Soulcake har 58 792 følgere og
+publiserer nesten daglig; Egon er en restaurantkjede med en helt annen
+kontoprofil. Tallene måler **kundens publikum**, ikke vårt arbeid, og stilt
+opp ved siden av hverandre leser de som en rangering mellom to kunder — der
+den ene ser 21 ganger svakere ut enn den andre.
+
+**Regelen er nå at kortet bærer et relativt tall:** en andel eller en vekst,
+som beskriver Reflektors bidrag.
+
+| | før | etter |
+|---|---|---|
+| Soulcake | 6,8 mill. visninger | **80 %+** av foto og video på kontoen kommer fra oss |
+| Egon | 323 000 visninger | **4×** flere reels-visninger i året, fra 2023 til 2025 |
+
+Da kan ingen av de to gjøre den andre liten, og tallet sier faktisk noe om
+samarbeidet. De absolutte tallene står fortsatt på casesidene, der de har
+kilde, dato og forbehold rundt seg.
