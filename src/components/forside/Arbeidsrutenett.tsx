@@ -24,10 +24,22 @@ export function Arbeidsrutenett() {
       argumentet, ikke et nytt kapittel, og en overskrift ville gjort den
       til det siste.
     */}
-      <section
-        className="pb-28 sm:pb-36"
-        aria-label="Arbeid fra produksjonsdager"
-      >
+      {/*
+        LUFTA UNDER ER LIK LUFTA OVER, satt 19.09.2026 etter måling.
+
+        Seksjonen hadde `pb-28 sm:pb-36`, altså 144 px ned til priskortet,
+        mens prosesskortet over slutter 80 px opp. Det er den samme
+        overgangen — mørkt kort mot bilderutenett — med nesten dobbel
+        avstand på den ene siden. Målt blekk til blekk på tvers av hele
+        forsiden var 144 ikke det største gapet (arbeidsseksjonen mot
+        prosesskortet er 152), men det var det eneste som sto rett overfor
+        sin egen motsats.
+
+        `pb-20` gir 80 px på begge sider. Rutenettet leser da som ett
+        pusterom mellom to kort i stedet for som en seksjon som henger
+        løsere nedover enn oppover.
+      */}
+      <section className="pb-20" aria-label="Arbeid fra produksjonsdager">
         <Arbeidskolonner kolonner={arbeidskolonner} />
       </section>
 

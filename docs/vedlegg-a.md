@@ -1271,3 +1271,43 @@ i rendret HTML. Skjemaet brukes bare på forsiden, så ingen andre sider
 arver endringen.
 
 Venstrespalten står fortsatt uten ingress: overskrift, NAP, bilde.
+
+---
+
+## A50 — Lufta rundt bilderutenettet. Målt 19.09.2026
+
+Pål: «for mye space mellom seksjonene i forhold til andre steder på siden»,
+med utsnitt av overgangen fra bilderutenettet til prisseksjonen.
+
+### Målt, blekk til blekk, hele forsiden på 1440 px
+
+| Overgang | Fra | Til | Før |
+|---|---|---|---|
+| 1 → 2 | hero | logorad | 144 |
+| 2 → 3 | logorad | Arbeidet | 128 |
+| 3 → 4 | reel-vegg | mørkt prosesskort | 152 |
+| 4 → 5 | mørkt prosesskort | bilderutenett | **80** |
+| 5 → 6 | bilderutenett | mørkt priskort | **144** |
+| 6 → 7 | priskort | anmeldelser | 128 |
+| 7 → 8 | anmeldelser | arbeidsvegg | 0 |
+| 8 → 9 | arbeidsvegg | FAQ | 80 |
+
+144 var ikke sidens største gap — 152 er større. Men det var det eneste
+som sto rett overfor sin egen motsats: **samme overgang, mørkt kort mot
+bilderutenett, hadde 80 px på oversiden og 144 på undersiden.** Rutenettet
+hang løsere nedover enn oppover, og det er det øyet fanger, ikke
+absoluttverdien.
+
+Variasjon i seksjonsrytmen er bevisst i dette prosjektet — jevn vertikal
+padding overalt er et malsignal, og forholdet mellom største og minste
+rytme er omtrent 3:1 (se kommentaren i Hero.tsx). Denne rettingen rører
+ikke det prinsippet. Den fjerner én asymmetri i et par.
+
+### Etter
+
+`pb-28 sm:pb-36` → `pb-20` på arbeidsrutenettet. 80 px på begge sider, på
+mobil så vel som desktop, siden begge naboene allerede står på `pb-20`.
+Rutenettet leser nå som ett pusterom mellom to kort.
+
+Forsiden: 8 106 → 8 068 px på desktop. Netto bare −38 px, fordi
+prosessblokken samtidig vokste 26 px av gutterrettingen i A47.
