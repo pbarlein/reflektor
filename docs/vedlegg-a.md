@@ -1419,3 +1419,59 @@ aksent som tekstfarge — nå bruker riktig token i hover.
 
 Den andre forekomsten, `text-aksent` i `Slot.tsx`, er TBD-markøren. Den
 vises bare når copy mangler og er et previewverktøy, ikke innhold.
+
+---
+
+## A53 — Personvernerklæringen er fylt, og punkt 1 var ødelagt. 19.09.2026
+
+### De tre TBD-ene, besvart av Pål
+
+De ble ikke bare stående tomme — de ble **servert som synlig
+«TBD(...)»-tekst i produksjon**. Verifisert med curl mot deployet før
+rettingen.
+
+| Felt | Var | Er |
+|---|---|---|
+| Sist oppdatert | `TBD(...)`, kilden sa «29.04.206» | **19. september 2026** |
+| Lagringstid | `TBD(...)`, kilden sa «[for eksempel 12–24 måneder]» | **24 måneder** |
+| Rettighetsadresse | `TBD(...)`, kilden sa «[e-postadresse]» | **pal@reflektor.no** |
+
+Datoen er bevisst en literal og ikke utledet fra byggetidspunktet. «Sist
+oppdatert» skal si når teksten faktisk ble endret; en dato som flytter seg
+ved hver deploy er en usann påstand om at erklæringen er revidert.
+
+### Punkt 1 var en vegg, og adressen var feil
+
+Funnet mens jeg fylte inn de tre over. Kontaktblokken sto som én streng
+uten skilletegn, og rendret slik på siden:
+
+```
+Kontaktinformasjon:Reflektor ASOrganisasjonsnummer: 926974270Adresse:
+Tvetenvein 162, 0671 OsloE-post: pal@reflektor.noTelefon: 47605070
+```
+
+Linjeskiftene gikk tapt i migreringen fra Squarespace. `liste`-typen
+fantes allerede i fila og gir strukturen tilbake.
+
+**To innholdsrettelser, verdt å si høyt fordi fila ellers sier at teksten
+er ordrett og ikke skal redigeres:**
+
+1. **«Tvetenvein» → «Tvetenveien».** Gateadressen manglet en e. Den sto
+   riktig i `site.ts`, i `Schema.tsx` og i bunnteksten — feil bare her.
+   NAP-konsistens mellom bunntekst og markup er ett av de fire punktene
+   AGENTS.md sier synligheten faktisk krever, så dette var ikke en
+   skrivefeil, det var et brutt entitetssignal.
+2. **«47605070» → «+47 47605070»**, samme form som `site.kontakt.telefon`.
+
+Ingen av delene er juridisk innhold. Det er selskapets eget navn, nummer
+og adresse.
+
+### Skanneren fanget sin egen dokumentasjon
+
+Kommentaren som forklarer at markørene er fylt inneholder selv
+«TBD(...)», og ble meldt som en åpen markør. En sjekk som rapporterer
+dokumentasjonen av en løsning som om den var problemet, lærer folk å
+ignorere den. `utenKommentarer()` blanker nå kommentarer før skanning,
+med linjeskift beholdt så linjenumrene stemmer. Verifisert i to
+retninger: en innsatt `TBD(test.verdi)` i `logoer.ts` ble fanget, og
+kommentarene ble ikke.

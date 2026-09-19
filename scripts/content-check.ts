@@ -102,6 +102,21 @@ function innholdsfiler(katalog: string): string[] {
   return ut;
 }
 
+/**
+ * Blanker ut kommentarer, men beholder linjeskift så linjenumrene stemmer.
+ *
+ * Uten dette fanger skanneren sine egne begrunnelser: kommentaren i
+ * personvern.ts som FORKLARER at markørene er fylt, inneholder selv
+ * «TBD(...)» og ble meldt som en åpen markør. En sjekk som rapporterer
+ * dokumentasjonen av en løsning som om den var problemet, lærer folk å
+ * ignorere den.
+ */
+function utenKommentarer(kilde: string): string {
+  return kilde
+    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, " "))
+    .replace(/(^|[^:])\/\/[^\n]*/g, (m, f) => f + " ".repeat(m.length - f.length));
+}
+
 type Markor = { fil: string; linje: number; id: string };
 const markorer: Markor[] = [];
 
@@ -109,7 +124,7 @@ for (const fil of innholdsfiler(ROT)) {
   // Slot-filene er allerede dekket over; her er vi ute etter TBD som står
   // som TEKST i en streng, ikke som TBD()-funksjonen.
   if (fil.includes(`${ROT}/sider/`)) continue;
-  readFileSync(fil, "utf8")
+  utenKommentarer(readFileSync(fil, "utf8"))
     .split("\n")
     .forEach((linje, i) => {
       for (const treff of linje.matchAll(/TBD\(([^)]*)\)/g)) {

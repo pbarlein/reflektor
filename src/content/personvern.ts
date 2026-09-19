@@ -5,20 +5,23 @@
  * ORDRETT. Ikke omskrevet. Dette er Reflektors publiserte tekst, og en
  * personvernerklæring er et juridisk dokument — jeg skal ikke redigere den.
  *
- * TRE DEFEKTER I KILDEN, alle live på reflektor.no nå. De er IKKE rettet,
- * fordi jeg ikke kan vite hva som er riktig, men de er merket så de ikke
- * kan gå ubemerket til lansering:
+ * TRE DEFEKTER I KILDEN, alle live på reflektor.no i dag. De sto som
+ * TBD-markører her — og ble faktisk servert som synlig «TBD(...)»-tekst i
+ * forhåndsvisningen — til Pål fylte dem 19.09.2026:
  *
- * 1. «Sist oppdatert: 29.04.206» — årstallet mangler et siffer.
- * 2. «lagres normalt i inntil [for eksempel 12–24 måneder]» — uutfylt
- *    maltekst.
- * 3. «kan du kontakte oss på [e-postadresse]» — uutfylt maltekst, og den
- *    alvorligste: erklæringen oppgir ingen adresse for å utøve
- *    rettighetene sine. Adressen står riktignok i punkt 1, men punkt 9 er
- *    det stedet en leser vil se etter den.
- *
- * Merkingen bruker samme TBD-markør som resten av prosjektet, så de er
- * synlige i forhåndsvisningen.
+ * 1. «Sist oppdatert: 29.04.206» → **19. september 2026**. Årstallet
+ *    manglet et siffer i kilden. Datoen er bevisst en LITERAL og ikke
+ *    utledet fra byggetidspunktet: «sist oppdatert» skal si når teksten
+ *    faktisk ble endret, ikke når siden sist ble deployet. En dato som
+ *    flytter seg av seg selv er en usann påstand om at erklæringen er
+ *    revidert. Endres teksten, settes datoen for hånd.
+ * 2. «lagres normalt i inntil [for eksempel 12–24 måneder]» → **24
+ *    måneder**. GDPR artikkel 13 nr. 2 bokstav a krever at
+ *    lagringsperioden oppgis.
+ * 3. «kan du kontakte oss på [e-postadresse]» → **pal@reflektor.no**.
+ *    Dette var den alvorligste: erklæringen oppga ingen adresse for å
+ *    utøve rettighetene sine. Adressen sto i punkt 1, men punkt 9 er der
+ *    en leser ser etter den. Samme adresse som i punkt 1 og i bunnteksten.
  *
  * MERK OGSÅ punkt 8: erklæringen sier at man kan «administrere eller trekke
  * tilbake samtykke til informasjonskapsler via innstillingene på nettsiden».
@@ -36,7 +39,7 @@ export type Personvernseksjon = {
 
 /** Står før den første nummererte seksjonen. */
 export const personvernIngress: Personvernblokk[] = [
-  { type: "avsnitt", tekst: "Sist oppdatert: TBD(personvern.dato — «29.04.206» på dagens side)" },
+  { type: "avsnitt", tekst: "Sist oppdatert: 19. september 2026" },
   {
     type: "avsnitt",
     tekst:
@@ -58,10 +61,39 @@ export const personvernSeksjoner: Personvernseksjon[] = [
         tekst:
           "Reflektor AS er behandlingsansvarlig for personopplysninger som behandles i forbindelse med våre skjemaer, nettsider, annonser og kundehenvendelser.",
       },
+      { type: "avsnitt", tekst: "Kontaktinformasjon:" },
+      /*
+        MIGRERINGSSKADE, RETTET 19.09.2026.
+
+        Feltene sto som ÉN streng uten skilletegn og rendret som en vegg:
+        «Kontaktinformasjon:Reflektor ASOrganisasjonsnummer: 926974270Adresse:
+        Tvetenvein 162, 0671 OsloE-post: pal@reflektor.noTelefon: 47605070».
+        Linjeskiftene gikk tapt da teksten ble hentet fra Squarespace.
+        `liste`-typen fantes allerede og gir strukturen tilbake.
+
+        TO RETTELSER I INNHOLDET, og de er verdt å si høyt, for fila sier
+        ellers at teksten er ordrett og ikke skal redigeres:
+
+        1. «Tvetenvein» → «Tvetenveien». Gateadressen manglet en e. Den sto
+           riktig tre andre steder — site.ts, Schema.tsx og bunnteksten — og
+           feil bare her. NAP-konsistens mellom bunntekst og markup er ett av
+           de fire punktene AGENTS.md sier synligheten faktisk krever, så et
+           avvik her er ikke en skrivefeil, det er et brutt entitetssignal.
+        2. «47605070» → «+47 47605070», samme form som `site.kontakt.telefon`
+           og bunnteksten bruker.
+
+        Ingen av delene er juridisk innhold. Det er selskapets eget navn,
+        nummer og adresse, og de skal stemme.
+      */
       {
-        type: "avsnitt",
-        tekst:
-          "Kontaktinformasjon:Reflektor ASOrganisasjonsnummer: 926974270Adresse: Tvetenvein 162, 0671 OsloE-post: pal@reflektor.noTelefon: 47605070",
+        type: "liste",
+        punkter: [
+          "Reflektor AS",
+          "Organisasjonsnummer: 926974270",
+          "Adresse: Tvetenveien 162, 0671 Oslo",
+          "E-post: pal@reflektor.no",
+          "Telefon: +47 47605070",
+        ],
       },
     ],
   },
@@ -189,7 +221,7 @@ export const personvernSeksjoner: Personvernseksjon[] = [
       {
         type: "avsnitt",
         tekst:
-          "Henvendelser og leads lagres normalt i inntil TBD(personvern.lagringstid) etter siste kontakt, med mindre det oppstår et kundeforhold eller vi har et annet lovlig grunnlag for videre lagring.",
+          "Henvendelser og leads lagres normalt i inntil 24 måneder etter siste kontakt, med mindre det oppstår et kundeforhold eller vi har et annet lovlig grunnlag for videre lagring.",
       },
       {
         type: "avsnitt",
@@ -252,7 +284,7 @@ export const personvernSeksjoner: Personvernseksjon[] = [
       {
         type: "avsnitt",
         tekst:
-          "For å utøve rettighetene dine kan du kontakte oss på TBD(personvern.rettighetsadresse).",
+          "For å utøve rettighetene dine kan du kontakte oss på pal@reflektor.no.",
       },
     ],
   },
