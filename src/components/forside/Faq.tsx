@@ -76,7 +76,22 @@ export function Faq() {
               </div>
 
               <p className="mt-8 text-[1.0625rem]">
-                <Link href="/faq" className="underline hover:text-aksent">
+                {/*
+                    `hover:text-aksent-tekst` og ikke `hover:text-aksent`.
+                    Aksentfargen #DE4826 måler 3,78:1 mot den lyse flaten —
+                    under AA-kravet på 4,5 for tekst under 24 px, og denne
+                    lenka er 17. Token-fila har allerede den tilgjengelige
+                    varianten for akkurat dette: --aksent-tekst-liten,
+                    #C03A1C, som måler 4,95:1.
+
+                    Dette er altså ikke en merkevarebeslutning. Merkevaren
+                    er uendret; systemet hadde utgangen klar, den var bare
+                    ikke brukt her.
+                  */}
+                  <Link
+                    href="/faq"
+                    className="underline hover:text-aksent-tekst"
+                  >
                   Alle {faqSporsmal.length} spørsmål og svar
                 </Link>
               </p>

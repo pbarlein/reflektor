@@ -1381,3 +1381,32 @@ arbeid som skal vises, ikke en teknisk.
 
 Hover-kontrasten på 3,41:1 (under 4,5) er en merkevaretoken-beslutning og
 venter på Pål. Se tidligere notat.
+
+---
+
+## A52 — Hover-kontrasten var aldri en merkevarebeslutning. 19.09.2026
+
+Jeg har gjentatte ganger meldt hover-kontrasten som noe som venter på Pål,
+fordi den rører aksentfargen og `src/styles/tokens/` er merkevaren. **Det
+var feil, og jeg tok feil to ganger til:** tallet jeg oppga var 3,41, ikke
+3,78, fordi jeg målte mot feil flateverdi.
+
+Riktig målt, mot den faktiske bakgrunnen `rgb(246,244,241)`:
+
+| Farge | Kontrast | 17 px tekst (krav 4,5) |
+|---|---|---|
+| `#DE4826` — aksenten, brukt i hover i dag | **3,78** | ✗ |
+| `#C03A1C` — `--aksent-tekst-liten` | **4,95** | ✓ |
+
+Den andre raden fantes allerede. `overstyringer.css` definerer
+`--aksent-tekst-liten` med kommentaren «Trengs oransje i
+brødtekststørrelse, er #C03A1C (4,792) minsteverdien», og globals.css
+eksponerer den som `--color-aksent-tekst`. Systemet hadde utgangen klar;
+den var bare ikke brukt.
+
+Merkevaren er altså uendret. Det eneste som skjedde er at én lenke —
+«Alle 19 spørsmål og svar» på forsiden, sidens eneste produksjonsbruk av
+aksent som tekstfarge — nå bruker riktig token i hover.
+
+Den andre forekomsten, `text-aksent` i `Slot.tsx`, er TBD-markøren. Den
+vises bare når copy mangler og er et previewverktøy, ikke innhold.
