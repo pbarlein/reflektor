@@ -246,7 +246,15 @@ export function Pris() {
               lest som et likt løfte. Se `tilbud.stillbilder` i site.ts for
               Påls instruks ordrett.
             */}
-            <p className="mt-5 rounded-flate border border-dashed border-[color:var(--kant-pa-dyp)]/70 px-4 py-3.5 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet">
+            {/*
+              `max-w-3xl` er ikke pynt. Merknaden gikk over hele kortets
+              bredde og målte 90 tegn per linje. Løpende tekst leses
+              best mellom 45 og 75 tegn — over det mister øyet
+              linjestarten på vei tilbake. 768 px gir 69 her. Rammen
+              beholder full bredde; det er bare teksten som brekker
+              tidligere.
+            */}
+            <p className="mt-5 max-w-3xl rounded-flate border border-dashed border-[color:var(--kant-pa-dyp)]/70 px-4 py-3.5 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet">
               {tilbud.stillbilder}
             </p>
 

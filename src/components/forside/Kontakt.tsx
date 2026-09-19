@@ -62,10 +62,17 @@ export function Kontakt() {
                     {site.kontakt.firma}
                   </p>
                   <p className="mt-1">{site.kontakt.adresse}</p>
+                  {/*
+                    `inline-flex min-h-6` og ikke bare en lenke: WCAG 2.2
+                    AA 2.5.8 krever 24x24 CSS-piksler for klikkmål. Unntaket
+                    for «inline» gjelder lenker som står inne i en setning —
+                    denne står alene i sin egen blokk, så unntaket gjelder
+                    ikke. Målt høyde var 21 px.
+                  */}
                   <p className="mt-3">
                     <a
                       href={`mailto:${site.kontakt.epost}`}
-                      className="hover:text-pa-dyp"
+                      className="inline-flex min-h-6 items-center hover:text-pa-dyp"
                     >
                       {site.kontakt.epost}
                     </a>

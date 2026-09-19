@@ -1311,3 +1311,73 @@ Rutenettet leser nå som ett pusterom mellom to kort.
 
 Forsiden: 8 106 → 8 068 px på desktop. Netto bare −38 px, fordi
 prosessblokken samtidig vokste 26 px av gutterrettingen i A47.
+
+---
+
+## A51 — Forsiden målt mot best practice. 19.09.2026
+
+Pål: «så lenge designet støtter best practice i verdensklasse, så er jeg
+happy». Best practice har tall knyttet til seg, så jeg kjørte forsiden mot
+dem i stedet for å påstå noe.
+
+### Én ting jeg selv rapporterte feil først
+
+Første kjøring meldte kontrastbrudd på skilletegnet «·» i prisraden:
+1,29:1. **Det var skriptets feil, ikke sidens.** Fargen er
+`oklab(0.805984 0.00984171 0.0146355 / 0.6)`, og parseren min plukket
+tallene ut som om de var RGB. Målt riktig — komposittert over kortflaten
+`rgb(46,28,20)` — er den **4,05:1**. Tegnet er dessuten `aria-hidden` og
+`select-none`, altså ren dekor, som WCAG 1.4.3 eksplisitt unntar. Ingen
+feil.
+
+### Det som besto
+
+| Mål | Terskel | Målt |
+|---|---|---|
+| axe (alle regler) | 0 brudd | **0**, desktop og mobil |
+| WCAG 1.4.3 kontrast | 4,5:1 / 3:1 | all informasjonsbærende tekst består |
+| WCAG 2.4.7 synlig fokus | alle fokuserbare | alle (de to «treffene» var `type=hidden`) |
+| CLS | < 0,1 | **0,0000** — gjennom full skroll, 30 bilder og 16 klipp |
+| LCP | < 2 500 ms | 124 ms desktop, 180 ms mobil med 4× CPU-brems |
+
+CLS på null gjennom hele siden er det sterkeste tallet her: hvert eneste
+medieelement reserverer plassen sin før det lastes. LCP-tallene er målt
+mot localhost og sier **ingenting** om virkeligheten — uten nettverk er de
+bare en øvre grense.
+
+### Det som ikke besto, og som er rettet
+
+**WCAG 2.2 AA 2.5.8, målstørrelse.** To lenker målte 21 px i høyden mot
+kravet på 24: «Se alle anmeldelsene på Google» og e-postadressen i
+kontaktkortet. Unntaket for «inline» gjelder lenker inne i en setning —
+begge sto alene i sin egen blokk, så det gjaldt ikke. `inline-flex
+min-h-6`. «+47 47605070» står inne i en setning og er unntatt.
+
+**Linjelengde.** Merknaden om stillbilder gikk over hele priskortets
+bredde: 129 tegn per linje mot normen 45–75. `max-w-3xl` tar den til 99.
+
+### Det som ikke besto, og som jeg lot stå
+
+**Prosesstegene måler 34 tegn per linje**, under gulvet på 45. Årsaken er
+gutterrettingen i A47: spaltene gikk fra 298 til 266 px da lufta rundt
+hårstrekene ble symmetrisk. Jeg lot det stå av to grunner:
+
+1. 45–75 gjelder **løpende lesning**. Disse er 20-ords trinn i en
+   prosesstripe, altså etiketter. Der er 35–45 normalen.
+2. Tre spalter i en 992 px container topper på ~42 tegn selv med null
+   gutter. Skal tallet over 45, må det bli to spalter eller bredere
+   container — en designendring, ikke en justering.
+
+**Merknaden står fortsatt på 99 tegn**, ikke 75. For å komme til 75 måtte
+rammen ned i 558 px inne i et 992 px kort, og da ser den ut som en feil.
+En to-linjers merknad tåler lengre linjer enn et avsnitt gjør.
+
+**Vekt: 1 474 kB desktop, 2 372 kB mobil.** Over det man vil ha, men
+siden er et videobyrås arbeidsprøve — 16 klipp og 30 bilder er produktet,
+ikke pynt. Skal tallet ned, er det en redaksjonell beslutning om hvor mye
+arbeid som skal vises, ikke en teknisk.
+
+### Fortsatt uavklart fra tidligere
+
+Hover-kontrasten på 3,41:1 (under 4,5) er en merkevaretoken-beslutning og
+venter på Pål. Se tidligere notat.

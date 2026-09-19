@@ -209,7 +209,7 @@ export function Anmeldelsesrad({
             href={googleProfil.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-aksent-pa-dyp underline decoration-from-font underline-offset-4"
+            className="inline-flex min-h-6 items-center text-aksent-pa-dyp underline decoration-from-font underline-offset-4"
           >
             Se alle anmeldelsene på Google
           </a>
