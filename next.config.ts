@@ -46,16 +46,20 @@ const redirects: NextConfig["redirects"] = async () => [
     permanent: true,
   },
   /*
-   * Søkekonsollen viser 1 935 visninger og posisjon 15,8 på «produktfoto» for
-   * denne URL-en, med 22 rangerende søkeord. Første versjon sendte den til
-   * forsiden sammen med resten av det døde /tjenester/-treet – det ville kastet
-   * bort den sterkeste enkeltposisjonen vi har på et kommersielt søkeord.
+   * TIL FORSIDEN, BESTEMT AV PÅL 19.09.2026: «produktfoto-siden er slettet.
+   * vi driver ikke med produktfoto.»
+   *
+   * URL-en hadde 1 935 visninger, posisjon 15,8 og 22 rangerende søkeord,
+   * og pekte derfor til /produktfoto. Den siden finnes ikke og skal ikke
+   * lages — tjenesten er avviklet. En 301 til en side som ikke finnes er
+   * verre enn ingen redirect: den lover en etterfølger og leverer 404.
+   *
+   * Forsiden er riktig mål her, etter samme regel som resten av det døde
+   * /tjenester/-treet lenger ned: berg lenkeverdien, ikke lat som om
+   * tjenesten finnes. Tallene står igjen for historikken, ikke som et
+   * argument for å gjenopplive siden.
    */
-  {
-    source: "/tjenester/produktfoto",
-    destination: "/produktfoto",
-    permanent: true,
-  },
+  { source: "/tjenester/produktfoto", destination: "/", permanent: true },
   /* 1 466 visninger, 43 søkeord. Samme resonnement. */
   {
     source: "/tjenester/eventfotograf-eventvideo",

@@ -494,6 +494,15 @@ Sjekk mot kilden før en instruks derfra brukes som premiss.
 
 ## A40 — `/produktfoto` finnes ikke, men redirecten peker dit
 
+> **LUKKET 19.09.2026 av Pål:** «produktfoto-siden er slettet. vi driver
+> ikke med produktfoto, så det er helt greit.» Tjenesten er avviklet, og
+> siden skal ikke lages. `/tjenester/produktfoto` går nå til forsiden,
+> etter samme regel som resten av det døde `/tjenester/`-treet.
+>
+> **Ikke ta dette opp igjen.** Visningstallene under står for historikken,
+> ikke som et argument. En sterk posisjon på et søkeord for en tjeneste
+> selskapet ikke leverer, er ikke en posisjon verdt å berge.
+
 `next.config.ts` sender `/tjenester/produktfoto` til `/produktfoto`
 permanent (301). Begrunnelsen i filen er god: 1 935 visninger og posisjon
 15,8 på «produktfoto», 22 rangerende søkeord — den sterkeste
