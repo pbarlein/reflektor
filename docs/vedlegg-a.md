@@ -1475,3 +1475,72 @@ ignorere den. `utenKommentarer()` blanker nå kommentarer før skanning,
 med linjeskift beholdt så linjenumrene stemmer. Verifisert i to
 retninger: en innsatt `TBD(test.verdi)` i `logoer.ts` ble fanget, og
 kommentarene ble ikke.
+
+---
+
+## A54 — Bloggmigreringen kan ikke starte på dagens sluggliste. Målt 19.09.2026
+
+Pål spurte om migreringen var startet. Den er ikke det, og det er like
+greit: jeg sjekket `bloggSlugs` mot levende reflektor.no før jeg skrev en
+linje, og lista stemmer ikke med virkeligheten.
+
+Alle 17 sluggene i `src/content/site.ts` hentet mot
+`https://www.reflektor.no/blogg/<slug>`, uten å følge redirects:
+
+### 8 er ekte artikler (200, eget innhold)
+
+| Slug | Ord | Tittel |
+|---|---|---|
+| `hva-innebaerer-digital-historiefortelling` | 1 518 | Hva innebærer digital historiefortelling? |
+| `markedsforing-i-sosiale-medier-some` | 2 011 | Markedsføring i sosiale medier |
+| `hva-er-innholdsmarkedsforing` | 2 332 | Hva er innholdsmarkedsføring? |
+| `hva-er-employer-branding` | 1 447 | Hva er employer branding? |
+| `hva-er-innholdsproduksjon` | 2 340 | Hva er innholdsproduksjon? |
+| `hva-er-videomarkedsfring` | 2 051 | Hva er videomarkedsføring? |
+| `hva-gjr-en-innholdsprodusent` | 1 524 | Hva gjør en innholdsprodusent? |
+| `hva-koster-et-some-byra` | 701 | Hva koster et SoMe-byrå i Norge? |
+
+Til sammen ~13 900 ord. Det er migreringsjobben.
+
+### 3 er aliaser — 301 til en av de åtte
+
+| Slug | 301 til |
+|---|---|
+| `hvordan-markedsfore-bedrift` | `markedsforing-i-sosiale-medier-some` |
+| `hva-er-digital-markedsforing` | `markedsforing-i-sosiale-medier-some` |
+| `hva-er-inbound-marketing` | `hva-er-innholdsmarkedsforing` |
+
+### 6 er døde — 301 til `/blogg`
+
+`hvilke-virkemidler-er-mest-effektive-i-reklame-og-hvordan-brukes-de`,
+`hva-er-holdningskampanje`, `hva-er-reklame`, `hva-er-personas`,
+`hva-er-visuell-identitet`, `hvordan-ta-portrett-bilder`.
+
+Merk at Squarespace svarer **200 på en soft-404**: den serverer
+bloggoversikten med oversiktens egen `<title>`. En sjekk som bare ser på
+statuskoden ville meldt alle 17 som friske. Det var slik lista oppsto.
+
+### Hva det betyr
+
+`bloggSlugs` bygger én side per slug. Ved cutover ville den altså:
+
+- publisert **6 sider som ikke finnes i dag**, og som i dag sender folk
+  videre til oversikten
+- publisert **3 aliaser som selvstendige artikler**, altså duplikatinnhold
+  der det i dag står én kanonisk URL med tre innganger
+
+Det er samme klasse feil som A45 — publisere det som ikke finnes, og
+miste strukturen i det som finnes.
+
+### Ikke rettet, og hvorfor
+
+Regel 3 i AGENTS.md sier rett ut at bloggsluggene ikke skal endres. Den
+regelen finnes for å verne ~481 refererende domener, og den er riktig —
+men den forutsetter at lista er korrekt, og det er den ikke. Å endre den
+er Påls beslutning, ikke min.
+
+**Anbefalingen min:** de 8 ekte blir sider og får migrert tekst. De 3
+aliasene blir 301 i `next.config.ts`, til samme mål som i dag. De 6 døde
+blir 301 til `/blogg`, som i dag — altså ingen ny 404, og ingen ny side.
+Da er den nye siden identisk med dagens på alle 17 adressene, og det er
+akkurat det regel 3 er ute etter.
