@@ -1,5 +1,11 @@
 # Synlighet 2026: søkeordsanalyse og AEO-strategi
 
+> **STATUS 21.09.2026: BYGGET.** Alle fem tjenestesider, bloggen med åtte
+> migrerte artikler og én ny, samt `/kontaktoss` og `/gratis-strategimote`
+> står. Se A56 i `docs/vedlegg-a.md` for hva som ble bygget og hvilke tre
+> feil som ble funnet underveis. Rekkefølgen i kapittel 5 er utført, med
+> ett unntak som er begrunnet der.
+
 Skrevet 21.09.2026 på bestilling fra Pål: «gå igjennom alle landingssidene
 og optimaliser basert på research, AEO og SEO … start med en solid
 søkeordsanalyse … ikke føl deg begrenset av eksisterende brief».

@@ -1695,3 +1695,63 @@ altså kannibalisering, som var oppgaven å hindre.
 Den ene artikkelen som ikke kan eies av noen tjenesteside, er
 sammenligningen «byrå, frilanser eller ansette selv». Den krever
 lønnstall med kilde, og de må hentes før den kan skrives.
+
+---
+
+## A57 — `/kontaktoss` hadde ikke skjema. Funnet 21.09.2026
+
+Funnet i en sluttkontroll over alle tjue sider, der ordtelling per side ble
+målt sammen med axe og schema. Tre sider skilte seg ut med nesten ingen
+tekst. To av dem var reelle mangler.
+
+### `/kontaktoss` — tre ord i `main`
+
+En overskrift og en e-postadresse. TODO-en i fila sa det rett ut:
+
+> «skjema. Innsending må utløse `takk_page_view` på `/takk` – det er
+> hendelsen GA4 og Google Ads måler leads på. Skjemaet er eneste
+> KPI-bærende element på siden.»
+
+**`/kontaktoss` er navngitt i AGENTS.md som en live side det annonseres
+mot.** Betalt trafikk landet på en side uten det ene elementet som gjør
+den til noe annet enn en blindvei. Av alt som ble funnet i denne
+gjennomgangen, er dette det som koster penger hver dag.
+
+Skjemaet er nå det samme som ellers, med `side="/kontaktoss"` slik at
+kilden registreres, og gjennom `/api/skjema` med 303 til `/takk`. Ingen
+ny strøm, ingen sporing rørt. Ikke testet ved innsending — det ville
+utløst en ekte konvertering i Ads-kontoen.
+
+### `/gratis-strategimote` — to ord, og et tilbud som motsa resten
+
+Siden lovet et «gratis strategimøte». Resten av nettstedet lover et
+skriftlig forslag innen tre virkedager. To løfter for samme handling er
+samme feil som `/sosiale-medier-byra` ble 301-et for.
+
+Påls avklaring 19.09.2026 løste den: forslag først, så en prat om det.
+Siden eier nå praten — den andre halvdelen av sekvensen — og sier
+eksplisitt at forslaget kommer først. Den konkurrerer ikke med
+`/kontaktoss`; den forklarer hva møtet faktisk er.
+
+TODO-en ventet på «budskap og HubSpot-oppsett». Budskapet fantes allerede
+i Påls egen avklaring, og HubSpot trengs ikke: skjemaet er det verifiserte
+som brukes ellers.
+
+### `/sosiale-medier-byra` — 19 ord, og det er riktig
+
+Fortsatt en `UnderArbeid`-stubb, og den skal forbli det. 301-en til `/`
+legges inn på cutover, etter at Google Ads har byttet endelig URL. Se
+`docs/cutover.md` punkt 1. Å bygge den ville vært å bygge noe som skal
+fjernes.
+
+### Sluttkontrollen, tjue sider
+
+| Mål | Resultat |
+|---|---|
+| axe-brudd | **0** på alle tjue |
+| `<h1>` per side | nøyaktig 1 på alle tjue |
+| Service-schema | 6 |
+| FAQPage-schema | 11 |
+| BreadcrumbList | 16 |
+| Article | 5 |
+| Synlige TBD | 7, alle på tjenestesidene, alle listet av `content:check` |
