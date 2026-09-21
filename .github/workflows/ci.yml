@@ -28,5 +28,47 @@ jobs:
         run: npm run lenkesjekk
       - name: Bygg
         run: npm run build
+
+  # Intranettet er et eget prosjekt med egen package.json og egen
+  # node_modules. Det MÅ derfor ha sin egen jobb — rotas `npm ci` installerer
+  # ikke avhengighetene, og rotas tsconfig og eslint holder mappa utenfor
+  # med vilje.
+  #
+  # Egen jobb og ikke ekstra steg i `sjekk`: de to prosjektene kan feile
+  # uavhengig av hverandre, og da skal det stå hvilket av dem som er rødt.
+  # De kjører samtidig, så det koster ingen ekstra ventetid.
+  intern:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: intern
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: intern/package-lock.json
+      - run: npm ci
+      - name: Typesjekk
+        run: npx tsc --noEmit
+      - name: Lint
+        run: npm run lint
+      - name: Tester
+        run: npm test
+      # Bygget kjører `hent-medier` via prebuild. Det leser ../public, som
+      # finnes fordi actions/checkout henter hele repoet.
+      #
+      # INGEN SESJON_HEMMELIGHET HER, og det er etterprøvd: byggen er kjørt
+      # uten den. Alle sider er dynamiske fordi de leser cookies, så
+      # ingenting som signerer eller leser en sesjon kjører ved bygg.
+      #
+      # En oppdiktet verdi ville dessuten vært aktivt skadelig: den ville
+      # fått en fremtidig side som faktisk trenger hemmeligheten til å bygge
+      # grønt i CI og feile i deploy. Feiler byggen her en dag, er det en
+      # ekte beskjed.
+      - name: Bygg
+        run: npm run build
+
 # TODO (vedlegg A): Lighthouse mot ytelsesbudsjettet i 8.7. Krever en deployet
 # preview-URL som workflowen kan peke på.
