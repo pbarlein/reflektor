@@ -99,6 +99,71 @@ const redirects: NextConfig["redirects"] = async () => [
   },
 
   /*
+   * BLOGGEN: NI AV SYTTEN SLUGS HAR ALDRI HATT INNHOLD. Lagt inn 21.09.2026.
+   *
+   * `bloggSlugs` i site.ts lister 17. Målt mot levende reflektor.no
+   * 19.09.2026 — hver enkelt hentet, uten å følge redirects — var 8 ekte
+   * artikler, 3 aliaser og 6 døde. Squarespace svarer 200 på en soft-404:
+   * den serverer bloggoversikten med oversiktens egen title. En sjekk på
+   * statuskode alene melder alle 17 som friske, og det er nesten sikkert
+   * slik lista oppsto. Se A54 i docs/vedlegg-a.md.
+   *
+   * Uten disse omdirigeringene ville cutover publisert 6 sider som ikke
+   * finnes, og 3 aliaser som selvstendige artikler — altså duplikatinnhold
+   * der det i dag står én kanonisk URL med tre innganger.
+   *
+   * MÅLENE SPEILER DAGENS SIDE NØYAKTIG. Det var fristende å sende
+   * `hva-er-reklame` til /reklamefilm i stedet for til /blogg — den
+   * rangerer tross alt på «reklame» (2 200) og «reklamer» (800). Men søket
+   * er informasjonssøkende og /reklamefilm er kommersiell, og en 301 til
+   * noe som ikke svarer på spørsmålet behandles som en myk 404. Dagens mål
+   * er det trygge, og det er dessuten regel 1 i AGENTS.md i praksis:
+   * levende adresser skal oppføre seg som før.
+   */
+
+  /* Tre aliaser — 301 til den kanoniske artikkelen, som i dag. */
+  {
+    source: "/blogg/hvordan-markedsfore-bedrift",
+    destination: "/blogg/markedsforing-i-sosiale-medier-some",
+    permanent: true,
+  },
+  {
+    source: "/blogg/hva-er-digital-markedsforing",
+    destination: "/blogg/markedsforing-i-sosiale-medier-some",
+    permanent: true,
+  },
+  {
+    source: "/blogg/hva-er-inbound-marketing",
+    destination: "/blogg/hva-er-innholdsmarkedsforing",
+    permanent: true,
+  },
+
+  /* Seks døde — 301 til oversikten, som i dag. */
+  {
+    source:
+      "/blogg/hvilke-virkemidler-er-mest-effektive-i-reklame-og-hvordan-brukes-de",
+    destination: "/blogg",
+    permanent: true,
+  },
+  {
+    source: "/blogg/hva-er-holdningskampanje",
+    destination: "/blogg",
+    permanent: true,
+  },
+  { source: "/blogg/hva-er-reklame", destination: "/blogg", permanent: true },
+  { source: "/blogg/hva-er-personas", destination: "/blogg", permanent: true },
+  {
+    source: "/blogg/hva-er-visuell-identitet",
+    destination: "/blogg",
+    permanent: true,
+  },
+  {
+    source: "/blogg/hvordan-ta-portrett-bilder",
+    destination: "/blogg",
+    permanent: true,
+  },
+
+  /*
    * IKKE LAGT INN, med vilje:
    *
    * /cart   – Squarespace-rest. Forsvinner av seg selv ved plattformbytte.

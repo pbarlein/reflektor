@@ -380,3 +380,47 @@ export function TeamSchema() {
     />
   );
 }
+
+/**
+ * Article-markering for et blogginnlegg.
+ *
+ * `datePublished` er den EKTE datoen fra Squarespace. Ferskhet er en
+ * siteringsfaktor — 83 % av AI-siteringer på kommersielle søk går til sider
+ * oppdatert siste 12 måneder — men en dato vi flytter for å se ferskere ut
+ * er en usann påstand for maskiner vi ikke ville tort å skrive for
+ * mennesker. Samme regel som KundecaseSchema følger.
+ *
+ * Ingen `dateModified`. Vi vet når teksten ble publisert på Squarespace, og
+ * vi vet når den ble flyttet hit — men en flytting er ikke en revisjon, og
+ * å markere den som det ville vært å jukse med nettopp det signalet.
+ */
+export function ArtikkelSchema({
+  tittel,
+  beskrivelse,
+  sti,
+  publisert,
+}: {
+  tittel: string;
+  beskrivelse: string;
+  sti: string;
+  publisert: string;
+}) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: tittel,
+    description: beskrivelse,
+    datePublished: publisert,
+    inLanguage: "nb-NO",
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${basisUrl()}${sti}` },
+    author: { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}

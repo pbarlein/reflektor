@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
-import { alleLandingssider, bloggSlugs } from "@/content/site";
+import { artikkelSlugs } from "@/content/artikler";
+import { alleLandingssider } from "@/content/site";
 import { kundecaser } from "@/content/caser";
 import { basisUrl } from "@/lib/miljo";
 
@@ -25,6 +26,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: url("/faq"), priority: 0.6 },
     // Bloggen beholdes for lenkeverdien, men prioriteres lavt.
     { url: url("/blogg"), priority: 0.4 },
-    ...bloggSlugs.map((slug) => ({ url: url(`/blogg/${slug}`), priority: 0.3 })),
+    /*
+      ÅTTE, IKKE SYTTEN. Sitemapet mappet over `bloggSlugs`, som lister ni
+      slugs uten innhold — tre aliaser og seks døde, alle 301 fra
+      21.09.2026. Et sitemap som annonserer URL-er som omdirigerer er en
+      selvmotsigelse: det er en liste over sider vi ber Google indeksere,
+      og de ni er sider vi ber Google glemme.
+    */
+    ...artikkelSlugs.map((slug) => ({
+      url: url(`/blogg/${slug}`),
+      priority: 0.3,
+    })),
   ];
 }

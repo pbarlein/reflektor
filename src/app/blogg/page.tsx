@@ -1,37 +1,88 @@
-import Link from "next/link";
 import type { Metadata } from "next";
-import { Container } from "@/components/Container";
-import { bloggSlugs } from "@/content/site";
+import Link from "next/link";
 
+import { Container } from "@/components/Container";
+import { Eyebrow } from "@/components/Eyebrow";
+import { BrodsmuleSchema } from "@/components/Schema";
+import { artikler } from "@/content/artikler";
+import { basisUrl } from "@/lib/miljo";
+
+/**
+ * Bloggoversikten.
+ *
+ * LISTER ÅTTE, IKKE SYTTEN. Den gamle versjonen mappet over `bloggSlugs` og
+ * utledet en tittel av slugen — «Hva er videomarkedsfring» med skrivefeilen
+ * og alt. Ni av de sytten pekte dessuten på sider som ikke finnes: tre er
+ * aliaser som 301-er videre, seks er døde. Se A54 i docs/vedlegg-a.md.
+ *
+ * Nå leses `artikler`, som er de som faktisk har innhold, og titlene er de
+ * ekte fra Squarespace.
+ *
+ * SORTERT NYEST FØRST. Ferskhet er en siteringsfaktor, og den nyeste
+ * artikkelen — «Hva koster et SoMe-byrå i Norge?» — er dessuten den eneste
+ * bunn-trakt-teksten i bunken. Forskningen sier at det er den typen som
+ * siteres; «hva er»-guidene er kategorien AI-motorene svarer på selv.
+ */
 export const metadata: Metadata = {
-  title: "Blogg",
-  description: "Om sosiale medier, innholdsproduksjon og markedsføring.",
+  title: "Blogg – sosiale medier, video og innholdsproduksjon",
+  description:
+    "Artikler fra Reflektor om sosiale medier, videomarkedsføring, innholdsproduksjon og employer branding.",
+  alternates: { canonical: `${basisUrl()}/blogg` },
 };
 
-/** Midlertidig: utleder en lesbar tittel av slugen inntil tekstene er migrert. */
-function tittelFraSlug(slug: string) {
-  const ord = slug.replace(/-/g, " ");
-  return ord.charAt(0).toUpperCase() + ord.slice(1);
-}
-
 export default function Blogg() {
+  const sortert = [...artikler].sort((a, b) =>
+    b.publisert.localeCompare(a.publisert),
+  );
+
   return (
-    <section className="py-20">
-      <Container>
-        <h1 className="text-4xl font-semibold tracking-tight">Blogg</h1>
-        <ul className="mt-12 divide-y divide-kant border-y border-kant">
-          {bloggSlugs.map((slug) => (
-            <li key={slug}>
-              <Link
-                href={`/blogg/${slug}`}
-                className="block py-6 transition-opacity hover:opacity-70"
-              >
-                {tittelFraSlug(slug)}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </Container>
-    </section>
+    <>
+      <BrodsmuleSchema ledd={[{ navn: "Hjem", sti: "/" }, { navn: "Blogg" }]} />
+
+      <section className="pt-16 pb-14 sm:pt-24 sm:pb-20">
+        <Container>
+          <Eyebrow>Blogg</Eyebrow>
+          <h1 className="mt-4 max-w-3xl text-4xl text-balance sm:text-5xl lg:text-6xl">
+            Om sosiale medier, video og innholdsproduksjon
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-pretty text-blekk-dempet">
+            Åtte artikler om faget vi jobber med. Skrevet for å forklare, ikke
+            for å selge.
+          </p>
+        </Container>
+      </section>
+
+      <section className="pb-24 sm:pb-32">
+        <Container>
+          <ul className="grid gap-px overflow-hidden rounded-flate bg-kant sm:grid-cols-2">
+            {sortert.map((a) => (
+              <li key={a.slug} className="bg-flate">
+                <Link
+                  href={`/blogg/${a.slug}`}
+                  className="group flex h-full flex-col p-7 transition-colors hover:bg-flate-dempet motion-reduce:transition-none sm:p-9"
+                >
+                  <p className="font-sans text-xs font-medium tracking-[0.08em] text-blekk-dempet uppercase">
+                    <time dateTime={a.publisert}>
+                      {new Date(a.publisert).toLocaleDateString("nb-NO", {
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </time>
+                  </p>
+                  <h2 className="display mt-4 text-2xl text-balance sm:text-[1.75rem]">
+                    <span className="underline decoration-transparent decoration-1 underline-offset-[0.25em] transition-colors group-hover:decoration-aksent motion-reduce:transition-none">
+                      {a.tittel}
+                    </span>
+                  </h2>
+                  <p className="mt-4 grow leading-relaxed text-pretty text-blekk-dempet">
+                    {a.beskrivelse}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+    </>
   );
 }
