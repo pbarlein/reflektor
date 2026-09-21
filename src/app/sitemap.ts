@@ -15,7 +15,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: url(`/${side.slug}`),
       priority: side.status === "live" ? 0.9 : 0.5,
     })),
-    { url: url("/gratis-strategimote"), priority: 0.9 },
     { url: url("/kontaktoss"), priority: 0.8 },
     { url: url("/vart-arbeid"), priority: 0.7 },
     ...kundecaser.map((c) => ({

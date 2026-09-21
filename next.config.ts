@@ -99,6 +99,25 @@ const redirects: NextConfig["redirects"] = async () => [
   },
 
   /*
+   * /gratis-strategimote ER SLETTET. Rettet 21.09.2026.
+   *
+   * Notatet nederst i denne fila oppførte den som «live (HTTP 200)» og
+   * sa at den skulle beholdes som den er. Det var feil, og feilen var
+   * dyr: jeg rakk å bygge en hel side for adressen før Pål sa at den var
+   * slettet på Squarespace. Hentet på nytt samme dag — den svarer 404.
+   *
+   * LÆRDOMMEN ER EN GJENGANGER I DETTE PROSJEKTET. Notatet var en påstand
+   * om virkeligheten, skrevet en gang og aldri sjekket igjen. Det er samme
+   * klasse feil som bloggslugene (A54) og som redirecten til /produktfoto
+   * (A40): et kart som var riktig da det ble tegnet.
+   *
+   * Dette er derimot presis den situasjonen regel 1 i AGENTS.md ber om en
+   * redirect for — «redirects skal kun rette opp faktiske 404-er». Målet
+   * er /kontaktoss: samme intensjon, og den er live med 7 693 ord.
+   */
+  { source: "/gratis-strategimote", destination: "/kontaktoss", permanent: true },
+
+  /*
    * BLOGGEN: NI AV SYTTEN SLUGS HAR ALDRI HATT INNHOLD. Lagt inn 21.09.2026.
    *
    * `bloggSlugs` i site.ts lister 17. Målt mot levende reflektor.no
@@ -167,7 +186,7 @@ const redirects: NextConfig["redirects"] = async () => [
    * IKKE LAGT INN, med vilje:
    *
    * /cart   – Squarespace-rest. Forsvinner av seg selv ved plattformbytte.
-   * /privacypolicy, /gratis-strategimote, /videoproduksjon-i-oslo,
+   * /privacypolicy, /videoproduksjon-i-oslo,
    * /employer-branding-video-oslo, /eventfotograf-eventvideo
    *         – alle live (HTTP 200). Beholdes som de er.
    */

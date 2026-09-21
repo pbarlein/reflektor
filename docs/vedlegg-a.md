@@ -1755,3 +1755,45 @@ fjernes.
 | BreadcrumbList | 16 |
 | Article | 5 |
 | Synlige TBD | 7, alle på tjenestesidene, alle listet av `content:check` |
+
+---
+
+## A58 — `/gratis-strategimote` var slettet. Rettet 21.09.2026
+
+Pål, etter at jeg hadde bygget siden: «jeg mener forresten at "gratis
+strategimøte" er en gammel kontaktside som ikke lenger er i bruk. slettet
+på squarespace siden.»
+
+Hentet på nytt samme dag: **404.** Han har rett.
+
+### Notatet i `next.config.ts` var feil
+
+Den listet `/gratis-strategimote` blant sider som er «alle live (HTTP
+200). Beholdes som de er.» Det var en påstand om virkeligheten, skrevet
+én gang og aldri sjekket igjen.
+
+**Det er tredje gang samme klasse feil dukker opp i dette prosjektet:**
+
+| Sak | Kartet sa | Virkeligheten |
+|---|---|---|
+| A40 | 301 til `/produktfoto` berger en sterk posisjon | siden fantes ikke |
+| A54 | 17 bloggslugs er friske | 8 var ekte, 9 var døde eller aliaser |
+| A58 | `/gratis-strategimote` er live | 404 |
+
+Fellesnevneren er et kart som var riktig da det ble tegnet. Kostnaden her
+var en hel side bygget for en adresse som ikke finnes — funnet fordi Pål
+kjente sin egen side bedre enn notatet gjorde.
+
+### Gjort
+
+Siden er slettet, fjernet fra sitemapet, og adressen 301-er nå til
+`/kontaktoss` — samme intensjon, og den er live med 7 693 ord. Det er
+presis situasjonen regel 1 i AGENTS.md ber om en redirect for: «redirects
+skal kun rette opp faktiske 404-er».
+
+### Verdt å merke
+
+Arbeidet var ikke bortkastet. Da siden ble bygget, måtte tilbudet ryddes
+— «gratis strategimøte» motsa «forslag innen tre virkedager». Den
+opprydningen står, i sekvensen på `/kontaktoss`: forslag først, så en
+prat om det.
