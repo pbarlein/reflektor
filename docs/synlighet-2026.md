@@ -183,23 +183,79 @@ byråer ikke har, fordi de skriver «ta kontakt for pris».
 
 ---
 
-## 5. Rekkefølge for byggingen
+## 5. Testen hver tjenesteside må bestå
 
-Sortert etter forventet effekt per time, ikke etter hva som er gøyest:
+**RETTELSE 21.09.2026.** Kapittel 4 og 5 sto opprinnelig med
+`/sosiale-medier-byra` som byggemål nummer fire, med et spørsmål om den
+burde bygges. Pål påpekte at det var avgjort, og han har rett.
 
-1. **`/innholdsproduksjon`** — 450 vol, KD 0, URL-en finnes. Største gap.
-2. **`/videoproduksjon-i-oslo`** — 150 + 150 vol, KD 2.
-3. **`/reklamefilm`** — 200 vol, KD 9.
-4. **`/sosiale-medier-byra`** — 100 + 50 vol, høyest CPC (2,50 $). Merk:
-   denne skal 301-es til `/` ved cutover per AGENTS.md. **Det må avklares
-   med Pål før den bygges** — å optimalisere en side som skal fjernes er
-   bortkastet.
-5. **`/employer-branding-video-oslo`** og **`/eventfotograf-eventvideo`** —
-   lavt volum, men de finnes og annonseres mot.
-6. **De 8 bloggartiklene** — migrering + AEO-struktur.
-7. **Nye prissider** — etter at tjenestesidene står.
+Vedtaket fra 15.09.2026, i `docs/cutover.md`:
 
----
+> Google AI Mode siterer vekselvis forsiden og `/sosiale-medier-byra` for
+> samme prompt, fordi begge bærer samme fakta. To sider med samme fakta
+> deler signalene i to. Det AI belønner er setningene, ikke URL-en — og
+> setningene følger med i en 301.
+
+Det var et **AEO-vedtak**, ikke en opprydding. Søkeordene `sosiale medier
+byrå` (50, 2,50 $) og `some byrå` (100, 2,00 $) er dermed **forsidens**
+ansvar, ikke en egen sides.
+
+### Prinsippet gjelder alle fem, ikke bare den ene
+
+Det var dette jeg ikke tok konsekvensen av. Regelen som følger:
+
+> **En tjenesteside fortjener å eksistere bare hvis den bærer fakta
+> forsiden ikke bærer.** Er fakta de samme, deler de to sidene signalene,
+> og begge blir svakere enn én av dem ville vært alene.
+
+Forsiden selger **abonnementet**: én produksjonsdag i måneden, 8–10
+videoer, publisering to ganger i uken, 30 000 kr/mnd.
+
+Men produksjonskundene — Anton Sport, The Well, Peppes Pizza, Egon, Baker
+Brun — er ifølge AGENTS.md **produksjonskunder, ikke abonnenter**.
+Prosjektproduksjon er altså en reell, separat virksomhet. Det er den, og
+bare den, en tjenesteside kan bygges på uten å konkurrere med forsiden.
+
+### Testen anvendt
+
+| Side | Bærer den egne fakta? | Dom |
+|---|---|---|
+| `/sosiale-medier-byra` | nei — samme tilbud som forsiden | **301 til `/`** ved cutover. Avgjort. |
+| `/reklamefilm` | ja — en reklamefilm er et prosjekt, ikke et abonnement | bygges |
+| `/employer-branding-video-oslo` | ja — rekrutteringsvideo, eget bruksområde | bygges |
+| `/eventfotograf-eventvideo` | ja — eventdekning, eget bruksområde | bygges |
+| `/videoproduksjon-i-oslo` | delvis — overlapper `/reklamefilm` | grensen må settes |
+| `/innholdsproduksjon` | **usikkert — se under** | avklares først |
+
+### Problemet med `/innholdsproduksjon`
+
+Den er samtidig den største muligheten (450 vol, KD 0, 1,80 $) og den
+som ligner mest på forsiden. «Innholdsproduksjon» er bokstavelig talt
+det abonnementet gjør: produsere innhold, månedlig.
+
+Bygger vi den som «vi produserer innhold for bedrifter», har vi laget
+`/sosiale-medier-byra` på nytt under et annet navn — samme feil,
+14 dager senere.
+
+Den kan bare forsvares hvis den beskriver **prosjektproduksjon uten
+abonnement**: en annen leveranse, en annen prismodell, en annen kunde.
+Det er fakta jeg ikke har, og ikke skal finne på.
+
+### Rekkefølge, oppdatert
+
+1. **`/reklamefilm`** — 200 vol, KD 9. Består testen uten forbehold.
+2. **`/videoproduksjon-i-oslo`** — 150 + 150 vol, KD 2. Krever at grensen
+   mot `/reklamefilm` settes først: hva er prosjektet, hva er formatet.
+3. **`/employer-branding-video-oslo`** og **`/eventfotograf-eventvideo`** —
+   lavere volum, men egne bruksområder og annonseres mot.
+4. **`/innholdsproduksjon`** — størst gevinst, men først når spørsmålet i
+   kapittel 6 er besvart.
+5. **De 8 bloggartiklene** — migrering + AEO-struktur.
+6. **Nye prissider** — etter at tjenestesidene står.
+
+`/sosiale-medier-byra` står ikke på lista. Forsiden skal bære de ordene,
+og den gjør det delvis allerede: «sosiale medier-byrå» står fire ganger i
+markeringen og FAQ-svaret. Det kan styrkes uten en ny side.
 
 ## 6. To ting jeg trenger avklart
 
@@ -213,4 +269,14 @@ Praktisk betyr det: jeg skriver prosa, men hver faktapåstand — tall,
 kundenavn, resultater — må komme fra noe som allerede er verifisert i
 repoet. Der det mangler, blir det stående som `TBD(...)`.
 
-**`/sosiale-medier-byra`.** Se punkt 4 over.
+**Selger Reflektor prosjektproduksjon uten abonnement — og hva koster
+det?** Det avgjør om `/innholdsproduksjon` kan bygges i det hele tatt.
+Produksjonskundene beviser at virksomheten finnes; jeg mangler
+leveransen og prismodellen. Uten dem blir siden en omskrivning av
+forsiden, og da er 301 til `/` det riktige — samme dom som
+`/sosiale-medier-byra` fikk.
+
+**Hvor går grensen mellom `/reklamefilm` og `/videoproduksjon-i-oslo`?**
+Er det format mot format (én film mot flere), eller bruk mot bruk
+(kampanje mot løpende)? To sider som begge sier «vi lager video i Oslo»
+er samme feil i mindre skala.
