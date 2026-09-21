@@ -56,12 +56,14 @@ Workspace.
    - Fyll inn appnavn og support-e-post.
 3. **APIs & Services → Credentials → Create credentials → OAuth client ID**
    - Application type: **Web application**
-   - **Authorized redirect URIs** — legg inn én per miljø dere bruker:
+   - **Authorized redirect URIs** — disse tre, ordrett:
      ```
+     https://reflektor-intern-reflektor.vercel.app/api/auth/retur
+     https://reflektor-intern-git-claude-beautiful-lovelace-dy56f2-reflektor.vercel.app/api/auth/retur
      http://localhost:3000/api/auth/retur
-     https://<prosjekt>.vercel.app/api/auth/retur
-     https://<eget-domene>/api/auth/retur
      ```
+     Den andre er branch-aliaset og kan sløyfes når arbeidet er merget.
+     Får dere eget domene senere, må det legges inn her også.
      Google godtar kun adresser den har sett før. Mangler en, får brukeren
      `redirect_uri_mismatch` fra Google — ikke fra oss.
 4. Kopier **Client ID** og **Client secret** inn i miljøvariablene.
@@ -84,17 +86,37 @@ stille.
 
 ---
 
-## Deploy
+## Deploy — allerede satt opp
 
-Eget Vercel-prosjekt, med **Root Directory** satt til `intern`. Vercel sjekker
-ut hele repoet og bygger derfra, så `scripts/hent-medier.mts` finner
-`../public` som normalt.
+| | |
+|---|---|
+| Vercel-prosjekt | `reflektor-intern` (eget, ved siden av `reflektor-ny`) |
+| Root Directory | `intern` |
+| Node | 22.x |
+| «Include files outside root» | **på** — byggen trenger `../public` |
+| URL | https://reflektor-intern-reflektor.vercel.app |
 
-Sett de tre påkrevde miljøvariablene i Vercel før første deploy.
+`SESJON_HEMMELIGHET` og `TILLATT_DOMENE` er satt i alle tre miljøer.
+`GOOGLE_CLIENT_ID` og `GOOGLE_CLIENT_SECRET` mangler — se over.
 
 > **Ikke deploy dette fra salgssidens Vercel-prosjekt.** To prosjekter mot
 > samme repo er poenget: intranettet skal kunne deployes uten å røre
 > reflektor.no, og omvendt.
+
+### Vercel Authentication står PÅ, og må skrus av før utrulling
+
+Prosjektet ble opprettet med Vercels eget SSO-lag aktivt
+(`ssoProtection: all_except_custom_domains`). Alt — også `/robots.txt` —
+svarer 302 til `vercel.com/sso-api` for den som ikke er innlogget på Vercel
+med tilgang til teamet.
+
+Det er riktig **nå**: så lenge Google-innloggingen ikke er konfigurert, er
+Vercel-laget den eneste ekte låsen på siden.
+
+Det er feil **etterpå**: en ansatt uten Vercel-konto kommer ikke fram til vår
+egen innlogging i det hele tatt. Når Google er på plass, skru det av under
+Project → Settings → Deployment Protection → Vercel Authentication. Da er
+`src/proxy.ts` og `krevBruker()` låsen, som de er ment å være.
 
 ---
 
