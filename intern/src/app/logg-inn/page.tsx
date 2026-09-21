@@ -55,15 +55,15 @@ export default async function LoggInn({
     */
     <div className="flex min-h-screen items-center justify-center px-6 py-16">
       <div className="w-full max-w-md">
-        <div className="glassflate rounded-medie px-7 py-10 sm:px-9 sm:py-12">
+        <div className="rounded-medie border border-kant bg-kort px-7 py-10 sm:px-9 sm:py-12">
           <Logo />
 
-          <h1 className="display mt-8 text-[2.25rem] leading-[1.02] tracking-[-0.025em] text-pa-dyp sm:text-[2.75rem]">
+          <h1 className="display mt-8 text-[2.25rem] leading-[1.02] tracking-[-0.025em] text-blekk sm:text-[2.75rem]">
             Kun for ansatte
           </h1>
-          <p className="mt-4 text-[1.0625rem] leading-relaxed text-pretty text-pa-dyp-dempet">
+          <p className="mt-4 text-[1.0625rem] leading-relaxed text-pretty text-blekk-dempet">
             Logg inn med Google-kontoen din på{" "}
-            <span className="text-pa-dyp">
+            <span className="text-blekk">
               @{oppsett?.tillattDomene ?? "reflektor.no"}
             </span>
             .
@@ -78,7 +78,7 @@ export default async function LoggInn({
             */
             <p
               role="alert"
-              className="mt-6 rounded-flate border border-[color:var(--varsel)]/45 bg-[color:var(--varsel-flate)] px-4 py-3.5 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp"
+              className="mt-6 rounded-flate border border-[color:var(--varsel)]/45 bg-[color:var(--varsel-flate)] px-4 py-3.5 text-[0.9375rem] leading-relaxed text-pretty text-blekk"
             >
               {FEIL[feil]}
             </p>
@@ -87,7 +87,7 @@ export default async function LoggInn({
           {oppsett ? (
             <a
               href={googleLenke}
-              className="mt-8 inline-flex w-full items-center justify-center gap-3 rounded-interaktiv bg-aksent px-6 py-3.5 font-medium text-[#1B0F0C] transition-colors hover:brightness-95 motion-reduce:transition-none"
+              className="mt-8 inline-flex w-full items-center justify-center gap-3 rounded-interaktiv bg-aksent px-6 py-3.5 font-medium text-[color:var(--text-on-accent)] transition-colors hover:brightness-95 motion-reduce:transition-none"
             >
               {/* Googles G, tegnet inline. En ekstern logofil for én knapp
                   er et nettverkskall og en lisensvurdering til ingen nytte. */}
@@ -116,20 +116,20 @@ export default async function LoggInn({
               Logg inn med Google
             </a>
           ) : (
-            <p className="mt-8 rounded-flate border border-dashed border-[color:var(--kant-pa-dyp)] px-4 py-4 text-[0.9375rem] leading-relaxed text-pa-dyp-dempet">
+            <p className="mt-8 rounded-flate border border-dashed border-kant px-4 py-4 text-[0.9375rem] leading-relaxed text-blekk-dempet">
               {manglerHemmelighet ? (
                 <>
-                  <code className="text-pa-dyp">SESJON_HEMMELIGHET</code>{" "}
+                  <code className="text-blekk">SESJON_HEMMELIGHET</code>{" "}
                   mangler, eller er kortere enn 32 tegn. Uten den kan ingen
                   sesjon signeres. Lag en med{" "}
-                  <code className="text-pa-dyp">openssl rand -base64 48</code>{" "}
+                  <code className="text-blekk">openssl rand -base64 48</code>{" "}
                   — se LES-MEG.md.
                 </>
               ) : (
                 <>
                   Google-innlogging mangler oppsett. Sett{" "}
-                  <code className="text-pa-dyp">GOOGLE_CLIENT_ID</code> og{" "}
-                  <code className="text-pa-dyp">GOOGLE_CLIENT_SECRET</code> —
+                  <code className="text-blekk">GOOGLE_CLIENT_ID</code> og{" "}
+                  <code className="text-blekk">GOOGLE_CLIENT_SECRET</code> —
                   se LES-MEG.md.
                 </>
               )}
@@ -146,7 +146,7 @@ export default async function LoggInn({
             <form action="/api/auth/dev" method="post" className="mt-4">
               <button
                 type="submit"
-                className="w-full rounded-interaktiv border border-dashed border-[color:var(--kant-pa-dyp)] px-6 py-3 text-[0.9375rem] text-pa-dyp-dempet transition-colors hover:border-aksent hover:text-pa-dyp motion-reduce:transition-none"
+                className="w-full rounded-interaktiv border border-dashed border-kant px-6 py-3 text-[0.9375rem] text-blekk-dempet transition-colors hover:border-aksent hover:text-blekk motion-reduce:transition-none"
               >
                 Dev-innlogging (kun lokalt)
               </button>
@@ -154,7 +154,7 @@ export default async function LoggInn({
           )}
         </div>
 
-        <p className="mt-6 px-2 text-center text-[0.8125rem] leading-relaxed text-pa-dyp-svak">
+        <p className="mt-6 px-2 text-center text-[0.8125rem] leading-relaxed text-blekk-svak">
           Intranettet er ikke søkbart og skal ikke deles utenfor Reflektor.
         </p>
       </div>

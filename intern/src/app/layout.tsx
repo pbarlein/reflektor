@@ -82,7 +82,7 @@ export default function RotLayout({
         */}
         <a
           href="#hovedinnhold"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-interaktiv focus:bg-aksent focus:px-4 focus:py-2.5 focus:text-[0.9375rem] focus:font-medium focus:text-[#1B0F0C]"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-interaktiv focus:bg-aksent focus:px-4 focus:py-2.5 focus:text-[0.9375rem] focus:font-medium focus:text-[color:var(--text-on-accent)]"
         >
           Hopp til innholdet
         </a>

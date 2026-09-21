@@ -1,19 +1,10 @@
-export function Container({
-  children,
-  bred = false,
-}: {
-  children: React.ReactNode;
-  /**
-   * Rutenettet med rubrikker trenger mer bredde enn løpende tekst. Én prop,
-   * ikke en klasse utenfra — da forblir det to bredder og ikke fem.
+export function Container({ children }: { children: React.ReactNode }) {
+  /*
+   * Én bredde, ikke to. Radene ligger utenfor containeren og har sin egen
+   * polstring — se kommentaren i page.tsx — så behovet for en «bred»
+   * variant forsvant da rutenettet ble til rader.
    */
-  bred?: boolean;
-}) {
   return (
-    <div
-      className={`mx-auto w-full px-6 ${bred ? "max-w-[84rem]" : "max-w-6xl"}`}
-    >
-      {children}
-    </div>
+    <div className="mx-auto w-full max-w-[88rem] px-5 sm:px-8">{children}</div>
   );
 }

@@ -1,57 +1,69 @@
-import type { KategoriId } from "@/content/kategorier";
+import type { KategoriId } from "./kategorier.ts";
 
 /**
  * Rubrikkene — alt innhold i huben.
  *
  * ── GODKJENT / UGODKJENT ──────────────────────────────────────────────────
  *
- * `godkjent: false` er STANDARD, og flagget er ikke en formalitet. AGENTS.md
- * i hovedprosjektet er utvetydig: «Ikke finn på copy, tall, kundenavn,
- * priser eller resultater», og «Claude Code ber om copy, skriver den ikke
- * selv».
+ * `godkjent: false` betyr at teksten er et fagutkast: den bygger på kilder
+ * som er oppgitt, men den er ikke vedtatt av Reflektor. Den vises med rød
+ * merkelapp og et felt som sier hvilken rolle som må kvalitetssikre.
  *
- * Her gjelder den regelen enda strengere enn på salgssidene, og av en annen
- * grunn. En påfunnet setning på forsiden er en påstand en kunde leser. En
- * påfunnet setning HER er en instruks en ansatt FØLGER — på en
+ * Grunnen er ikke formell. Innholdet her er instrukser folk FØLGER — på en
  * produksjonsdag, hos en kunde, med kameraet i hånda. Feil rutine er dyrere
  * enn feil salgstekst.
  *
- * Derfor:
+ * `godkjent: true` er reservert for tekst som er HENTET og ikke skrevet:
+ * Påls egne ord, eller tall fra `src/content/site.ts` i hovedprosjektet.
  *
- *   godkjent: false  Faglig utkast skrevet av Claude Code. Rimelig, men
- *                    IKKE Reflektors vedtatte praksis. Vises med rød
- *                    merkelapp og et felt som sier hvem som må kvalitets-
- *                    sikre den. Kan ikke forveksles med noe annet.
+ * ── KILDER ────────────────────────────────────────────────────────────────
  *
- *   godkjent: true   Innholdet er HENTET, ikke skrevet. Enten fra Påls egne
- *                    ord, eller fra `src/content/site.ts` i hovedprosjektet.
- *                    `kilde` sier hvilket av delene, hver gang.
+ * `kilder` er ikke pynt. Forskjellen på en fagtekst og en mening er at
+ * fagteksten kan etterprøves. Alt som er en PÅSTAND OM VERDEN — en
+ * plattformspesifikasjon, et tall, et forskningsfunn — skal kunne følges
+ * tilbake til noe som ikke er oss.
  *
- * Når Reflektor har gått gjennom et utkast: rett teksten, sett
- * `godkjent: true`, fyll `kilde` med hvem som godkjente og når.
+ * Plattformtall er ferskvare. Derfor står `sjekket` på hver kilde: ser
+ * leseren at spesifikasjonen ble sjekket for ni måneder siden, vet hen at
+ * den skal verifiseres før den brukes til noe som betyr noe.
  *
- * ── ANSVARLIG ER EN ROLLE, IKKE ET NAVN ───────────────────────────────────
+ * ── OPPSUMMERING ──────────────────────────────────────────────────────────
  *
- * Feltet sier hvilken rolle som eier rutinen. Å skrive et personnavn her
- * ville vært å tildele en reell kollega en oppgave hen ikke har sagt ja til
- * — og navnet blir stående feil den dagen noen bytter rolle.
- *
- * ── MEDIE ─────────────────────────────────────────────────────────────────
- *
- * Alle filer ligger under /medier og kopieres inn fra hovedprosjektets
- * /public av `scripts/hent-medier.ts`. De er ikke sjekket inn her — se
- * LES-MEG.md for hvorfor.
- *
- * Alt-tekstene beskriver BILDET, ikke kunden. Hvilke kunder et klipp er
- * laget for, er ikke poenget i en hub om håndverk, og AGENTS.md er streng
- * på hvordan produksjonskunder omtales.
+ * Hver tekst åpner med tre til seks punkter. Hvert punkt peker på en
+ * seksjon lenger nede via `anker`, som MÅ matche `id` på en seksjonsblokk.
+ * Det er ikke en innholdsfortegnelse for pynt: den som allerede kan det
+ * meste, skal kunne hoppe rett til den ene tingen hen var usikker på.
  */
 
 export type Blokk =
+  /**
+   * Overskrift med anker. Målet for et oppsummeringspunkt.
+   *
+   * `id` MÅ være unik i teksten og matche et `anker` i oppsummeringen.
+   * Testene feiler hvis et anker peker i tomme luften — en lenke som ikke
+   * hopper noe sted er verre enn ingen lenke.
+   */
+  | { type: "seksjon"; id: string; tittel: string }
   | { type: "avsnitt"; tekst: string }
   | { type: "punkter"; punkter: readonly string[] }
   | { type: "sjekkliste"; tittel?: string; punkter: readonly string[] }
   | { type: "steg"; steg: readonly { tittel: string; tekst: string }[] }
+  /**
+   * Tabell. Brukes der forskjeller mellom bransjer eller formater er
+   * poenget — en tabell sier «disse er ikke like» tydeligere enn tre
+   * avsnitt etter hverandre.
+   */
+  | {
+      type: "tabell";
+      kolonner: readonly string[];
+      rader: readonly (readonly string[])[];
+    }
+  /**
+   * Tegnet figur. Brukes der innholdet er en SPESIFIKASJON og ikke en
+   * smakssak — safe zone, utsnitt, bildeutsnitt. En tegning viser regelen
+   * selv; en video viser bare noen som følger den. Se Figur.tsx.
+   */
+  | { type: "figur"; navn: "trygg-sone" | "utsnitt" | "bildeutsnitt"; tekst: string }
   /** Kort advarsel eller presisering. Rammet inn, ett sted i teksten. */
   | { type: "merknad"; tekst: string }
   | { type: "sitat"; tekst: string; kilde: string };
@@ -61,6 +73,19 @@ export type Medie = {
   /** Sti under /medier, uten filendelse. Video forutsetter .mp4 + .jpg. */
   fil: string;
   alt: string;
+};
+
+export type Kilde = {
+  tittel: string;
+  url: string;
+  /** ISO-dato. Når noen sist verifiserte at kilden sier det vi sier den sier. */
+  sjekket: string;
+};
+
+export type Punkt = {
+  tekst: string;
+  /** Må matche `id` på en seksjonsblokk i `innhold`. */
+  anker: string;
 };
 
 export type Rubrikk = {
@@ -75,15 +100,18 @@ export type Rubrikk = {
   /** Anslått lesetid i minutter. */
   lesetid: number;
   godkjent: boolean;
-  /** Rolle som eier rutinen og må kvalitetssikre den. */
+  /** Rolle som eier rutinen og må kvalitetssikre den. Aldri et personnavn. */
   ansvarlig: string;
   /** Kun på godkjente rubrikker: hvor innholdet kommer fra. */
   kilde?: string;
   /**
-   * Redaksjonell rekkefølge. Brukes FØR noen har lest noe som helst, og som
-   * tiebreaker mellom to like ofte åpnede rubrikker. Høyere tall = høyere
-   * opp. Se src/lib/visninger.ts for hvordan faktisk bruk overstyrer den.
+   * Redaksjonell rekkefølge INNENFOR kategorien. Høyere tall = lenger til
+   * venstre i raden, altså synlig uten å bla. De fem første er de som
+   * faktisk blir lest, så tallet er en redaksjonell beslutning og ikke en
+   * sorteringsdetalj.
    */
   prioritet: number;
+  oppsummering: readonly Punkt[];
   innhold: readonly Blokk[];
+  kilder?: readonly Kilde[];
 };

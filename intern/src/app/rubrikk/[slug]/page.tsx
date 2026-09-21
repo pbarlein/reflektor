@@ -4,22 +4,21 @@ import { notFound } from "next/navigation";
 
 import { Container } from "@/components/Container";
 import { Godkjentbanner } from "@/components/Godkjenning";
-import { Innhold } from "@/components/Innhold";
+import { Innhold, Kildeliste } from "@/components/Innhold";
 import { Medieflate } from "@/components/Medieflate";
+import { Oppsummering } from "@/components/Oppsummering";
 import { Rubrikkort } from "@/components/Rubrikkort";
-import { Teller } from "@/components/Teller";
 import { finnKategori } from "@/content/kategorier";
-import { RUBRIKKER, finnRubrikk } from "@/content/rubrikker";
+import { RUBRIKKER, finnRubrikk, rubrikkerIKategori } from "@/content/rubrikker";
 import { krevBruker } from "@/lib/tilgang";
 
 type Props = { params: Promise<{ slug: string }> };
 
 /**
- * `generateStaticParams` gjør rutene kjente ved bygg. Sidene rendres
- * fortsatt per forespørsel — `krevBruker()` leser cookies, og det er en
- * request-time-API som slår av prerendering. Det er riktig: en
- * forhåndsrendret intern side er en side som kan serveres uten at noen har
- * logget inn.
+ * Rutene er kjente ved bygg. Sidene rendres fortsatt per forespørsel —
+ * `krevBruker()` leser cookies, som er en request-time-API og slår av
+ * prerendering. Det er riktig: en forhåndsrendret intern side er en side
+ * som kan serveres uten at noen har logget inn.
  *
  * Verdien ligger i at en feilstavet slug fanges ved bygg i stedet for som
  * en 404 i bruk.
@@ -32,10 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const rubrikk = finnRubrikk(slug);
   if (!rubrikk) return { title: "Ikke funnet" };
-  return {
-    title: rubrikk.tittel,
-    description: rubrikk.sammendrag,
-  };
+  return { title: rubrikk.tittel, description: rubrikk.sammendrag };
 }
 
 export default async function Rubrikkside({ params }: Props) {
@@ -46,19 +42,9 @@ export default async function Rubrikkside({ params }: Props) {
   if (!rubrikk) notFound();
 
   const kategori = finnKategori(rubrikk.kategori);
-
-  /*
-   * BESLEKTEDE: samme kategori, sortert etter redaksjonell prioritet.
-   *
-   * Ikke «mest brukt» her — de tellerne ligger i localStorage og finnes
-   * ikke på serveren. Å hente dem på klienten for en rad på tre kort ville
-   * gitt et hopp i layouten etter hydrering, for en gevinst ingen ba om.
-   */
-  const beslektede = RUBRIKKER.filter(
-    (r) => r.kategori === rubrikk.kategori && r.slug !== rubrikk.slug,
-  )
-    .sort((a, b) => b.prioritet - a.prioritet)
-    .slice(0, 3);
+  const beslektede = rubrikkerIKategori(rubrikk.kategori)
+    .filter((r) => r.slug !== rubrikk.slug)
+    .slice(0, 4);
 
   const dato = new Date(rubrikk.oppdatert).toLocaleDateString("nb-NO", {
     day: "numeric",
@@ -67,100 +53,131 @@ export default async function Rubrikkside({ params }: Props) {
   });
 
   return (
-    <>
-      <Teller slug={rubrikk.slug} />
-      <Container>
-        <div className="py-8 sm:py-12">
-          {/*
-            TILBAKELENKE OG IKKE BRØDSMULER. Hierarkiet er to nivåer dypt —
-            forside og rubrikk. En brødsmulesti for to nivåer er en
-            komponent som sier «denne siden er komplisert» om en side som
-            ikke er det.
-          */}
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 rounded-interaktiv text-[0.9375rem] text-pa-dyp-dempet transition-colors hover:text-pa-dyp motion-reduce:transition-none"
-          >
-            <span aria-hidden>←</span> Alle rubrikker
-          </Link>
+    <Container>
+      <div className="py-8 sm:py-10">
+        {/*
+          TILBAKELENKE OG IKKE BRØDSMULER. Hierarkiet er to nivåer dypt. En
+          brødsmulesti for to nivåer er en komponent som sier «denne siden
+          er komplisert» om en side som ikke er det.
+        */}
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 rounded-interaktiv text-[0.9375rem] text-blekk-dempet transition-colors hover:text-blekk motion-reduce:transition-none"
+        >
+          <span aria-hidden>←</span> Alle rubrikker
+        </Link>
 
-          <article className="mt-8">
-            <header>
-              <p className="flex flex-wrap items-center gap-x-3 gap-y-2 font-sans text-xs font-medium tracking-[0.08em] text-pa-dyp-dempet uppercase">
-                {kategori.nr ? (
-                  <span aria-hidden className="tabular-nums text-aksent">
-                    {String(kategori.nr).padStart(2, "0")}
-                  </span>
-                ) : (
-                  <span
-                    aria-hidden
-                    className="size-1.5 rounded-full bg-aksent"
-                  />
-                )}
-                {kategori.navn}
-              </p>
+        {/*
+          TO SPALTER FRA lg: teksten til venstre, oppsummeringen klistret til
+          høyre. Oppsummeringen er et navigasjonsverktøy — den er mest verdt
+          mens man leser, ikke bare før man begynner.
 
-              <h1 className="display mt-5 text-[2.25rem] leading-[1.02] tracking-[-0.03em] text-pretty text-pa-dyp sm:text-[3rem] lg:text-[3.75rem]">
-                {rubrikk.tittel}
-              </h1>
+          Under lg ligger den over teksten, der den leses én gang og blir
+          liggende. Det er riktig der: en klistret boks på en telefon spiser
+          en tredjedel av skjermen.
+        */}
+        {/*
+          TRE GRIDBARN, IKKE TO SPALTER MED HVER SIN STABEL.
 
-              <p className="mt-5 max-w-[46rem] text-[1.125rem] leading-relaxed text-pretty text-pa-dyp-dempet sm:text-xl">
-                {rubrikk.sammendrag}
-              </p>
+          Første versjon rendret oppsummeringen to ganger — én `lg:hidden`
+          for telefon og én `hidden lg:block` for desktop. Det ga TO
+          <nav>-landemerker med samme navn i DOM-en, og to sett lenker til
+          de samme ankrene. En skjermleser annonserte navigasjonen to
+          ganger, og et automatisk klikk traff den skjulte først.
 
-              {/*
-                `<time>` med maskinlesbar `dateTime`. Datoen vises på norsk;
-                attributtet er ISO, slik at den også er entydig for det som
-                leser markeringen i stedet for pikslene.
-              */}
-              <p className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.8125rem] text-pa-dyp-svak">
-                <time dateTime={rubrikk.oppdatert}>Oppdatert {dato}</time>
-                <span aria-hidden>·</span>
-                <span>{rubrikk.lesetid} min lesetid</span>
-                <span aria-hidden>·</span>
-                <span>Eier: {rubrikk.ansvarlig}</span>
-              </p>
-            </header>
+          Nå finnes den én gang. På telefon faller den naturlig mellom
+          bildet og teksten, fordi det er der den står i DOM-en. Fra lg
+          flyttes den til høyre spalte med `lg:col-start-2` og blir
+          klistret. Ingen duplisering, og rekkefølgen for hjelpemidler er
+          den samme som den visuelle.
+        */}
+        <article className="mt-7 lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-12">
+          <header className="min-w-0 lg:col-start-1">
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-2 font-sans text-xs font-medium tracking-[0.08em] text-blekk-dempet uppercase">
+              {kategori.nr ? (
+                <span aria-hidden className="tabular-nums text-aksent-tekst">
+                  {String(kategori.nr).padStart(2, "0")}
+                </span>
+              ) : (
+                <span aria-hidden className="size-1.5 rounded-full bg-aksent" />
+              )}
+              {kategori.navn}
+            </p>
+
+            <h1 className="display mt-4 text-[2.25rem] leading-[1.02] tracking-[-0.03em] text-pretty text-blekk sm:text-[3rem]">
+              {rubrikk.tittel}
+            </h1>
+
+            <p className="mt-4 max-w-[46rem] text-[1.125rem] leading-relaxed text-pretty text-blekk-dempet">
+              {rubrikk.sammendrag}
+            </p>
+
+            {/*
+              `<time>` med maskinlesbar `dateTime`. Datoen vises på norsk;
+              attributtet er ISO, så den er entydig for det som leser
+              markeringen i stedet for pikslene.
+            */}
+            <p className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.8125rem] text-blekk-svak">
+              <time dateTime={rubrikk.oppdatert}>Oppdatert {dato}</time>
+              <span aria-hidden>·</span>
+              <span>{rubrikk.lesetid} min</span>
+              <span aria-hidden>·</span>
+              <span>Eier: {rubrikk.ansvarlig}</span>
+            </p>
 
             {/*
               MEDIEFLATEN STÅR ETTER INGRESSEN, ikke før overskriften. Et
               stort bilde øverst dytter tittelen under folden på en telefon
               — og tittelen er det eneste som forteller om man har åpnet
               riktig rubrikk.
+
+              Bredere enn 16:9: i full spaltebredde er 16:9 rundt 760 px
+              høyt, og da er oppsummeringen under folden på en vanlig
+              skjerm.
             */}
-            <div className="relative mt-10 aspect-[16/9] overflow-hidden rounded-medie bg-[rgba(245,240,232,0.06)]">
+            <div className="relative mt-8 aspect-[21/9] overflow-hidden rounded-medie border border-kant bg-dempet">
               <Medieflate medie={rubrikk.medie} prioritert />
             </div>
+          </header>
 
-            <div className="mt-10">
+          <div className="mt-8 lg:sticky lg:top-24 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:mt-0">
+            <Oppsummering punkter={rubrikk.oppsummering} />
+          </div>
+
+          <div className="min-w-0 lg:col-start-1 lg:row-start-2">
+            <div className="mt-8">
               <Godkjentbanner rubrikk={rubrikk} />
             </div>
 
-            <div className="mt-10 sm:mt-12">
+            <div className="mt-10">
               <Innhold blokker={rubrikk.innhold} />
             </div>
-          </article>
 
-          {beslektede.length > 0 && (
-            <section
-              aria-labelledby="beslektet"
-              className="mt-20 border-t border-[color:var(--kant-pa-dyp)] pt-10"
+            {rubrikk.kilder && rubrikk.kilder.length > 0 && (
+              <Kildeliste kilder={rubrikk.kilder} />
+            )}
+          </div>
+        </article>
+
+        {beslektede.length > 0 && (
+          <section
+            aria-labelledby="beslektet"
+            className="mt-20 border-t border-kant-regel pt-10"
+          >
+            <h2
+              id="beslektet"
+              className="font-sans text-xs font-medium tracking-[0.08em] text-blekk-dempet uppercase"
             >
-              <h2
-                id="beslektet"
-                className="font-sans text-xs font-medium tracking-[0.08em] text-pa-dyp-dempet uppercase"
-              >
-                Mer fra {kategori.navn.toLowerCase()}
-              </h2>
-              <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {beslektede.map((r) => (
-                  <Rubrikkort key={r.slug} rubrikk={r} />
-                ))}
-              </div>
-            </section>
-          )}
-        </div>
-      </Container>
-    </>
+              Mer fra {kategori.navn.toLowerCase()}
+            </h2>
+            <div className="mt-6 grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(17rem,1fr))]">
+              {beslektede.map((r) => (
+                <Rubrikkort key={r.slug} rubrikk={r} fyll />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </Container>
   );
 }

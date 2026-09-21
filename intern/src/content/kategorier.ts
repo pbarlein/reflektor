@@ -1,25 +1,28 @@
 /**
  * Kategoriene.
  *
- * SJU KATEGORIER I TO GRUPPER, og grupperingen er hele den visuelle ideen.
+ * TI KATEGORIER I TRE BOLKER, og rekkefølgen er lesningens rekkefølge, ikke
+ * en alfabetisk liste.
  *
- * Fem av dem er ikke sidestilte emner — de er STEG I SAMME ARBEID, i fast
- * rekkefølge: research → planlegging → opptak → redigering → publisering.
- * Det er slik en produksjon faktisk beveger seg, og den som leter etter noe,
- * vet nesten alltid hvilket steg hen står i. Derfor tegnes de som en skinne
- * med løpenummer, ikke som sju like knapper.
+ *   1. HÅNDVERKET   de fem fasene en produksjon faktisk går gjennom
+ *   2. KUNDEN       det som avgjør om kunden blir
+ *   3. OSS          folk, forretning og det som skjer utenfor huset
  *
- * De to siste — intern nyhet og markedsnyhet — er ikke steg i noe. De får
- * en annen FORM, ikke bare en annen plass.
+ * ── HVORFOR RADER OG IKKE FILTER ──────────────────────────────────────────
  *
- * FARGE BRUKES IKKE TIL Å SKILLE KATEGORIER. Det er fristende — sju farger,
- * ett blikk — men merkevaredisiplinen i AGENTS.md er eksplisitt: oransje er
- * reservert, og en regnbue ville brukt sju farger som ikke finnes i
- * paletten. Skillet ligger i nummer, plassering og form. Oransje markerer
- * ÉN ting: hva som er valgt akkurat nå.
+ * Første versjon hadde en klikkbar skinne der man valgte kategori og fikk
+ * et rutenett. Det er feil form for en hub: den krever at du VET hva du
+ * leter etter før du får se noe. Et oppslagsverk skal vise fram det det
+ * har.
  *
- * Det er også bedre design. Sju hardkodede hues er det tydeligste
- * malsignalet som finnes i et intranett.
+ * Nå er hver kategori en rad du blar sidelengs i, med overskrift over.
+ * Alt er synlig fra første skjerm, og søket går på tvers av alt — der det
+ * hører hjemme, for den som faktisk vet hva hen leter etter.
+ *
+ * ── FARGE SKILLER IKKE KATEGORIER ─────────────────────────────────────────
+ *
+ * Nummer og plassering gjør det. Ti hues ville brutt aksentdisiplinen i
+ * AGENTS.md og vært det tydeligste malsignalet som finnes i et intranett.
  */
 
 export type KategoriId =
@@ -28,18 +31,23 @@ export type KategoriId =
   | "opptak"
   | "redigering"
   | "publisering"
+  | "kunde"
+  | "folk"
+  | "forretning"
   | "internt"
   | "marked";
+
+export type Bolk = "handverk" | "kunde" | "oss";
 
 export type Kategori = {
   id: KategoriId;
   navn: string;
   /** Under seksten tegn. Brukes i merkelappen på kortene. */
   kort: string;
-  /** Én setning. Står under skinna når kategorien er valgt. */
+  /** Én setning. Står under overskriften på raden. */
   beskrivelse: string;
-  gruppe: "fase" | "nyhet";
-  /** Løpenummer på skinna. Kun faser. */
+  bolk: Bolk;
+  /** Løpenummer. Kun de fem produksjonsfasene har det. */
   nr?: number;
 };
 
@@ -49,8 +57,8 @@ export const KATEGORIER: readonly Kategori[] = [
     navn: "Researchfasen",
     kort: "Research",
     beskrivelse:
-      "Alt vi finner ut før vi foreslår noe. Kunden, nisjen, hva som allerede virker.",
-    gruppe: "fase",
+      "Alt vi finner ut før vi foreslår noe. Kunden, bransjen, og hva som allerede virker der.",
+    bolk: "handverk",
     nr: 1,
   },
   {
@@ -59,7 +67,7 @@ export const KATEGORIER: readonly Kategori[] = [
     kort: "Planlegging",
     beskrivelse:
       "Fra idé til opptaksklar plan. Det er her en produksjonsdag vinnes eller tapes.",
-    gruppe: "fase",
+    bolk: "handverk",
     nr: 2,
   },
   {
@@ -68,7 +76,7 @@ export const KATEGORIER: readonly Kategori[] = [
     kort: "Opptak",
     beskrivelse:
       "På lokasjon. Håndverket, og feilene som ikke lar seg rette i etterkant.",
-    gruppe: "fase",
+    bolk: "handverk",
     nr: 3,
   },
   {
@@ -77,7 +85,7 @@ export const KATEGORIER: readonly Kategori[] = [
     kort: "Redigering",
     beskrivelse:
       "Klipp, tekst, lyd og eksport. Fra råmateriale til noe som stopper tommelen.",
-    gruppe: "fase",
+    bolk: "handverk",
     nr: 4,
   },
   {
@@ -86,29 +94,66 @@ export const KATEGORIER: readonly Kategori[] = [
     kort: "Publisering",
     beskrivelse:
       "Rytme, bildetekst og krysspublisering. To poster i uka, hele året.",
-    gruppe: "fase",
+    bolk: "handverk",
     nr: 5,
   },
   {
+    id: "kunde",
+    navn: "Kundeforholdet",
+    kort: "Kunde",
+    beskrivelse:
+      "Det som avgjør om kunden blir. Møter, forventninger, dårlige nyheter og vanskelige samtaler.",
+    bolk: "kunde",
+  },
+  {
+    id: "folk",
+    navn: "Folk og fag",
+    kort: "Folk",
+    beskrivelse:
+      "Hvordan man blir god her, hvordan man hjelper andre å bli det, og hva som holder folk gående.",
+    bolk: "oss",
+  },
+  {
+    id: "forretning",
+    navn: "Forretningsforståelse",
+    kort: "Forretning",
+    beskrivelse:
+      "Hvordan Reflektor tjener penger, og hva hver enkelt av oss faktisk påvirker.",
+    bolk: "oss",
+  },
+  {
     id: "internt",
-    navn: "Intern nyhet",
+    navn: "Slik gjør vi det",
     kort: "Internt",
     beskrivelse:
-      "Hvordan vi jobber, hva vi selger, og hva vi har blitt enige om.",
-    gruppe: "nyhet",
+      "Hva vi selger, hva vi har blitt enige om, og hva som gjelder uansett.",
+    bolk: "oss",
   },
   {
     id: "marked",
-    navn: "Markedsnyhet",
+    navn: "Markedet utenfor",
     kort: "Marked",
     beskrivelse:
-      "Hva som skjer utenfor huset — plattformer, bransjen, og hva kunder spør om.",
-    gruppe: "nyhet",
+      "Plattformene, bransjen, og hva kunder spør om akkurat nå.",
+    bolk: "oss",
   },
 ] as const;
 
-export const FASER = KATEGORIER.filter((k) => k.gruppe === "fase");
-export const NYHETER = KATEGORIER.filter((k) => k.gruppe === "nyhet");
+export const BOLKER: Record<Bolk, { navn: string; ingress: string }> = {
+  handverk: {
+    navn: "Håndverket",
+    ingress:
+      "De fem fasene en produksjon går gjennom, i den rekkefølgen de skjer.",
+  },
+  kunde: {
+    navn: "Kunden",
+    ingress: "Det arbeidet som avgjør om de blir hos oss.",
+  },
+  oss: {
+    navn: "Oss",
+    ingress: "Folkene, forretningen og verden rundt.",
+  },
+};
 
 export function finnKategori(id: KategoriId): Kategori {
   const treff = KATEGORIER.find((k) => k.id === id);
@@ -116,4 +161,8 @@ export function finnKategori(id: KategoriId): Kategori {
   // sprer seg ut i en komponent og feiler et helt annet sted.
   if (!treff) throw new Error(`Ukjent kategori: ${id}`);
   return treff;
+}
+
+export function kategorierIBolk(bolk: Bolk): readonly Kategori[] {
+  return KATEGORIER.filter((k) => k.bolk === bolk);
 }

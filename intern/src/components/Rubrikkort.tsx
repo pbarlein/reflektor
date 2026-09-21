@@ -6,70 +6,56 @@ import { finnKategori } from "@/content/kategorier";
 import type { Rubrikk } from "@/content/rubrikktype";
 
 /**
- * Én klikkbar rubrikk.
+ * Ett kort i en rad.
  *
  * HELE KORTET ER ÉN LENKE, ikke et kort med en lenke inni. Et kort der bare
- * tittelen er klikkbar, er et kort folk klikker feil på — og «kortet ser
- * klikkbart ut, men bare tittelen er det» er en av de mest irriterende
- * tingene et grensesnitt kan gjøre.
+ * tittelen er klikkbar, er et kort folk klikker feil på. Konsekvensen er at
+ * ingenting inni kan være interaktivt — og det er greit: en rubrikk har én
+ * handling.
  *
- * Konsekvensen er at ingenting inni kan være interaktivt. Det er en
- * begrensning, og den er verdt prisen her: en rubrikk har én handling —
- * åpne den.
- *
- * KATEGORIEN STÅR SOM NUMMER PÅ FASENE. Det er den samme skinna som over
- * rutenettet, i miniatyr: ser du «03 Opptak», vet du hvor i arbeidet du er
- * uten å lese noe mer. Nyhetskategoriene har ikke nummer, fordi de ikke er
- * steg i noe — se kategorier.ts.
+ * FAST BREDDE, fordi kortet ligger i en vannrett rad. Et kort med relativ
+ * bredde ville krympet når raden ble lang. Bredden er valgt så det så vidt
+ * vises et snitt av neste kort på vanlige skjermbredder — det er signalet
+ * om at raden fortsetter.
  */
 export function Rubrikkort({
   rubrikk,
-  fremhevet = false,
   prioritert = false,
+  fyll = false,
 }: {
   rubrikk: Rubrikk;
-  /** De øverste kortene får høyere medieflate og større tittel. */
-  fremhevet?: boolean;
+  /** Kun for kort over folden. `priority` på alle ville bedt om alt samtidig. */
   prioritert?: boolean;
+  /**
+   * Fyll cellen i stedet for å ha fast bredde. Søketreff vises i et
+   * rutenett, der fast bredde ville etterlatt hull i hver rad.
+   */
+  fyll?: boolean;
 }) {
   const kategori = finnKategori(rubrikk.kategori);
 
   return (
     <Link
       href={`/rubrikk/${rubrikk.slug}`}
-      className="kort-inn group glassflate-rolig flex flex-col overflow-hidden rounded-flate border border-[color:var(--kant-pa-dyp)] transition-colors hover:border-aksent/60 motion-reduce:transition-none"
+      className={`group flex flex-col overflow-hidden rounded-flate border border-kant bg-kort transition-colors hover:border-kant-sterk motion-reduce:transition-none ${
+        fyll ? "w-full" : "w-[17rem] shrink-0 sm:w-[19rem]"
+      }`}
     >
       {/*
-        `relative` OG ET FAST FORMAT PÅ RAMMEN. Medieflaten er absolutt
-        posisjonert — et <video> uten width/height tar ellers sin egen
-        naturlige størrelse og bestemmer kortets høyde. Det kostet en runde
-        i hovedprosjektet.
+        `relative` OG ET FAST FORMAT. Medieflaten er absolutt posisjonert —
+        et <video> uten width/height tar ellers sin egen naturlige størrelse
+        og bestemmer kortets høyde.
 
-        `overflow-hidden` ligger HER og ikke på kortet: zoomen på hover skal
-        klippes av medierammen, mens kortet selv må slippe å være en
-        rullecontainer — se kort-inn i globals.css.
+        `overflow-hidden` ligger her og ikke på kortet, så zoomen klippes av
+        medierammen.
       */}
-      <div
-        className={`relative overflow-hidden ${
-          fremhevet ? "aspect-[4/3]" : "aspect-[16/10]"
-        }`}
-      >
+      <div className="relative aspect-[16/10] overflow-hidden bg-dempet">
         <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:transform-none motion-reduce:transition-none">
           <Medieflate medie={rubrikk.medie} prioritert={prioritert} />
         </div>
-        {/*
-          Skygge nedover, så etiketten øverst og kanten mot teksten under
-          holder seg lesbare uansett hva klippet viser. Gradient og ikke en
-          flat overlegg: en flat demping ville tatt like mye fra det mørke
-          hjørnet som fra det lyse.
-        */}
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-[rgba(27,15,12,0.92)] via-[rgba(27,15,12,0.18)] to-transparent"
-        />
-        <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-[rgba(27,15,12,0.72)] px-2.5 py-1 font-sans text-[0.6875rem] font-medium tracking-[0.06em] text-pa-dyp uppercase backdrop-blur-sm">
+        <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1.5 rounded-full bg-[rgba(255,255,255,0.92)] px-2.5 py-1 font-sans text-[0.6875rem] font-medium tracking-[0.06em] text-blekk uppercase backdrop-blur-sm">
           {kategori.nr ? (
-            <span aria-hidden className="tabular-nums text-aksent">
+            <span aria-hidden className="tabular-nums text-aksent-tekst">
               {String(kategori.nr).padStart(2, "0")}
             </span>
           ) : (
@@ -79,26 +65,21 @@ export function Rubrikkort({
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 px-5 pt-4 pb-5">
-        <h3
-          className={`display leading-[1.08] tracking-[-0.02em] text-pa-dyp ${
-            fremhevet ? "text-[1.6rem]" : "text-[1.3rem]"
-          }`}
-        >
+      <div className="flex flex-1 flex-col gap-2.5 px-4 pt-3.5 pb-4">
+        <h3 className="display text-[1.25rem] leading-[1.12] tracking-[-0.02em] text-blekk">
           {rubrikk.tittel}
         </h3>
-        <p className="text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet">
+        <p className="text-[0.875rem] leading-relaxed text-pretty text-blekk-dempet">
           {rubrikk.sammendrag}
         </p>
 
         {/*
-          `mt-auto` skyver bunnraden ned uansett hvor lang sammendraget er.
-          Uten den ligger merkelappen rett under teksten, og i et rutenett
-          med ulik tekstlengde står de i sikksakk på tvers av raden.
+          `mt-auto` skyver bunnraden ned uansett hvor langt sammendraget er.
+          Uten den står merkelappene i sikksakk på tvers av raden.
         */}
-        <div className="mt-auto flex items-center justify-between gap-3 border-t border-[color:var(--kant-pa-dyp)]/70 pt-3.5">
+        <div className="mt-auto flex items-center justify-between gap-3 border-t border-kant pt-3">
           <Godkjentmerke godkjent={rubrikk.godkjent} />
-          <span className="text-[0.75rem] tracking-[0.02em] text-pa-dyp-svak">
+          <span className="text-[0.75rem] tracking-[0.02em] text-blekk-svak">
             {rubrikk.lesetid} min
           </span>
         </div>

@@ -4,20 +4,21 @@ import type { Blokk, Rubrikk } from "@/content/rubrikktype";
 /**
  * Flater ut en rubrikk til én søkbar streng.
  *
- * SØKET GÅR I BRØDTEKSTEN, ikke bare i titlene. Det er hele forskjellen på
- * en hub man finner fram i og en man må huske strukturen til. Den som søker
- * «romtone» eller «hvitbalanse», leter ikke etter en rubrikktittel — hen
- * leter etter setningen den står i.
+ * SØKET GÅR I BRØDTEKSTEN, ikke bare i titlene. Det er forskjellen på en
+ * hub man finner fram i og en man må huske strukturen til. Den som søker
+ * «hvitbalanse» eller «oppsigelse», leter etter setningen ordet står i.
  *
- * INGEN INDEKS, INGEN BIBLIOTEK. Det er tjuefire rubrikker. En `includes`
- * over tjuefire strenger er raskere enn å laste et søkebibliotek, og den
- * kan ikke bli utdatert i forhold til innholdet. Skulle dette vokse forbi
- * et par hundre, er det her man bytter.
+ * OPPSUMMERINGEN ER MED, og det er verdt å nevne: den er skrevet som korte,
+ * presise formuleringer av hva teksten handler om, og treffer derfor ofte
+ * bedre enn brødteksten.
  */
 function blokktekst(blokk: Blokk): string {
   switch (blokk.type) {
+    case "seksjon":
+      return blokk.tittel;
     case "avsnitt":
     case "merknad":
+    case "figur":
       return blokk.tekst;
     case "sitat":
       return `${blokk.tekst} ${blokk.kilde}`;
@@ -27,6 +28,8 @@ function blokktekst(blokk: Blokk): string {
       return `${blokk.tittel ?? ""} ${blokk.punkter.join(" ")}`;
     case "steg":
       return blokk.steg.map((s) => `${s.tittel} ${s.tekst}`).join(" ");
+    case "tabell":
+      return [...blokk.kolonner, ...blokk.rader.flat()].join(" ");
   }
 }
 
@@ -38,6 +41,7 @@ export function sokeTekst(rubrikk: Rubrikk): string {
     kategori.navn,
     kategori.kort,
     rubrikk.ansvarlig,
+    ...rubrikk.oppsummering.map((p) => p.tekst),
     ...rubrikk.innhold.map(blokktekst),
   ]
     .join(" ")

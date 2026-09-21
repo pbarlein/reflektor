@@ -1,23 +1,23 @@
+import { RUBRIKKER, antallUgodkjente } from "@/content/rubrikker";
 import { hentBruker } from "@/lib/tilgang";
-import { RUBRIKKER } from "@/content/rubrikker";
 
 /**
- * Bunnfeltet. Kort, og med ÉN opplysning som faktisk betyr noe: hvor mange
- * rubrikker som fortsatt er utkast.
+ * Bunnfeltet. Kort, med ÉN opplysning som betyr noe: hvor mange rubrikker
+ * som fortsatt er fagutkast.
  *
- * Tallet står her og ikke bare på forsiden fordi det er lett å glemme at det
- * synker bare hvis noen gjør noe. En teller nederst på hver side er den
- * billigste påminnelsen som finnes.
+ * Tallet står på hver side fordi det er lett å glemme at det bare synker
+ * hvis noen gjør noe. En teller nederst er den billigste påminnelsen som
+ * finnes.
  */
 export async function Bunnfelt() {
   const bruker = await hentBruker();
   if (!bruker) return null;
 
-  const utkast = RUBRIKKER.filter((r) => !r.godkjent).length;
+  const utkast = antallUgodkjente();
 
   return (
-    <footer className="mt-24 border-t border-[color:var(--kant-pa-dyp)] py-10">
-      <div className="mx-auto flex w-full max-w-[84rem] flex-col gap-3 px-6 text-[0.8125rem] text-pa-dyp-svak sm:flex-row sm:items-center sm:justify-between">
+    <footer className="mt-24 border-t border-kant bg-dempet py-10">
+      <div className="mx-auto flex w-full max-w-[88rem] flex-col gap-3 px-5 text-[0.8125rem] text-blekk-dempet sm:flex-row sm:items-center sm:justify-between sm:px-8">
         <p>Reflektor internt — kun for ansatte. Ikke del lenker utenfor huset.</p>
         <p>
           {utkast === 0 ? (
@@ -25,7 +25,7 @@ export async function Bunnfelt() {
           ) : (
             <>
               <span className="font-medium text-varsel">{utkast}</span> av{" "}
-              {RUBRIKKER.length} rubrikker er fortsatt utkast.
+              {RUBRIKKER.length} rubrikker er fagutkast som må kvalitetssikres.
             </>
           )}
         </p>
