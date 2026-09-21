@@ -96,27 +96,39 @@ stille.
 | «Include files outside root» | **på** — byggen trenger `../public` |
 | URL | https://reflektor-intern-reflektor.vercel.app |
 
-`SESJON_HEMMELIGHET` og `TILLATT_DOMENE` er satt i alle tre miljøer.
-`GOOGLE_CLIENT_ID` og `GOOGLE_CLIENT_SECRET` mangler — se over.
+Alle fire miljøvariablene er satt i alle tre miljøer. Innloggingen virker.
 
 > **Ikke deploy dette fra salgssidens Vercel-prosjekt.** To prosjekter mot
 > samme repo er poenget: intranettet skal kunne deployes uten å røre
 > reflektor.no, og omvendt.
 
-### Vercel Authentication står PÅ, og må skrus av før utrulling
+### Vercel Authentication er AV — med vilje
 
-Prosjektet ble opprettet med Vercels eget SSO-lag aktivt
-(`ssoProtection: all_except_custom_domains`). Alt — også `/robots.txt` —
-svarer 302 til `vercel.com/sso-api` for den som ikke er innlogget på Vercel
-med tilgang til teamet.
+Prosjektet ble opprettet med Vercels eget SSO-lag på, og det ble skrudd av
+da Google-innloggingen kom på plass.
 
-Det er riktig **nå**: så lenge Google-innloggingen ikke er konfigurert, er
-Vercel-laget den eneste ekte låsen på siden.
+Rekkefølgen var poenget. Uten Google-oppsett var Vercel-laget den eneste
+ekte låsen, og da skulle det stå. Med Google på plass er det aktivt skadelig:
+en ansatt uten Vercel-konto ville ikke kommet fram til vår egen innlogging i
+det hele tatt, og feilen ville sett ut som «innloggingen virker ikke».
 
-Det er feil **etterpå**: en ansatt uten Vercel-konto kommer ikke fram til vår
-egen innlogging i det hele tatt. Når Google er på plass, skru det av under
-Project → Settings → Deployment Protection → Vercel Authentication. Da er
-`src/proxy.ts` og `krevBruker()` låsen, som de er ment å være.
+Låsen er nå `src/proxy.ts` og `krevBruker()`, som er der den hører hjemme.
+Skal den slås på igjen — for eksempel mens noe testes — ligger den under
+Project → Settings → Deployment Protection → Vercel Authentication.
+
+### Verifisert på den deployede siden
+
+| Sjekk | Resultat |
+|---|---|
+| `/robots.txt` uten innlogging | 200, `Disallow: /` |
+| Forsiden uten innlogging | 307 → `/logg-inn` |
+| Dyplenke uten innlogging | 307 → `/logg-inn?neste=%2Frubrikk%2Fmalet` |
+| `noindex` | både HTTP-header og `<meta>` |
+| `POST /api/auth/dev` | **404** — dev-døra finnes ikke i produksjon |
+| Google-flyten | riktig `client_id`, `redirect_uri`, `hd=reflektor.no`, PKCE S256 |
+
+Det nest siste er den viktigste: de to betingelsene i `src/lib/utvikling.ts`
+holder i en ekte deploy, ikke bare i en test.
 
 ---
 
