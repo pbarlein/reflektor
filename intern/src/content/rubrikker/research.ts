@@ -368,7 +368,7 @@ export const RESEARCH: readonly Rubrikk[] = [
           likes: 3546,
           hentet: "2026-09-21",
           seEtter:
-            "TYPEN «DET DIREKTE SPØRSMÅLET». Spørsmålet står på skjermen fra bilde én — «hvor mange klarer du?» — sammen med regelen som gjør svaret målbart, og en teller som løper mens du ser. Spørsmålet er verdt å se fordi videoen faktisk svarer på det. Det er hele forskjellen på et spørsmål som krok og et spørsmål som pynt.",
+            "TYPEN «DET DIREKTE SPØRSMÅLET». Bildeteksten spør «hvor mange tror du at du klarer?». På skjermen står regelen som gjør svaret målbart — «hvert touch er én dollar» — og en teller som begynner på 1. Spørsmålet er verdt å bli for fordi videoen faktisk svarer på det, mens du ser. Det er hele forskjellen på et spørsmål som krok og et spørsmål som pynt.",
         },
       },
       {

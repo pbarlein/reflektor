@@ -82,7 +82,7 @@ export const OPPTAK: readonly Rubrikk[] = [
           likes: 24086,
           hentet: "2026-09-21",
           seEtter:
-            "Samme grep utendørs, og her er grunnen en annen: vind. Mygg på kragen, tett på munnen, gir lyd som tåler luft i bevegelse. Legg også merke til at hun står i skyggen med lyset bak fotografen — de har valgt sted for lyd og lys samtidig, ikke først det ene og så det andre.",
+            "Samme grep utendørs, og her er grunnen en annen: vind. Mygg på kragen, tett på munnen, gir lyd som tåler luft i bevegelse. Legg også merke til at lyset er jevnt og kommer forfra, uten harde skygger i ansiktet — de har valgt sted for lyd og lys i samme vurdering, ikke først det ene og så det andre.",
         },
       },
       { type: "seksjon", id: "romtone", tittel: "Romtone" },
@@ -192,7 +192,7 @@ export const OPPTAK: readonly Rubrikk[] = [
           likes: 2700,
           hentet: "2026-09-21",
           seEtter:
-            "Dagslys fra siden, personen vendt mot det, og en bakgrunn som er ryddet før noen tenkte på ansiktet: plante, glatt vegg, ingen stikkontakt bak hodet. Produktene står i lyset, ikke i skyggen av hånda som holder dem. Hele oppsettet kan bygges på to minutter i et hvilket som helst lokale med et vindu.",
+            "Mykt dagslys fra siden, personen vendt mot det, og en bakgrunn som er ryddet før noen tenkte på ansiktet: én plante, glatt vegg, ingenting som stikker ut bak hodet. Produktene står fremme på disken, i samme lys som ham. Hele oppsettet kan bygges på to minutter i et hvilket som helst lokale med et vindu — det er ingenting her du ikke har hos en kunde.",
         },
       },
       { type: "seksjon", id: "blandet", tittel: "Blandet lys" },
@@ -401,7 +401,7 @@ export const OPPTAK: readonly Rubrikk[] = [
           likes: 84465,
           hentet: "2026-09-21",
           seEtter:
-            "En person i vernevest på et lager, med en flaske i hendene. Han har en oppgave — han holder noe, han gjør noe — og det er derfor han ser rolig ut. Ingen står stille og «er seg selv». Dette er kontoens klart mest sette video, foran alt det profesjonelt produserte. Grepet du kan kopiere: gi personen den jobben de gjør til daglig, og film den.",
+            "En person i vernevest på et lager, med en flaske i hendene. Han har en oppgave — han holder noe, han gjør noe — og det er derfor han ser rolig ut. Ingen står stille og «er seg selv». Dette er den mest sette videoen på kontoen de siste tre månedene, foran alt det åpenbart dyrere. Grepet du kan kopiere: gi personen den jobben de gjør til daglig, og film den.",
         },
       },
       {
@@ -499,7 +499,7 @@ export const OPPTAK: readonly Rubrikk[] = [
           likes: 6136,
           hentet: "2026-09-21",
           seEtter:
-            "Et dekningsbilde som gjør to jobber samtidig: kjeglen ligger uskarpt i forgrunnen og rammer inn bildet, og det våte asfaltet gir refleksjoner som forteller at det har regnet. Kameraet står stille. Dette er ti sekunders arbeid på vei fra bilen til lokasjonen — se etter forgrunnen hver gang du rigger et dekningsbilde, den koster ingenting og skiller et klipp fra et bilde.",
+            "Et dekningsbilde som gjør to jobber samtidig: kjeglen ligger uskarp i forgrunnen og rammer inn bildet, og den våte asfalten gir refleksjoner som forteller at det har regnet — uten at noen måtte si det. Dette er ti sekunders arbeid på vei fra bilen til lokasjonen. Se etter forgrunnen hver gang du rigger et dekningsbilde: den koster ingenting, og den er forskjellen på et klipp og et bilde.",
         },
       },
       { type: "seksjon", id: "lenger", tittel: "Lenger enn du tror" },
@@ -570,7 +570,7 @@ export const OPPTAK: readonly Rubrikk[] = [
           likes: 4473,
           hentet: "2026-09-21",
           seEtter:
-            "Filmet på en ekte jobb, hos en ekte kunde, mens arbeidet pågår. Håndverkeren ligger på gulvet og gjør det han skal — han har ikke flyttet seg for kameraet. Kameraet har flyttet seg for ham. Det er hele forholdet mellom oss og en bedrift i drift, på ett bilde: vi tilpasser oss arbeidet, ikke motsatt.",
+            "Filmet på en ekte byggeplass, sammen med et entreprenørfirma som er kreditert i bildeteksten, mens arbeidet pågår. Håndverkeren ligger på gulvet og gjør det han skal — han har ikke reist seg eller flyttet seg for kameraet. Kameraet har lagt seg ned til ham. Det er hele forholdet mellom oss og en bedrift i drift, på ett bilde: vi tilpasser oss arbeidet, ikke motsatt.",
         },
       },
       { type: "seksjon", id: "sikkerhet", tittel: "Sikkerhet og adgang" },

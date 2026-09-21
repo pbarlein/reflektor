@@ -338,7 +338,7 @@ export const REDIGERING: readonly Rubrikk[] = [
           likes: 9519,
           hentet: "2026-09-21",
           seEtter:
-            "Raskt, og riktig raskt. En oppskrift har mange steg som alle må vises, og ingen av dem må forstås i dybden. Da er tett klipping ikke en stil — det er den eneste måten å få plass til alt. Tell klippene i de første ti sekundene og sammenlign med eksempelet lenger ned.",
+            "Raskt, og riktig raskt. En oppskrift har mange steg som alle må vises, og ingen av dem må forstås i dybden. Da er tett klipping ikke en stil — det er den eneste måten å få plass til alt. Tell klippene i de første ti sekundene, og gjør det samme på eiendomseksempelet lenger ned. Forskjellen er ikke smak.",
         },
       },
       { type: "seksjon", id: "feil", tittel: "Når det er feil" },
@@ -361,7 +361,7 @@ export const REDIGERING: readonly Rubrikk[] = [
           likes: 19382,
           hentet: "2026-09-21",
           seEtter:
-            "Samme måned, samme plattform, motsatt rytme. Bildene får stå. Kameraet beveger seg sakte gjennom huset i stedet for at klippingen beveger seg for det. Grunnen er at motivet skal FØLES, ikke telles — akkurat som et behandlingsrom eller et lokale en kunde skal ønske seg til. Hadde dette vært klippet like tett som iskremoppskriften, hadde huset sett stresset ut.",
+            "Samme måned, samme plattform, motsatt rytme. Bildene får stå. Grunnen er at motivet skal FØLES, ikke telles — akkurat som et behandlingsrom, en sal eller et lokale en kunde skal ønske seg til. Hadde dette vært klippet like tett som iskremoppskriften over, hadde huset sett stresset ut, og det er det motsatte av det som selger det.",
         },
       },
       { type: "seksjon", id: "bevegelse", tittel: "Klipp på bevegelse" },
@@ -433,7 +433,7 @@ export const REDIGERING: readonly Rubrikk[] = [
           likes: 5511,
           hentet: "2026-09-21",
           seEtter:
-            "Bildeteksten er hele poenget: «No trending audio needed.» Lydsporet er maskinen. Ingen musikk, ingen trendlyd, og 875 386 visninger på en video der det eneste man hører er jord som flyttes. Neste gang du strekker deg etter et musikkspor: hør gjennom opptakslyden først og spør om den er bedre enn det du var i ferd med å legge oppå.",
+            "Bildeteksten er hele poenget, og den er på fire ord: «No trending audio needed.» Et selskap med 1,1 millioner følgere sier rett ut at de dropper trendlyden — og får 875 386 visninger på det. Neste gang du strekker deg etter et musikkspor: hør gjennom opptakslyden først, og spør om den er dårligere enn det du var i ferd med å legge oppå. Ofte er den ikke det.",
         },
       },
     ],

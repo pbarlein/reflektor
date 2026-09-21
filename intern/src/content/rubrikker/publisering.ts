@@ -161,7 +161,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
           likes: 2682,
           hentet: "2026-09-21",
           seEtter:
-            "9 643 855 visninger. 2 682 likes. Det er 0,03 prosent — under én liker per tre tusen visninger. Et tall som dette betyr nesten alltid at posten er betalt frem til folk som ikke følger kontoen. Det er ikke juks, og det kan være helt riktig kjøpt. Men det er ikke det samme som at innholdet traff, og det er ikke et tall du skal vise en kunde som bevis på at noe fungerte.",
+            "9 643 855 visninger. 2 682 likes. Det er 0,03 prosent — under én liker per tre tusen visninger. Vi vet ikke sikkert hvorfor, men et så skjevt forhold peker mot at visningene er kjøpt frem til folk som ikke følger kontoen. Det er ikke juks, og det kan være helt riktig brukt. Men det er ikke det samme som at innholdet traff, og det er ikke et tall du skal legge frem for en kunde som bevis på at noe fungerte.",
         },
       },
       {
@@ -457,7 +457,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
           likes: 4693,
           hentet: "2026-09-21",
           seEtter:
-            "Et hudpleiemerke utviklet med hudleger, som snakker om hud i halvannet minutt uten å love én eneste ting. Innholdet er «ikke gjør dette, gjør heller dette» — altså råd, ikke virkning. Ingen «yngre hud», ingen «blir kvitt», ingen før-og-etter. Dette er malen for enhver kunde i en regulert bransje: vis fremgangsmåten, ikke resultatet. Det er lov, det krever ingen godkjenning, og det holder lenger.",
+            "Les bildeteksten før du ser videoen: «Nei, vi bruker ikke såpestykke i ansiktet. Hold deg til to-stegsrutinen.» Det er et råd om fremgangsmåte, og det er alt. Ingen «yngre hud», ingen «blir kvitt», ingen før-og-etter — fra et merke som er utviklet sammen med hudleger og godt kunne fristes. Dette er malen for enhver kunde i en regulert bransje: vis fremgangsmåten, ikke resultatet. Det er lov, det krever ingen godkjenning fra kunden, og det holder lenger.",
         },
       },
       { type: "seksjon", id: "barn", tittel: "Barn og unge" },
