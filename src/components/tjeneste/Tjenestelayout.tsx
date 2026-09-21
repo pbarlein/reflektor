@@ -21,6 +21,12 @@ import { Tekst } from "./Tekst";
  *
  * Se docs/synlighet-2026.md for kildene og docs/sidearkitektur.md for
  * hvorfor avgrensningsblokken finnes.
+ *
+ * «DERE», IKKE «DU». Overskriftene sa «Er du på riktig side?» og «Det du
+ * lurer på», mens brødteksten på samme side sier «dere» gjennomgående.
+ * Nettstedet snakker til et selskap, ikke til en privatperson — og et
+ * personskifte midt på siden leser som to forfattere. Avgrensningsblokken
+ * er omformulert til «Er dette riktig side?», som slipper unna valget helt.
  */
 export function Tjenestelayout({
   side,
@@ -88,7 +94,7 @@ export function Tjenestelayout({
               hvilken av dem den skal vise.
             */}
             <div className="rounded-flate border border-kant px-6 py-8 sm:px-10 sm:py-9">
-              <Merkelapp som="h2">Er du på riktig side?</Merkelapp>
+              <Merkelapp som="h2">Er dette riktig side?</Merkelapp>
               <p className="mt-4 max-w-2xl leading-relaxed text-pretty text-blekk-dempet">
                 <Tekst>{side.avgrensning.tekst}</Tekst>
               </p>
@@ -160,7 +166,7 @@ export function Tjenestelayout({
         <Container>
           <div className="grid gap-x-10 gap-y-14 lg:grid-cols-[9rem_1fr]">
             <Merkelapp className="lg:pt-2" som="h2">
-              Det du lurer på
+              Det dere lurer på
             </Merkelapp>
             <div className="max-w-2xl">
               {side.seksjoner.map((s, i) => (

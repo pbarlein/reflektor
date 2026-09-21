@@ -46,9 +46,9 @@ export default function KontaktOss() {
             Se hva vi ville filmet hos dere
           </h1>
           <p className="mt-8 max-w-2xl border-l-2 border-aksent pl-6 text-lg leading-relaxed text-pretty sm:pl-8 sm:text-xl">
-            Dere får et forslag tilbake til hvordan en måned med Reflektor kan
-            se ut hos dere, innen {tilbud.strategiforslagVirkedager}{" "}
-            virkedager. Vi holder til i Oslo og jobber i hele Norge.
+            Dere får et forslag til hvordan en måned med Reflektor kan se ut
+            hos dere, innen {tilbud.strategiforslagVirkedager} virkedager. Vi
+            holder til i Oslo og jobber i hele Norge.
           </p>
 
           <div className="mt-14 grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-20">

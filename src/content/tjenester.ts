@@ -70,7 +70,7 @@ export type Tjenesteside = {
 const KONTAKT = { sti: "/#kontakt", tekst: "Få et forslag" };
 
 /* ────────────────────────────────────────────────────────────────────
-   /reklamefilm — filmen som skal kjøpes visning for
+   /reklamefilm — filmen dere betaler for å få vist
    ──────────────────────────────────────────────────────────────────── */
 
 export const reklamefilm: Tjenesteside = {
@@ -81,7 +81,7 @@ export const reklamefilm: Tjenesteside = {
   h1: "Reklamefilm",
   merkelapp: "Produksjon",
   tjenestetype: "Produksjon av reklamefilm for betalte flater",
-  svar: "En reklamefilm er en film som skal kjøpes visning for — på TV, som nettannonse eller som annonse i sosiale medier. Reflektor står for produksjonen: idé, manus, opptak, klipp, lyd og fargekorrigering. Vi produserer filmen. Vi kjøper ikke sendetid eller annonseplass.",
+  svar: "En reklamefilm er laget for å vises mot betaling — på TV, som nettannonse eller i sosiale medier. Reflektor står for produksjonen: idé, manus, opptak, klipp, lyd og fargekorrigering. Vi produserer filmen. Vi kjøper ikke sendetid eller annonseplass.",
   avgrensning: {
     tekst:
       "Skal filmen ligge på deres egne flater — nettsiden, en tjenesteside eller en skjerm i butikk — er det videoproduksjon, ikke reklamefilm. Skal den brukes til rekruttering, er det employer branding. Forskjellen er ikke hvordan filmen ser ut, men hvor den vises.",
@@ -96,7 +96,7 @@ export const reklamefilm: Tjenesteside = {
   seksjoner: [
     {
       sporsmal: "Kjøper dere sendetid på TV?",
-      svar: "Nei. Reflektor er et produksjonshus, ikke et mediebyrå. Vi lager filmen, og dere eller mediebyrået deres kjøper flaten den skal vises på. Det er verdt å vite før dere ber om pris: et tilbud fra oss dekker produksjonen, ikke visningene. Spør noen «hva koster tv-reklame», er svaret to regninger fra to leverandører.",
+      svar: "Nei. Reflektor er et produksjonshus, ikke et mediebyrå. Vi lager filmen, og dere eller mediebyrået deres kjøper flaten den skal vises på. Det er verdt å vite før dere ber om pris: et tilbud fra oss dekker produksjonen, ikke visningene. Spør man «hva koster tv-reklame», er svaret egentlig to regninger fra to leverandører.",
     },
     {
       sporsmal: "Hva koster en reklamefilm?",
@@ -116,13 +116,13 @@ export const reklamefilm: Tjenesteside = {
     },
     {
       sporsmal: "Hvem har Reflektor produsert for?",
-      svar: "Reflektor har produsert foto og video for blant andre Anton Sport, The Well, Peppes Pizza, Egon og Baker Brun. Hvilke av disse som har hatt reklamefilm spesifikt, står ikke oppgitt her — kundelisten er produksjonskunder samlet.",
+      svar: "Reflektor har produsert foto og video for blant andre Anton Sport, The Well, Peppes Pizza, Egon og Baker Brun. TBD(reklamefilm.kunder — hvilke av disse, eller hvilke andre, som har hatt reklamefilm eller tv-reklame)",
     },
   ],
   faq: [
     {
       sporsmal: "Hvor lang bør en reklamefilm være?",
-      svar: "Det avhenger av flaten. En TV-reklame kjøpes i faste lengder, oftest 15 eller 30 sekunder. En annonse i sosiale medier har ingen fast lengde, men de første to sekundene avgjør om resten blir sett. Vi klipper som regel én film i flere lengder, slik at samme opptak dekker flere flater.",
+      svar: "Det avhenger av flaten. En TV-reklame kjøpes i faste lengder, oftest 15 eller 30 sekunder. En annonse i sosiale medier har ingen fast lengde, men de første to sekundene avgjør om resten blir sett. Vi klipper som regel filmen i flere lengder, slik at samme opptak dekker flere flater.",
     },
     {
       sporsmal: "Kan vi bruke filmen flere steder?",
@@ -156,7 +156,7 @@ export const videoproduksjon: Tjenesteside = {
   svar: "Videoproduksjon er film til flater dere selv eier: forsiden av nettsiden, en tjenesteside som trenger forklaring, skjermer i butikk eller resepsjon, og egne kanaler. Reflektor står for idé, opptak, klipp, teksting og fargekorrigering. Filmen koster ingenting å vise, fordi flaten er deres.",
   avgrensning: {
     tekst:
-      "Skal filmen kjøpes visning for — på TV eller som annonse — er det reklamefilm. Skal den brukes til å rekruttere, er det employer branding, og den har en egen side fordi den snakker til et annet publikum enn kundene deres.",
+      "Skal dere betale for å få filmen vist — på TV eller som annonse — er det reklamefilm. Skal den brukes til å rekruttere, er det employer branding, og den har en egen side fordi den snakker til et annet publikum enn kundene deres.",
     lenker: [
       { sti: "/reklamefilm", tekst: "reklamefilm for betalte flater" },
       {
@@ -178,7 +178,7 @@ export const videoproduksjon: Tjenesteside = {
     },
     {
       sporsmal: "Hvorfor video på nettsiden i det hele tatt?",
-      svar: "Fordi noen ting ikke lar seg skrive. Et rom, et håndverk, en maskin i bevegelse eller stemningen på et sted er raskere å vise enn å beskrive. Det som kan forklares i en setning, bør forklares i en setning — video på nettsider blir dyrt og dårlig når det brukes på noe tekst løste bedre.",
+      svar: "Fordi noen ting ikke lar seg skrive. Et rom, et håndverk, en maskin i bevegelse eller stemningen på et sted er raskere å vise enn å beskrive. Det som kan forklares i en setning, bør forklares i en setning — video på nettsider blir dyrt og dårlig når det brukes på noe tekst ville løst bedre.",
     },
     {
       sporsmal: "Hva koster videoproduksjon for bedrift?",
@@ -248,7 +248,7 @@ export const employerBranding: Tjenesteside = {
   seksjoner: [
     {
       sporsmal: "Hvorfor film, og ikke bare en god stillingsannonse?",
-      svar: "Fordi kandidater velger et sted, ikke en tekst. En stillingsannonse kan beskrive oppgavene, men ikke lokalet, tempoet eller menneskene man skal sitte ved siden av. Det er det som avgjør om noen trykker «søk» — og det er nettopp det som lar seg vise og ikke skrive.",
+      svar: "Fordi kandidater velger et sted, ikke en tekst. En stillingsannonse kan beskrive oppgavene, men ikke lokalet, tempoet eller menneskene man skal sitte ved siden av. Det er det som avgjør om noen trykker «søk» — og det er nettopp det som lar seg vise, men ikke skrive.",
     },
     {
       sporsmal: "Hvem skal være med i filmen?",
@@ -307,7 +307,7 @@ export const event: Tjenesteside = {
   svar: "Eventdekning er foto og film fra noe som skjer én gang: en konferanse, en lansering, en messe eller et firmaarrangement. Jobben er å komme hjem med materiale dere kan bruke i ettertid — ikke bare bilder fra dagen, men innhold til kanalene og til neste gang dere skal invitere.",
   avgrensning: {
     tekst:
-      "Dette er dekning av noe som skjer. Skal dere lage film om selskapet eller et produkt, planlagt fra bunnen, er det videoproduksjon. Skal den kjøpes visning for, er det reklamefilm.",
+      "Dette er dekning av noe som skjer. Skal dere lage film om selskapet eller et produkt, planlagt fra bunnen, er det videoproduksjon. Skal den vises som betalt annonse, er det reklamefilm.",
     lenker: [
       { sti: "/videoproduksjon-i-oslo", tekst: "planlagt videoproduksjon" },
       { sti: "/reklamefilm", tekst: "reklamefilm" },
@@ -391,7 +391,7 @@ export const innholdsproduksjon: Tjenesteside = {
   seksjoner: [
     {
       sporsmal: "Prosjekt eller abonnement — hva trenger dere?",
-      svar: "Et prosjekt løser én oppgave med en start og en slutt: en lansering, en kampanje, en stilling som skal fylles. Et abonnement løser et problem som ikke tar slutt — at kanalene må fylles hver uke, hele året. De fleste som spør om innholdsproduksjon trenger det første og oppdager etter hvert at de også trenger det andre.",
+      svar: "Et prosjekt løser én oppgave med en start og en slutt: en lansering, en kampanje, en stilling som skal fylles. Et abonnement løser et problem som ikke tar slutt — at kanalene må fylles hver uke, hele året. De fleste som spør om innholdsproduksjon trenger et prosjekt først, og oppdager etter hvert at de også trenger kalenderen.",
       punkter: [
         "Prosjekt: én leveranse, avtalt omfang, egen pris",
         `Abonnement: ${site.kontakt.firma} produserer og publiserer løpende, ${new Intl.NumberFormat("nb-NO").format(30000)} kr/mnd`,
@@ -444,7 +444,7 @@ export const eiker = [
     navn: "Reklamefilm",
     flate: "Betalte flater — TV, nettannonser, sosiale medier",
     beskrivelse:
-      "Filmen dere kjøper visning for. Må fange folk som ikke lette etter dere.",
+      "Filmen dere betaler for å få vist. Den må fange folk som ikke lette etter dere.",
   },
   {
     sti: "/videoproduksjon-i-oslo",

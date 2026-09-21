@@ -1797,3 +1797,66 @@ Arbeidet var ikke bortkastet. Da siden ble bygget, måtte tilbudet ryddes
 — «gratis strategimøte» motsa «forslag innen tre virkedager». Den
 opprydningen står, i sekvensen på `/kontaktoss`: forslag først, så en
 prat om det.
+
+---
+
+## A59 — Redaksjonell gjennomgang av egen copy. 21.09.2026
+
+Pål pekte på «Skal filmen kjøpes visning for» og ba om en selvkritisk
+redaktørgjennomgang av alle landingssidene og blogginnleggene.
+
+Formuleringen han fanget sto **fire steder**, ikke ett. Gjennomgangen fant
+elleve ting til, og to av dem var verre enn språk.
+
+### Faktafeil
+
+**Artikkelen om SoMe-ansvarlig påsto at 600 000 kroner er «over
+medianen».** SSBs median er 55 800 i måneden, altså 669 600 i året.
+600 000 ligger **under**. Artikkelen motsa seg selv to setninger senere
+med «tallet i eksempelet ligger under begge».
+
+Rettingen gjør argumentet sterkere, ikke svakere: et eksempel under
+medianen betyr at regnestykket er konservativt, og at forskjellen blir
+større med et mer realistisk lønnsnivå. Det står nå eksplisitt.
+
+**Bloggoversikten sa «Åtte artikler» mens det var ni.** Tallet ble skrevet
+da åtte var migrert, og ble ikke oppdatert da den niende kom til samme
+dag. Nå telles det i koden. Et tall på siden som er feil koster mer tillit
+enn tallet er verdt.
+
+### Språk
+
+| Var | Er | Hvorfor |
+|---|---|---|
+| «skal kjøpes visning for» (×4) | «laget for å vises mot betaling», «betale for å få filmen vist» | passiv, ikke idiomatisk |
+| «kundelisten er produksjonskunder samlet» | TBD(reklamefilm.kunder) | ugrammatisk, og avsnittet endte på det vi *ikke* har |
+| «Spør noen «hva koster tv-reklame», er svaret …» | «Spør man …» | inversjonen faller ikke naturlig |
+| «noe tekst løste bedre» | «noe tekst ville løst bedre» | feil tempus |
+| «lar seg vise og ikke skrive» | «lar seg vise, men ikke skrive» | elliptisk, motsetningen manglet |
+| «klipper én film i flere lengder» | «klipper filmen i flere lengder» | man klipper filmen, ikke «én film» |
+| «trenger det første … det andre» | «trenger et prosjekt først … kalenderen» | tvang leseren til å bla tilbake |
+| «Hva får du som du ikke får?» | «Hva får dere — og hva får dere ikke?» | ikke norsk; setningen manglet motsetningen |
+| «En markedsansvarlig som jobber der håndterer …» | «… som jobber der, håndterer …» | manglende komma |
+| «et forslag tilbake til hvordan» | «et forslag til hvordan» | preposisjonskjeden snublet |
+
+### Personskifte
+
+Overskriftene sa «Er du på riktig side?» og «Det du lurer på», mens
+brødteksten på samme side sier «dere» gjennomgående. Nettstedet snakker
+til et selskap. Avgrensningsblokken heter nå «Er dette riktig side?», som
+slipper unna valget helt.
+
+Én du-form sto igjen i min egen copy: «din risiko» i sammenligningstabellen.
+Rettet.
+
+### Det jeg IKKE rettet, og hvorfor
+
+**Bloggartiklene bruker «du» gjennomgående.** «Er du nysgjerrig på employer
+branding», «målgruppen din», «alt du trenger». Det er Reflektors egen
+publiserte copy, migrert ordrett, og regel 3 i AGENTS.md sier at
+bloggen ikke skal skrives om.
+
+Men det betyr at nettstedet har to stemmer: bloggen sier «du», de nye
+sidene sier «dere». **Det er en beslutning for Pål, ikke for meg** — å
+harmonisere krever at åtte artikler skrives om, og det er nøyaktig det
+regel 3 forbyr uten videre.

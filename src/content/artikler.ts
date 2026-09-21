@@ -1755,7 +1755,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Det er over medianen, men ikke oppsiktsvekkende. SSB oppgir en medianlønn i Norge på 55 800 kroner i måneden og et gjennomsnitt på 62 070 — altså henholdsvis 669 600 og 744 840 kroner i året for alle ansatte sett under ett. Tallet i eksempelet ligger under begge.",
+          "Det ligger under medianen. SSB oppgir en medianlønn i Norge på 55 800 kroner i måneden og et gjennomsnitt på 62 070 — altså 669 600 og 744 840 kroner i året for alle ansatte sett under ett. Eksempelet på 600 000 er lavere enn begge, og regnestykket er dermed konservativt: setter dere inn et høyere og mer realistisk lønnsnivå, blir forskjellen større, ikke mindre.",
       },
       {
         type: "kilde",
@@ -1766,7 +1766,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Poenget er heller ikke det eksakte lønnsnivået. Poenget er påslaget: uansett hvilket tall du setter inn, legger arbeidsgiveravgift, feriepenger og pensjon på rundt 27 prosent.",
+          "Poenget er heller ikke det eksakte lønnsnivået. Poenget er påslaget: uansett hvilket tall dere setter inn, legger arbeidsgiveravgift, feriepenger og pensjon på rundt 27 prosent.",
       },
       {
         type: "overskrift",
@@ -1786,7 +1786,7 @@ export const artikler: Artikkel[] = [
       {
         type: "overskrift",
         niva: 2,
-        tekst: "Hva får du som du ikke får?",
+        tekst: "Hva får dere — og hva får dere ikke?",
       },
       {
         type: "tabell",
@@ -1797,7 +1797,7 @@ export const artikler: Artikkel[] = [
           ["Stories og løpende publisering", "ja", "delvis"],
           ["Profesjonelt kamerautstyr", "må kjøpes", "inngår"],
           ["Flere fagfelt dekket", "én person", "team"],
-          ["Sykefravær og ferie", "din risiko", "vår risiko"],
+          ["Sykefravær og ferie", "deres risiko", "vår risiko"],
           ["Bindingstid", "arbeidsavtale", "tre måneders oppsigelse"],
         ],
       },
@@ -1847,7 +1847,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Den vanligste løsningen er ikke enten–eller. En markedsansvarlig som allerede jobber der håndterer dialogen, kjenner kundene og legger strategien — og produksjonen settes bort. Da betaler dere for det som faktisk er vanskelig å gjøre selv, og beholder det som krever å være innenfor.",
+          "Den vanligste løsningen er ikke enten–eller. En markedsansvarlig som allerede jobber der, håndterer dialogen, kjenner kundene og legger strategien — og produksjonen settes bort. Da betaler dere for det som faktisk er vanskelig å gjøre selv, og beholder det som krever å være innenfor.",
       },
     ],
     lesVidere: [

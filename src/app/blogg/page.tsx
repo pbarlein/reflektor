@@ -45,9 +45,21 @@ export default function Blogg() {
           <h1 className="mt-4 max-w-3xl text-4xl text-balance sm:text-5xl lg:text-6xl">
             Om sosiale medier, video og innholdsproduksjon
           </h1>
+          {/*
+            ANTALLET TELLES, det skrives ikke. Her sto «Åtte artikler» mens
+            det var ni — tallet ble skrevet da bloggen hadde åtte migrerte
+            innlegg, og ble ikke oppdatert da den niende kom til samme dag.
+            Et tall på siden som er feil, koster mer tillit enn tallet er
+            verdt. Nå kan det ikke skje igjen.
+
+            «Skrevet for å forklare» er dessuten dempet fra «skrevet for å
+            forklare, ikke for å selge». Den nyeste artikkelen sammenligner
+            og ender med Reflektors egen pris — den selger, og påstanden om
+            det motsatte var en overdrivelse vi ikke trenger.
+          */}
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-pretty text-blekk-dempet">
-            Åtte artikler om faget vi jobber med. Skrevet for å forklare, ikke
-            for å selge.
+            {sortert.length} artikler om faget vi jobber med — skrevet for å
+            forklare noe, ikke for å fylle en kalender.
           </p>
         </Container>
       </section>
