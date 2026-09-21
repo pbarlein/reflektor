@@ -20,7 +20,10 @@ export const PUBLISERING: readonly Rubrikk[] = [
     prioritet: 100,
     oppsummering: [
       { tekst: "Regnestykket bak to i uka", anker: "regnestykke" },
-      { tekst: "Forspranget er viktigere enn den perfekte posten", anker: "forsprang" },
+      {
+        tekst: "Forspranget er viktigere enn den perfekte posten",
+        anker: "forsprang",
+      },
       { tekst: "Fire steg for å legge måneden", anker: "steg" },
       { tekst: "Juli og romjulen er vår beste måned", anker: "ferie" },
     ],
@@ -94,7 +97,10 @@ export const PUBLISERING: readonly Rubrikk[] = [
     ansvarlig: "Kundeansvarlig",
     prioritet: 94,
     oppsummering: [
-      { tekst: "Hvorfor visninger er nesten ubrukelig alene", anker: "visninger" },
+      {
+        tekst: "Hvorfor visninger er nesten ubrukelig alene",
+        anker: "visninger",
+      },
       { tekst: "De fire tallene som faktisk sier noe", anker: "fire" },
       { tekst: "Én post sier ingenting. Ti sier noe", anker: "ti" },
       { tekst: "Slik snakker du om tall uten å love noe", anker: "snakk" },
@@ -143,6 +149,34 @@ export const PUBLISERING: readonly Rubrikk[] = [
         type: "merknad",
         tekst:
           "Sammenlign alltid en konto med seg selv, aldri med en annen. Følgertall, bransje og historikk gjør sammenligning på tvers av kontoer meningsløs.",
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DbVpuvrthtg/",
+          konto: "theordinary",
+          hvem: "The Ordinary — kanadisk hudpleiemerke. Selger virkestoffbaserte serum til lav pris, i egne butikker og på nett.",
+          folgere: 3098837,
+          visninger: 9643855,
+          likes: 2682,
+          hentet: "2026-09-21",
+          seEtter:
+            "9 643 855 visninger. 2 682 likes. Det er 0,03 prosent — under én liker per tre tusen visninger. Et tall som dette betyr nesten alltid at posten er betalt frem til folk som ikke følger kontoen. Det er ikke juks, og det kan være helt riktig kjøpt. Men det er ikke det samme som at innholdet traff, og det er ikke et tall du skal vise en kunde som bevis på at noe fungerte.",
+        },
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DbnwggJt_rQ/",
+          konto: "theordinary",
+          hvem: "The Ordinary — kanadisk hudpleiemerke. Selger virkestoffbaserte serum til lav pris, i egne butikker og på nett.",
+          folgere: 3098837,
+          visninger: 1863446,
+          likes: 77616,
+          hentet: "2026-09-21",
+          seEtter:
+            "Samme konto, samme måned, en femdel av visningene — og 77 616 likes. Det er 4,2 prosent, altså over hundre ganger høyere responsrate enn posten over. Dette er poenget med hele rubrikken på ett sted: den «dårligere» videoen er den som traff. Når du leser tall for en kunde, se alltid på forholdet mellom visninger og respons, aldri på visningene alene.",
+        },
       },
       { type: "seksjon", id: "snakk", tittel: "Hvordan du snakker om det" },
       {
@@ -197,6 +231,20 @@ export const PUBLISERING: readonly Rubrikk[] = [
           "Én handling, hvis noen i det hele tatt. «Bestill bord.» Ikke tre ting.",
           "Skriv som kunden snakker, ikke som en pressemelding.",
         ],
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/Dbgipm8BFZT/",
+          konto: "benandjerrys",
+          hvem: "Ben & Jerry's — amerikansk iskremprodusent. Selger iskrem i dagligvare og i egne utsalg over hele verden.",
+          folgere: 2020661,
+          visninger: 188620,
+          likes: 3269,
+          hentet: "2026-09-21",
+          seEtter:
+            "På skjermen står det tre ord: «We miss you.» Første linje i bildeteksten er «RIP to the greats of the freezer aisle.» Legg merke til at teksten ikke gjentar ett eneste ord fra videoen — den forklarer den. Uten bildeteksten er klippet en gåte; uten videoen er teksten en vits uten poeng. Det er slik arbeidsdelingen skal være, og det er den vanligste feilen å bryte.",
+        },
       },
       { type: "seksjon", id: "knagger", tittel: "Emneknagger og lokasjon" },
       {
@@ -338,7 +386,10 @@ export const PUBLISERING: readonly Rubrikk[] = [
     ansvarlig: "Daglig leder",
     prioritet: 88,
     oppsummering: [
-      { tekst: "Hvorfor dette er vårt problem og ikke bare kundens", anker: "vart" },
+      {
+        tekst: "Hvorfor dette er vårt problem og ikke bare kundens",
+        anker: "vart",
+      },
       { tekst: "Bransjene der det gjelder særlig", anker: "bransjer" },
       { tekst: "Barn og unge har eget vern", anker: "barn" },
       { tekst: "Regelen som alltid gjelder: spør, ikke gjett", anker: "spor" },
@@ -355,10 +406,18 @@ export const PUBLISERING: readonly Rubrikk[] = [
         tekst:
           "Det er kunden som er ansvarlig for egen markedsføring. Men det er vi som skriver teksten, klipper videoen og trykker publiser. Havner kunden i trøbbel for noe vi formulerte, er det ikke en juridisk diskusjon som avgjør om de blir hos oss.",
       },
-      { type: "seksjon", id: "bransjer", tittel: "Bransjer der det gjelder særlig" },
+      {
+        type: "seksjon",
+        id: "bransjer",
+        tittel: "Bransjer der det gjelder særlig",
+      },
       {
         type: "tabell",
-        kolonner: ["Område", "Det som er strengt regulert", "Hvem fører tilsyn"],
+        kolonner: [
+          "Område",
+          "Det som er strengt regulert",
+          "Hvem fører tilsyn",
+        ],
         rader: [
           [
             "Kosttilskudd og mat",
@@ -386,6 +445,20 @@ export const PUBLISERING: readonly Rubrikk[] = [
         type: "avsnitt",
         tekst:
           "Fellesnevneren er påstander om virkning. «Dette gir deg mer energi», «du går ned i vekt», «huden blir yngre» er formuleringer som kan være ulovlige selv når de er velmente — og de er akkurat den typen setning som sniker seg inn i en bildetekst fordi den høres fin ut.",
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DadGoD8NPaG/",
+          konto: "cerave",
+          hvem: "CeraVe — amerikansk hudpleiemerke utviklet sammen med hudleger. Selger rens og fuktighetskrem i apotek og dagligvare.",
+          folgere: 1572194,
+          visninger: 163051,
+          likes: 4693,
+          hentet: "2026-09-21",
+          seEtter:
+            "Et hudpleiemerke utviklet med hudleger, som snakker om hud i halvannet minutt uten å love én eneste ting. Innholdet er «ikke gjør dette, gjør heller dette» — altså råd, ikke virkning. Ingen «yngre hud», ingen «blir kvitt», ingen før-og-etter. Dette er malen for enhver kunde i en regulert bransje: vis fremgangsmåten, ikke resultatet. Det er lov, det krever ingen godkjenning, og det holder lenger.",
+        },
       },
       { type: "seksjon", id: "barn", tittel: "Barn og unge" },
       {
@@ -433,7 +506,8 @@ export const PUBLISERING: readonly Rubrikk[] = [
         sjekket: "2026-09-21",
       },
       {
-        tittel: "Mattilsynet: Kosttilskudd eller treningsprodukt — hvilke regler gjelder?",
+        tittel:
+          "Mattilsynet: Kosttilskudd eller treningsprodukt — hvilke regler gjelder?",
         url: "https://www.mattilsynet.no/mat-og-drikke/kosttilskott/kosttilskudd-eller-treningsprodukt--hvilke-regler-gjelder",
         sjekket: "2026-09-21",
       },

@@ -32,7 +32,11 @@ export const FORRETNING: readonly Rubrikk[] = [
       { tekst: "Hvorfor vi ikke jager nye kunder først", anker: "jager" },
     ],
     innhold: [
-      { type: "seksjon", id: "abonnement", tittel: "Abonnement, ikke prosjekt" },
+      {
+        type: "seksjon",
+        id: "abonnement",
+        tittel: "Abonnement, ikke prosjekt",
+      },
       {
         type: "avsnitt",
         tekst:
@@ -65,7 +69,11 @@ export const FORRETNING: readonly Rubrikk[] = [
         tekst:
           "Å skaffe en ny kunde koster tid i salg, møter, oppstart og en periode der vi lærer bedriften å kjenne. Å beholde en eksisterende koster en melding i uka og et godt forslag i måneden. Det er hele begrunnelsen for mål nummer én.",
       },
-      { type: "seksjon", id: "jager", tittel: "Derfor jager vi ikke nye først" },
+      {
+        type: "seksjon",
+        id: "jager",
+        tittel: "Derfor jager vi ikke nye først",
+      },
       {
         type: "avsnitt",
         tekst:
@@ -105,7 +113,10 @@ export const FORRETNING: readonly Rubrikk[] = [
     oppsummering: [
       { tekst: "Fire ting du flytter på", anker: "fire" },
       { tekst: "Den ene som betyr mest", anker: "mest" },
-      { tekst: "Det du ikke påvirker, og som du kan slippe å bekymre deg for", anker: "ikke" },
+      {
+        tekst: "Det du ikke påvirker, og som du kan slippe å bekymre deg for",
+        anker: "ikke",
+      },
     ],
     innhold: [
       { type: "seksjon", id: "fire", tittel: "Fire ting" },
@@ -157,7 +168,10 @@ export const FORRETNING: readonly Rubrikk[] = [
     oppsummering: [
       { tekst: "Hva fast pris gjør for kunden", anker: "kunden" },
       { tekst: "Hva det krever av oss", anker: "oss" },
-      { tekst: "Hva du sier når noen ber om «bare én ting til»", anker: "en-ting-til" },
+      {
+        tekst: "Hva du sier når noen ber om «bare én ting til»",
+        anker: "en-ting-til",
+      },
     ],
     innhold: [
       { type: "seksjon", id: "kunden", tittel: "Hva det gjør for kunden" },

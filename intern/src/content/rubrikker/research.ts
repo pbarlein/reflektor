@@ -19,10 +19,19 @@ export const RESEARCH: readonly Rubrikk[] = [
     ansvarlig: "Produsent",
     prioritet: 100,
     oppsummering: [
-      { tekst: "Fire spørsmål avgjør hva slags innhold som virker", anker: "fire" },
+      {
+        tekst: "Fire spørsmål avgjør hva slags innhold som virker",
+        anker: "fire",
+      },
       { tekst: "Slik skiller bransjene seg — konkret", anker: "tabell" },
-      { tekst: "Kjøpsavstand er den viktigste enkeltfaktoren", anker: "avstand" },
-      { tekst: "Tre feil vi gjør når vi overfører en oppskrift", anker: "feil" },
+      {
+        tekst: "Kjøpsavstand er den viktigste enkeltfaktoren",
+        anker: "avstand",
+      },
+      {
+        tekst: "Tre feil vi gjør når vi overfører en oppskrift",
+        anker: "feil",
+      },
       { tekst: "Hva du gjør når bransjen er ny for deg", anker: "ny" },
     ],
     innhold: [
@@ -75,7 +84,12 @@ export const RESEARCH: readonly Rubrikk[] = [
       },
       {
         type: "tabell",
-        kolonner: ["Type kunde", "Bærer innholdet", "Kadens", "Vanligste tabbe"],
+        kolonner: [
+          "Type kunde",
+          "Bærer innholdet",
+          "Kadens",
+          "Vanligste tabbe",
+        ],
         rader: [
           [
             "Servering og mat",
@@ -159,7 +173,11 @@ export const RESEARCH: readonly Rubrikk[] = [
         tekst:
           "Praktisk konsekvens: jo lengre avstand, jo mer skal innholdet lære bort og vise fram, og jo mindre skal det selge. Det er ikke idealisme. En selgende video til noen som er fem måneder unna å kjøpe, blir scrollet forbi.",
       },
-      { type: "seksjon", id: "feil", tittel: "Tre feil når en oppskrift flyttes" },
+      {
+        type: "seksjon",
+        id: "feil",
+        tittel: "Tre feil når en oppskrift flyttes",
+      },
       {
         type: "punkter",
         punkter: [
@@ -291,7 +309,10 @@ export const RESEARCH: readonly Rubrikk[] = [
       { tekst: "Hva vi vet, og hvor sikkert vi vet det", anker: "vet" },
       { tekst: "Seks åpningstyper som er i vanlig bruk", anker: "typer" },
       { tekst: "Bygg et bibliotek i fire steg", anker: "bibliotek" },
-      { tekst: "Den dyreste feilen: en åpning som lover for mye", anker: "lover" },
+      {
+        tekst: "Den dyreste feilen: en åpning som lover for mye",
+        anker: "lover",
+      },
     ],
     innhold: [
       {
@@ -321,6 +342,48 @@ export const RESEARCH: readonly Rubrikk[] = [
           "Problemet — start i irritasjonen, ikke i løsningen.",
           "Beviset — et resultat, en kø, et fullt lokale. Sterkest når det er ekte og udramatisk.",
         ],
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DbGUaYkCT5L/",
+          konto: "festool",
+          hvem: "Festool — tysk produsent av elektroverktøy. Selger sager, slipere og støvsugere til snekkere, malere og industri gjennom forhandlere.",
+          folgere: 610867,
+          visninger: 153702,
+          likes: 712,
+          hentet: "2026-09-21",
+          seEtter:
+            "TYPEN «PROBLEMET». Bildeteksten begynner slik: «Vinduskarmene er i veien. Trerekkverket må sages av. Veggen skal bort.» Tre irritasjoner, og først etter dem kommer verktøyet. Ingen presentasjon, ingen «vi lanserer». Det er nøyaktig grepet du kan flytte til en kunde: skriv ned de tre tingene som irriterer kundens kunder, og begynn der.",
+        },
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DaTnXD_vjkg/",
+          konto: "wingstop",
+          hvem: "Wingstop — amerikansk restaurantkjede. Selger kyllingvinger over disk gjennom en franchisedrevet kjede.",
+          folgere: 802391,
+          visninger: 215623,
+          likes: 3546,
+          hentet: "2026-09-21",
+          seEtter:
+            "TYPEN «DET DIREKTE SPØRSMÅLET». Spørsmålet står på skjermen fra bilde én — «hvor mange klarer du?» — sammen med regelen som gjør svaret målbart, og en teller som løper mens du ser. Spørsmålet er verdt å se fordi videoen faktisk svarer på det. Det er hele forskjellen på et spørsmål som krok og et spørsmål som pynt.",
+        },
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/Dchj1KWJtit/",
+          konto: "saltandstraw",
+          hvem: "Salt & Straw — amerikansk iskremkjede fra Portland. Selger iskrem over disk i egne butikker og på nett.",
+          folgere: 511400,
+          visninger: 469160,
+          likes: 10945,
+          hentet: "2026-09-21",
+          seEtter:
+            "TYPEN «BEVISET». Ett bilde rett ovenfra av et enormt brett med iskrembase som brer seg utover, og tre ord: «WE'VE BEEN BUSY.» Ingen påstand om kvalitet, ingen tall. Mengden arbeid ligger i bildet, og det er udramatisk — som beviset alltid skal være. Tenk hvilket bilde hos kunden din som ville gjort samme jobb: en full ovn, en ferdig lastet bil, en stabel med det de leverte i går.",
+        },
       },
       { type: "seksjon", id: "bibliotek", tittel: "Bygg biblioteket" },
       {
@@ -455,7 +518,11 @@ export const RESEARCH: readonly Rubrikk[] = [
         tekst:
           "«Kari, 34, glad i friluftsliv og gode opplevelser» er en oppdiktet person med oppdiktede egenskaper. Den endrer ingenting i hva vi filmer, og den føles produktiv å lage. Det er en dårlig kombinasjon.",
       },
-      { type: "seksjon", id: "situasjon", tittel: "Beskriv situasjonen i stedet" },
+      {
+        type: "seksjon",
+        id: "situasjon",
+        tittel: "Beskriv situasjonen i stedet",
+      },
       {
         type: "avsnitt",
         tekst:
@@ -468,6 +535,20 @@ export const RESEARCH: readonly Rubrikk[] = [
           "Hva er de i ferd med å bestemme seg for?",
           "Hva holder dem tilbake akkurat nå?",
         ],
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/Db09WXRj45y/",
+          konto: "caterpillarinc",
+          hvem: "Caterpillar — amerikansk produsent av anleggsmaskiner. Selger gravemaskiner, dozere og motorer til entreprenører og industri.",
+          folgere: 1091197,
+          visninger: 137776,
+          likes: 2366,
+          hentet: "2026-09-21",
+          seEtter:
+            "Bildeteksten er «Noen barn drømmer om berg-og-dalbane. Andre drømmer om å kjøre minigraver.» Bildet er en sandkasse med to små gravemaskiner der det ellers ville stått husker. Ingen persona, ingen alder, ingen interesser: bare en situasjon — en familie som skal finne på noe i helgen. Legg merke til at et anleggsmaskinselskap her snakker til foreldre, ikke til entreprenører. Situasjonen bestemte hvem, ikke omvendt.",
+        },
       },
       { type: "seksjon", id: "endrer", tittel: "Hva det endrer i opptaket" },
       {

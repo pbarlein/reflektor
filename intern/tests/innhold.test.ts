@@ -185,6 +185,31 @@ test("eksempler har permalenke, konto, tall og dato", () => {
   }
 });
 
+test("ingen post brukes som eksempel to steder", () => {
+  /*
+   * Samme video i to rubrikker er ikke en teknisk feil, men det er en
+   * faglig en. Et eksempel skal vise ÉN ting, og den som møter det samme
+   * klippet igjen tre rubrikker senere, slutter å lese «se etter»-teksten
+   * — den har jo allerede sagt hva videoen handler om.
+   *
+   * Dette fanget ikke noe da det ble skrevet. Det er meningen: det står
+   * her for å fange den dagen en travel produsent gjenbruker det letteste
+   * eksempelet i stedet for å finne et nytt.
+   */
+  const sett = new Map<string, string>();
+  for (const r of RUBRIKKER) {
+    for (const b of r.innhold) {
+      if (b.type !== "eksempel") continue;
+      const fra = sett.get(b.data.url);
+      assert.ok(
+        fra === undefined,
+        `${r.slug}: samme post er allerede brukt i ${fra} — ${b.data.url}`,
+      );
+      sett.set(b.data.url, r.slug);
+    }
+  }
+});
+
 test("eksempler bruker ikke Reflektors egen konto", () => {
   /*
    * Eksemplene i fagartiklene skal vise HÅNDVERKET, ikke oss. Bruker vi

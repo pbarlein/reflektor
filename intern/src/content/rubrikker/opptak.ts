@@ -21,7 +21,10 @@ export const OPPTAK: readonly Rubrikk[] = [
     oppsummering: [
       { tekst: "Hvorfor lyd er i en egen klasse", anker: "klasse" },
       { tekst: "Sjekken på hver nye lokasjon", anker: "sjekk" },
-      { tekst: "Romtone: tretti sekunder som redder klippingen", anker: "romtone" },
+      {
+        tekst: "Romtone: tretti sekunder som redder klippingen",
+        anker: "romtone",
+      },
       { tekst: "Hør mens det filmes, ikke bare før", anker: "hor" },
     ],
     innhold: [
@@ -53,6 +56,34 @@ export const OPPTAK: readonly Rubrikk[] = [
           "Nivå: toppene rundt −12 til −6 dB. Klipper det, er det ødelagt.",
           "Batteri i senderen, og et reservebatteri i lomma.",
         ],
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DbKAm_kJrGq/",
+          konto: "saltandstraw",
+          hvem: "Salt & Straw — amerikansk iskremkjede fra Portland. Selger iskrem over disk i egne butikker og på nett.",
+          folgere: 511400,
+          visninger: 259880,
+          likes: 6743,
+          hentet: "2026-09-21",
+          seEtter:
+            "Se etter myggen på t-skjorta hans. Den sitter høyt på brystet, en håndsbredd under haka, og den er synlig i bildet — de har ikke prøvd å skjule den. Dette er en iskrembutikk: kjøleanlegg, folk, disk. Kameramikrofonen hadde tatt hele rommet og litt av ham. Mygg på hovedpersonen er ikke en oppgradering, det er minstekravet så snart noen skal si noe i et lokale som er i drift.",
+        },
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DaK24mKOlqP/",
+          konto: "marriottbonvoy",
+          hvem: "Marriott Bonvoy — lojalitetsprogrammet til hotellkjeden Marriott. Selger opphold og medlemsfordeler på tvers av kjedens hotellmerker.",
+          folgere: 2463084,
+          visninger: 722530,
+          likes: 24086,
+          hentet: "2026-09-21",
+          seEtter:
+            "Samme grep utendørs, og her er grunnen en annen: vind. Mygg på kragen, tett på munnen, gir lyd som tåler luft i bevegelse. Legg også merke til at hun står i skyggen med lyset bak fotografen — de har valgt sted for lyd og lys samtidig, ikke først det ene og så det andre.",
+        },
       },
       { type: "seksjon", id: "romtone", tittel: "Romtone" },
       {
@@ -91,9 +122,15 @@ export const OPPTAK: readonly Rubrikk[] = [
     ansvarlig: "Produsent",
     prioritet: 92,
     oppsummering: [
-      { tekst: "Lys på lokasjon er en forhandling, ikke en oppbygging", anker: "forhandling" },
+      {
+        tekst: "Lys på lokasjon er en forhandling, ikke en oppbygging",
+        anker: "forhandling",
+      },
       { tekst: "Fire grep, i rekkefølge", anker: "grep" },
-      { tekst: "Blandet lys er den vanligste usynlige feilen", anker: "blandet" },
+      {
+        tekst: "Blandet lys er den vanligste usynlige feilen",
+        anker: "blandet",
+      },
       { tekst: "Sjekk bakgrunnen før du sjekker personen", anker: "bakgrunn" },
       { tekst: "Lås hvitbalansen", anker: "hvitbalanse" },
     ],
@@ -129,6 +166,34 @@ export const OPPTAK: readonly Rubrikk[] = [
               "Ett mykt lys som fyller skyggesiden holder i de aller fleste oppsett. Tre lamper er en oppbygging, og den har du ikke tid til.",
           },
         ],
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/Dcv4Tg3BDes/",
+          konto: "equinox",
+          hvem: "Equinox — amerikansk treningskjede i høyprissegmentet. Selger medlemskap til klubber med basseng, spa og behandling.",
+          folgere: 555326,
+          visninger: 99394,
+          likes: 1735,
+          hentet: "2026-09-21",
+          seEtter:
+            "Et mørkt rom med kun én type lys: varme pærer i sedertre, speilet i vannet. Ingen har hengt opp en lampe. De har funnet det rommet hvor husets eget lys allerede dominerer, og filmet der. Dette er situasjonen du møter hos behandlingssteder, spa og klinikker — og svaret er nesten alltid å velge rom, ikke å tilføre lys.",
+        },
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DbJeuQChAxu/",
+          konto: "tatcha",
+          hvem: "Tatcha — amerikansk hudpleiemerke med japansk utgangspunkt. Selger rens og kremer i egne kanaler og hos Sephora.",
+          folgere: 1460176,
+          visninger: 110466,
+          likes: 2700,
+          hentet: "2026-09-21",
+          seEtter:
+            "Dagslys fra siden, personen vendt mot det, og en bakgrunn som er ryddet før noen tenkte på ansiktet: plante, glatt vegg, ingen stikkontakt bak hodet. Produktene står i lyset, ikke i skyggen av hånda som holder dem. Hele oppsettet kan bygges på to minutter i et hvilket som helst lokale med et vindu.",
+        },
       },
       { type: "seksjon", id: "blandet", tittel: "Blandet lys" },
       {
@@ -175,7 +240,10 @@ export const OPPTAK: readonly Rubrikk[] = [
     oppsummering: [
       { tekst: "To krav til samme bilde", anker: "krav" },
       { tekst: "Hvor mye grensesnittet faktisk dekker", anker: "trygg" },
-      { tekst: "Når du filmer stående, og når du ikke gjør det", anker: "naar" },
+      {
+        tekst: "Når du filmer stående, og når du ikke gjør det",
+        anker: "naar",
+      },
       { tekst: "Midtfeltet er ikke midten", anker: "midt" },
     ],
     innhold: [
@@ -201,6 +269,20 @@ export const OPPTAK: readonly Rubrikk[] = [
         navn: "trygg-sone",
         tekst:
           "Det stiplede feltet er alt du kan regne med at seeren ser. 35 % i bunnen er over en tredjedel av bildet — et ansikt plassert der blir dekket av brukernavn, bildetekst og knapper. Tallene er Metas egne for Stories og Reels.",
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DbT2KxHKeHF/",
+          konto: "yeti",
+          hvem: "YETI — amerikansk produsent av kjølebokser, termokopper og turutstyr. Selger gjennom forhandlere og egen nettbutikk.",
+          folgere: 2329069,
+          visninger: 293912,
+          likes: 15477,
+          hentet: "2026-09-21",
+          seEtter:
+            "Alt som betyr noe ligger i midtfeltet: produktet, ansiktet, og avstanden mellom dem. Øverst er det luft, nederst er det luft. Legg en tommel over de nederste 35 prosentene av bildet og se hva du mister — svaret er ingenting. Det er testen du skal gjøre på hvert eneste oppsett før du trykker opptak.",
+        },
       },
       { type: "seksjon", id: "naar", tittel: "Stående eller liggende" },
       {
@@ -256,7 +338,10 @@ export const OPPTAK: readonly Rubrikk[] = [
     ansvarlig: "Produsent",
     prioritet: 94,
     oppsummering: [
-      { tekst: "Nervøsitet er normalt, og det syns på kamera", anker: "nervos" },
+      {
+        tekst: "Nervøsitet er normalt, og det syns på kamera",
+        anker: "nervos",
+      },
       { tekst: "Fem grep som virker nesten alltid", anker: "grep" },
       { tekst: "Aldri be noen «være naturlig»", anker: "naturlig" },
       { tekst: "Når du skal gi deg", anker: "gi-deg" },
@@ -278,7 +363,8 @@ export const OPPTAK: readonly Rubrikk[] = [
         type: "steg",
         steg: [
           {
-            tittel: "1 — Start med kameraet i gang, uten å si det er en tagning",
+            tittel:
+              "1 — Start med kameraet i gang, uten å si det er en tagning",
             tekst:
               "Den beste taket er nesten alltid det som skjer før personen tror det gjelder. Si «jeg bare sjekker lyden» og still første spørsmål der.",
           },
@@ -303,6 +389,34 @@ export const OPPTAK: readonly Rubrikk[] = [
               "To eller tre tak. Etter det blir folk dårligere, ikke bedre — de begynner å høre på seg selv.",
           },
         ],
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/Dc3INy_MIA7/",
+          konto: "nandosuk",
+          hvem: "Nando's UK & Ireland — restaurantkjede med portugisisk-afrikansk grillkylling. Selger mat over disk i egne restauranter.",
+          folgere: 456776,
+          visninger: 1207671,
+          likes: 84465,
+          hentet: "2026-09-21",
+          seEtter:
+            "En person i vernevest på et lager, med en flaske i hendene. Han har en oppgave — han holder noe, han gjør noe — og det er derfor han ser rolig ut. Ingen står stille og «er seg selv». Dette er kontoens klart mest sette video, foran alt det profesjonelt produserte. Grepet du kan kopiere: gi personen den jobben de gjør til daglig, og film den.",
+        },
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/Dc6VZ86x4mH/",
+          konto: "shakeshack",
+          hvem: "Shake Shack — amerikansk burgerkjede. Selger burgere og milkshake over disk i egne restauranter.",
+          folgere: 911636,
+          visninger: 276351,
+          likes: 8580,
+          hentet: "2026-09-21",
+          seEtter:
+            "Samme prinsipp på et kjøkken. Han står bak sin egen disk, i sine egne klær, og rekker noe mot kameraet. Hendene er opptatt, kroppen er på hjemmebane, og blikket går til kameraet bare et øyeblikk. Sammenlign med hvordan det hadde sett ut om han var bedt om å stå foran disken og fortelle om stedet.",
+        },
       },
       { type: "seksjon", id: "naturlig", tittel: "Ikke si «vær naturlig»" },
       {
@@ -374,6 +488,20 @@ export const OPPTAK: readonly Rubrikk[] = [
         tekst:
           "Fire klipp på fem til åtte sekunder tar under to minutter å filme og sparer typisk et kvarter i redigering.",
       },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/Dc63UzbgQ3t/",
+          konto: "caterpillarinc",
+          hvem: "Caterpillar — amerikansk produsent av anleggsmaskiner. Selger gravemaskiner, dozere og motorer til entreprenører og industri.",
+          folgere: 1091197,
+          visninger: 132356,
+          likes: 6136,
+          hentet: "2026-09-21",
+          seEtter:
+            "Et dekningsbilde som gjør to jobber samtidig: kjeglen ligger uskarpt i forgrunnen og rammer inn bildet, og det våte asfaltet gir refleksjoner som forteller at det har regnet. Kameraet står stille. Dette er ti sekunders arbeid på vei fra bilen til lokasjonen — se etter forgrunnen hver gang du rigger et dekningsbilde, den koster ingenting og skiller et klipp fra et bilde.",
+        },
+      },
       { type: "seksjon", id: "lenger", tittel: "Lenger enn du tror" },
       {
         type: "avsnitt",
@@ -407,7 +535,10 @@ export const OPPTAK: readonly Rubrikk[] = [
     prioritet: 68,
     oppsummering: [
       { tekst: "Vi koster dem noe mens vi er der", anker: "koster" },
-      { tekst: "Praktiske regler som gjør oss lette å ha i huset", anker: "regler" },
+      {
+        tekst: "Praktiske regler som gjør oss lette å ha i huset",
+        anker: "regler",
+      },
       { tekst: "Sikkerhet og adgang", anker: "sikkerhet" },
     ],
     innhold: [
@@ -427,6 +558,20 @@ export const OPPTAK: readonly Rubrikk[] = [
           "Rydd opp etter hvert oppsett, ikke til slutt.",
           "Takk dem som stilte opp, med navn, før du går.",
         ],
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DdUn9ORgbRU/",
+          konto: "dewalttough",
+          hvem: "DEWALT — amerikansk verktøyprodusent. Selger elektroverktøy til håndverkere og byggeplasser gjennom forhandlere.",
+          folgere: 1267628,
+          visninger: 944383,
+          likes: 4473,
+          hentet: "2026-09-21",
+          seEtter:
+            "Filmet på en ekte jobb, hos en ekte kunde, mens arbeidet pågår. Håndverkeren ligger på gulvet og gjør det han skal — han har ikke flyttet seg for kameraet. Kameraet har flyttet seg for ham. Det er hele forholdet mellom oss og en bedrift i drift, på ett bilde: vi tilpasser oss arbeidet, ikke motsatt.",
+        },
       },
       { type: "seksjon", id: "sikkerhet", tittel: "Sikkerhet og adgang" },
       {

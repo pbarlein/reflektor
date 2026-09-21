@@ -43,6 +43,20 @@ export const PLANLEGGING: readonly Rubrikk[] = [
         tekst:
           "Typisk lander 8–10 videoer på tre til fem oppsett. Er det flere enn fem, er dagen for spredt, og da mister du tid du trodde du hadde.",
       },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DbY7ZH7j-pL/",
+          konto: "caterpillarinc",
+          hvem: "Caterpillar — amerikansk produsent av anleggsmaskiner. Selger gravemaskiner, dozere og motorer til entreprenører og industri.",
+          folgere: 1091197,
+          visninger: 121998,
+          likes: 2209,
+          hentet: "2026-09-21",
+          seEtter:
+            "Én dag, delt i fire tidsstempler: 7 am, 10 am, 1 pm, 4 pm. Det er ikke en fortelling — det er en produksjonsplan gjort synlig. Fire oppsett, fire lys, fire steder på samme anlegg, klippet sammen til én video. Se på den som en kvittering for hvordan dagen ble planlagt: noen bestemte oppsettene før de dro, ikke underveis.",
+        },
+      },
       { type: "seksjon", id: "steg", tittel: "Fem steg" },
       {
         type: "steg",
@@ -290,7 +304,10 @@ export const PLANLEGGING: readonly Rubrikk[] = [
     oppsummering: [
       { tekst: "Fire typer innhold, og hva hver gjør", anker: "typer" },
       { tekst: "Miksen som tåler å gjentas", anker: "miks" },
-      { tekst: "Hva som låses til dato, og hva som er fyllmasse", anker: "laas" },
+      {
+        tekst: "Hva som låses til dato, og hva som er fyllmasse",
+        anker: "laas",
+      },
     ],
     innhold: [
       { type: "seksjon", id: "typer", tittel: "Fire typer" },

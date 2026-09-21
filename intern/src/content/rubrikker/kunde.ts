@@ -124,7 +124,10 @@ export const KUNDE: readonly Rubrikk[] = [
     oppsummering: [
       { tekst: "Tjuetre dager uten oss", anker: "dager" },
       { tekst: "Fire kontaktpunkter i måneden", anker: "punkter" },
-      { tekst: "Retningen, ikke hyppigheten, gjør det proaktivt", anker: "retning" },
+      {
+        tekst: "Retningen, ikke hyppigheten, gjør det proaktivt",
+        anker: "retning",
+      },
     ],
     innhold: [
       { type: "seksjon", id: "dager", tittel: "Tjuetre dager" },

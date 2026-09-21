@@ -91,7 +91,10 @@ export const INTERNT: readonly Rubrikk[] = [
       { tekst: "Pris og vilkår", anker: "pris" },
       { tekst: "De seks punktene som inngår", anker: "inngar" },
       { tekst: "Stillbilder — ved behov, ikke fast", anker: "stillbilder" },
-      { tekst: "Hva som ikke inngår, og hvorfor vi sier det høyt", anker: "ikke" },
+      {
+        tekst: "Hva som ikke inngår, og hvorfor vi sier det høyt",
+        anker: "ikke",
+      },
     ],
     innhold: [
       { type: "seksjon", id: "pris", tittel: "Pris og vilkår" },

@@ -363,12 +363,19 @@ export const FOLK: readonly Rubrikk[] = [
     ansvarlig: "Daglig leder",
     prioritet: 72,
     oppsummering: [
-      { tekst: "Standarden er den dårligste vi slipper gjennom", anker: "standard" },
+      {
+        tekst: "Standarden er den dårligste vi slipper gjennom",
+        anker: "standard",
+      },
       { tekst: "Fem ting som aldri går ut", anker: "aldri" },
       { tekst: "Når godt nok faktisk er godt nok", anker: "godt-nok" },
     ],
     innhold: [
-      { type: "seksjon", id: "standard", tittel: "Standarden er den dårligste" },
+      {
+        type: "seksjon",
+        id: "standard",
+        tittel: "Standarden er den dårligste",
+      },
       {
         type: "avsnitt",
         tekst:

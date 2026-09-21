@@ -107,7 +107,10 @@ export const MARKED: readonly Rubrikk[] = [
     prioritet: 84,
     oppsummering: [
       { tekst: "Hva som faktisk påvirker oss", anker: "paavirker" },
-      { tekst: "Sjekklisten når noe ser ut til å ha endret seg", anker: "sjekk" },
+      {
+        tekst: "Sjekklisten når noe ser ut til å ha endret seg",
+        anker: "sjekk",
+      },
       { tekst: "Si fra før kunden oppdager det", anker: "si-fra" },
     ],
     innhold: [

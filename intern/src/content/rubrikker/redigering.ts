@@ -22,7 +22,10 @@ export const REDIGERING: readonly Rubrikk[] = [
       { tekst: "Hva videoen faktisk konkurrerer med", anker: "konkurrent" },
       { tekst: "Fire ting som skal skje tidlig", anker: "skal" },
       { tekst: "Fire ting som koster deg seeren", anker: "koster" },
-      { tekst: "Den vanligste feilen: det gode ligger på tjue sekunder", anker: "tjue" },
+      {
+        tekst: "Den vanligste feilen: det gode ligger på tjue sekunder",
+        anker: "tjue",
+      },
       { tekst: "Testen du gjør på deg selv", anker: "test" },
     ],
     innhold: [
@@ -76,7 +79,11 @@ export const REDIGERING: readonly Rubrikk[] = [
         tekst:
           "Logo-animasjon. «Hei, og velkommen til.» En oppbygging som forklarer hva videoen skal handle om. Stillhet. Alle fire er vanlige, og alle fire er bortkastede sekunder.",
       },
-      { type: "seksjon", id: "tjue", tittel: "Det gode ligger på tjue sekunder" },
+      {
+        type: "seksjon",
+        id: "tjue",
+        tittel: "Det gode ligger på tjue sekunder",
+      },
       {
         type: "avsnitt",
         tekst:
@@ -166,6 +173,20 @@ export const REDIGERING: readonly Rubrikk[] = [
           hentet: "2026-09-21",
           seEtter:
             "Tekstplakaten står midt i bildehøyden, ikke nederst. To ord, store nok til å leses på en armlengdes avstand, og de bærer hele premisset for videoen før noen har sagt noe. Ingenting av teksten er i nedre tredjedel — det er der brukernavn, bildetekst og knapper legger seg på telefonen.",
+        },
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DdT0BvWjdmP/",
+          konto: "festool",
+          hvem: "Festool — tysk produsent av elektroverktøy. Selger sager, slipere og støvsugere til snekkere, malere og industri gjennom forhandlere.",
+          folgere: 610867,
+          visninger: 221850,
+          likes: 1716,
+          hentet: "2026-09-21",
+          seEtter:
+            "Samme regel, helt annen bransje. Plakaten står i øvre midtfelt over et gjærsagblad: produktnavn på én linje, bruksområdet på den neste. To linjer, ingen setning. En snekker vet på et halvt sekund om dette angår ham. Legg merke til at teksten ikke gjentar det bildet allerede viser — bildet viser sagen, teksten sier hva den er til.",
         },
       },
       { type: "seksjon", id: "auto", tittel: "Automatikk er et utkast" },
@@ -306,6 +327,20 @@ export const REDIGERING: readonly Rubrikk[] = [
           "Når det ikke er tale, og rytmen må komme fra bildene.",
         ],
       },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/Db15EO7NRhH/",
+          konto: "saltandstraw",
+          hvem: "Salt & Straw — amerikansk iskremkjede fra Portland. Selger iskrem over disk i egne butikker og på nett.",
+          folgere: 511400,
+          visninger: 1120874,
+          likes: 9519,
+          hentet: "2026-09-21",
+          seEtter:
+            "Raskt, og riktig raskt. En oppskrift har mange steg som alle må vises, og ingen av dem må forstås i dybden. Da er tett klipping ikke en stil — det er den eneste måten å få plass til alt. Tell klippene i de første ti sekundene og sammenlign med eksempelet lenger ned.",
+        },
+      },
       { type: "seksjon", id: "feil", tittel: "Når det er feil" },
       {
         type: "punkter",
@@ -314,6 +349,20 @@ export const REDIGERING: readonly Rubrikk[] = [
           "Når motivet er rolig av natur — behandling, håndverk, mat som skal se god ut.",
           "Når fagligheten er poenget. Rask klipping på en teknisk forklaring leser som at vi ikke tror folk gidder å høre etter.",
         ],
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/Da0gfUkBRZs/",
+          konto: "sothebysrealty",
+          hvem: "Sotheby's International Realty — internasjonal eiendomsmegler i luksussegmentet. Formidler boliger gjennom lokale kontorer i over åtti land.",
+          folgere: 582523,
+          visninger: 398913,
+          likes: 19382,
+          hentet: "2026-09-21",
+          seEtter:
+            "Samme måned, samme plattform, motsatt rytme. Bildene får stå. Kameraet beveger seg sakte gjennom huset i stedet for at klippingen beveger seg for det. Grunnen er at motivet skal FØLES, ikke telles — akkurat som et behandlingsrom eller et lokale en kunde skal ønske seg til. Hadde dette vært klippet like tett som iskremoppskriften, hadde huset sett stresset ut.",
+        },
       },
       { type: "seksjon", id: "bevegelse", tittel: "Klipp på bevegelse" },
       {
@@ -363,11 +412,29 @@ export const REDIGERING: readonly Rubrikk[] = [
         tekst:
           "Musikk skal støtte tempoet som allerede finnes i klippingen. Legger du musikk på for å skjule at videoen mangler rytme, hører man det. Prøv å se redigeringen uten musikk: fungerer den ikke da, er det klippingen som må fikses.",
       },
-      { type: "seksjon", id: "opptakslyd", tittel: "Behold lyden fra opptaket" },
+      {
+        type: "seksjon",
+        id: "opptakslyd",
+        tittel: "Behold lyden fra opptaket",
+      },
       {
         type: "avsnitt",
         tekst:
           "Lyden fra stedet — kaffemaskinen, kniven mot fjøla, stemmene i lokalet — gjør videoen ekte på en måte musikk ikke kan. Legg den under musikken i stedet for å erstatte den. Det er ofte forskjellen på at noe ser ut som en reklame og at det ser ut som en bedrift.",
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DbBSuIVAOu_/",
+          konto: "caterpillarinc",
+          hvem: "Caterpillar — amerikansk produsent av anleggsmaskiner. Selger gravemaskiner, dozere og motorer til entreprenører og industri.",
+          folgere: 1091197,
+          visninger: 875386,
+          likes: 5511,
+          hentet: "2026-09-21",
+          seEtter:
+            "Bildeteksten er hele poenget: «No trending audio needed.» Lydsporet er maskinen. Ingen musikk, ingen trendlyd, og 875 386 visninger på en video der det eneste man hører er jord som flyttes. Neste gang du strekker deg etter et musikkspor: hør gjennom opptakslyden først og spør om den er bedre enn det du var i ferd med å legge oppå.",
+        },
       },
     ],
   },
