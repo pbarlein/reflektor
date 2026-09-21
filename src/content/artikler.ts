@@ -33,7 +33,24 @@
 export type Blokk =
   | { type: "avsnitt"; tekst: string }
   | { type: "overskrift"; niva: 2 | 3; tekst: string }
-  | { type: "liste"; punkter: string[] };
+  | { type: "liste"; punkter: string[] }
+  /**
+   * Kildehenvisning med utgående lenke.
+   *
+   * Lagt til 21.09.2026 for artikler som regner på noe. En påstand med
+   * kilde er ikke bare mer redelig — den er mer siterbar. Researchen er
+   * entydig: «Unsupported claims rarely get cited by AI engines. If you
+   * state a claim without linking to data, answer engines cannot verify it
+   * and will prefer a competitor who cites specific numbers.» Og innhold
+   * som selv siterer autoritative kilder bygger det forskerne kaller «a
+   * web of mutual verification».
+   *
+   * De migrerte Squarespace-artiklene har ingen av disse. Det er en av
+   * grunnene til at de rangerer på ordbokord og ikke på kjøpsintensjon.
+   */
+  | { type: "kilde"; tekst: string; url: string }
+  /** Tabell. Sammenligningstabeller er blant de mest siterte formatene. */
+  | { type: "tabell"; kolonner: string[]; rader: string[][] };
 
 export type Artikkel = {
   slug: string;
@@ -1683,6 +1700,159 @@ export const artikler: Artikkel[] = [
     ],
     lesVidere: [
       { sti: "/videoproduksjon-i-oslo", tekst: "film til nettside og skjerm" },
+    ],
+  },
+  {
+    slug: "some-ansvarlig-eller-byra",
+    tittel: "SoMe-ansvarlig eller byrå? Regnestykket med tall",
+    beskrivelse:
+      "Hva koster en ansatt SoMe-ansvarlig egentlig, når arbeidsgiveravgift, feriepenger og pensjon er regnet med? Vi setter tallene fra Altinn og SSB mot et byråbudsjett.",
+    publisert: "2026-09-21",
+    blokker: [
+      {
+        type: "avsnitt",
+        tekst:
+          "En ansatt koster 20–30 prosent mer enn lønnen. Det er tommelfingerregelen Altinn oppgir, og den er grunnen til at sammenligningen mellom å ansette og å sette bort sjelden går som folk tror. Her er regnestykket med tall fra offentlige kilder, og en ærlig gjennomgang av hva de to alternativene faktisk gir.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hva koster en ansatt egentlig?",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Lønnen er ikke kostnaden. Altinn regner et eksempel med 600 000 kroner i avtalt årslønn, og lander på 764 410 kroner i faktisk kostnad for arbeidsgiver. Differansen er 164 410 kroner, eller 27 prosent, og den består av fire poster som ikke er valgfrie.",
+      },
+      {
+        type: "tabell",
+        kolonner: ["Post", "Kroner"],
+        rader: [
+          ["Avtalt årslønn", "600 000"],
+          ["Feriepenger, 12 %", "65 077"],
+          ["Arbeidsgiveravgift, 14,1 %", "85 641"],
+          ["Pensjon (OTP), 2 %", "12 000"],
+          ["Arbeidsgiveravgift av pensjonen", "1 692"],
+          ["Faktisk kostnad", "764 410"],
+        ],
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Eksempelet og satsene er hentet fra Altinns oversikt «Hva koster en arbeidstaker». Arbeidsgiveravgiften varierer fra 0 prosent i deler av Troms og Finnmark til 14,1 prosent, som er satsen de fleste bedrifter betaler. Feriepengesatsen er 10,2 eller 12 prosent, avhengig av om ferien følger ferielovens minstekrav eller er avtalt til fem uker.",
+        url: "https://info.altinn.no/starte-og-drive/arbeidsforhold/ansettelse/hva-koster-en-arbeidstaker/",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "764 410 kroner i året er 63 700 kroner i måneden. Og det er før utstyr, programvare, kontorplass, kursing og den tiden noen i bedriften bruker på å lede, følge opp og rekruttere.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Er 600 000 et realistisk lønnsnivå?",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det er over medianen, men ikke oppsiktsvekkende. SSB oppgir en medianlønn i Norge på 55 800 kroner i måneden og et gjennomsnitt på 62 070 — altså henholdsvis 669 600 og 744 840 kroner i året for alle ansatte sett under ett. Tallet i eksempelet ligger under begge.",
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Lønnstallene er fra Statistisk sentralbyrå. Vi oppgir bevisst ikke et lønnsnivå for SoMe-ansvarlige spesifikt — stillingstittelen finnes ikke som egen kategori i SSBs statistikk, og tallene som sirkulerer for den rollen kommer fra kilder uten samme etterprøvbarhet.",
+        url: "https://www.ssb.no/arbeid-og-lonn/lonn-og-arbeidskraftkostnader/artikler/hva-er-vanlig-lonn-i-norge",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Poenget er heller ikke det eksakte lønnsnivået. Poenget er påslaget: uansett hvilket tall du setter inn, legger arbeidsgiveravgift, feriepenger og pensjon på rundt 27 prosent.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hva koster et byrå?",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det er et vanskeligere spørsmål å besvare, fordi de fleste byråer ikke oppgir pris. Reflektor gjør det: 30 000 kroner i måneden, altså 360 000 i året, for én produksjonsdag i måneden, 8–10 ferdige videoer og publisering to ganger i uken.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det er mindre enn halvparten av kostnaden i eksempelet over. Men de to leveransene er ikke like, og det er den viktigste delen av sammenligningen.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hva får du som du ikke får?",
+      },
+      {
+        type: "tabell",
+        kolonner: ["Hva", "Ansatt", "Abonnement"],
+        rader: [
+          ["Til stede i kanalene hver dag", "ja", "nei"],
+          ["Svarer i kommentarfelt og meldinger", "ja", "nei"],
+          ["Stories og løpende publisering", "ja", "delvis"],
+          ["Profesjonelt kamerautstyr", "må kjøpes", "inngår"],
+          ["Flere fagfelt dekket", "én person", "team"],
+          ["Sykefravær og ferie", "din risiko", "vår risiko"],
+          ["Bindingstid", "arbeidsavtale", "tre måneders oppsigelse"],
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "En ansatt er til stede. Det er den reelle forskjellen, og den er ikke liten. Trenger dere noen som svarer i kommentarfeltet innen en time, legger ut stories fra en messe samme ettermiddag og kjenner bedriften innenfra, er ansettelse det riktige valget. Ingen leverandør kan erstatte det.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Men en ansatt SoMe-ansvarlig skal som regel beherske strategi, foto, video, klipping, fargekorrigering, tekst og publisering alene. Det er flere fagfelt, og de færreste er sterke i alle. Resultatet blir ofte mobilinnhold laget mellom andre oppgaver — og da er det ikke 764 410 kroner mot 360 000, men 764 410 kroner mot et bedre produkt til under halve prisen.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Når er ansettelse riktig?",
+      },
+      {
+        type: "liste",
+        punkter: [
+          "Dere trenger daglig tilstedeværelse i kanalene, ikke bare innhold",
+          "Dialogen med kundene er en del av produktet, ikke et vedlegg",
+          "Volumet er så høyt at en ekstern produksjonsdag i måneden ikke rekker",
+          "Dere har allerede noen som kan filme og klippe, og trenger en som styrer",
+        ],
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Når er byrå riktig?",
+      },
+      {
+        type: "liste",
+        punkter: [
+          "Problemet er at det ikke produseres nok godt innhold, jevnt nok",
+          "Dere vil ha profesjonell kvalitet uten å kjøpe utstyr og kompetanse",
+          "Budsjettet skal være forutsigbart, uten rekruttering og opplæring",
+          "Dere vil kunne snu i løpet av tre måneder hvis det ikke fungerer",
+        ],
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Mange gjør begge deler",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Den vanligste løsningen er ikke enten–eller. En markedsansvarlig som allerede jobber der håndterer dialogen, kjenner kundene og legger strategien — og produksjonen settes bort. Da betaler dere for det som faktisk er vanskelig å gjøre selv, og beholder det som krever å være innenfor.",
+      },
+    ],
+    lesVidere: [
+      { sti: "/", tekst: "Reflektors pris og leveranse, oppgitt åpent" },
+      { sti: "/innholdsproduksjon", tekst: "hva Reflektor produserer" },
     ],
   },
 ];

@@ -156,6 +156,59 @@ export default async function BloggInnlegg({ params }: Props) {
                   </ul>
                 );
               }
+              if (b.type === "kilde") {
+                return (
+                  <p
+                    key={i}
+                    className="mt-5 border-l-2 border-kant pl-5 text-[0.9375rem] leading-relaxed text-pretty text-blekk-dempet"
+                  >
+                    {b.tekst}{" "}
+                    <a
+                      href={b.url}
+                      target="_blank"
+                      rel="noopener"
+                      className="inline-flex min-h-6 items-center underline underline-offset-2 hover:text-aksent-tekst"
+                    >
+                      Kilde
+                    </a>
+                  </p>
+                );
+              }
+              if (b.type === "tabell") {
+                return (
+                  <div key={i} className="mt-7 overflow-x-auto">
+                    <table className="w-full border-collapse text-left text-[0.9375rem]">
+                      <thead>
+                        <tr className="border-b border-blekk-svak">
+                          {b.kolonner.map((k) => (
+                            <th
+                              key={k}
+                              scope="col"
+                              className="py-3 pr-4 font-sans text-xs font-medium tracking-[0.06em] text-blekk-dempet uppercase last:pr-0"
+                            >
+                              {k}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {b.rader.map((r) => (
+                          <tr key={r.join()} className="border-b border-kant">
+                            {r.map((celle, j) => (
+                              <td
+                                key={j}
+                                className={`py-3 pr-4 leading-relaxed last:pr-0 ${j === 0 ? "text-blekk" : "tabular-nums text-blekk-dempet"}`}
+                              >
+                                {celle}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                );
+              }
               return (
                 <p
                   key={i}
