@@ -1,9 +1,11 @@
 import Link from "next/link";
 
 import { Godkjentmerke } from "@/components/Godkjenning";
+import { Lesemerke } from "@/components/Lesemerke";
 import { Medieflate } from "@/components/Medieflate";
 import { finnKategori } from "@/content/kategorier";
 import type { Rubrikk } from "@/content/rubrikktype";
+import type { Lesetilstand } from "@/lib/lesing";
 
 /**
  * Ett kort i en rad.
@@ -20,10 +22,13 @@ import type { Rubrikk } from "@/content/rubrikktype";
  */
 export function Rubrikkort({
   rubrikk,
+  tilstand = "ulest",
   prioritert = false,
   fyll = false,
 }: {
   rubrikk: Rubrikk;
+  /** Lesestatus. Regnes for hele samlingen i src/lib/lesing.ts. */
+  tilstand?: Lesetilstand;
   /** Kun for kort over folden. `priority` på alle ville bedt om alt samtidig. */
   prioritert?: boolean;
   /**
@@ -50,9 +55,20 @@ export function Rubrikkort({
         medierammen.
       */}
       <div className="relative aspect-[16/10] overflow-hidden bg-dempet">
-        <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:transform-none motion-reduce:transition-none">
+        {/*
+          LEST DEMPER MEDIET. Merket alene er lite; sammen med et litt
+          blassere bilde ser man på en halv sekund hvilke kort man er
+          ferdig med, uten å lese et eneste ord. Hover setter det tilbake,
+          så ingenting føles utilgjengelig.
+        */}
+        <div
+          className={`absolute inset-0 transition-all duration-500 group-hover:scale-[1.04] group-hover:opacity-100 group-hover:saturate-100 motion-reduce:transform-none motion-reduce:transition-none ${
+            tilstand === "lest" ? "opacity-55 saturate-[0.55]" : ""
+          }`}
+        >
           <Medieflate medie={rubrikk.medie} prioritert={prioritert} />
         </div>
+        <Lesemerke tilstand={tilstand} />
         <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1.5 rounded-full bg-[rgba(255,255,255,0.92)] px-2.5 py-1 font-sans text-[0.6875rem] font-medium tracking-[0.06em] text-blekk uppercase backdrop-blur-sm">
           {kategori.nr ? (
             <span aria-hidden className="tabular-nums text-aksent-tekst">

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import { Rubrikkort } from "@/components/Rubrikkort";
 import type { Rubrikk } from "@/content/rubrikktype";
+import type { Lesetilstand } from "@/lib/lesing";
 import { sokeTekst, treffer } from "@/lib/sok";
 
 /**
@@ -29,7 +30,13 @@ import { sokeTekst, treffer } from "@/lib/sok";
  */
 const FORSLAG = ["romtone", "hvitbalanse", "mygg", "emneknagg", "oppsigelse"];
 
-export function Sok({ rubrikker }: { rubrikker: readonly Rubrikk[] }) {
+export function Sok({
+  rubrikker,
+  tilstander,
+}: {
+  rubrikker: readonly Rubrikk[];
+  tilstander: Record<string, Lesetilstand>;
+}) {
   const [sok, settSok] = useState("");
 
   const indeks = useMemo(() => {
@@ -145,7 +152,12 @@ export function Sok({ rubrikker }: { rubrikker: readonly Rubrikk[] }) {
             */
             <div className="mt-6 grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(17rem,1fr))]">
               {treff.map((r) => (
-                <Rubrikkort key={r.slug} rubrikk={r} fyll />
+                <Rubrikkort
+                  key={r.slug}
+                  rubrikk={r}
+                  tilstand={tilstander[r.slug] ?? "ulest"}
+                  fyll
+                />
               ))}
             </div>
           )}

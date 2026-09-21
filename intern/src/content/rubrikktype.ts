@@ -63,7 +63,11 @@ export type Blokk =
    * smakssak — safe zone, utsnitt, bildeutsnitt. En tegning viser regelen
    * selv; en video viser bare noen som følger den. Se Figur.tsx.
    */
-  | { type: "figur"; navn: "trygg-sone" | "utsnitt" | "bildeutsnitt"; tekst: string }
+  | {
+      type: "figur";
+      navn: "trygg-sone" | "utsnitt" | "bildeutsnitt";
+      tekst: string;
+    }
   /**
    * Innebygd eksempel fra Instagram. Brukes der en teknikk må SES for å
    * forstås, og der vårt eget arbeid ville bundet forklaringen til én
@@ -75,6 +79,24 @@ export type Blokk =
   | { type: "merknad"; tekst: string }
   | { type: "sitat"; tekst: string; kilde: string };
 
+/**
+ * ── `nr` ──────────────────────────────────────────────────────────────────
+ *
+ * Et permanent, unikt tall per rubrikk. Det er IKKE en rekkefølge og skal
+ * aldri vises. Det finnes av én grunn: lesestatus lagres som en bitmaske i
+ * en informasjonskapsel, og bitmasken trenger en fast posisjon per rubrikk.
+ *
+ * TO REGLER, OG BEGGE ER VIKTIGE:
+ *
+ *   1. Et `nr` skal aldri endres. Gjør du det, flytter du lesestatusen til
+ *      alle ansatte over på en annen rubrikk.
+ *   2. Et `nr` skal aldri gjenbrukes. Slettes en rubrikk, blir tallet
+ *      liggende tomt. Gjenbruk gir nye ansatte en rubrikk som allerede er
+ *      huket av.
+ *
+ * Alternativet var å lagre slugger. Femti slugger er rundt 1 200 byte som
+ * sendes med HVER forespørsel, også bilder og video. Bitmasken er sju.
+ */
 export type Medie = {
   type: "video" | "bilde";
   /** Sti under /medier, uten filendelse. Video forutsetter .mp4 + .jpg. */
@@ -142,6 +164,17 @@ export type Punkt = {
 };
 
 export type Rubrikk = {
+  /** Permanent og unikt. Se forklaringen over Medie. Endres aldri. */
+  nr: number;
+  /**
+   * Satt på ÉN rubrikk om gangen, og bare når det er sant: grunnen til at
+   * nettopp denne skal leses nå. Vises i «Start her» øverst på forsiden.
+   *
+   * At det er én, er ikke en begrensning — det er hele funksjonen. To
+   * fremhevede rubrikker peker i to retninger, og da peker de ingen vei.
+   * En test feiler hvis det står mer enn én.
+   */
+  fremhevet?: string;
   slug: string;
   tittel: string;
   /** Én til to setninger. Dette er alt kortet viser av innholdet. */

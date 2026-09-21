@@ -4,6 +4,7 @@ import type { Rubrikk } from "../rubrikktype.ts";
 export const REDIGERING: readonly Rubrikk[] = [
   {
     slug: "de-forste-tre-sekundene",
+    nr: 41,
     tittel: "De første tre sekundene",
     sammendrag:
       "Beslutningen om å bli eller dra tas før seeren rekker å tenke. Hva som skal skje der, og de fire tingene som garantert koster deg dem.",
@@ -105,6 +106,7 @@ export const REDIGERING: readonly Rubrikk[] = [
 
   {
     slug: "teksting-og-tekstplakater",
+    nr: 42,
     tittel: "Teksting som faktisk er lesbar",
     sammendrag:
       "Teksting inngår i leveransen, og de fleste ser uten lyd. Slik settes den så den er lesbar på en telefon i sollys — og ikke havner bak grensesnittet.",
@@ -214,6 +216,7 @@ export const REDIGERING: readonly Rubrikk[] = [
 
   {
     slug: "eksport-og-spesifikasjoner",
+    nr: 43,
     tittel: "Eksport: å gi plattformen et godt utgangspunkt",
     sammendrag:
       "Alt du laster opp blir komprimert på nytt. Du kan ikke unngå det, men du kan levere noe som tåler behandlingen.",
@@ -291,6 +294,7 @@ export const REDIGERING: readonly Rubrikk[] = [
 
   {
     slug: "klipperytme",
+    nr: 44,
     tittel: "Klipperytme: når det skal gå fort, og når det ikke skal",
     sammendrag:
       "Rask klipping er ikke automatisk bedre. Rytmen skal følge innholdet og bransjen, ikke en trend.",
@@ -375,6 +379,7 @@ export const REDIGERING: readonly Rubrikk[] = [
 
   {
     slug: "musikk-og-lyd-i-redigering",
+    nr: 45,
     tittel: "Musikk og lyd i redigeringen",
     sammendrag:
       "Musikk kan bære en video eller ødelegge den. Og rettighetene er ikke en detalj — det er kundens konto som rammes.",

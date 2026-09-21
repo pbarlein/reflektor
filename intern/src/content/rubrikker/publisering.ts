@@ -4,6 +4,7 @@ import type { Rubrikk } from "../rubrikktype.ts";
 export const PUBLISERING: readonly Rubrikk[] = [
   {
     slug: "rytmen-to-i-uka",
+    nr: 35,
     tittel: "Rytmen er hele produktet",
     sammendrag:
       "Kunden kjøper ikke 8–10 videoer. De kjøper at kontoen aldri står stille. Slik fordeles en måneds materiale så rytmen tåler at noe går galt.",
@@ -82,6 +83,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
 
   {
     slug: "hva-tallene-betyr",
+    nr: 36,
     tittel: "Hva tallene betyr, og hva de ikke betyr",
     sammendrag:
       "Visninger er det minst nyttige tallet på skjermen. Her er hva du faktisk skal se på, og hvordan du snakker om det med en kunde uten å love noe.",
@@ -195,6 +197,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
 
   {
     slug: "bildetekst-og-forste-kommentar",
+    nr: 37,
     tittel: "Bildetekst og første kommentar",
     sammendrag:
       "Bildeteksten leses av dem som allerede har stoppet. Hva den skal gjøre, og hvorfor emneknagger ikke hører hjemme i den.",
@@ -268,6 +271,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
 
   {
     slug: "krysspublisering-til-facebook",
+    nr: 38,
     tittel: "Krysspublisering til Facebook",
     sammendrag:
       "Det som publiseres på Instagram krysspubliseres til Facebook. Hva som følger med automatisk, og hva som må sjekkes for hånd.",
@@ -321,6 +325,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
 
   {
     slug: "naar-noe-gikk-darlig",
+    nr: 39,
     tittel: "Når en post gikk dårlig",
     sammendrag:
       "Det kommer til å skje, jevnlig. Hvordan du finner ut hvorfor uten å overtolke, og hva du sier til kunden.",
@@ -371,6 +376,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
   },
   {
     slug: "hva-vi-ikke-kan-love",
+    nr: 40,
     tittel: "Hva vi ikke kan love på kundens vegne",
     sammendrag:
       "Noen bransjer har regler for hva som kan sies i markedsføring. Bryter vi dem, er det kunden som får tilsynet på nakken. Her er hva du må vite for å stille riktig spørsmål.",

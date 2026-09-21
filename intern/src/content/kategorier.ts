@@ -133,8 +133,7 @@ export const KATEGORIER: readonly Kategori[] = [
     id: "marked",
     navn: "Markedet utenfor",
     kort: "Marked",
-    beskrivelse:
-      "Plattformene, bransjen, og hva kunder spør om akkurat nå.",
+    beskrivelse: "Plattformene, bransjen, og hva kunder spør om akkurat nå.",
     bolk: "oss",
   },
 ] as const;

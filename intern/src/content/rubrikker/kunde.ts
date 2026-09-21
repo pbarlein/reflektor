@@ -11,6 +11,7 @@ import type { Rubrikk } from "../rubrikktype.ts";
 export const KUNDE: readonly Rubrikk[] = [
   {
     slug: "hvorfor-kunder-slutter",
+    nr: 14,
     tittel: "Hvorfor kunder slutter — og hva som faktisk holder dem",
     sammendrag:
       "Pris er nesten aldri grunnen. Undersøkelser peker på det samme hver gang: manglende initiativ og dårlig kommunikasjon. Begge deler er innenfor vår kontroll.",
@@ -107,6 +108,7 @@ export const KUNDE: readonly Rubrikk[] = [
 
   {
     slug: "proaktiv-kundekontakt",
+    nr: 15,
     tittel: "Proaktiv kontakt mellom produksjonsdagene",
     sammendrag:
       "Kunden ser oss én dag i måneden. De resterende tjuetre er det opp til oss om vi finnes. En rytme som gjør «proaktiv» til noe konkret.",
@@ -178,6 +180,7 @@ export const KUNDE: readonly Rubrikk[] = [
 
   {
     slug: "forventninger-fra-dag-en",
+    nr: 16,
     tittel: "Sett forventningene før de settes for deg",
     sammendrag:
       "De fleste konflikter med kunder er forventninger som aldri ble uttalt. Fem ting som skal være sagt høyt i oppstarten.",
@@ -232,6 +235,7 @@ export const KUNDE: readonly Rubrikk[] = [
 
   {
     slug: "daarlige-nyheter",
+    nr: 17,
     tittel: "Å gi dårlige nyheter",
     sammendrag:
       "Noe kommer til å gå galt. Måten du sier fra på avgjør om det blir en ripe eller et brudd.",
@@ -304,6 +308,7 @@ export const KUNDE: readonly Rubrikk[] = [
 
   {
     slug: "naar-kunden-er-misfornoyd",
+    nr: 18,
     tittel: "Når kunden er misfornøyd",
     sammendrag:
       "Kritikk er informasjon, men den kommer sjelden pent pakket. Slik tar du imot den uten å bli defensiv, og uten å love bort mer enn vi kan holde.",
@@ -371,6 +376,7 @@ export const KUNDE: readonly Rubrikk[] = [
 
   {
     slug: "kundemotet",
+    nr: 19,
     tittel: "Kundemøtet: struktur som gjør det verdt tiden",
     sammendrag:
       "Et møte uten struktur blir en statusoppdatering. Fire deler som gjør at kunden går ut med noe de ikke hadde da de kom inn.",

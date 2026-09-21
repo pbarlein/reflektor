@@ -4,6 +4,7 @@ import type { Rubrikk } from "../rubrikktype.ts";
 export const PLANLEGGING: readonly Rubrikk[] = [
   {
     slug: "produksjonsdag-som-gir-8-10",
+    nr: 30,
     tittel: "Slik planlegges en dag som gir 8–10 videoer",
     sammendrag:
       "Én dag skal dekke en måned. Det går bare opp hvis dagen planlegges i oppsett, ikke som en liste med opptak.",
@@ -114,6 +115,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
 
   {
     slug: "shotliste",
+    nr: 31,
     tittel: "Shotliste som en annen kan filme etter",
     sammendrag:
       "Testen er om en kollega som ikke var med i planleggingen kan filme dagen med listen i hånda. Her er hva som må stå der, og hva som bare er støy.",
@@ -177,6 +179,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
 
   {
     slug: "lokasjonsbefaring",
+    nr: 32,
     tittel: "Befaring: se etter det som stopper dagen",
     sammendrag:
       "Tjue minutter på lokasjon i forveien sparer to timer på produksjonsdagen. Det du skal se etter er sjelden det du tror.",
@@ -228,6 +231,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
 
   {
     slug: "forberedt-til-kundemote",
+    nr: 33,
     tittel: "Godt forberedt til kundemøte",
     sammendrag:
       "«Godt forberedt» er det andre ordet i målet vårt. Her er hva det betyr konkret, i minuttene før du går inn.",
@@ -287,6 +291,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
 
   {
     slug: "innholdsplan-for-en-maned",
+    nr: 34,
     tittel: "Innholdsplan for en måned",
     sammendrag:
       "Hvordan en måneds poster settes sammen så det blir variasjon uten at det blir tilfeldig. En enkel miks som tåler å gjentas.",

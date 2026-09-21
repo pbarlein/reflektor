@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
 import { Godkjentbanner } from "@/components/Godkjenning";
 import { Innhold, Kildeliste } from "@/components/Innhold";
+import { Lesesporing } from "@/components/Lesesporing";
 import { Oppsummering } from "@/components/Oppsummering";
 import { Rubrikkort } from "@/components/Rubrikkort";
 import { finnKategori } from "@/content/kategorier";
@@ -13,6 +14,8 @@ import {
   finnRubrikk,
   rubrikkerIKategori,
 } from "@/content/rubrikker";
+import { lesetilstander } from "@/lib/lesing";
+import { lestAvBrukeren } from "@/lib/lesing-server";
 import { krevBruker } from "@/lib/tilgang";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -44,10 +47,18 @@ export default async function Rubrikkside({ params }: Props) {
   const rubrikk = finnRubrikk(slug);
   if (!rubrikk) notFound();
 
+  const lest = await lestAvBrukeren();
   const kategori = finnKategori(rubrikk.kategori);
   const beslektede = rubrikkerIKategori(rubrikk.kategori)
     .filter((r) => r.slug !== rubrikk.slug)
     .slice(0, 4);
+
+  /*
+   * Kortene nederst skal vise samme lesestatus som på forsiden. Regnes mot
+   * HELE samlingen, ikke mot de fire — NY-grensa er en egenskap ved huben,
+   * ikke ved den enkelte raden.
+   */
+  const tilstander = lesetilstander(RUBRIKKER, lest, new Date());
 
   const dato = new Date(rubrikk.oppdatert).toLocaleDateString("nb-NO", {
     day: "numeric",
@@ -57,6 +68,8 @@ export default async function Rubrikkside({ params }: Props) {
 
   return (
     <Container>
+      {/* Se .lesestripe i globals.css. Ren CSS, ingen rullelytter. */}
+      <div aria-hidden className="lesestripe" />
       <div className="py-8 sm:py-10">
         {/*
           TILBAKELENKE OG IKKE BRØDSMULER. Hierarkiet er to nivåer dypt. En
@@ -165,6 +178,13 @@ export default async function Rubrikkside({ params }: Props) {
             {rubrikk.kilder && rubrikk.kilder.length > 0 && (
               <Kildeliste kilder={rubrikk.kilder} />
             )}
+
+            {/*
+              LESESPORINGEN STÅR NEDERST I TEKSTEN, ikke som et flytende
+              element. Den er både merket og målepunktet: at den er synlig,
+              ER beviset på at leseren kom til bunnen.
+            */}
+            <Lesesporing nr={rubrikk.nr} alleredeLest={lest.has(rubrikk.nr)} />
           </div>
         </article>
 
@@ -181,7 +201,12 @@ export default async function Rubrikkside({ params }: Props) {
             </h2>
             <div className="mt-6 grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(17rem,1fr))]">
               {beslektede.map((r) => (
-                <Rubrikkort key={r.slug} rubrikk={r} fyll />
+                <Rubrikkort
+                  key={r.slug}
+                  rubrikk={r}
+                  tilstand={tilstander.get(r.slug) ?? "ulest"}
+                  fyll
+                />
               ))}
             </div>
           </section>

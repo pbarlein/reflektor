@@ -228,3 +228,55 @@ html {
     transition-duration: 0.01ms !important;
   }
 }
+
+/*
+ * ══════════════════════════════════════════════════════════════════════════
+ * LESEFREMDRIFT PÅ EN RUBRIKKSIDE
+ * ══════════════════════════════════════════════════════════════════════════
+ *
+ * En to piksler høy strek øverst som følger hvor langt ned i teksten man er.
+ * Ingen JavaScript: `animation-timeline: scroll()` kobler animasjonen til
+ * rullingen i stedet for til klokka, så streken er alltid i takt — også når
+ * man drar i rullefeltet eller hopper med et anker.
+ *
+ * ALT LIGGER I @supports, og det er ikke forsiktighet for forsiktighetens
+ * skyld. Uten støtte ville regelen blitt ignorert og streken blitt stående
+ * på null bredde for alltid — en strek som ser ut som om siden henger.
+ * Innenfor @supports finnes den ikke i det hele tatt der den ikke virker.
+ *
+ * Den er `aria-hidden` i markeringen: en skjermleser vet allerede hvor i
+ * dokumentet den står, og trenger ikke en strek som forteller det samme.
+ */
+@supports (animation-timeline: scroll()) {
+  .lesestripe {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 40;
+    height: 2px;
+    width: 100%;
+    transform-origin: 0 50%;
+    background: var(--action-primary);
+    animation: lesestripe linear;
+    animation-timeline: scroll();
+  }
+
+  @keyframes lesestripe {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /*
+   * Den som har bedt om mindre bevegelse, har ikke bedt om mindre
+   * informasjon — men en strek som løper er bevegelse. Vi tar den bort.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .lesestripe {
+      display: none;
+    }
+  }
+}

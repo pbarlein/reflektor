@@ -94,7 +94,10 @@ function nokkel(): Promise<CryptoKey> {
 function tilBase64Url(bytes: Uint8Array): string {
   let binart = "";
   for (const b of bytes) binart += String.fromCharCode(b);
-  return btoa(binart).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return btoa(binart)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
 }
 
 /**

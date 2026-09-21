@@ -4,6 +4,7 @@ import type { Rubrikk } from "../rubrikktype.ts";
 export const OPPTAK: readonly Rubrikk[] = [
   {
     slug: "lyd-kan-ikke-reddes",
+    nr: 24,
     tittel: "Lyd er det eneste du ikke kan redde etterpå",
     sammendrag:
       "Dårlig lys kan løftes, skjevt bilde kan beskjæres, og feil farge kan rettes. Dårlig lyd er borte for godt. Her er sjekken som må gå før første opptak.",
@@ -107,6 +108,7 @@ export const OPPTAK: readonly Rubrikk[] = [
 
   {
     slug: "lyssetting-pa-lokasjon",
+    nr: 25,
     tittel: "Lyssetting når du ikke kan bygge om rommet",
     sammendrag:
       "Kundens lokale er sjelden bygget for å filmes i. Hva du gjør med dagslys, taklys og blandet lys når du har minutter og ikke timer.",
@@ -223,6 +225,7 @@ export const OPPTAK: readonly Rubrikk[] = [
 
   {
     slug: "komponer-for-9-16",
+    nr: 26,
     tittel: "Komponer for 9:16 uten å ødelegge for alt annet",
     sammendrag:
       "Innholdet skal virke i feeden og kunne brukes fritt av kunden etterpå. Det stiller to krav til samme bilde, og plattformen spiser mer av det enn du tror.",
@@ -323,6 +326,7 @@ export const OPPTAK: readonly Rubrikk[] = [
 
   {
     slug: "filme-folk-som-ikke-vil",
+    nr: 27,
     tittel: "Å filme folk som helst slipper",
     sammendrag:
       "De fleste vi filmer er ikke skuespillere, og mange gruer seg. Hvordan du får noe ekte ut av en som er ukomfortabel — på fem minutter.",
@@ -440,6 +444,7 @@ export const OPPTAK: readonly Rubrikk[] = [
 
   {
     slug: "b-roll",
+    nr: 28,
     tittel: "Dekningsbilder: hvor mye, og hva slags",
     sammendrag:
       "Mangel på dekningsbilder er den vanligste grunnen til at en redigering tar dobbelt så lang tid som den skulle.",
@@ -519,6 +524,7 @@ export const OPPTAK: readonly Rubrikk[] = [
 
   {
     slug: "filme-i-en-bedrift-i-drift",
+    nr: 29,
     tittel: "Å filme i en bedrift som er i drift",
     sammendrag:
       "Vi er gjester i noen andres arbeidsdag. Hvordan du får det du trenger uten å stoppe driften — og hvorfor det avgjør om vi blir invitert tilbake.",

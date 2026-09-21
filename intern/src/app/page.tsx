@@ -1,9 +1,16 @@
 import { Container } from "@/components/Container";
+import { Fremdrift } from "@/components/Fremdrift";
 import { Maalet } from "@/components/Maalet";
 import { Rad } from "@/components/Rad";
 import { Sok } from "@/components/Sok";
 import { BOLKER, type Bolk } from "@/content/kategorier";
-import { RUBRIKKER, kategorierMedInnhold } from "@/content/rubrikker";
+import {
+  RUBRIKKER,
+  antallUgodkjente,
+  kategorierMedInnhold,
+} from "@/content/rubrikker";
+import { lesetilstander, nesteRubrikk } from "@/lib/lesing";
+import { lestAvBrukeren } from "@/lib/lesing-server";
 import { fornavn, krevBruker } from "@/lib/tilgang";
 
 /**
@@ -18,6 +25,20 @@ import { fornavn, krevBruker } from "@/lib/tilgang";
 export default async function Forside() {
   const bruker = await krevBruker();
   const grupper = kategorierMedInnhold();
+
+  /*
+   * LESESTATUSEN REGNES ÉN GANG, HER.
+   *
+   * Ikke per kort. Om et kort skal merkes NY avhenger av hvor mange andre
+   * som også er nye — se NY_MAKS i src/lib/lesing.ts — og det kan bare
+   * avgjøres når man ser hele samlingen. Radene og søket får et ferdig
+   * oppslag.
+   */
+  const lest = await lestAvBrukeren();
+  const tilstander = Object.fromEntries(
+    lesetilstander(RUBRIKKER, lest, new Date()),
+  );
+  const neste = nesteRubrikk(RUBRIKKER, lest);
 
   // Bolkene i rekkefølge, med kategoriene sine. Se kategorier.ts for hvorfor
   // rekkefølgen er håndverk → kunde → oss.
@@ -35,6 +56,20 @@ export default async function Forside() {
           <Maalet navn={fornavn(bruker)} />
 
           {/*
+            FRAMDRIFTEN STÅR FØR SØKET. Søket er for den som vet hva hen
+            leter etter. Den som ikke vet, trenger én dør — ikke et felt
+            hen ikke vet hva skal fylles med.
+          */}
+          <div className="mt-8 sm:mt-10">
+            <Fremdrift
+              antall={RUBRIKKER.length}
+              lest={RUBRIKKER.filter((r) => lest.has(r.nr)).length}
+              neste={neste}
+              ugodkjente={antallUgodkjente()}
+            />
+          </div>
+
+          {/*
             SØKET STÅR FOR SEG, over radene og under målet.
 
             Det er den eneste kontrollen på siden som går på tvers av alt, og
@@ -44,7 +79,7 @@ export default async function Forside() {
             titlene.
           */}
           <div className="mt-8 sm:mt-10">
-            <Sok rubrikker={RUBRIKKER} />
+            <Sok rubrikker={RUBRIKKER} tilstander={tilstander} />
           </div>
         </div>
       </Container>
@@ -67,6 +102,7 @@ export default async function Forside() {
                   key={kategori.id}
                   kategori={kategori}
                   rubrikker={rubrikker}
+                  tilstander={tilstander}
                   prioriter={bolk === "handverk" && i === 0}
                 />
               ))}

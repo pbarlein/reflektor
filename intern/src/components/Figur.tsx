@@ -84,9 +84,8 @@ function TryggSone() {
       aria-labelledby="trygg-sone-tittel"
     >
       <title id="trygg-sone-tittel">
-        En stående videoflate der de øverste 14 prosent, de nederste 35
-        prosent og 6 prosent i hver side er markert som områder
-        grensesnittet kan dekke.
+        En stående videoflate der de øverste 14 prosent, de nederste 35 prosent
+        og 6 prosent i hver side er markert som områder grensesnittet kan dekke.
       </title>
 
       <rect
@@ -222,8 +221,8 @@ function Utsnitt() {
       aria-labelledby="utsnitt-tittel"
     >
       <title id="utsnitt-tittel">
-        Et liggende 16:9-bilde med et smalt stående 9:16-utsnitt markert midt
-        i, som dekker omtrent den midterste tredjedelen av bredden.
+        Et liggende 16:9-bilde med et smalt stående 9:16-utsnitt markert midt i,
+        som dekker omtrent den midterste tredjedelen av bredden.
       </title>
 
       {/*
@@ -309,8 +308,8 @@ function Bildeutsnitt() {
       aria-labelledby="bildeutsnitt-tittel"
     >
       <title id="bildeutsnitt-tittel">
-        Fire rammer som viser bildeutsnittene totalt, halvnært, nært og
-        detalj, der motivet fyller gradvis mer av rammen.
+        Fire rammer som viser bildeutsnittene totalt, halvnært, nært og detalj,
+        der motivet fyller gradvis mer av rammen.
       </title>
       {navn.map((n, i) => {
         const x = i * (R + mellomrom);

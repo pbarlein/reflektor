@@ -4,6 +4,7 @@ import type { Rubrikk } from "../rubrikktype.ts";
 export const RESEARCH: readonly Rubrikk[] = [
   {
     slug: "bransjen-bestemmer-alt",
+    nr: 46,
     tittel: "Bransjen bestemmer alt",
     sammendrag:
       "Den samme oppskriften virker ikke for en restaurant og en industribedrift. Her er forskjellene som faktisk betyr noe, og hvordan du leser dem.",
@@ -221,6 +222,7 @@ export const RESEARCH: readonly Rubrikk[] = [
 
   {
     slug: "kartlegg-konkurrentene",
+    nr: 47,
     tittel: "Kartlegg de tre nærmeste konkurrentene",
     sammendrag:
       "En halvtimes arbeid som gjør første strategiforslag konkret i stedet for generelt. Hva du ser etter, og hva du skal la være å notere.",
@@ -291,6 +293,7 @@ export const RESEARCH: readonly Rubrikk[] = [
 
   {
     slug: "hooks-som-virker",
+    nr: 48,
     tittel: "Åpninger som faktisk holder på folk",
     sammendrag:
       "Beslutningen om å bli eller dra tas før sekund tre. Her er hva som er dokumentert om åpninger, og hvordan du bygger et bibliotek i stedet for å finne opp én hver gang.",
@@ -434,6 +437,7 @@ export const RESEARCH: readonly Rubrikk[] = [
 
   {
     slug: "innsikt-fra-kundens-folk",
+    nr: 49,
     tittel: "Hent innsikten fra dem som møter kundene",
     sammendrag:
       "Ledelsen vet hva bedriften vil si. De i førstelinja vet hva folk faktisk lurer på. Fire spørsmål som gir en måneds innhold.",
@@ -492,6 +496,7 @@ export const RESEARCH: readonly Rubrikk[] = [
 
   {
     slug: "hvem-snakker-vi-til",
+    nr: 50,
     tittel: "Hvem snakker vi egentlig til",
     sammendrag:
       "«Alle» er ikke en målgruppe, men en persona full av påfunn er ikke bedre. Slik beskriver du mottakeren på en måte som faktisk endrer hva du filmer.",

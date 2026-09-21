@@ -18,7 +18,9 @@ export async function Bunnfelt() {
   return (
     <footer className="mt-24 border-t border-kant bg-dempet py-10">
       <div className="mx-auto flex w-full max-w-[88rem] flex-col gap-3 px-5 text-[0.8125rem] text-blekk-dempet sm:flex-row sm:items-center sm:justify-between sm:px-8">
-        <p>Reflektor internt — kun for ansatte. Ikke del lenker utenfor huset.</p>
+        <p>
+          Reflektor internt — kun for ansatte. Ikke del lenker utenfor huset.
+        </p>
         <p>
           {utkast === 0 ? (
             "Alt innhold er kvalitetssikret."

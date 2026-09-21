@@ -11,6 +11,7 @@ import type { Rubrikk } from "../rubrikktype.ts";
 export const FOLK: readonly Rubrikk[] = [
   {
     slug: "hva-som-holder-folk-gaende",
+    nr: 1,
     tittel: "Hva som faktisk holder folk gående",
     sammendrag:
       "Motivasjon er ikke et humør. Det er tre behov som enten blir dekket eller ikke — og alle tre kan påvirkes av hvordan vi jobber sammen.",
@@ -106,6 +107,7 @@ export const FOLK: readonly Rubrikk[] = [
 
   {
     slug: "forste-nitti-dager",
+    nr: 2,
     tittel: "De første nitti dagene",
     sammendrag:
       "Hvordan vi tar imot en ny kollega avgjør hvor fort de blir gode, og om de blir værende. Forskningen er tydelig på hva som virker.",
@@ -215,6 +217,7 @@ export const FOLK: readonly Rubrikk[] = [
 
   {
     slug: "tilbakemelding-som-virker",
+    nr: 3,
     tittel: "Tilbakemelding som virker",
     sammendrag:
       "«Fin video» hjelper ingen. Slik gir du en tilbakemelding som faktisk gjør neste jobb bedre — og slik tar du imot en.",
@@ -285,6 +288,7 @@ export const FOLK: readonly Rubrikk[] = [
 
   {
     slug: "bli-bedre-med-vilje",
+    nr: 4,
     tittel: "Å bli bedre med vilje",
     sammendrag:
       "Erfaring alene gjør deg ikke bedre — den gjør deg raskere på det du allerede gjør. Slik bruker du jobben til faktisk å utvikle deg.",
@@ -349,6 +353,7 @@ export const FOLK: readonly Rubrikk[] = [
 
   {
     slug: "stolthet-og-standard",
+    nr: 5,
     tittel: "Stolthet og standard",
     sammendrag:
       "Hva som skiller noe som er godt nok fra noe vi vil sette navnet vårt på — og hvorfor den forskjellen er verdt tiden den koster.",
@@ -416,6 +421,7 @@ export const FOLK: readonly Rubrikk[] = [
 
   {
     slug: "naar-du-star-fast",
+    nr: 6,
     tittel: "Når du står fast",
     sammendrag:
       "Alle står fast. Det som skiller folk er hvor lenge de blir stående før de spør. Her er når og hvordan.",

@@ -122,15 +122,15 @@ export default async function LoggInn({
                   <code className="text-blekk">SESJON_HEMMELIGHET</code>{" "}
                   mangler, eller er kortere enn 32 tegn. Uten den kan ingen
                   sesjon signeres. Lag en med{" "}
-                  <code className="text-blekk">openssl rand -base64 48</code>{" "}
-                  — se LES-MEG.md.
+                  <code className="text-blekk">openssl rand -base64 48</code> —
+                  se LES-MEG.md.
                 </>
               ) : (
                 <>
                   Google-innlogging mangler oppsett. Sett{" "}
                   <code className="text-blekk">GOOGLE_CLIENT_ID</code> og{" "}
-                  <code className="text-blekk">GOOGLE_CLIENT_SECRET</code> —
-                  se LES-MEG.md.
+                  <code className="text-blekk">GOOGLE_CLIENT_SECRET</code> — se
+                  LES-MEG.md.
                 </>
               )}
             </p>

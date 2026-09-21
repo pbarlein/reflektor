@@ -17,9 +17,7 @@ import { COOKIE_NAVN, lesSesjon } from "@/lib/sesjon";
 export async function proxy(foresporsel: NextRequest) {
   const { pathname, search } = foresporsel.nextUrl;
 
-  const bruker = await lesSesjon(
-    foresporsel.cookies.get(COOKIE_NAVN)?.value,
-  );
+  const bruker = await lesSesjon(foresporsel.cookies.get(COOKIE_NAVN)?.value);
   if (bruker) {
     // Allerede innlogget? Da er innloggingssiden feil sted å være.
     if (pathname === "/logg-inn") {

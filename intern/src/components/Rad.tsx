@@ -5,6 +5,7 @@ import { useRef, useState, useEffect } from "react";
 import { Rubrikkort } from "@/components/Rubrikkort";
 import type { Kategori } from "@/content/kategorier";
 import type { Rubrikk } from "@/content/rubrikktype";
+import type { Lesetilstand } from "@/lib/lesing";
 
 /**
  * Én kategori som en vannrett rad.
@@ -32,10 +33,13 @@ import type { Rubrikk } from "@/content/rubrikktype";
 export function Rad({
   kategori,
   rubrikker,
+  tilstander,
   prioriter = false,
 }: {
   kategori: Kategori;
   rubrikker: readonly Rubrikk[];
+  /** Lesestatus per slug. Regnet på serveren, se src/lib/lesing.ts. */
+  tilstander: Record<string, Lesetilstand>;
   /** Kun den øverste raden på siden. Se `prioritert` i Rubrikkort. */
   prioriter?: boolean;
 }) {
@@ -71,7 +75,10 @@ export function Rad({
     const el = spor.current;
     if (!el) return;
     // Rundt to kort av gangen. Mindre føles som om ingenting skjedde.
-    el.scrollBy({ left: retning * Math.min(el.clientWidth * 0.8, 640), behavior: "smooth" });
+    el.scrollBy({
+      left: retning * Math.min(el.clientWidth * 0.8, 640),
+      behavior: "smooth",
+    });
   }
 
   return (
@@ -110,6 +117,7 @@ export function Rad({
             <Rubrikkort
               key={r.slug}
               rubrikk={r}
+              tilstand={tilstander[r.slug] ?? "ulest"}
               prioritert={prioriter && i < 3}
             />
           ))}

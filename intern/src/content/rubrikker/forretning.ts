@@ -11,6 +11,7 @@ import type { Rubrikk } from "../rubrikktype.ts";
 export const FORRETNING: readonly Rubrikk[] = [
   {
     slug: "hvordan-reflektor-tjener-penger",
+    nr: 7,
     tittel: "Hvordan Reflektor tjener penger",
     sammendrag:
       "Modellen er enkel nok til å forklares på to minutter, og den forklarer nesten alle valgene vi tar. Her er den.",
@@ -96,6 +97,7 @@ export const FORRETNING: readonly Rubrikk[] = [
 
   {
     slug: "hva-du-faktisk-paavirker",
+    nr: 8,
     tittel: "Hva du faktisk påvirker",
     sammendrag:
       "Det er lett å tro at forretningen er noe andre styrer. Her er de fire tingene hver enkelt av oss påvirker, uke for uke.",
@@ -151,6 +153,7 @@ export const FORRETNING: readonly Rubrikk[] = [
 
   {
     slug: "hvorfor-fast-pris",
+    nr: 9,
     tittel: "Hvorfor vi har fast pris",
     sammendrag:
       "Vi har ingen timepriser, ingen etterfakturering og ingen tillegg for ekstra runder. Det er en posisjonering, og den har konsekvenser for hvordan vi jobber.",
@@ -217,6 +220,7 @@ export const FORRETNING: readonly Rubrikk[] = [
 
   {
     slug: "hva-en-produksjonsdag-egentlig-koster",
+    nr: 10,
     tittel: "Hva en produksjonsdag egentlig koster",
     sammendrag:
       "Ikke i kroner, for de tallene hører ikke hjemme her. Men i det som faktisk brukes opp: tid, oppmerksomhet og kundens tålmodighet.",

@@ -10,6 +10,9 @@ import type { Rubrikk } from "../rubrikktype.ts";
 export const INTERNT: readonly Rubrikk[] = [
   {
     slug: "malet",
+    fremhevet:
+      "Start her. Alt annet i huben er midler til de to målene, og det er lettere å bruke et oppslagsverk når man vet hva det sikter mot.",
+    nr: 11,
     tittel: "Målet: at kunder blir, og at de kommer tilbake",
     sammendrag:
       "De to målene alle i Reflektor jobber mot, og den ene måten vi kommer dit på. Alt annet i denne huben er midler til dette.",
@@ -71,6 +74,7 @@ export const INTERNT: readonly Rubrikk[] = [
 
   {
     slug: "hva-abonnementet-inneholder",
+    nr: 12,
     tittel: "Hva abonnementet inneholder — og hva det ikke gjør",
     sammendrag:
       "Leveransen, prisen og vilkårene ordrett slik de står på nettsiden. Kunn dette før du snakker med en kunde om omfang.",
@@ -142,6 +146,7 @@ export const INTERNT: readonly Rubrikk[] = [
 
   {
     slug: "prisen-sier-vi-hoyt",
+    nr: 13,
     tittel: "Prisen sier vi høyt",
     sammendrag:
       "Pristransparens er den ene posisjoneringen Reflektor faktisk eier. Slik skrives prisen, og hvorfor vi aldri er vage om den.",
