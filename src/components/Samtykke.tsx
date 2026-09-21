@@ -102,9 +102,22 @@ function lagre(valg: Valg) {
  * det uten at noen trenger å konfigurere noe.
  *
  * `samtykke_oppdatert` i dataLayer er for ALT ANNET. Meta-pikselen bryr seg
- * ikke om Googles samtykkesignaler i det hele tatt, og kan bare stanses av
- * en utløser inne i GTM-containeren. Den utløseren finnes ennå ikke — se
- * A42 — og hendelsen her er kroken den skal henge på.
+ * ikke om Googles samtykkesignaler i det hele tatt, og kan bare stanses
+ * inne i GTM-containeren — sammen med Apollo, HubSpot, Clarity og
+ * Microsoft Ads. Se A42 og docs/gtm-samtykke.md.
+ *
+ * RETTELSE 21.09.2026. Her sto det at hendelsen er «kroken utløseren skal
+ * henge på». Det er den ikke, i hvert fall ikke alene: denne funksjonen
+ * kalles bare fra `svar()`, altså når noen aktivt klikker. En utløser på
+ * hendelsen ville fyrt én gang per bruker og aldri mer.
+ *
+ * Oppstartsskriptet i lib/samtykke.ts gjentar derfor hendelsen på hver
+ * sidevisning der cookien finnes, med `samtykke_kilde: "lagret"`. Denne
+ * her sender `"valg"`. Da dekker én utløser på hendelsesnavnet begge.
+ *
+ * Anbefalingen i docs/gtm-samtykke.md er likevel GTMs innebygde
+ * samtykkekontroll framfor en egen utløser, fordi den leser tilstanden
+ * direkte. Gjentakelsen er sikkerhetsnettet under begge valg.
  */
 function meldFra(valg: Valg) {
   const w = window as unknown as {
@@ -118,6 +131,7 @@ function meldFra(valg: Valg) {
     event: "samtykke_oppdatert",
     samtykke_analyse: valg.analyse ? "granted" : "denied",
     samtykke_markedsforing: valg.markedsforing ? "granted" : "denied",
+    samtykke_kilde: "valg",
   });
 }
 

@@ -128,3 +128,87 @@ test("standardSkript nevner alle signalene og setter dem nektet som utgangspunkt
 test("standardSkript er gyldig JavaScript", () => {
   assert.doesNotThrow(() => new Function(standardSkript()));
 });
+
+/**
+ * GJENGANGEREN. Lagt til 21.09.2026 etter at målingen i nettleseren viste
+ * at `samtykke_oppdatert` manglet helt på besøk nummer to.
+ *
+ * De fem taggene som ikke leser Consent Mode — Meta, Apollo, HubSpot,
+ * Clarity, Microsoft Ads — kan bare styres inne i GTM-containeren. Henges
+ * de på denne hendelsen uten at den gjentas, fyrer de den ene gangen
+ * brukeren klikker og aldri mer for den personen. Det er en feil ingen
+ * ville oppdaget ved å se på siden.
+ */
+test("oppstartsskriptet gjentar samtykket for gjengangere", () => {
+  const k = standardSkript();
+  assert.ok(k.includes("samtykke_oppdatert"), "hendelsen mangler i skriptet");
+  assert.ok(k.includes('samtykke_kilde:"lagret"'), "kilden må merkes");
+  assert.ok(
+    /if\(v\)window\.dataLayer\.push/.test(k),
+    "gjentakelsen må være betinget av at cookien finnes — uten svar skal ingen hendelse sendes",
+  );
+});
+
+/**
+ * Rekkefølgen er hele grunnen til at gjentakelsen ligger i skriptet og
+ * ikke i en React-effekt: GTM leser dataLayer når containeren starter, og
+ * på besøk to starter den allerede ved første render.
+ */
+test("gjentakelsen kommer etter consent default, ikke før", () => {
+  const k = standardSkript();
+  assert.ok(
+    k.indexOf('"consent","default"') < k.indexOf("samtykke_oppdatert"),
+    "Consent Mode må være satt før hendelsen sendes",
+  );
+});
+
+/**
+ * Skriptet kjøres som en streng i <head>. Denne testen simulerer en
+ * gjenganger ved å gi den en cookie, og ser på hva som faktisk havner i
+ * dataLayer — ikke på hva strengen inneholder.
+ */
+test("gjenganger med fullt samtykke får hendelsen med granted", () => {
+  const kjor = (cookie: string) => {
+    const dataLayer: Record<string, unknown>[] = [];
+    const doc = {
+      cookie,
+      documentElement: { setAttribute() {} },
+    };
+    const vindu: Record<string, unknown> = { dataLayer };
+    new Function("window", "document", standardSkript())(vindu, doc);
+    return dataLayer;
+  };
+
+  const full = kjor(`${COOKIE_NAVN}=${serialiser({ analyse: true, markedsforing: true })}`);
+  const hendelse = full.find((x) => x.event === "samtykke_oppdatert");
+  assert.ok(hendelse, "gjengangeren må få hendelsen");
+  assert.equal(hendelse.samtykke_analyse, "granted");
+  assert.equal(hendelse.samtykke_markedsforing, "granted");
+  assert.equal(hendelse.samtykke_kilde, "lagret");
+
+  const uten = kjor("");
+  assert.ok(
+    !uten.some((x) => x.event === "samtykke_oppdatert"),
+    "uten cookie skal det IKKE sendes noen hendelse — da har ingen svart",
+  );
+
+  /*
+    DEN FARLIGE RETNINGEN. En gjenganger som sa nei skal få hendelsen med
+    «denied», ikke bli utelatt. Utelates den, ser en utløser i GTM ingen
+    forskjell på «sa nei» og «har ikke svart» — og en tagg satt opp feil
+    ville fyrt på begge.
+  */
+  const nei = kjor(`${COOKIE_NAVN}=${serialiser(INGEN_SAMTYKKE)}`);
+  const avslag = nei.find((x) => x.event === "samtykke_oppdatert");
+  assert.ok(avslag, "et avslag er også et svar og skal sendes");
+  assert.equal(avslag.samtykke_analyse, "denied");
+  assert.equal(avslag.samtykke_markedsforing, "denied");
+
+  /* Og den blandede: analyse ja, markedsføring nei. */
+  const delvis = kjor(
+    `${COOKIE_NAVN}=${serialiser({ analyse: true, markedsforing: false })}`,
+  );
+  const blandet = delvis.find((x) => x.event === "samtykke_oppdatert");
+  assert.equal(blandet?.samtykke_analyse, "granted");
+  assert.equal(blandet?.samtykke_markedsforing, "denied");
+});

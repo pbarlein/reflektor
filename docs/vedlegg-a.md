@@ -1544,3 +1544,73 @@ aliasene blir 301 i `next.config.ts`, til samme mål som i dag. De 6 døde
 blir 301 til `/blogg`, som i dag — altså ingen ny 404, og ingen ny side.
 Da er den nye siden identisk med dagens på alle 17 adressene, og det er
 akkurat det regel 3 er ute etter.
+
+---
+
+## A55 — Gjengangeren fikk aldri samtykkehendelsen. Målt og rettet 21.09.2026
+
+Pål ba om at samtykkeløsningen skulle være optimal på den nye siden. Jeg
+målte dataLayer i nettleseren i stedet for å lese koden, med alle kall til
+Google blokkert så ingenting nådde ut.
+
+### Målt før
+
+Besøk nummer to, med cookien satt:
+
+```
+0: consent default {ad_storage:"granted", analytics_storage:"granted", …}
+1: set ads_data_redaction false
+2: set url_passthrough true
+3: gtm.js
+```
+
+**Ingen `samtykke_oppdatert`.** `meldFra()` kalles bare fra `svar()`, altså
+når noen aktivt klikker i banneret.
+
+Googles egne tagger klarer seg — de leser consent-tilstanden, og den er
+riktig. Men de fem taggene som ikke leser Consent Mode i det hele tatt
+(Meta, Apollo, HubSpot, Clarity, Microsoft Ads) kan bare styres inne i
+containeren. Henges de på hendelsen, fyrer de den ene gangen brukeren
+klikker og aldri mer for den personen. En feil ingen ville sett på siden.
+
+### En kommentar som pekte feil vei
+
+`Samtykke.tsx` sa at hendelsen er «kroken utløseren skal henge på». Det var
+akkurat den antakelsen målingen motbeviste. Kommentaren er rettet, ikke
+slettet — den neste som leser fila skal se hva som var galt.
+
+### Rettet
+
+Oppstartsskriptet gjentar nå hendelsen på hver sidevisning der cookien
+finnes. Den ligger i `standardSkript()` og ikke i en React-effekt, og det
+er et rekkefølgevalg: på besøk to setter skriptet `data-samtykke="svart"`
+allerede i `<head>`, så `Sporing` rendrer GTM ved første render. En effekt
+kunne kommet etter `gtm.js`.
+
+`samtykke_kilde` skiller de to — `"valg"` fra banneret, `"lagret"` fra
+oppstart. Feltet er additivt, så én utløser på hendelsesnavnet treffer
+begge.
+
+### Målt etter
+
+```
+0: consent default {ad_storage:"granted", …}
+1: set ads_data_redaction false
+2: set url_passthrough true
+3: {event:"samtykke_oppdatert", …, samtykke_kilde:"lagret"}
+4: gtm.js
+```
+
+### Tester, verifisert i to retninger
+
+Tre nye tester i `tests/samtykke.test.ts`: at skriptet gjentar hendelsen,
+at gjentakelsen kommer etter `consent default`, og at den faktisk havner i
+dataLayer når skriptet kjøres med en cookie. Den siste dekker fire
+tilfeller — fullt samtykke, avslag, blandet, og ingen cookie.
+
+**Avslaget er det viktigste.** En gjenganger som sa nei skal få hendelsen
+med `denied`, ikke bli utelatt: uten den ser en utløser i GTM ingen
+forskjell på «sa nei» og «har ikke svart ennå».
+
+Testene ble kjørt med gjentakelsen slått av for å bekrefte at de feiler:
+2 av 21 falt. Med den på: 21 av 21.

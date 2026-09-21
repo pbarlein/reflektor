@@ -36,15 +36,34 @@ Consent Mode styrer kun Googles egne tagger. Disse leser den ikke:
 GTM har et felt per tagg som heter **«Consent Settings» → «Require
 additional consent for tag to fire»**. Bruk det.
 
-**Ikke bruk en egendefinert utløser på `samtykke_oppdatert`.** Den
-hendelsen sendes bare når noen aktivt klikker i banneret. På neste besøk
-leser oppstartsskriptet cookien og setter `consent default` med de lagrede
-verdiene, men pusher ingen hendelse. En tagg som hang på hendelsen ville
-fyrt én gang og aldri mer for den samme personen.
-
 Den innebygde kontrollen leser samtykke**tilstanden**, som settes på hver
-eneste sidevisning fra cookien. Derfor virker den også for gjengangere,
-uten kodeendring.
+eneste sidevisning fra cookien. Derfor virker den også for gjengangere.
+
+### Hendelsen `samtykke_oppdatert` finnes, men er sikkerhetsnettet
+
+Den nye siden sender denne til dataLayer:
+
+```js
+{ event: "samtykke_oppdatert",
+  samtykke_analyse: "granted" | "denied",
+  samtykke_markedsforing: "granted" | "denied",
+  samtykke_kilde: "valg" | "lagret" }
+```
+
+**Den sendes både når noen klikker og på hver sidevisning der cookien
+finnes** — `"valg"` i det første tilfellet, `"lagret"` i det andre. Begge
+kommer før `gtm.js`, så containeren ser dem når den starter. Verifisert i
+nettleseren, begge veier.
+
+Det gjør at en egendefinert utløser på hendelsen *også* ville virket. Den
+innebygde kontrollen er likevel å foretrekke: den gjelder taggen uansett
+hvilken utløser som ber den fyre, så det er umulig å glemme å fjerne «All
+Pages». Velger du utløsermetoden i stedet, **må** «All Pages» fjernes fra
+hver av de fem — GTM fyrer en tagg hvis hvilken som helst av utløserne
+treffer.
+
+Et avslag sender også hendelsen, med `denied`. Det er med vilje: uten den
+ville en utløser ikke se forskjell på «sa nei» og «har ikke svart ennå».
 
 ## Framgangsmåte
 
@@ -70,8 +89,10 @@ I **Preview / Tag Assistant**, mot dagens reflektor.no:
 2. Klikk **«Bare nødvendige»** → fortsatt ingen av de fem
 3. Klikk **«Godta alle»** → alle fem fyrer
 4. Last siden på nytt uten å røre banneret → alle fem fyrer igjen.
-   **Dette steget er hele poenget.** Feiler det, er samtykket hengt på
-   hendelsen i stedet for tilstanden.
+   **Dette steget er hele poenget.** På dagens Squarespace-side finnes
+   ikke gjentakelsen fra den nye siden, så her er tilstandskontrollen det
+   eneste som holder. Feiler steget, er samtykket hengt på en hendelse
+   som ikke kommer.
 
 GA4 og Google Ads skal oppføre seg uendret gjennom hele testen. Gjør de
 ikke det, er noe rørt som ikke skulle røres — publiser ikke.

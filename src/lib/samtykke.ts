@@ -114,6 +114,30 @@ export function tilSignaler(s: Samtykke): Samtykkesignaler {
 /**
  * Skriptet som kjører FØR alt annet, i <head>.
  *
+ * DET GJENTAR OGSÅ `samtykke_oppdatert` FOR GJENGANGERE, lagt til
+ * 21.09.2026 etter måling. `meldFra()` i Samtykke.tsx sender den hendelsen
+ * bare når noen aktivt klikker i banneret. Målt i nettleseren så
+ * dataLayer slik ut på besøk nummer to, med cookien satt:
+ *
+ *   0: consent default {ad_storage:"granted", analytics_storage:"granted", …}
+ *   1: set ads_data_redaction false
+ *   2: set url_passthrough true
+ *   3: gtm.js
+ *
+ * Ingen `samtykke_oppdatert`. Googles egne tagger klarer seg — de leser
+ * consent-TILSTANDEN. Men de fem taggene i containeren som ikke leser
+ * Consent Mode i det hele tatt (Meta, Apollo, HubSpot, Clarity, Microsoft
+ * Ads) kan bare styres inne i GTM, og henges de på hendelsen, ville de
+ * fyrt den ene gangen brukeren klikket og aldri mer for den personen.
+ *
+ * Gjentakelsen hører hjemme HER og ikke i en React-effekt: på besøk to
+ * setter dette skriptet `data-samtykke="svart"` i <head>, så `Sporing`
+ * rendrer GTM allerede ved første render. En effekt kunne kommet etter
+ * `gtm.js`. Her er rekkefølgen garantert.
+ *
+ * `samtykke_kilde` skiller de to: "lagret" herfra, "valg" fra banneret.
+ * Feltet er additivt — en utløser på hendelsesnavnet treffer begge.
+ *
  * REKKEFØLGEN ER HELE POENGET. Consent Mode må være satt før GTM-containeren
  * kjører, ellers rekker taggene inni å fyre på en udefinert tilstand. Derfor
  * er dette en streng som legges inn med `strategy="beforeInteractive"`, mens
@@ -163,6 +187,12 @@ export function standardSkript(): string {
   });
   gtag("set","ads_data_redaction",g!=="granted");
   gtag("set","url_passthrough",true);
+  if(v)window.dataLayer.push({
+    event:"samtykke_oppdatert",
+    samtykke_analyse:a,
+    samtykke_markedsforing:g,
+    samtykke_kilde:"lagret"
+  });
   d.setAttribute("data-samtykke",v?"svart":"uavklart");
 })();`.trim();
 }
