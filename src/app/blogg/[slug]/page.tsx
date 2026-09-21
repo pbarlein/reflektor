@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -120,6 +121,32 @@ export default async function BloggInnlegg({ params }: Props) {
               {ingress.tekst}
             </p>
           )}
+
+          {/*
+            TOPPBILDET STÅR ETTER INGRESSEN, ikke over tittelen.
+
+            Over tittelen ville det skjøvet H1 og svaret ned under folden,
+            og 44 % av LLM-siteringer hentes fra de første 30 % av en side.
+            Her gjør det jobben sin uten å koste noe: det bryter opp en lang
+            brødtekst der leseren ellers møter to tusen ord i strekk.
+
+            Bredere enn teksten, med vilje. Brødteksten er 42rem for
+            lesbarhetens skyld; bildet trenger ikke den begrensningen, og
+            forskjellen gir siden en rytme den ikke hadde.
+          */}
+          <figure className="relative mt-12 aspect-[16/9] max-w-3xl overflow-hidden rounded-medie bg-flate-dempet">
+            <Image
+              src={`/arbeid/${a.bilde.fil}.jpg`}
+              alt={a.bilde.alt}
+              fill
+              priority
+              sizes="(min-width: 768px) 48rem, 100vw"
+              className="object-cover"
+              style={
+                a.bilde.fokus ? { objectPosition: a.bilde.fokus } : undefined
+              }
+            />
+          </figure>
 
           <div className="mt-12 max-w-2xl">
             {resten.map((b, i) => {

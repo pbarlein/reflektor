@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { Container } from "@/components/Container";
@@ -74,6 +75,29 @@ export function Tjenestelayout({
           </div>
         </Container>
       </section>
+
+      {/* ── Toppbilde, der siden ikke allerede har klipp ──────────── */}
+      {side.bilde && (
+        <section className="pb-20">
+          <Container>
+            <figure className="relative aspect-[21/9] overflow-hidden rounded-flate bg-flate-dempet sm:aspect-[21/8]">
+              <Image
+                src={`/arbeid/${side.bilde.fil}.jpg`}
+                alt={side.bilde.alt}
+                fill
+                priority
+                sizes="(min-width: 1280px) 68rem, 100vw"
+                className="object-cover"
+                style={
+                  side.bilde.fokus
+                    ? { objectPosition: side.bilde.fokus }
+                    : undefined
+                }
+              />
+            </figure>
+          </Container>
+        </section>
+      )}
 
       {/* ── Avgrensning: hva siden IKKE dekker ────────────────────── */}
       {side.avgrensning.lenker.length > 0 && (
@@ -253,7 +277,7 @@ export function Tjenestelayout({
         <Container>
           <div className="grid gap-x-10 gap-y-8 lg:grid-cols-[9rem_1fr]">
             <Merkelapp className="lg:pt-3" som="h2">
-              Spørsmål
+              Flere spørsmål
             </Merkelapp>
             <div className="max-w-2xl">
               {/*

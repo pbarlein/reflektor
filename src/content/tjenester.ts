@@ -46,6 +46,19 @@ export type Seksjon = {
 
 export type Tjenesteside = {
   sti: string;
+  /**
+   * Toppbilde fra Reflektors eget arbeid i public/arbeid/.
+   *
+   * Motivet er valgt etter hva siden handler om: ansatte i arbeid over
+   * employer branding, en foredragsholder over eventdekning. Alt-teksten
+   * er ORDRETT fra arbeid.ts og navngir ingen kunde — et bilde av en
+   * navngitt kunde over en tjenesteside ville antydet at kunden har kjøpt
+   * akkurat den tjenesten, og det er en påstand vi ikke kan belegge.
+   *
+   * De to sidene som allerede har `klipp` får ikke toppbilde. Et stillbilde
+   * rett over en rad med video er to løsninger på samme problem.
+   */
+  bilde?: { fil: string; alt: string; fokus?: string };
   tittel: string;
   beskrivelse: string;
   h1: string;
@@ -226,6 +239,7 @@ export const videoproduksjon: Tjenesteside = {
    ──────────────────────────────────────────────────────────────────── */
 
 export const employerBranding: Tjenesteside = {
+  bilde: { fil: "fabrikk-vegg", alt: "Ansatte i arbeidstøy i et produksjonslokale", fokus: "center 30%" },
   sti: "/employer-branding-video-oslo",
   tittel: "Employer branding-video | Film som gjør folk til søkere",
   beskrivelse:
@@ -297,6 +311,7 @@ export const employerBranding: Tjenesteside = {
    ──────────────────────────────────────────────────────────────────── */
 
 export const event: Tjenesteside = {
+  bilde: { fil: "aktivering-vegg", alt: "Utendørs aktivering med stand og publikum", fokus: "center 40%" },
   sti: "/eventfotograf-eventvideo",
   tittel: "Eventfotograf og eventvideo | Dekning av arrangementer",
   beskrivelse:
@@ -375,6 +390,7 @@ export const event: Tjenesteside = {
  * Dette er den.
  */
 export const innholdsproduksjon: Tjenesteside = {
+  bilde: { fil: "dag4-vegg", alt: "Opptak med kamera under et arrangement" },
   sti: "/innholdsproduksjon",
   tittel: "Innholdsproduksjon | Foto og video for bedrifter",
   beskrivelse:

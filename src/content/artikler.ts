@@ -52,8 +52,23 @@ export type Blokk =
   /** Tabell. Sammenligningstabeller er blant de mest siterte formatene. */
   | { type: "tabell"; kolonner: string[]; rader: string[][] };
 
+export type Bilde = { fil: string; alt: string; fokus?: string };
+
 export type Artikkel = {
   slug: string;
+  /**
+   * Toppbilde, hentet fra Reflektors eget arbeid i public/arbeid/.
+   *
+   * VALGT REDAKSJONELT. Motivet skal si noe om temaet — ansatte i arbeid
+   * over en artikkel om employer branding, en foredragsholder over en om
+   * historiefortelling.
+   *
+   * ALT-TEKSTENE NAVNGIR INGEN, og er de samme som i arbeid.ts. Det er med
+   * vilje: et bilde av en navngitt kunde over en artikkel om et fagfelt
+   * ville antydet at kunden har kjøpt akkurat det, og det er en påstand vi
+   * ikke kan belegge. Samme regel som arbeidsrutenettet følger.
+   */
+  bilde: Bilde;
   tittel: string;
   beskrivelse: string;
   /** ISO-dato fra Squarespace. Ikke pyntet. */
@@ -63,9 +78,36 @@ export type Artikkel = {
   lesVidere: { sti: string; tekst: string }[];
 };
 
+/**
+ * Lesetid i minutter, regnet ut — ikke skrevet.
+ *
+ * 200 ord i minuttet er det vanlige anslaget for voksne som leser sakprosa
+ * på morsmålet. Tallet er grovt, og det er greit: forskjellen på «6 min» og
+ * «7 min» betyr ingenting. Det som betyr noe er at en artikkel på 2 300 ord
+ * ikke ser ut som en på 500.
+ *
+ * Regnet ut fordi et tall som skrives for hånd blir feil. Se bloggoversikten,
+ * der «Åtte artikler» sto mens det var ni.
+ */
+export function lesetid(a: Artikkel): number {
+  const ord = a.blokker.reduce((sum, b) => {
+    if (b.type === "liste")
+      return sum + b.punkter.join(" ").split(/\s+/).length;
+    if (b.type === "tabell")
+      return sum + b.rader.flat().join(" ").split(/\s+/).length;
+    return sum + b.tekst.split(/\s+/).length;
+  }, 0);
+  return Math.max(1, Math.round(ord / 200));
+}
+
 export const artikler: Artikkel[] = [
   {
     slug: "hva-koster-et-some-byra",
+    bilde: {
+      fil: "dag1-1600",
+      alt: "Nærbilde av bakverk på brett",
+      fokus: "center 40%",
+    },
     tittel: "Hva koster et SoMe-byrå i Norge? Priser og prismodeller",
     beskrivelse:
       "Hva koster det å sette bort sosiale medier? Vi forklarer hva prisen består av, sju spørsmål du bør stille før du signerer, og hva vi selv tar: 30 000 kr/mnd fast pris.",
@@ -175,6 +217,11 @@ export const artikler: Artikkel[] = [
   },
   {
     slug: "markedsforing-i-sosiale-medier-some",
+    bilde: {
+      fil: "peppes1-1600",
+      alt: "Gjest med pizzastykke foran et neonskilt",
+      fokus: "center 30%",
+    },
     tittel: "Markedsføring i sosiale medier",
     beskrivelse:
       "SoMe-markedsføring kan være et virkningsfullt verktøy for å tiltrekke målgruppen din. Dette forutsetter godt innhold som engasjerer kunden.",
@@ -407,6 +454,7 @@ export const artikler: Artikkel[] = [
   },
   {
     slug: "hva-er-innholdsproduksjon",
+    bilde: { fil: "dag4-vegg", alt: "Opptak med kamera under et arrangement" },
     tittel: "Hva er innholdsproduksjon?",
     beskrivelse:
       "Innholdsproduksjon er å lage tekst, bilder og videoer som tiltrekker og engasjerer en målgruppe. Det kan være nøkkelen til suksess for flere bedrifter.",
@@ -670,6 +718,11 @@ export const artikler: Artikkel[] = [
   },
   {
     slug: "hva-er-innholdsmarkedsforing",
+    bilde: {
+      fil: "kafe1-1600",
+      alt: "Vegg av flasker i en butikkhylle",
+      fokus: "center 35%",
+    },
     tittel: "Hva er innholdsmarkedsføring?",
     beskrivelse:
       "Innholdsmarkedsføring (content marketing) er et strategisk middel for å tiltrekke og beholde kunder gjennom målrettet innhold. Få nyttige råd i vår guide.",
@@ -967,6 +1020,10 @@ export const artikler: Artikkel[] = [
   },
   {
     slug: "hva-er-videomarkedsfring",
+    bilde: {
+      fil: "dag6-vegg",
+      alt: "Bakverk i en disk",
+    },
     tittel: "Hva er videomarkedsføring?",
     beskrivelse:
       "Videomarkedsføring er et strategisk grep, ikke minst i sosiale medier. Vi forklarer hva det er og hvordan dere lykkes med det.",
@@ -1218,6 +1275,11 @@ export const artikler: Artikkel[] = [
   },
   {
     slug: "hva-er-employer-branding",
+    bilde: {
+      fil: "fabrikk-vegg",
+      alt: "Ansatte i arbeidstøy i et produksjonslokale",
+      fokus: "center 30%",
+    },
     tittel: "Hva er employer branding?",
     beskrivelse:
       "Er du nysgjerrig på employer branding og hvordan man lykkes med det? Vi har laget en guide som inneholder alt du trenger å vite!",
@@ -1361,6 +1423,11 @@ export const artikler: Artikkel[] = [
   },
   {
     slug: "hva-gjr-en-innholdsprodusent",
+    bilde: {
+      fil: "portrett-vegg",
+      alt: "Portrett utendørs mot blå himmel",
+      fokus: "center 25%",
+    },
     tittel: "Hva gjør en innholdsprodusent?",
     beskrivelse:
       "Med innholdsmarkedsføring og hjelp av en innholdsprodusent kan du ta markedsføringen din til et nytt nivå. Men hva gjør en innholdsprodusent? Vi svarer!",
@@ -1507,6 +1574,11 @@ export const artikler: Artikkel[] = [
   },
   {
     slug: "hva-innebaerer-digital-historiefortelling",
+    bilde: {
+      fil: "scene-vegg",
+      alt: "Foredragsholder foran en skjerm",
+      fokus: "center 35%",
+    },
     tittel: "Hva innebærer digital historiefortelling?",
     beskrivelse:
       "Med digital historieformidling kan du nå ut til riktig målgruppe og formidle budskap effektivt og virkningsfullt. Les mer om gode strategier her.",
@@ -1704,6 +1776,7 @@ export const artikler: Artikkel[] = [
   },
   {
     slug: "some-ansvarlig-eller-byra",
+    bilde: { fil: "mat1-1600", alt: "Ansatte i et produksjonslokale" },
     tittel: "SoMe-ansvarlig eller byrå? Regnestykket med tall",
     beskrivelse:
       "Hva koster en ansatt SoMe-ansvarlig egentlig, når arbeidsgiveravgift, feriepenger og pensjon er regnet med? Vi setter tallene fra Altinn og SSB mot et byråbudsjett.",

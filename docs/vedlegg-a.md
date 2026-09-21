@@ -1860,3 +1860,70 @@ Men det betyr at nettstedet har to stemmer: bloggen sier «du», de nye
 sidene sier «dere». **Det er en beslutning for Pål, ikke for meg** — å
 harmonisere krever at åtte artikler skrives om, og det er nøyaktig det
 regel 3 forbyr uten videre.
+
+---
+
+## A60 — Bloggoversikten bygget om, bilder gjennom hele siden. 21.09.2026
+
+Pål: «veldig lite inspirerende oversikt over blogginnlegg. redesign, og
+hold en høy standard gjennom alle landingssider og blogginnlegg … ta
+inspirasjon fra vårt arbeid.»
+
+### Hva som var galt
+
+Ni like tekstkort i et rutenett. Alt hadde samme vekt, ingenting hadde
+bilde, og den nyeste artikkelen — den eneste som er skrevet for å selge
+noe — så nøyaktig ut som en ordbokartikkel fra 2024.
+
+### Tre grep, alle hentet fra `/vart-arbeid`
+
+**Bilde først.** Kundecasene leder med et stort stillbilde, og det er det
+som gjør dem til noe annet enn en lenkeliste. Ni artikler har nå hvert
+sitt, valgt redaksjonelt per tema — ansatte i arbeid over employer
+branding, en foredragsholder over historiefortelling.
+
+**Ett oppslag som bærer.** Casene er «store og få» fordi et rutenett
+bygget for flere enn man har ser ut som et rutenett med hull i. Her er
+problemet motsatt — ni artikler av svært ulik verdi — og løsningen er
+samme tanke: løft den ene som betyr mest, la resten være et ryddig arkiv.
+
+**Metadata som rad.** Casene har «kunde · sektor · siden». Artiklene har
+«måned · lesetid». Lesetiden regnes ut fra ordtellingen, den skrives ikke
+— samme grunn som at artikkelantallet nå telles: et tall skrevet for hånd
+blir feil.
+
+### Alt-tekstene måtte renses
+
+Jeg kopierte alt-tekstene fra `arbeid.ts`, men **pyntet på tre av dem**
+underveis: «Nærbilde av bakverk på brett» ble til «… fra en
+produksjonsdag», og «Bakverk i en disk» til «… fotografert på en
+produksjonsdag». Ingen av tilleggene kan belegges — jeg vet ikke når de
+bildene ble tatt.
+
+Alle ni er nå ordrett fra kilden, verifisert programmatisk mot
+`arbeid.ts`. Det er samme regel som gjelder for tall og kundenavn: et
+tillegg som høres harmløst ut er fortsatt en påstand.
+
+**Motivene navngir ingen kunde**, med vilje. Et bilde av en navngitt kunde
+over en artikkel om et fagfelt ville antydet at kunden har kjøpt akkurat
+det.
+
+### Ellers
+
+- Toppbilde på de tre tjenestesidene som ikke allerede har klipp. De to
+  som har, får ikke — et stillbilde rett over en videorad er to løsninger
+  på samme problem.
+- Toppbilde på hver artikkel, plassert **etter** ingressen. Over tittelen
+  ville det skjøvet H1 og svaret ned, og 44 % av LLM-siteringer hentes fra
+  de første 30 % av en side.
+- `/kontaktoss` hadde ikke ett eneste bilde. Et videobyrå som ber om
+  kontakt uten å vise noe av det de lager, ber om tillit uten å gi grunn
+  til den.
+- «Spørsmål» → «Flere spørsmål» på tjenestesidene. To merkelapper på samme
+  side som begge betyr «her er spørsmål» navigerer ikke, de forvirrer.
+
+### Kontroll, seksten sider
+
+0 axe-brudd, nøyaktig én `<h1>` per side, ingen ødelagte bilder. Forsiden
+meldte først 18 ødelagte — det var lazy-loading som ikke hadde fullført i
+målingen. Med riktig skrolling: 109 bilder, 0 feil, 0 HTTP-feil.

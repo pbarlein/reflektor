@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import Image from "next/image";
+
 import { Container } from "@/components/Container";
 import { Eyebrow, Merkelapp } from "@/components/Eyebrow";
 import { Kontaktskjema } from "@/components/Kontaktskjema";
@@ -73,6 +75,26 @@ export default function KontaktOss() {
                   </a>
                 </p>
               </div>
+
+              {/*
+                ET BILDE PÅ EN SKJEMASIDE. Siden hadde ingen — og et
+                videobyrå som ber om kontakt uten å vise noe av det de
+                lager, ber om tillit uten å gi noen grunn til den.
+
+                Motivet er hentet fra arbeidet, og alt-teksten er ordrett
+                fra arbeid.ts. Ikke «pa-vei.jpg», som forsiden bruker: to
+                sider med samme foto rett etter hverandre leser som at vi
+                bare har ett.
+              */}
+              <figure className="relative mt-10 aspect-[3/2] overflow-hidden rounded-medie bg-flate-dempet">
+                <Image
+                  src="/arbeid/stallen-1600.jpg"
+                  alt="Kokker på et kjøkken med en plakett"
+                  fill
+                  sizes="(min-width: 1024px) 34rem, 100vw"
+                  className="object-cover"
+                />
+              </figure>
 
               <Merkelapp som="h2" className="mt-12 block">
                 Hva skjer etterpå
