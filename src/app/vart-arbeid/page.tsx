@@ -10,6 +10,7 @@ import { Logorad } from "@/components/Logorad";
 import { ReelVegg } from "@/components/ReelVegg";
 import { BrodsmuleSchema } from "@/components/Schema";
 import { kundecaser } from "@/content/caser";
+import { eiker } from "@/content/tjenester";
 import { reels } from "@/content/reels";
 import { basisUrl } from "@/lib/miljo";
 
@@ -245,6 +246,50 @@ export default function VartArbeid() {
         <div className="mt-8">
           <Logorad dekorativ />
         </div>
+      </section>
+
+      {/* ── Hva vi kan lage ──────────────────────────────────────── */}
+      <section className="pb-20">
+        <Container>
+          {/*
+            LAGT TIL 21.09.2026, og grunnen er intern lenking.
+
+            Tjenestesidene ble bygget samme dag. Før dette lenket ingenting
+            til dem utenom bunnteksten — og en bunntekstlenke er sitewide,
+            altså den svakeste formen for intern lenking som finnes.
+
+            Denne siden er det riktige stedet. Jobben dens er å vise
+            bredden i arbeidet, og CTA-en under spør «skal vi lage det
+            samme for dere?». Uten denne blokken er «det samme» udefinert;
+            med den er det fire konkrete valg.
+
+            Ankerteksten sier hva hver side ER. Se docs/sidearkitektur.md,
+            mekanisme 4.
+          */}
+          <Merkelapp som="h2">Hva vi kan lage for dere</Merkelapp>
+          <ul className="mt-8 grid gap-px overflow-hidden rounded-flate bg-kant sm:grid-cols-2">
+            {eiker.map((e) => (
+              <li key={e.sti} className="bg-flate">
+                <Link
+                  href={e.sti}
+                  className="group flex h-full flex-col p-7 transition-colors hover:bg-flate-dempet motion-reduce:transition-none sm:p-8"
+                >
+                  <p className="font-sans text-xs font-medium tracking-[0.08em] text-blekk-dempet uppercase">
+                    {e.flate}
+                  </p>
+                  <h3 className="display mt-3 text-xl sm:text-2xl">
+                    <span className="underline decoration-transparent decoration-1 underline-offset-[0.25em] transition-colors group-hover:decoration-aksent motion-reduce:transition-none">
+                      {e.navn}
+                    </span>
+                  </h3>
+                  <p className="mt-3 grow text-[0.9375rem] leading-relaxed text-pretty text-blekk-dempet">
+                    {e.beskrivelse}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Container>
       </section>
 
       {/* ── CTA ──────────────────────────────────────────────────── */}

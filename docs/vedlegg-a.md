@@ -1614,3 +1614,84 @@ forskjell på «sa nei» og «har ikke svart ennå».
 
 Testene ble kjørt med gjentakelsen slått av for å bekrefte at de feiler:
 2 av 21 falt. Med den på: 21 av 21.
+
+---
+
+## A56 — Tjenestesidene og bloggen bygget. 21.09.2026
+
+Pål: «du bygger alle sidene med faglig hold i hva som er best for
+Reflektor … her har du frie tøyler.»
+
+Grunnlaget er `docs/synlighet-2026.md` (søkeord og AEO-research) og
+`docs/sidearkitektur.md` (hvem eier hvilke ord).
+
+### Hva som ble bygget
+
+| Side | Før | Nå |
+|---|---|---|
+| `/innholdsproduksjon` | tom stubb | nav-side, ruter til fire eiker |
+| `/reklamefilm` | tom stubb | landingsside |
+| `/videoproduksjon-i-oslo` | tom stubb | landingsside |
+| `/employer-branding-video-oslo` | tom stubb | landingsside |
+| `/eventfotograf-eventvideo` | tom stubb | landingsside |
+| `/blogg` | 17 slugs, utledede titler | 8 ekte artikler, ekte titler |
+| `/blogg/[slug]` | «ikke migrert fra Squarespace» | 12 871 ord, migrert ordrett |
+
+### Strukturen følger målingene, ikke smaken
+
+- **Svaret først**, som eget designelement med egen venstrekant. 44,2 % av
+  LLM-siteringer hentes fra første 30 % av en side, 55 % for AI Overviews.
+- **Spørsmålsformede H2-er**, hver en selvstendig siterbar enhet.
+- **FAQ-schema på hver side.** På bloggen er den utledet fra artiklenes
+  egne spørsmålsoverskrifter — de ER en FAQ — uten en linje ny copy.
+- **Sitater fra navngitte Google-anmeldelser** der de hører hjemme.
+  Sitater var det sterkeste enkeltgrepet i GEO-studien: +37 %.
+
+### Tre feil funnet underveis
+
+**`TjenesteSchema` hardkodet abonnementsprisen** inn i `offers` på hver
+side som brukte den. Riktig med én side, feil med fem: en reklamefilm
+koster ikke 30 000 kr/mnd. Prisblokken er nå av som standard, og forsiden
+er den ene siden som eksplisitt slår den på.
+
+**`TbdMarkor` målte 3,23:1.** Oransje tekst på en 12 %-tone av samme
+oransje. Feilen var usynlig fordi markøren bare vises når copy MANGLER, og
+forsidens slots er fylt — den dukket opp i det tjenestesidene fikk
+TBD-er. Nå mørk blekk, 14,22:1.
+
+**Sitemapet listet alle sytten bloggslugs.** Ni av dem 301-er. Et sitemap
+som annonserer omdirigeringer er en selvmotsigelse.
+
+### Intern lenking var det virkelige hullet
+
+Før i dag lenket ingenting til tjenestesidene utenom bunnteksten, og en
+bunntekstlenke er sitewide — den svakeste formen for intern lenking som
+finnes. Nå:
+
+- hver bloggartikkel → tjenestesiden den leder til, med ankertekst som
+  sier hva siden ER
+- `/vart-arbeid` → de fire eikene, rett over «skal vi lage det samme for
+  dere?», som ellers lot «det samme» stå udefinert
+- tjenestesidene → hverandre, gjennom avgrensningsblokkene
+
+Forsiden er bevisst holdt utenfor. Jobben dens er skjemaleads, og
+prosjektlenker over skjemaet er en lekkasje. Bunntekstlenken står der
+uansett.
+
+### Det som gjenstår
+
+**8 TBD-er blokkerer.** Prosjektpriser, leveringstider og prosessen for
+hver tjeneste finnes ikke verifisert noe sted i repoet. De rendres synlig
+i previewen og listes av `content:check`. Sidene er ferdige som
+konstruksjoner; de er ikke ferdige som salgsmateriell før Pål fyller dem.
+
+**Ingen nye bloggartikler er skrevet, og det er et valg.** Researchen sier
+at «hva er»-innhold kannibaliseres av AI-motorene, og at prissøk er det
+som siteres. Men prisspørsmålene hører hjemme PÅ tjenestesidene, der de
+nå står som egne H2-er. En egen artikkel om «hva koster videoproduksjon»
+ville konkurrert med `/videoproduksjon-i-oslo` om nøyaktig det søket —
+altså kannibalisering, som var oppgaven å hindre.
+
+Den ene artikkelen som ikke kan eies av noen tjenesteside, er
+sammenligningen «byrå, frilanser eller ansette selv». Den krever
+lønnstall med kilde, og de må hentes før den kan skrives.
