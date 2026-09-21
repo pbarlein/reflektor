@@ -6,7 +6,7 @@ export const OPPTAK: readonly Rubrikk[] = [
     slug: "lyd-kan-ikke-reddes",
     tittel: "Lyd er det eneste du ikke kan redde etterpå",
     sammendrag:
-      "Dårlig lys kan graderes, skjevt bilde kan beskjæres, feil farge kan rettes. Dårlig lyd er borte. Sjekken som må gå før første opptak.",
+      "Dårlig lys kan løftes, skjevt bilde kan beskjæres, og feil farge kan rettes. Dårlig lyd er borte for godt. Her er sjekken som må gå før første opptak.",
     kategori: "opptak",
     medie: {
       type: "video",
@@ -68,7 +68,7 @@ export const OPPTAK: readonly Rubrikk[] = [
           likes: 6743,
           hentet: "2026-09-21",
           seEtter:
-            "Se etter myggen på t-skjorta hans. Den sitter høyt på brystet, en håndsbredd under haka, og den er synlig i bildet — de har ikke prøvd å skjule den. Dette er en iskrembutikk: kjøleanlegg, folk, disk. Kameramikrofonen hadde tatt hele rommet og litt av ham. Mygg på hovedpersonen er ikke en oppgradering, det er minstekravet så snart noen skal si noe i et lokale som er i drift.",
+            "Se etter myggen på t-skjorta hans. Den sitter høyt på brystet, omtrent en håndsbredd under haka, og den er fullt synlig i bildet — de har ikke forsøkt å skjule den. Stedet er en iskrembutikk, med kjøleanlegg, folk og disk. En kameramikrofon hadde tatt hele rommet og bare litt av ham. Mygg på hovedpersonen er ikke en oppgradering, det er minstekravet så snart noen skal si noe i et lokale som er i drift.",
         },
       },
       {
@@ -82,14 +82,14 @@ export const OPPTAK: readonly Rubrikk[] = [
           likes: 24086,
           hentet: "2026-09-21",
           seEtter:
-            "Samme grep utendørs, og her er grunnen en annen: vind. Mygg på kragen, tett på munnen, gir lyd som tåler luft i bevegelse. Legg også merke til at lyset er jevnt og kommer forfra, uten harde skygger i ansiktet — de har valgt sted for lyd og lys i samme vurdering, ikke først det ene og så det andre.",
+            "Her er samme grep brukt utendørs, og grunnen er en annen: vind. En mygg på kragen, tett på munnen, gir lyd som tåler luft i bevegelse. Legg også merke til at lyset er jevnt og kommer forfra, uten harde skygger i ansiktet. De har valgt sted for lyd og lys i samme vurdering, ikke først det ene og så det andre.",
         },
       },
       { type: "seksjon", id: "romtone", tittel: "Romtone" },
       {
         type: "avsnitt",
         tekst:
-          "Ta alltid opp tretti sekunder romtone på hver lokasjon: bare rommet, uten folk og uten bevegelse. Det koster en halv gitarpause og redder hver eneste klippovergang der to opptak med ulik bakgrunnsstøy møtes.",
+          "Ta alltid opp tretti sekunder romtone på hver lokasjon: bare rommet, uten folk og uten bevegelse. Det tar et halvt minutt, og det redder hver eneste klippovergang der to opptak med ulik bakgrunnsstøy møtes.",
       },
       {
         type: "avsnitt",
@@ -178,7 +178,7 @@ export const OPPTAK: readonly Rubrikk[] = [
           likes: 1735,
           hentet: "2026-09-21",
           seEtter:
-            "Et mørkt rom med kun én type lys: varme pærer i sedertre, speilet i vannet. Ingen har hengt opp en lampe. De har funnet det rommet hvor husets eget lys allerede dominerer, og filmet der. Dette er situasjonen du møter hos behandlingssteder, spa og klinikker — og svaret er nesten alltid å velge rom, ikke å tilføre lys.",
+            "Rommet er mørkt, og det har bare én type lys: varme pærer i sedertre, speilet i vannet. Ingen har hengt opp en lampe. De har funnet rommet der husets eget lys allerede dominerer, og filmet der. Dette er situasjonen du møter hos behandlingssteder, spa og klinikker, og svaret er nesten alltid å velge rom i stedet for å tilføre lys.",
         },
       },
       {
@@ -192,7 +192,7 @@ export const OPPTAK: readonly Rubrikk[] = [
           likes: 2700,
           hentet: "2026-09-21",
           seEtter:
-            "Mykt dagslys fra siden, personen vendt mot det, og en bakgrunn som er ryddet før noen tenkte på ansiktet: én plante, glatt vegg, ingenting som stikker ut bak hodet. Produktene står fremme på disken, i samme lys som ham. Hele oppsettet kan bygges på to minutter i et hvilket som helst lokale med et vindu — det er ingenting her du ikke har hos en kunde.",
+            "Her er det mykt dagslys fra siden, personen er vendt mot lyset, og bakgrunnen er ryddet før noen tenkte på ansiktet: én plante, en glatt vegg, og ingenting som stikker ut bak hodet. Produktene står fremme på disken, i samme lys som ham. Hele oppsettet kan bygges på to minutter i et hvilket som helst lokale med et vindu, og det er ingenting her du ikke finner hos en kunde.",
         },
       },
       { type: "seksjon", id: "blandet", tittel: "Blandet lys" },
@@ -204,7 +204,7 @@ export const OPPTAK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Løsningen er alltid den samme: få én kilde til å dominere. Enten slå av den andre, eller flytt deg til der den ene er sterk nok til å overdøve den andre.",
+          "Løsningen er alltid den samme: få én kilde til å dominere. Enten slår du av den andre, eller så flytter du deg dit den ene er sterk nok til å overstyre den andre.",
       },
       { type: "seksjon", id: "bakgrunn", tittel: "Bakgrunnen først" },
       {
@@ -288,8 +288,8 @@ export const OPPTAK: readonly Rubrikk[] = [
       {
         type: "punkter",
         punkter: [
-          "Stående når bevegelsen er loddrett, når det er én person, og når det skal i feeden først.",
-          "Liggende med god luft rundt motivet når det er flere personer, eller når det åpenbart skal på skjerm eller nettside.",
+          "Film stående når bevegelsen er loddrett, når det bare er én person i bildet, og når innholdet skal i feeden først.",
+          "Film liggende med god luft rundt motivet når det er flere personer, eller når innholdet åpenbart skal på en skjerm eller en nettside.",
           "Trenger du begge: film liggende i høyere oppløsning og hold motivet i midtfeltet, så kan et stående utsnitt hentes ut uten å miste skarphet.",
         ],
       },
@@ -366,7 +366,7 @@ export const OPPTAK: readonly Rubrikk[] = [
             tittel:
               "1 — Start med kameraet i gang, uten å si det er en tagning",
             tekst:
-              "Den beste taket er nesten alltid det som skjer før personen tror det gjelder. Si «jeg bare sjekker lyden» og still første spørsmål der.",
+              "Det beste taket er nesten alltid det som skjer før personen tror det gjelder. Si «jeg bare sjekker lyden», og still det første spørsmålet der.",
           },
           {
             tittel: "2 — Still spørsmål om noe de kan",
@@ -381,12 +381,12 @@ export const OPPTAK: readonly Rubrikk[] = [
           {
             tittel: "4 — Si når det er bra",
             tekst:
-              "«Den var fin» etter første tak endrer hele kroppsspråket. Ikke spar på det til slutt.",
+              "Et «den var fin» etter første tak endrer hele kroppsspråket. Ikke spar det til slutt.",
           },
           {
             tittel: "5 — Ta det igjen, men ikke mange ganger",
             tekst:
-              "To eller tre tak. Etter det blir folk dårligere, ikke bedre — de begynner å høre på seg selv.",
+              "Ta to eller tre tak. Etter det blir folk dårligere og ikke bedre, fordi de begynner å høre på seg selv.",
           },
         ],
       },
@@ -401,7 +401,7 @@ export const OPPTAK: readonly Rubrikk[] = [
           likes: 84465,
           hentet: "2026-09-21",
           seEtter:
-            "En person i vernevest på et lager, med en flaske i hendene. Han har en oppgave — han holder noe, han gjør noe — og det er derfor han ser rolig ut. Ingen står stille og «er seg selv». Dette er den mest sette videoen på kontoen de siste tre månedene, foran alt det åpenbart dyrere. Grepet du kan kopiere: gi personen den jobben de gjør til daglig, og film den.",
+            "Vi ser en person i vernevest på et lager, med en flaske i hendene. Han har en oppgave — han holder noe, og han gjør noe — og det er derfor han ser rolig ut. Ingen står stille og «er seg selv». Dette er den mest sette videoen på kontoen de siste tre månedene, foran alt det som åpenbart har kostet mer. Grepet du kan kopiere, er å gi personen den jobben de gjør til daglig, og så filme den.",
         },
       },
       {
@@ -415,7 +415,7 @@ export const OPPTAK: readonly Rubrikk[] = [
           likes: 8580,
           hentet: "2026-09-21",
           seEtter:
-            "Samme prinsipp på et kjøkken. Han står bak sin egen disk, i sine egne klær, og rekker noe mot kameraet. Hendene er opptatt, kroppen er på hjemmebane, og blikket går til kameraet bare et øyeblikk. Sammenlign med hvordan det hadde sett ut om han var bedt om å stå foran disken og fortelle om stedet.",
+            "Her er samme prinsipp, på et kjøkken. Han står bak sin egen disk, i sine egne klær, og rekker noe mot kameraet. Hendene er opptatt, kroppen er på hjemmebane, og blikket går til kameraet bare et øyeblikk. Sammenlign med hvordan det hadde sett ut om han var bedt om å stille seg foran disken og fortelle om stedet.",
         },
       },
       { type: "seksjon", id: "naturlig", tittel: "Ikke si «vær naturlig»" },
@@ -456,7 +456,7 @@ export const OPPTAK: readonly Rubrikk[] = [
     prioritet: 76,
     oppsummering: [
       { tekst: "Hva dekningsbilder faktisk løser", anker: "loser" },
-      { tekst: "Fire som nesten alltid brukes", anker: "fire" },
+      { tekst: "Fire dekningsbilder som nesten alltid brukes", anker: "fire" },
       { tekst: "Film lenger enn du tror du trenger", anker: "lenger" },
       { tekst: "Hold kameraet i ro på halvparten", anker: "ro" },
     ],
@@ -472,7 +472,7 @@ export const OPPTAK: readonly Rubrikk[] = [
         tekst:
           "De løser også et problem du ikke har oppdaget ennå: når personen sier noe halvveis feil, og du må klippe midt i setningen. Uten dekning ser det ut som en glipp. Med dekning ser det ut som et valg.",
       },
-      { type: "seksjon", id: "fire", tittel: "Fire som alltid brukes" },
+      { type: "seksjon", id: "fire", tittel: "Fire som nesten alltid brukes" },
       {
         type: "sjekkliste",
         tittel: "Per oppsett med tale",
@@ -499,7 +499,7 @@ export const OPPTAK: readonly Rubrikk[] = [
           likes: 6136,
           hentet: "2026-09-21",
           seEtter:
-            "Et dekningsbilde som gjør to jobber samtidig: kjeglen ligger uskarp i forgrunnen og rammer inn bildet, og den våte asfalten gir refleksjoner som forteller at det har regnet — uten at noen måtte si det. Dette er ti sekunders arbeid på vei fra bilen til lokasjonen. Se etter forgrunnen hver gang du rigger et dekningsbilde: den koster ingenting, og den er forskjellen på et klipp og et bilde.",
+            "Dette dekningsbildet gjør to jobber samtidig. Kjeglen ligger uskarp i forgrunnen og rammer inn bildet, og den våte asfalten gir refleksjoner som forteller at det har regnet, uten at noen måtte si det. Hele grepet er ti sekunders arbeid på vei fra bilen til lokasjonen. Se etter forgrunnen hver gang du rigger et dekningsbilde: den koster ingenting, og den er forskjellen på et klipp og et bilde.",
         },
       },
       { type: "seksjon", id: "lenger", tittel: "Lenger enn du tror" },
@@ -554,7 +554,7 @@ export const OPPTAK: readonly Rubrikk[] = [
         punkter: [
           "Si hvor lenge du trenger dem, og hold det. Går det over, si fra i stedet for å håpe de ikke merker det.",
           "Rigg ferdig før du henter folk. Ingen skal stå og vente mens du finner en kabel.",
-          "Ikke blokker en dør, en kasse eller en vei folk må gå.",
+          "Ikke blokker en dør, en kasse eller en gang som folk må bruke.",
           "Rydd opp etter hvert oppsett, ikke til slutt.",
           "Takk dem som stilte opp, med navn, før du går.",
         ],
@@ -570,14 +570,14 @@ export const OPPTAK: readonly Rubrikk[] = [
           likes: 4473,
           hentet: "2026-09-21",
           seEtter:
-            "Filmet på en ekte byggeplass, sammen med et entreprenørfirma som er kreditert i bildeteksten, mens arbeidet pågår. Håndverkeren ligger på gulvet og gjør det han skal — han har ikke reist seg eller flyttet seg for kameraet. Kameraet har lagt seg ned til ham. Det er hele forholdet mellom oss og en bedrift i drift, på ett bilde: vi tilpasser oss arbeidet, ikke motsatt.",
+            "Videoen er filmet på en ekte byggeplass mens arbeidet pågår, sammen med et entreprenørfirma som er kreditert i bildeteksten. Håndverkeren ligger på gulvet og gjør det han skal. Han har ikke reist seg eller flyttet seg for kameraet — kameraet har lagt seg ned til ham. Det er hele forholdet mellom oss og en bedrift i drift, samlet i ett bilde: vi tilpasser oss arbeidet, ikke omvendt.",
         },
       },
       { type: "seksjon", id: "sikkerhet", tittel: "Sikkerhet og adgang" },
       {
         type: "avsnitt",
         tekst:
-          "I produksjonslokaler, kjøkken og byggeplasser gjelder deres regler, ikke våre. Vernesko, hårnett, synlighetsvest, adgangskort. Spør hva som kreves før dagen, ikke i resepsjonen.",
+          "I produksjonslokaler, på kjøkken og på byggeplasser gjelder deres regler, ikke våre. Det kan være vernesko, hårnett, synlighetsvest eller adgangskort. Spør hva som kreves i god tid før dagen, ikke i resepsjonen.",
       },
       {
         type: "merknad",

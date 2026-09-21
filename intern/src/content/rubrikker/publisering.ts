@@ -25,7 +25,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
         anker: "forsprang",
       },
       { tekst: "Fire steg for å legge måneden", anker: "steg" },
-      { tekst: "Juli og romjulen er vår beste måned", anker: "ferie" },
+      { tekst: "Juli og romjulen er vår beste tid", anker: "ferie" },
     ],
     innhold: [
       { type: "seksjon", id: "regnestykke", tittel: "Regnestykket" },
@@ -52,7 +52,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
           {
             tittel: "1 — Sorter etter tidsavhengighet",
             tekst:
-              "Det som er knyttet til en dato eller sesong låses først. Resten kan flyttes fritt, og det er den som redder rytmen.",
+              "Det som er knyttet til en dato eller en sesong, låses først. Resten kan flyttes fritt, og det er den delen som redder rytmen.",
           },
           {
             tittel: "2 — Sett to faste ukedager",
@@ -67,7 +67,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
           {
             tittel: "4 — Sikre rytmen før du finner ny dato",
             tekst:
-              "Blir en produksjonsdag utsatt: første oppgave er å fylle køen, ikke å booke ny dag. Kunden merker et hull i feeden lenge før de merker at en dag ble flyttet.",
+              "Blir en produksjonsdag utsatt, er første oppgave å fylle køen, ikke å finne ny dato. Kunden merker et hull i feeden lenge før de merker at en dag ble flyttet.",
           },
         ],
       },
@@ -135,7 +135,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
           [
             "Profilbesøk etter en post",
             "Om noen ble nysgjerrige på bedriften",
-            "Nærmest et kjøpssignal. Verdt mer enn tusen visninger",
+            "Nærmest et kjøpssignal, og verdt mer oppmerksomhet enn visningstallet",
           ],
         ],
       },
@@ -161,7 +161,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
           likes: 2682,
           hentet: "2026-09-21",
           seEtter:
-            "9 643 855 visninger. 2 682 likes. Det er 0,03 prosent — under én liker per tre tusen visninger. Vi vet ikke sikkert hvorfor, men et så skjevt forhold peker mot at visningene er kjøpt frem til folk som ikke følger kontoen. Det er ikke juks, og det kan være helt riktig brukt. Men det er ikke det samme som at innholdet traff, og det er ikke et tall du skal legge frem for en kunde som bevis på at noe fungerte.",
+            "Posten har 9 643 855 visninger og 2 682 likes. Det er 0,03 prosent, altså under én like per tre tusen visninger. Vi vet ikke sikkert hvorfor, men et så skjevt forhold peker mot at visningene er kjøpt frem til folk som ikke følger kontoen. Det er verken juks eller feil bruk av penger. Men det er ikke det samme som at innholdet traff, og det er ikke et tall du skal legge fram for en kunde som bevis på at noe fungerte.",
         },
       },
       {
@@ -175,14 +175,14 @@ export const PUBLISERING: readonly Rubrikk[] = [
           likes: 77616,
           hentet: "2026-09-21",
           seEtter:
-            "Samme konto, samme måned, en femdel av visningene — og 77 616 likes. Det er 4,2 prosent, altså over hundre ganger høyere responsrate enn posten over. Dette er poenget med hele rubrikken på ett sted: den «dårligere» videoen er den som traff. Når du leser tall for en kunde, se alltid på forholdet mellom visninger og respons, aldri på visningene alene.",
+            "Dette er samme konto og samme måned, med en femdel av visningene — og 77 616 likes. Det er 4,2 prosent, altså over hundre ganger høyere responsrate enn posten ved siden av. Her er poenget med hele rubrikken samlet på ett sted: den «dårligere» videoen er den som traff. Når du leser tall for en kunde, se alltid på forholdet mellom visninger og respons, aldri på visningene alene.",
         },
       },
       { type: "seksjon", id: "snakk", tittel: "Hvordan du snakker om det" },
       {
         type: "avsnitt",
         tekst:
-          "Si hva vi ser, hva vi tror det betyr, og hva vi gjør med det neste måned. Tre setninger. Ikke lov et tall — vi har ingen kontroll over rekkevidde, og et løfte du ikke kan holde er det dyreste du kan si i et kundemøte.",
+          "Si hva vi ser, hva vi tror det betyr, og hva vi gjør med det neste måned. Det holder med tre setninger. Ikke lov et tall: vi har ingen kontroll over rekkevidde, og et løfte du ikke kan holde er det dyreste du kan si i et kundemøte.",
       },
       {
         type: "sitat",
@@ -228,7 +228,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
         punkter: [
           "Første linje er den eneste som vises før «mer». Den skal kunne stå alene.",
           "Ikke gjenta det videoen nettopp sa. Legg til noe — konteksten, prisen, navnet, når det skjer.",
-          "Én handling, hvis noen i det hele tatt. «Bestill bord.» Ikke tre ting.",
+          "Be om én handling, hvis du i det hele tatt skal be om noe. «Bestill bord» holder, og tre oppfordringer gjør at ingen av dem virker.",
           "Skriv som kunden snakker, ikke som en pressemelding.",
         ],
       },
@@ -457,7 +457,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
           likes: 4693,
           hentet: "2026-09-21",
           seEtter:
-            "Les bildeteksten før du ser videoen: «Nei, vi bruker ikke såpestykke i ansiktet. Hold deg til to-stegsrutinen.» Det er et råd om fremgangsmåte, og det er alt. Ingen «yngre hud», ingen «blir kvitt», ingen før-og-etter — fra et merke som er utviklet sammen med hudleger og godt kunne fristes. Dette er malen for enhver kunde i en regulert bransje: vis fremgangsmåten, ikke resultatet. Det er lov, det krever ingen godkjenning fra kunden, og det holder lenger.",
+            "Les bildeteksten før du ser videoen: «Nei, vi bruker ikke såpestykke i ansiktet. Hold deg til to-stegsrutinen.» Det er et råd om fremgangsmåte, og det er alt. Ingen «yngre hud», ingen «blir kvitt» og ingen før-og-etter — fra et merke som er utviklet sammen med hudleger og godt kunne fristet til det motsatte. Dette er malen for enhver kunde i en regulert bransje: vis fremgangsmåten, ikke resultatet. Det er lov, det trenger ingen godkjenning, og det holder lenger.",
         },
       },
       { type: "seksjon", id: "barn", tittel: "Barn og unge" },
@@ -469,7 +469,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
       {
         type: "merknad",
         tekst:
-          "Barn i bildet er dessuten et personvernspørsmål uavhengig av markedsføring. Samtykke fra foresatte, hver gang, uten unntak.",
+          "Barn i bildet er dessuten et personvernspørsmål uavhengig av markedsføring. Samtykke fra foresatte kreves hver gang, uten unntak.",
       },
       { type: "seksjon", id: "spor", tittel: "Spør, ikke gjett" },
       {

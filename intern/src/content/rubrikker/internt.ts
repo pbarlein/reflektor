@@ -23,7 +23,7 @@ export const INTERNT: readonly Rubrikk[] = [
     lesetid: 2,
     godkjent: true,
     ansvarlig: "Daglig leder",
-    kilde: "Påls egne ord, gjengitt ordrett. Ikke omskrevet.",
+    kilde: "Påls egne ord, gjengitt ordrett og uten omskrivinger.",
     prioritet: 100,
     oppsummering: [
       { tekst: "De to målene", anker: "mal" },
@@ -35,7 +35,7 @@ export const INTERNT: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Alle ansatte i Reflektor har de samme to målene. De er verdt å kunne utenat, fordi de avgjør hvilken av to mulige handlinger som er riktig, omtrent hver dag.",
+          "Alle ansatte i Reflektor har de samme to målene. De er verdt å kunne utenat, fordi de avgjør hvilken av to mulige handlinger som er riktig, nesten hver eneste dag.",
       },
       {
         type: "punkter",
@@ -85,7 +85,7 @@ export const INTERNT: readonly Rubrikk[] = [
     godkjent: true,
     ansvarlig: "Daglig leder",
     kilde:
-      "Hentet fra src/content/site.ts i hovedprosjektet (objektet `tilbud`). Samme kilde som forsiden rendrer fra.",
+      "Hentet fra tilbudsteksten i hovedprosjektet. Det er den samme kilden som nettsiden viser.",
     prioritet: 96,
     oppsummering: [
       { tekst: "Pris og vilkår", anker: "pris" },
@@ -118,7 +118,7 @@ export const INTERNT: readonly Rubrikk[] = [
       {
         type: "merknad",
         tekst:
-          "To publiseringer i uken betyr TO, ikke to på hver kanal. De går til Instagram og krysspubliseres til Facebook. 2 × 52 = 104 i året, altså 8,7 i måneden — som er derfor produksjonsmålet er 8–10.",
+          "To publiseringer i uken betyr TO, ikke to på hver kanal. De går til Instagram og krysspubliseres til Facebook. 2 × 52 = 104 i året, altså 8,7 i måneden, og det er derfor produksjonsmålet er 8–10.",
       },
       { type: "seksjon", id: "stillbilder", tittel: "Stillbilder" },
       {
@@ -156,7 +156,7 @@ export const INTERNT: readonly Rubrikk[] = [
     godkjent: true,
     ansvarlig: "Daglig leder",
     kilde:
-      "Hentet fra AGENTS.md kapittel 0.3 og src/content/site.ts i hovedprosjektet.",
+      "Hentet fra de låste rammene i prosjektbriefen og fra tilbudsteksten i hovedprosjektet.",
     prioritet: 88,
     oppsummering: [
       { tekst: "Slik skrives prisen", anker: "skrives" },

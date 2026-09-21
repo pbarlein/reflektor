@@ -82,12 +82,12 @@ export const FORRETNING: readonly Rubrikk[] = [
       {
         type: "merknad",
         tekst:
-          "Tallene her er hentet fra det som står åpent på nettsiden. Det som ikke står der — faktiske marginer, lønnskostnader, hvor mange kunder vi har — er ikke mitt å gjengi. Spør Pål hvis du vil vite mer.",
+          "Tallene her er hentet fra det som står åpent på nettsiden. Det som ikke står der — faktiske marginer, lønnskostnader og hvor mange kunder vi har — gjengis ikke her. Spør Pål hvis du vil vite mer.",
       },
     ],
     kilder: [
       {
-        tittel: "Reflektor: pris og leveranse (src/content/site.ts)",
+        tittel: "Reflektor: pris og leveranse, slik den står på nettsiden",
         url: "https://www.reflektor.no/sosiale-medier-byra",
         sjekket: "2026-09-21",
       },
@@ -98,7 +98,7 @@ export const FORRETNING: readonly Rubrikk[] = [
     slug: "hva-du-faktisk-paavirker",
     tittel: "Hva du faktisk påvirker",
     sammendrag:
-      "Det er lett å tro at forretningen er noe andre styrer. Her er de fire tingene hver enkelt av oss flytter på, hver uke.",
+      "Det er lett å tro at forretningen er noe andre styrer. Her er de fire tingene hver enkelt av oss påvirker, uke for uke.",
     kategori: "forretning",
     medie: {
       type: "bilde",
@@ -111,7 +111,7 @@ export const FORRETNING: readonly Rubrikk[] = [
     ansvarlig: "Daglig leder",
     prioritet: 90,
     oppsummering: [
-      { tekst: "Fire ting du flytter på", anker: "fire" },
+      { tekst: "Fire ting du avgjør selv", anker: "fire" },
       { tekst: "Den ene som betyr mest", anker: "mest" },
       {
         tekst: "Det du ikke påvirker, og som du kan slippe å bekymre deg for",
@@ -123,23 +123,23 @@ export const FORRETNING: readonly Rubrikk[] = [
       {
         type: "punkter",
         punkter: [
-          "Om produksjonsdagen gir nok materiale. Går den i vasken, må noen tilbake, og da forsvinner marginen på den kunden.",
-          "Om kunden føler seg sett mellom dagene. Det er her oppsigelser starter, lenge før noen sier noe.",
-          "Om innholdet holder standard. Den dårligste videoen setter nivået i kundens hode.",
-          "Om rytmen holder. Et hull i feeden er det mest synlige tegnet på at noe ikke fungerer.",
+          "Om produksjonsdagen gir nok materiale, avgjøres av deg som er der. Går dagen i vasken, må noen tilbake, og da forsvinner marginen på den kunden.",
+          "Om kunden føler seg sett mellom dagene, avgjøres av hvem som tar kontakt. Det er her oppsigelser starter, lenge før noen sier noe.",
+          "Om innholdet holder standard, ser kunden med en gang. Den dårligste videoen setter nivået i hodet deres.",
+          "Om rytmen holder, er synlig for alle. Et hull i feeden er det tydeligste tegnet på at noe ikke fungerer.",
         ],
       },
       { type: "seksjon", id: "mest", tittel: "Den som betyr mest" },
       {
         type: "avsnitt",
         tekst:
-          "Nummer to. En kunde tåler en svakere måned med innhold hvis de opplever at noen følger med. De tåler ikke en god måned der de aldri hørte fra oss — for da vet de ikke at den var god.",
+          "Det er nummer to som betyr mest. En kunde tåler en svakere måned med innhold hvis de opplever at noen følger med. De tåler ikke en god måned der de aldri hørte fra oss, for da vet de ikke at den var god.",
       },
       { type: "seksjon", id: "ikke", tittel: "Det du ikke påvirker" },
       {
         type: "avsnitt",
         tekst:
-          "Rekkevidde. Algoritmer. Om en post plutselig går bra eller dårlig. Dette er verdt å si høyt, fordi det er lett å ta det personlig når tallene svinger.",
+          "Rekkevidde, algoritmer og om en enkelt post plutselig går bra eller dårlig, ligger utenfor det du styrer. Det er verdt å si høyt, fordi det er lett å ta det personlig når tallene svinger.",
       },
       {
         type: "avsnitt",
@@ -153,7 +153,7 @@ export const FORRETNING: readonly Rubrikk[] = [
     slug: "hvorfor-fast-pris",
     tittel: "Hvorfor vi har fast pris",
     sammendrag:
-      "Ingen timepriser, ingen etterfakturering, ingen tillegg for ekstra runder. Det er en posisjonering, og den har konsekvenser for hvordan vi jobber.",
+      "Vi har ingen timepriser, ingen etterfakturering og ingen tillegg for ekstra runder. Det er en posisjonering, og den har konsekvenser for hvordan vi jobber.",
     kategori: "forretning",
     medie: {
       type: "bilde",
@@ -205,7 +205,7 @@ export const FORRETNING: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Grensen går ved om det kan gjøres på den produksjonsdagen vi uansett er der. Kan det det, gjør vi det gjerne. Kan det ikke det, er det en ekstra produksjonsdag, og den har en egen pris. Si det vennlig og tidlig — ikke la det bli en overraskelse på fakturaen.",
+          "Grensen går ved om det kan gjøres på den produksjonsdagen vi uansett er der. Kan det gjøres da, gjør vi det gjerne. Kan det ikke det, er det en ekstra produksjonsdag, og den har en egen pris. Si det vennlig og tidlig, så det ikke blir en overraskelse på fakturaen.",
       },
       {
         type: "merknad",
@@ -219,7 +219,7 @@ export const FORRETNING: readonly Rubrikk[] = [
     slug: "hva-en-produksjonsdag-egentlig-koster",
     tittel: "Hva en produksjonsdag egentlig koster",
     sammendrag:
-      "Ikke i kroner — det er ikke mitt å gjengi. Men i det som faktisk brukes opp: tid, oppmerksomhet og kundens tålmodighet.",
+      "Ikke i kroner, for de tallene hører ikke hjemme her. Men i det som faktisk brukes opp: tid, oppmerksomhet og kundens tålmodighet.",
     kategori: "forretning",
     medie: {
       type: "bilde",
@@ -232,7 +232,7 @@ export const FORRETNING: readonly Rubrikk[] = [
     ansvarlig: "Daglig leder",
     prioritet: 68,
     oppsummering: [
-      { tekst: "Tre ting som brukes opp", anker: "tre" },
+      { tekst: "Tre ting som brukes opp på en dag", anker: "tre" },
       { tekst: "Hvor tiden faktisk går", anker: "tid" },
       { tekst: "Den dyreste timen på dagen", anker: "dyrest" },
     ],
@@ -241,9 +241,9 @@ export const FORRETNING: readonly Rubrikk[] = [
       {
         type: "punkter",
         punkter: [
-          "Vår tid — planlegging, reise, opptak, redigering, publisering.",
-          "Kundens tid — folk som stilte opp i stedet for å gjøre jobben sin.",
-          "Kundens tålmodighet — en endelig ressurs som brukes opp raskere enn man tror.",
+          "Vår tid går med til planlegging, reise, opptak, redigering og publisering.",
+          "Kundens tid går med fordi folk stiller opp for oss i stedet for å gjøre jobben sin.",
+          "Kundens tålmodighet er en begrenset ressurs, og den brukes opp raskere enn man tror.",
         ],
       },
       {

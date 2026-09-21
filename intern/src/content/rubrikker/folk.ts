@@ -48,7 +48,7 @@ export const FOLK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Å oppleve at det du gjør er ditt eget valg, ikke bare noe du ble bedt om. I praksis handler det sjelden om å bestemme alt — det handler om å forstå hvorfor, og å ha reell innflytelse på hvordan.",
+          "Selvbestemmelse er å oppleve at det du gjør er ditt eget valg, og ikke bare noe du ble bedt om. I praksis handler det sjelden om å bestemme alt. Det handler om å forstå hvorfor, og om å ha reell innflytelse på hvordan.",
       },
       {
         type: "avsnitt",
@@ -59,7 +59,7 @@ export const FOLK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Å bli merkbart bedre på noe som er vanskelig nok til å telle. Dette er den som ryker først i en travel hverdag: man gjør det man allerede kan, fordi det går fortest, og etter et år har man gjort det samme tolv ganger i stedet for å ha blitt bedre tolv ganger.",
+          "Mestring er å bli merkbart bedre på noe som er vanskelig nok til at det teller. Dette er behovet som ryker først i en travel hverdag: man gjør det man allerede kan, fordi det går fortest, og etter et år har man gjort det samme tolv ganger i stedet for å ha blitt bedre tolv ganger.",
       },
       {
         type: "avsnitt",
@@ -70,7 +70,7 @@ export const FOLK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Å bety noe for folkene rundt seg. I et lite selskap der mye av arbeidet skjer ute hos kunder, er dette det letteste å miste uten at noen merker det. Man drar hjem fra en lokasjon, redigerer alene, og ser kolleger i forbifarten.",
+          "Tilhørighet er å bety noe for folkene rundt seg. I et lite selskap der mye av arbeidet skjer ute hos kunder, er dette det letteste å miste uten at noen merker det. Man drar hjem fra en lokasjon, redigerer alene, og ser kolleger i forbifarten.",
       },
       { type: "seksjon", id: "gjor", tittel: "Hva du kan gjøre i dag" },
       {
@@ -177,7 +177,7 @@ export const FOLK: readonly Rubrikk[] = [
           {
             tittel: "Uke 2–4 — Gjør en del",
             tekst:
-              "Ta ansvar for én avgrenset ting per dag — lyd, dekningsbilder, ett oppsett. Med noen ved siden av.",
+              "Ta ansvar for én avgrenset ting per dag, som lyd, dekningsbilder eller ett oppsett. Ha alltid noen ved siden av deg.",
           },
           {
             tittel: "Uke 5–8 — Gjør det meste, med gjennomgang",
@@ -187,7 +187,7 @@ export const FOLK: readonly Rubrikk[] = [
           {
             tittel: "Uke 9–12 — Egen dag",
             tekst:
-              "Egen produksjonsdag hos en kunde som ikke er den vanskeligste. Med noen tilgjengelig på telefon.",
+              "Kjør en egen produksjonsdag hos en kunde som ikke er den vanskeligste, med noen tilgjengelig på telefon.",
           },
         ],
       },
@@ -195,7 +195,7 @@ export const FOLK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Å sende noen ut alene i uke to fordi det er travelt. Det føles effektivt og er det motsatte: personen bruker tre måneder på å avlære ting ingen fortalte dem, og kunden får en dårligere dag i mellomtiden.",
+          "Den vanligste feilen er å sende noen ut alene i uke to fordi det er travelt. Det føles effektivt, og er det motsatte: personen bruker tre måneder på å avlære ting ingen fortalte dem, og kunden får en dårligere dag i mellomtiden.",
       },
       {
         type: "merknad",
@@ -248,17 +248,18 @@ export const FOLK: readonly Rubrikk[] = [
         steg: [
           {
             tittel: "1 — Hva du så",
-            tekst: "Konkret og etterprøvbart. Noe den andre også kan se.",
+            tekst:
+              "Beskriv noe konkret og etterprøvbart, som den andre også kan se.",
           },
           {
             tittel: "2 — Hva konsekvensen ble",
             tekst:
-              "Hvorfor det betydde noe. Uten dette høres det ut som en smakssak.",
+              "Si hvorfor det betydde noe. Uten den delen høres tilbakemeldingen ut som en smakssak.",
           },
           {
             tittel: "3 — Hva du ville gjort",
             tekst:
-              "Et alternativ, ikke bare en feil. Ellers har du beskrevet et problem og overlatt løsningen til den som allerede ikke fant den.",
+              "Foreslå et alternativ, ikke bare påpek en feil. Ellers har du beskrevet et problem og overlatt løsningen til den som allerede ikke fant den.",
           },
         ],
       },
@@ -266,7 +267,7 @@ export const FOLK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Så nær hendelsen som mulig, og aldri foran kunden. En tilbakemelding som kommer i medarbeidersamtalen tre måneder senere, er ikke en tilbakemelding — det er en anklage med lang oppbevaringstid.",
+          "Gi den så nær hendelsen som mulig, og aldri foran kunden. En tilbakemelding som kommer i medarbeidersamtalen tre måneder senere, er ikke en tilbakemelding. Det er en anklage med lang oppbevaringstid.",
       },
       { type: "seksjon", id: "imot", tittel: "Å ta imot" },
       {
@@ -325,10 +326,10 @@ export const FOLK: readonly Rubrikk[] = [
       {
         type: "punkter",
         punkter: [
-          "Et intervju du vanligvis lar noen andre ta",
-          "En lyssetting du pleier å unngå fordi den tar tid",
-          "En åpningstype du aldri har prøvd",
-          "Å klippe en video uten musikk, og se om den holder",
+          "Ta et intervju du vanligvis lar noen andre ta.",
+          "Prøv en lyssetting du pleier å unngå fordi den tar tid.",
+          "Bruk en åpningstype du aldri har prøvd før.",
+          "Klipp en video uten musikk, og se om den holder likevel.",
         ],
       },
       { type: "seksjon", id: "fremmed", tittel: "Se på det som en fremmed" },
@@ -445,7 +446,7 @@ export const FOLK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Si hva du prøver å oppnå, hva du har prøvd, og hva som skjedde. Tre setninger. «Får ikke til lyden» krever tre spørsmål tilbake før noen kan hjelpe; «prøver å få ren lyd i et lokale med ventilasjon, har flyttet mikrofonen nærmere, fortsatt brumming» kan besvares med en gang.",
+          "Si hva du prøver å oppnå, hva du har prøvd, og hva som skjedde. Det holder med tre setninger. «Får ikke til lyden» krever tre spørsmål tilbake før noen kan hjelpe, mens «prøver å få ren lyd i et lokale med ventilasjon, har flyttet mikrofonen nærmere, fortsatt brumming» kan besvares med en gang.",
       },
       { type: "seksjon", id: "lokasjon", tittel: "På lokasjon: ring" },
       {

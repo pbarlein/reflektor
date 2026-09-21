@@ -1,6 +1,6 @@
-import { Eksempel } from "@/components/Eksempel";
+import { Eksempelrad } from "@/components/Eksempel";
 import { Figur } from "@/components/Figur";
-import type { Blokk, Kilde } from "@/content/rubrikktype";
+import type { Blokk, Eksempeldata, Kilde } from "@/content/rubrikktype";
 
 /**
  * Innholdsblokkene.
@@ -16,11 +16,45 @@ import type { Blokk, Kilde } from "@/content/rubrikktype";
 export function Innhold({ blokker }: { blokker: readonly Blokk[] }) {
   return (
     <div className="flex flex-col gap-6">
-      {blokker.map((blokk, i) => (
-        <Enkeltblokk key={i} blokk={blokk} />
-      ))}
+      {slaaSammenEksempler(blokker).map((del, i) =>
+        Array.isArray(del) ? (
+          <Eksempelrad key={i} eksempler={del} />
+        ) : (
+          <Enkeltblokk key={i} blokk={del} />
+        ),
+      )}
     </div>
   );
+}
+
+/**
+ * Slår sammen eksempler som står etter hverandre, til én rad.
+ *
+ * Eksempler kommer nesten alltid i par eller triller, og de er skrevet for
+ * å leses sammen: «Klipperytme» setter en iskremoppskrift mot en
+ * eiendomsvisning, og «Hva tallene betyr» setter to poster fra samme konto
+ * mot hverandre. Lå de under hverandre, måtte man bla forbi det ene for å
+ * se det andre — og da er sammenligningen borte.
+ *
+ * Sammenslåingen skjer her og ikke i innholdet. En forfatter skal skrive
+ * «to eksempler etter hverandre» og ikke måtte kjenne til en radtype.
+ */
+function slaaSammenEksempler(
+  blokker: readonly Blokk[],
+): (Blokk | Eksempeldata[])[] {
+  const ut: (Blokk | Eksempeldata[])[] = [];
+
+  for (const blokk of blokker) {
+    if (blokk.type !== "eksempel") {
+      ut.push(blokk);
+      continue;
+    }
+    const forrige = ut[ut.length - 1];
+    if (Array.isArray(forrige)) forrige.push(blokk.data);
+    else ut.push([blokk.data]);
+  }
+
+  return ut;
 }
 
 function Enkeltblokk({ blokk }: { blokk: Blokk }) {
@@ -185,7 +219,13 @@ function Enkeltblokk({ blokk }: { blokk: Blokk }) {
       return <Figur navn={blokk.navn} tekst={blokk.tekst} />;
 
     case "eksempel":
-      return <Eksempel data={blokk.data} />;
+      /*
+        Håndteres av slaaSammenEksempler() over, som samler dem i rader.
+        Tilfellet står her fordi unionen krever det — kommer en enkelt
+        eksempelblokk hit, er det en feil i sammenslåingen, ikke i
+        innholdet, og da er én rad med ett eksempel riktig fallback.
+      */
+      return <Eksempelrad eksempler={[blokk.data]} />;
 
     case "merknad":
       return (

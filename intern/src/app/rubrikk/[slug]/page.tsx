@@ -8,7 +8,11 @@ import { Innhold, Kildeliste } from "@/components/Innhold";
 import { Oppsummering } from "@/components/Oppsummering";
 import { Rubrikkort } from "@/components/Rubrikkort";
 import { finnKategori } from "@/content/kategorier";
-import { RUBRIKKER, finnRubrikk, rubrikkerIKategori } from "@/content/rubrikker";
+import {
+  RUBRIKKER,
+  finnRubrikk,
+  rubrikkerIKategori,
+} from "@/content/rubrikker";
 import { krevBruker } from "@/lib/tilgang";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -90,7 +94,7 @@ export default async function Rubrikkside({ params }: Props) {
           klistret. Ingen duplisering, og rekkefølgen for hjelpemidler er
           den samme som den visuelle.
         */}
-        <article className="mt-7 lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-12">
+        <article className="mt-7 lg:grid lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start lg:gap-10">
           <header className="min-w-0 lg:col-start-1">
             <p className="flex flex-wrap items-center gap-x-3 gap-y-2 font-sans text-xs font-medium tracking-[0.08em] text-blekk-dempet uppercase">
               {kategori.nr ? (

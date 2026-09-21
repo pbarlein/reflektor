@@ -54,7 +54,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
           likes: 2209,
           hentet: "2026-09-21",
           seEtter:
-            "Én dag, delt i fire tidsstempler: 7 am, 10 am, 1 pm, 4 pm. Det er ikke en fortelling — det er en produksjonsplan gjort synlig. Fire oppsett, fire lys, fire steder på samme anlegg, klippet sammen til én video. Se på den som en kvittering for hvordan dagen ble planlagt: noen bestemte oppsettene før de dro, ikke underveis.",
+            "Videoen er én arbeidsdag, delt i fire tidsstempler på skjermen: «7 am», «10 am», «1 pm» og «4 pm». Det er ikke en fortelling, det er en produksjonsplan gjort synlig. Fire oppsett, fire lyssituasjoner og fire steder på samme anlegg er klippet sammen til én video. Se på den som en kvittering for hvordan dagen ble planlagt: noen bestemte oppsettene før de dro, ikke underveis.",
         },
       },
       { type: "seksjon", id: "steg", tittel: "Fem steg" },
@@ -64,7 +64,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
           {
             tittel: "1 — Skriv ned de 8–10 videoene først",
             tekst:
-              "Én linje hver: hva den handler om, og hva som må være i bildet. Ikke manus. Uten denne listen planlegger du en dag uten å vite hva den skal produsere.",
+              "Gi hver video én linje: hva den handler om, og hva som må være i bildet. Det skal ikke være et manus. Uten denne listen planlegger du en dag uten å vite hva den skal produsere.",
           },
           {
             tittel: "2 — Grupper dem i oppsett",
@@ -79,7 +79,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
           {
             tittel: "4 — Bekreft folk, ikke bare tid",
             tekst:
-              "Hvert oppsett som krever en person, krever at personen vet at hen skal være med, når, og omtrent hvor lenge.",
+              "Krever et oppsett en bestemt person, må personen vite at hen skal være med, når det skjer, og omtrent hvor lenge det tar.",
           },
           {
             tittel: "5 — Få planen ned på én side",
@@ -98,10 +98,10 @@ export const PLANLEGGING: readonly Rubrikk[] = [
       {
         type: "punkter",
         punkter: [
-          "Folk som ikke visste at de skulle være med. Den klart vanligste.",
+          "Folk som ikke visste at de skulle være med. Dette er den klart vanligste grunnen.",
           "Stillbilder som dukker opp som ønske på selve dagen. Kapasiteten deles med video — da ryker noe annet.",
           "Lokalet er i drift på en annen måte enn antatt, og vi kan ikke stå der vi planla.",
-          "Batteri og kort. Det er kjedelig, og det stopper alt når det skjer.",
+          "Tomt batteri eller fullt minnekort. Det er kjedelig, og det stopper alt når det først skjer.",
         ],
       },
       {
@@ -152,7 +152,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
         type: "figur",
         navn: "bildeutsnitt",
         tekst:
-          "De fire utsnittene, i forholdet mellom motiv og ramme. «Detalj» er større enn rammen med vilje — motivet skal klippes av. Bruk ordene i shotlisten, så vet den som filmer nøyaktig hvor nær hen skal.",
+          "Figuren viser de fire utsnittene og forholdet mellom motiv og ramme. «Detalj» er større enn rammen med vilje, fordi motivet skal klippes av. Bruk disse ordene i shotlisten, så vet den som filmer nøyaktig hvor nær hen skal gå.",
       },
       { type: "seksjon", id: "sekunder", tittel: "Sekunder, ikke «kort»" },
       {
@@ -164,7 +164,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Begrunnelser, stemningsord, referanser og alt som beskriver hvorfor. Det hører hjemme i planen. Shotlisten er en huskeliste for hendene, og hvert ord som ikke hjelper hendene, gjør den tregere å lese.",
+          "Begrunnelser, stemningsord, referanser og alt annet som forklarer hvorfor, hører hjemme i planen og ikke her. Shotlisten er en huskeliste for hendene, og hvert ord som ikke hjelper hendene, gjør den tregere å lese.",
       },
       { type: "seksjon", id: "kryss", tittel: "Kryss av" },
       {
@@ -305,7 +305,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
       { tekst: "Fire typer innhold, og hva hver gjør", anker: "typer" },
       { tekst: "Miksen som tåler å gjentas", anker: "miks" },
       {
-        tekst: "Hva som låses til dato, og hva som er fyllmasse",
+        tekst: "Hva som låses til dato, og hva som kan flyttes fritt",
         anker: "laas",
       },
     ],
@@ -314,10 +314,10 @@ export const PLANLEGGING: readonly Rubrikk[] = [
       {
         type: "punkter",
         punkter: [
-          "Vise fram — produktet, lokalet, folkene. Bygger gjenkjennelse. Trygt, og det bør ikke være alt.",
-          "Lære bort — noe seeren kan bruke uansett om de kjøper. Bygger tillit og deles oftest.",
-          "Vise prosessen — hvordan noe blir til. Nesten alltid undervurdert, og billig å filme mens vi uansett er der.",
-          "Be om noe — bestill bord, kom innom, meld deg på. Virker bare hvis de tre andre har gjort jobben sin.",
+          "Vise fram betyr produktet, lokalet og folkene. Det bygger gjenkjennelse, det er trygt, og det bør ikke være alt du lager.",
+          "Lære bort betyr noe seeren kan bruke uansett om de kjøper. Det bygger tillit, og det er den typen som deles oftest.",
+          "Vise prosessen betyr å vise hvordan noe blir til. Den typen er nesten alltid undervurdert, og den er billig å filme mens vi uansett er der.",
+          "Be om noe betyr å bestille bord, komme innom eller melde seg på. Det virker bare hvis de tre andre typene har gjort jobben sin.",
         ],
       },
       { type: "seksjon", id: "miks", tittel: "Miksen" },
@@ -335,7 +335,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Sorter månedens videoer etter hvor tidsavhengige de er. Det som er knyttet til en dato eller en sesong låses først. Resten er fyllmasse som kan flyttes fritt — og det er den fyllmassen som redder rytmen når noe glipper.",
+          "Sorter månedens videoer etter hvor tidsavhengige de er. Det som er knyttet til en dato eller en sesong, låses først. Resten kan flyttes fritt, og det er nettopp den delen som redder rytmen når noe glipper.",
       },
     ],
   },

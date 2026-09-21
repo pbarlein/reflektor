@@ -13,7 +13,7 @@ export const KUNDE: readonly Rubrikk[] = [
     slug: "hvorfor-kunder-slutter",
     tittel: "Hvorfor kunder slutter — og hva som faktisk holder dem",
     sammendrag:
-      "Pris er nesten aldri grunnen. Undersøkelser peker på det samme hver gang: manglende initiativ og dårlig kommunikasjon. Det er begge deler innenfor vår kontroll.",
+      "Pris er nesten aldri grunnen. Undersøkelser peker på det samme hver gang: manglende initiativ og dårlig kommunikasjon. Begge deler er innenfor vår kontroll.",
     kategori: "kunde",
     medie: {
       type: "video",
@@ -63,7 +63,7 @@ export const KUNDE: readonly Rubrikk[] = [
       {
         type: "punkter",
         punkter: [
-          "Kunden slutter å svare like raskt som før. Ikke fiendtlig — bare tregere. Dette kommer nesten alltid først.",
+          "Kunden slutter å svare like raskt som før. Det er ikke fiendtlig, bare tregere, og det kommer nesten alltid først.",
           "Møtene blir korte og praktiske. Ingen spør om ideer lenger.",
           "De begynner å publisere ting selv, ved siden av det vi lager.",
         ],
@@ -143,7 +143,7 @@ export const KUNDE: readonly Rubrikk[] = [
           {
             tittel: "Dagen etter produksjonsdagen",
             tekst:
-              "Kort melding med ett bilde eller ett klipp fra dagen. Ikke en statusrapport — et tegn på at materialet er i hus og at noen jobber med det.",
+              "Send en kort melding med ett bilde eller ett klipp fra dagen. Det er ikke en statusrapport, men et tegn på at materialet er i hus og at noen allerede jobber med det.",
           },
           {
             tittel: "Når første video er ute",
@@ -153,12 +153,12 @@ export const KUNDE: readonly Rubrikk[] = [
           {
             tittel: "Midt mellom to produksjonsdager",
             tekst:
-              "Ett konkret forslag, basert på noe du faktisk har sett — en ny rett, en sesong som kommer, et lokale som er pusset opp.",
+              "Kom med ett konkret forslag, basert på noe du faktisk har sett: en ny rett, en sesong som kommer, eller et lokale som er pusset opp.",
           },
           {
             tittel: "Uken før neste dag",
             tekst:
-              "Bekreft tid, sted og hvem som stiller. Siste frist for å melde behov for stillbilder, siden de deler kapasitet med video.",
+              "Bekreft tid, sted og hvem som stiller. Dette er også siste frist for å melde behov for stillbilder, siden de deler kapasitet med video.",
           },
         ],
       },
@@ -265,21 +265,22 @@ export const KUNDE: readonly Rubrikk[] = [
         steg: [
           {
             tittel: "1 — Si hva som har skjedd",
-            tekst: "Rett fram, i første setning. Ingen oppbygging.",
+            tekst: "Si det rett fram, i første setning, uten oppbygging.",
           },
           {
             tittel: "2 — Si hva det betyr for dem",
             tekst:
-              "Konsekvensen i deres kalender, ikke i vår. «Torsdagens post går ut mandag i stedet.»",
+              "Beskriv konsekvensen i deres kalender, ikke i vår: «Torsdagens post går ut mandag i stedet.»",
           },
           {
             tittel: "3 — Si hva vi gjør med det",
-            tekst: "Konkret, og noe som allerede er i gang.",
+            tekst:
+              "Vær konkret, og nevn helst noe som allerede er satt i gang.",
           },
           {
             tittel: "4 — Si når de hører fra deg igjen",
             tekst:
-              "Et tidspunkt. Dette er den delen folk glemmer, og den som gjør mest for roen.",
+              "Gi et konkret tidspunkt. Dette er delen folk glemmer, og den som gjør mest for roen.",
           },
         ],
       },
@@ -287,7 +288,7 @@ export const KUNDE: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "En lang forklaring leser som en unnskyldning, selv når den er sann. Kunden trenger å vite hva som skjer videre, ikke hvorfor kameraet svarte som det gjorde. Hold årsaken til én setning med mindre de spør.",
+          "En lang forklaring leser som en unnskyldning, selv når den er sann. Kunden trenger å vite hva som skjer videre, ikke hvorfor kameraet sviktet. Hold årsaken til én setning med mindre de spør.",
       },
       { type: "seksjon", id: "aldri", tittel: "Aldri" },
       {
@@ -305,7 +306,7 @@ export const KUNDE: readonly Rubrikk[] = [
     slug: "naar-kunden-er-misfornoyd",
     tittel: "Når kunden er misfornøyd",
     sammendrag:
-      "Kritikk er informasjon, men den kommer sjelden pent pakket. Slik tar du imot den uten å bli defensiv, og uten å love bort huset.",
+      "Kritikk er informasjon, men den kommer sjelden pent pakket. Slik tar du imot den uten å bli defensiv, og uten å love bort mer enn vi kan holde.",
     kategori: "kunde",
     medie: {
       type: "bilde",
@@ -327,7 +328,7 @@ export const KUNDE: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Den første reaksjonen er å forklare. Ikke gjør det. Still ett spørsmål til før du sier noe: «Kan du vise meg hvilken du tenker på?» eller «Hva var det du hadde sett for deg?» Halvparten av alle klager endrer form når de blir konkrete.",
+          "Den første reaksjonen er å forklare. Ikke gjør det. Still ett spørsmål til før du sier noe: «Kan du vise meg hvilken du tenker på?» eller «Hva var det du hadde sett for deg?» Mange klager endrer form i det de blir konkrete.",
       },
       { type: "seksjon", id: "skill", tittel: "Tre slags misnøye" },
       {
@@ -363,7 +364,7 @@ export const KUNDE: readonly Rubrikk[] = [
       {
         type: "merknad",
         tekst:
-          "Er du i tvil om det er forventning eller feil, behandle det som feil. Det koster oss lite, og det er den billigste måten å kjøpe tilbake tillit på.",
+          "Er du i tvil om det er en forventning eller en feil, behandle det som en feil. Det koster oss lite, og det er den billigste måten å kjøpe tilbake tillit på.",
       },
     ],
   },
@@ -396,12 +397,13 @@ export const KUNDE: readonly Rubrikk[] = [
         steg: [
           {
             tittel: "1 — Hva vi leverte siden sist",
-            tekst: "Kort. Vis, ikke fortell. To minutter.",
+            tekst:
+              "Hold det kort, vis det i stedet for å fortelle om det, og bruk maks to minutter.",
           },
           {
             tittel: "2 — Hva vi ser i tallene",
             tekst:
-              "Tre setninger: hva vi ser, hva vi tror det betyr, hva vi gjør med det.",
+              "Bruk tre setninger: hva vi ser, hva vi tror det betyr, og hva vi gjør med det.",
           },
           {
             tittel: "3 — Hva vi foreslår framover",
@@ -410,7 +412,8 @@ export const KUNDE: readonly Rubrikk[] = [
           },
           {
             tittel: "4 — Hva vi trenger fra dere",
-            tekst: "Folk, tilgang, datoer, beslutninger. Med frister.",
+            tekst:
+              "Be om folk, tilgang, datoer og beslutninger — og sett en frist på hvert punkt.",
           },
         ],
       },
@@ -424,7 +427,7 @@ export const KUNDE: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Siste to minutter: les opp hvem som gjør hva, innen når. Send det samme skriftlig innen dagen er omme. Det tar fem minutter og fjerner nesten all tvil om hva som ble sagt.",
+          "Bruk de siste to minuttene på å lese opp hvem som gjør hva, og innen når. Send det samme skriftlig før dagen er omme. Det tar fem minutter, og det fjerner nesten all tvil om hva som ble sagt.",
       },
     ],
   },

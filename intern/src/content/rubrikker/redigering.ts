@@ -41,7 +41,7 @@ export const REDIGERING: readonly Rubrikk[] = [
         punkter: [
           "Start på bevegelse eller på et ansikt. Et statisk bilde av et lokale er en pause seeren ikke har bedt om.",
           "Hvis det snakkes: første setning skal være poenget, ikke opptakten til det.",
-          "Tekst på skjerm fra bilde én, hvis videoen har et budskap som kan leses.",
+          "Legg tekst på skjermen fra bilde én, hvis videoen har et budskap som kan leses.",
           "Det mest interessante i hele videoen skal være synlig eller antydet med en gang.",
         ],
       },
@@ -70,14 +70,14 @@ export const REDIGERING: readonly Rubrikk[] = [
           likes: 43771,
           hentet: "2026-09-21",
           seEtter:
-            "Motsatt oppskrift, samme prinsipp. Produktet er i bilde én, i hånda, i bruk — så nært at du ser hva det er før du har lest noe. Ingen logoanimasjon, ingen oppbygging. Dette er grepet for et fysisk produkt: vis tingen, tett nok til at den blir konkret, før du sier noe som helst.",
+            "Dette er motsatt oppskrift, men samme prinsipp. Produktet er i bilde én, i hånda og i bruk, så nært at du ser hva det er før du har lest noe. Ingen logoanimasjon, ingen oppbygging. Dette er grepet for et fysisk produkt: vis tingen tett nok til at den blir konkret, før du sier noe som helst.",
         },
       },
       { type: "seksjon", id: "koster", tittel: "Hva som koster deg seeren" },
       {
         type: "merknad",
         tekst:
-          "Logo-animasjon. «Hei, og velkommen til.» En oppbygging som forklarer hva videoen skal handle om. Stillhet. Alle fire er vanlige, og alle fire er bortkastede sekunder.",
+          "De fire er logoanimasjonen, «hei og velkommen til», en oppbygging som forklarer hva videoen skal handle om, og stillhet. Alle fire er vanlige, og alle fire er bortkastede sekunder.",
       },
       {
         type: "seksjon",
@@ -144,7 +144,7 @@ export const REDIGERING: readonly Rubrikk[] = [
         tittel: "Til selve teksten",
         punkter: [
           "Maks to linjer om gangen, og sjelden mer enn seks ord per linje.",
-          "Bakplate, skygge eller kontur. Hvit tekst rett på bildet forsvinner i første lyse flate.",
+          "Bruk bakplate, skygge eller kontur. Hvit tekst rett på bildet forsvinner i den første lyse flaten.",
           "Samme posisjon gjennom hele videoen. Tekst som hopper opp og ned er slitsom å følge.",
           "Store nok bokstaver til å leses på en telefon i sollys, ikke på skjermen din.",
           "Les korrektur. Feilstavet teksting på en kundes konto er vår feil, ikke maskinens.",
@@ -186,7 +186,7 @@ export const REDIGERING: readonly Rubrikk[] = [
           likes: 1716,
           hentet: "2026-09-21",
           seEtter:
-            "Samme regel, helt annen bransje. Plakaten står i øvre midtfelt over et gjærsagblad: produktnavn på én linje, bruksområdet på den neste. To linjer, ingen setning. En snekker vet på et halvt sekund om dette angår ham. Legg merke til at teksten ikke gjentar det bildet allerede viser — bildet viser sagen, teksten sier hva den er til.",
+            "Samme regel, men en helt annen bransje. Plakaten står i øvre midtfelt over et gjærsagblad, med produktnavnet på én linje og bruksområdet på den neste. To linjer, ingen hel setning. En snekker vet på et halvt sekund om dette angår hen. Legg merke til at teksten ikke gjentar det bildet allerede viser: bildet viser sagen, og teksten sier hva den er til.",
         },
       },
       { type: "seksjon", id: "auto", tittel: "Automatikk er et utkast" },
@@ -261,7 +261,7 @@ export const REDIGERING: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Én eksport fra tidslinjen, lastet rett opp. Ikke eksporter, komprimer og last opp. Og pass på overføringen til telefonen: en video sendt som vanlig melding er allerede degradert før plattformen får se den.",
+          "Gjør én eksport fra tidslinjen, og last den rett opp. Ikke eksporter, komprimer og last opp. Pass også på overføringen til telefonen: en video sendt som vanlig melding er allerede forringet før plattformen får se den.",
       },
       {
         type: "avsnitt",
@@ -272,7 +272,7 @@ export const REDIGERING: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Videoer som veksler mellom for lavt og for høyt mellom postene, er noe seeren merker uten å vite hva det er. Legg deg på et fast nivå på tvers av alle videoene i samme måned.",
+          "Lydnivå som spretter opp og ned fra post til post, er noe seeren merker uten å vite hva det er. Legg deg på ett fast nivå på tvers av alle videoene i samme måned.",
       },
     ],
     kilder: [
@@ -322,9 +322,18 @@ export const REDIGERING: readonly Rubrikk[] = [
       {
         type: "punkter",
         punkter: [
-          "Når det er energi i selve motivet — bevegelse, sport, travelt kjøkken.",
-          "Når videoen skal vise mye på kort tid, som et utvalg eller en transformasjon.",
-          "Når det ikke er tale, og rytmen må komme fra bildene.",
+          "Rask klipping er riktig når det er energi i selve motivet, som bevegelse, sport eller et travelt kjøkken.",
+          "Den er riktig når videoen skal vise mye på kort tid, som et utvalg eller en forvandling.",
+          "Den er riktig når det ikke er tale i videoen, og rytmen må komme fra bildene alene.",
+        ],
+      },
+      { type: "seksjon", id: "feil", tittel: "Når det er feil" },
+      {
+        type: "punkter",
+        punkter: [
+          "Rask klipping er feil når noen forklarer noe. Et kutt midt i en tanke gjør tanken vanskeligere å følge.",
+          "Den er feil når motivet er rolig av natur, som en behandling, et håndverk eller mat som skal se god ut.",
+          "Den er feil når fagligheten er poenget. Rask klipping på en teknisk forklaring leser som at vi ikke tror folk gidder å høre etter.",
         ],
       },
       {
@@ -338,17 +347,8 @@ export const REDIGERING: readonly Rubrikk[] = [
           likes: 9519,
           hentet: "2026-09-21",
           seEtter:
-            "Raskt, og riktig raskt. En oppskrift har mange steg som alle må vises, og ingen av dem må forstås i dybden. Da er tett klipping ikke en stil — det er den eneste måten å få plass til alt. Tell klippene i de første ti sekundene, og gjør det samme på eiendomseksempelet lenger ned. Forskjellen er ikke smak.",
+            "Dette er raskt, og riktig raskt. En oppskrift har mange steg som alle må vises, og ingen av dem må forstås i dybden. Da er tett klipping ikke en stil, men den eneste måten å få plass til alt. Tell klippene i de første ti sekundene, og gjør det samme på eiendomseksempelet ved siden av. Forskjellen er ikke smak.",
         },
-      },
-      { type: "seksjon", id: "feil", tittel: "Når det er feil" },
-      {
-        type: "punkter",
-        punkter: [
-          "Når noen forklarer noe. Et kutt midt i en tanke gjør den vanskeligere å følge.",
-          "Når motivet er rolig av natur — behandling, håndverk, mat som skal se god ut.",
-          "Når fagligheten er poenget. Rask klipping på en teknisk forklaring leser som at vi ikke tror folk gidder å høre etter.",
-        ],
       },
       {
         type: "eksempel",
@@ -361,14 +361,14 @@ export const REDIGERING: readonly Rubrikk[] = [
           likes: 19382,
           hentet: "2026-09-21",
           seEtter:
-            "Samme måned, samme plattform, motsatt rytme. Bildene får stå. Grunnen er at motivet skal FØLES, ikke telles — akkurat som et behandlingsrom, en sal eller et lokale en kunde skal ønske seg til. Hadde dette vært klippet like tett som iskremoppskriften over, hadde huset sett stresset ut, og det er det motsatte av det som selger det.",
+            "Dette er samme måned og samme plattform, med motsatt rytme. Bildene får stå. Grunnen er at motivet skal FØLES og ikke telles, akkurat som et behandlingsrom, en sal eller et lokale en kunde skal ønske seg til. Hadde dette vært klippet like tett som iskremoppskriften ved siden av, hadde huset sett stresset ut — og det er det motsatte av det som selger det.",
         },
       },
       { type: "seksjon", id: "bevegelse", tittel: "Klipp på bevegelse" },
       {
         type: "avsnitt",
         tekst:
-          "Et kutt som ligger midt i en bevegelse — en hånd som går ned, en dør som lukkes — forsvinner for øyet. Samme kutt to bilder senere, når alt står stille, syns. Det er den enkleste måten å få en redigering til å virke mer gjennomarbeidet enn den er.",
+          "Et kutt som ligger midt i en bevegelse, for eksempel en hånd som går ned eller en dør som lukkes, forsvinner for øyet. Det samme kuttet to bilder senere, når alt står stille, ser man med en gang. Dette er den enkleste måten å få en redigering til å virke mer gjennomarbeidet enn den er.",
       },
     ],
   },

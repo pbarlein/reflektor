@@ -106,7 +106,7 @@ export const RESEARCH: readonly Rubrikk[] = [
           [
             "Trening, velvære, behandling",
             "Følelsen etterpå, og den som utfører",
-            "Jevnt, med tydelige toppen i januar og august",
+            "Jevnt, med tydelige topper i januar og august",
             "Løfter om resultat. Se rubrikken om hva vi ikke kan love",
           ],
           [
@@ -140,7 +140,7 @@ export const RESEARCH: readonly Rubrikk[] = [
           likes: 16154,
           hentet: "2026-09-21",
           seEtter:
-            "Raden «Industri og B2B» gjort om til film. Ingen humor, ingen musikkvideo, ikke et ansikt: verktøyet gjør jobben sin, filmet lavt og tett nok til at en elektriker ser nøyaktig hva som skjer. Bildeteksten er tre påstander om nytte og et produktnavn. Det er alt — og det er det de vil ha.",
+            "Dette er raden «Industri og B2B» gjort om til film. Ingen humor, ingen musikkvideo og ikke et eneste ansikt: verktøyet gjør jobben sin, filmet lavt og tett nok til at en elektriker ser nøyaktig hva som skjer. Bildeteksten er tre påstander om nytte og ett produktnavn. Det er alt, og det er det de vil ha.",
         },
       },
       {
@@ -154,7 +154,7 @@ export const RESEARCH: readonly Rubrikk[] = [
           likes: 279,
           hentet: "2026-09-21",
           seEtter:
-            "Samme tabell, raden «Tjenester og rådgivning». Et selskap som selger lederutvikling, selger ingenting i denne videoen — det viser et menneske som tenker høyt, i en serie med fast tittel og fast format. Og se på tallet: 25 574 visninger mot Milwaukees 2,5 millioner. Begge er riktige. Et konsulentselskaps kunder er noen tusen mennesker, ikke noen millioner, og en video som treffer dem er verdt mer enn en som treffer alle andre.",
+            "Her er raden «Tjenester og rådgivning» fra samme tabell. Et selskap som selger lederutvikling, selger ingenting i denne videoen. Det viser et menneske som tenker høyt, i en serie med fast tittel og fast format. Se så på tallet: 25 574 visninger mot Milwaukees 2,5 millioner. Begge tallene er riktige. Et konsulentselskap har noen tusen mulige kunder, ikke noen millioner, og en video som treffer dem er verdt mer enn en som treffer alle andre.",
         },
       },
       { type: "seksjon", id: "avstand", tittel: "Kjøpsavstanden endrer alt" },
@@ -354,7 +354,7 @@ export const RESEARCH: readonly Rubrikk[] = [
           likes: 712,
           hentet: "2026-09-21",
           seEtter:
-            "TYPEN «PROBLEMET». Bildeteksten begynner slik: «Vinduskarmene er i veien. Trerekkverket må sages av. Veggen skal bort.» Tre irritasjoner, og først etter dem kommer verktøyet. Ingen presentasjon, ingen «vi lanserer». Det er nøyaktig grepet du kan flytte til en kunde: skriv ned de tre tingene som irriterer kundens kunder, og begynn der.",
+            "Dette er typen «problemet». Bildeteksten begynner slik: «Vinduskarmene er i veien. Trerekkverket må sages av. Veggen skal bort.» Tre irritasjoner, og først etter dem kommer verktøyet. Ingen presentasjon, og ingen «vi lanserer». Grepet lar seg flytte rett over til en kunde: skriv ned de tre tingene som irriterer kundens kunder, og begynn der.",
         },
       },
       {
@@ -368,7 +368,7 @@ export const RESEARCH: readonly Rubrikk[] = [
           likes: 3546,
           hentet: "2026-09-21",
           seEtter:
-            "TYPEN «DET DIREKTE SPØRSMÅLET». Bildeteksten spør «hvor mange tror du at du klarer?». På skjermen står regelen som gjør svaret målbart — «hvert touch er én dollar» — og en teller som begynner på 1. Spørsmålet er verdt å bli for fordi videoen faktisk svarer på det, mens du ser. Det er hele forskjellen på et spørsmål som krok og et spørsmål som pynt.",
+            "Dette er typen «det direkte spørsmålet». Bildeteksten spør «hvor mange tror du at du klarer?». På skjermen står regelen som gjør svaret målbart, «hvert touch er én dollar», og en teller som begynner på 1. Spørsmålet er verdt å bli værende for, fordi videoen faktisk svarer på det mens du ser. Det er hele forskjellen på et spørsmål som krok og et spørsmål som pynt.",
         },
       },
       {
@@ -382,7 +382,7 @@ export const RESEARCH: readonly Rubrikk[] = [
           likes: 10945,
           hentet: "2026-09-21",
           seEtter:
-            "TYPEN «BEVISET». Ett bilde rett ovenfra av et enormt brett med iskrembase som brer seg utover, og tre ord: «WE'VE BEEN BUSY.» Ingen påstand om kvalitet, ingen tall. Mengden arbeid ligger i bildet, og det er udramatisk — som beviset alltid skal være. Tenk hvilket bilde hos kunden din som ville gjort samme jobb: en full ovn, en ferdig lastet bil, en stabel med det de leverte i går.",
+            "Dette er typen «beviset». Ett bilde rett ovenfra av et enormt brett med iskrembase som brer seg utover, og tre ord: «WE'VE BEEN BUSY.» Ingen påstand om kvalitet, og ingen tall. Mengden arbeid ligger i selve bildet, og den er udramatisk — slik beviset alltid skal være. Tenk over hvilket bilde hos din egen kunde som ville gjort samme jobb: en full ovn, en ferdig lastet bil, eller en stabel med det de leverte i går.",
         },
       },
       { type: "seksjon", id: "bibliotek", tittel: "Bygg biblioteket" },
@@ -392,7 +392,7 @@ export const RESEARCH: readonly Rubrikk[] = [
           {
             tittel: "Samle",
             tekst:
-              "Ser du en video i kundens nisje med merkbart mer respons enn resten på samme konto: noter de første fem ordene og det første bildet. Ikke hele videoen.",
+              "Ser du en video i kundens nisje med merkbart mer respons enn resten på samme konto, noterer du de første fem ordene og det første bildet. Ikke hele videoen.",
           },
           {
             tittel: "Klassifiser",
@@ -474,7 +474,7 @@ export const RESEARCH: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Løst, i en pause, uten notatblokk framme. De samme spørsmålene i et møterom med ledelsen til stede gir et annet og dårligere svar — folk svarer da på vegne av bedriften i stedet for på vegne av seg selv.",
+          "Still dem løst, i en pause, uten notatblokk framme. De samme spørsmålene i et møterom med ledelsen til stede gir et annet og dårligere svar, fordi folk da svarer på vegne av bedriften i stedet for på vegne av seg selv.",
       },
       {
         type: "avsnitt",
@@ -547,7 +547,7 @@ export const RESEARCH: readonly Rubrikk[] = [
           likes: 2366,
           hentet: "2026-09-21",
           seEtter:
-            "Bildeteksten er «Noen barn drømmer om berg-og-dalbane. Andre drømmer om å kjøre minigraver.» Bildet er en sandkasse med to små gravemaskiner der det ellers ville stått husker. Ingen persona, ingen alder, ingen interesser: bare en situasjon — en familie som skal finne på noe i helgen. Legg merke til at et anleggsmaskinselskap her snakker til foreldre, ikke til entreprenører. Situasjonen bestemte hvem, ikke omvendt.",
+            "Bildeteksten lyder: «Noen barn drømmer om berg-og-dalbane. Andre drømmer om å kjøre minigraver.» Bildet er en sandkasse med to små gravemaskiner, der det ellers ville stått husker. Ingen persona, ingen alder og ingen interesser — bare en situasjon: en familie som skal finne på noe i helgen. Legg merke til at et anleggsmaskinselskap her snakker til foreldre og ikke til entreprenører. Situasjonen bestemte hvem, ikke omvendt.",
         },
       },
       { type: "seksjon", id: "endrer", tittel: "Hva det endrer i opptaket" },

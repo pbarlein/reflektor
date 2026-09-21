@@ -117,7 +117,7 @@ export const MARKED: readonly Rubrikk[] = [
       {
         type: "merknad",
         tekst:
-          "Denne rubrikken inneholder med hensikt ingen konkrete plattformtall. De er ferskvare, og en gjengivelse skrevet uten kilde er feil før den er lest. Den beskriver rutinen for å holde dem riktige.",
+          "Denne rubrikken inneholder med hensikt ingen konkrete plattformtall. Slike tall er ferskvare, og et tall gjengitt uten kilde er som regel utdatert før noen rekker å lese det. Rubrikken beskriver i stedet rutinen for å holde tallene riktige.",
       },
       { type: "seksjon", id: "paavirker", tittel: "Hva som påvirker oss" },
       {
@@ -153,7 +153,7 @@ export const MARKED: readonly Rubrikk[] = [
     slug: "hva-kunder-sporr-om",
     tittel: "Spørsmål kunder stiller — og hva vi svarer",
     sammendrag:
-      "Rammen for et levende dokument. De samme spørsmålene kommer igjen og igjen, og svarene bør ikke improviseres hver gang.",
+      "Dette er rammen for et levende dokument. De samme spørsmålene kommer igjen og igjen, og svarene bør ikke improviseres hver gang.",
     kategori: "marked",
     medie: {
       type: "bilde",
@@ -207,7 +207,7 @@ export const MARKED: readonly Rubrikk[] = [
     slug: "ai-i-innholdsproduksjon",
     tittel: "AI i innholdsproduksjon",
     sammendrag:
-      "Spørsmålet kommer i stadig flere møter, i to former. Rammen for et standpunkt Reflektor må ta selv.",
+      "Spørsmålet kommer i stadig flere møter, og det kommer i to former. Dette er rammen for et standpunkt Reflektor må ta selv.",
     kategori: "marked",
     medie: {
       type: "bilde",
@@ -234,7 +234,7 @@ export const MARKED: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "«Bruker dere AI?» er et spørsmål om håndverk. «Trenger vi dere når det finnes AI?» er et spørsmål om verdi. De krever ulike svar, og begge bør være like hver gang de stilles.",
+          "«Bruker dere AI?» er et spørsmål om håndverk. «Trenger vi dere når det finnes AI?» er et spørsmål om verdi. De krever hvert sitt svar, og begge svarene bør være like hver gang spørsmålet stilles.",
       },
       { type: "seksjon", id: "avklares", tittel: "Hva som må avklares" },
       {
