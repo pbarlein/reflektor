@@ -1927,3 +1927,83 @@ det.
 0 axe-brudd, nøyaktig én `<h1>` per side, ingen ødelagte bilder. Forsiden
 meldte først 18 ødelagte — det var lazy-loading som ikke hadde fullført i
 målingen. Med riktig skrolling: 109 bilder, 0 feil, 0 HTTP-feil.
+
+---
+
+## A61 — FAQ på blogginnleggene. Målt 21.09.2026
+
+Pål: «burde vi implementere temarelevante FAQ-er i hvert blogginnlegg som
+også peiler inn på vår tjeneste uten at vi kanibaliserer?»
+
+Svaret var ja — men først måtte noe rettes, for **vi gjorde det allerede,
+og vi gjorde det galt.**
+
+### Målingen som avgjorde det
+
+All FAQ-markering på nettstedet, hentet fra rendret HTML:
+
+| | Før | Etter |
+|---|---|---|
+| FAQ-par totalt | 77 | 73 |
+| Unike spørsmål | 68 | 69 |
+| Spørsmål på flere sider | **5** | 4 |
+
+**«Trenger din bedrift en fotograf eller videograf?» sto som
+FAQ-markering på seks blogginnlegg samtidig.** Det er Squarespace-malens
+CTA-overskrift, migrert ordrett — og den automatiske utledningen gjorde
+den om til strukturerte data hver gang. Seks sider som hver påstår å være
+svaret på samme spørsmål, uten at noen av dem er kilden.
+
+Det er nøyaktig kannibaliseringen Pål spurte om vi kunne unngå, og den
+var allerede live. Selvforskyldt: utledningen var min.
+
+### To filtre til, og hvorfor
+
+Utledningen tok alt som endte på spørsmålstegn. Det ga oppføringer som
+**«Trinn 2: Målgruppen din: Hvem skal se, lese eller lytte til
+innholdet?»** — en stegoverskrift med et spørsmål inni. Som FAQ-oppføring
+er den uforståelig løsrevet, og en oppføring som ikke gir mening alene er
+verdiløs: hele poenget er at den skal kunne siteres uten konteksten.
+
+Nå kreves det at overskriften **begynner med et spørreord**, og en
+eksplisitt sperreliste tar boilerplate-CTA-en. Teksten står fortsatt på
+siden — det er bare markeringen som er borte.
+
+### Så, det Pål faktisk spurte om
+
+Fire artikler fikk ett håndskrevet spørsmål hver. Ikke ni: de fire med
+bare ett eller to utledede par, der tillegget gir mest. Å skrive ni ville
+vært å fylle en kvote.
+
+**Regelen som gjør at de ikke kannibaliserer:** spørsmålet må være ett
+ingen tjenesteside og ingen post i `/faq` allerede eier. Kontrollert mot
+alle 65 unike spørsmål på nettstedet før hvert ble skrevet.
+
+Det utelukker det åpenbare — «hva koster X» og «hvordan foregår en
+produksjon» eies av tjenestesidene, «bør vi ansette selv» av `/faq`. Det
+som står igjen er spørsmålene leseren sitter med *etter* artikkelen:
+
+| Artikkel | Spørsmål |
+|---|---|
+| Employer branding | Hvor begynner man hvis man aldri har jobbet med det før? |
+| Videomarkedsføring | Bør vi starte med én stor film eller flere små? |
+| Digital historiefortelling | Hva skiller en historie fra en vanlig produktvideo? |
+| Innholdsmarkedsføring | Hvor mye innhold skal til før det virker? |
+
+**Broen er ikke spørsmålet, den er svaret.** Et ærlig svar på «én stor
+film eller flere små» ender av seg selv ved to tjenestesider, uten å
+selge noe.
+
+### Teknisk
+
+Én `FAQPage`-node per side, ikke to — utledede og håndskrevne par slås
+sammen før markeringen skrives. To noder på samme URL er to entiteter som
+påstår å beskrive den samme siden.
+
+Synlige på siden, ikke bare i markeringen. Google krever at
+FAQ-markering gjenspeiler innhold brukeren ser, og uavhengig av kravet:
+en FAQ ingen kan lese hjelper ingen.
+
+Resultat: **null ny duplisering.** De fire som står igjen er forside ↔
+`/faq`, som er bevisst — forsiden viser et utvalg av samme liste, og
+forsiden var holdt utenfor denne runden.

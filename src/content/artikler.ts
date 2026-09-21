@@ -76,6 +76,34 @@ export type Artikkel = {
   blokker: Blokk[];
   /** Tjenestesiden artikkelen naturlig leder til. */
   lesVidere: { sti: string; tekst: string }[];
+  /**
+   * Håndskrevet FAQ, i tillegg til den som utledes av artikkelens egne
+   * spørsmålsoverskrifter.
+   *
+   * REGELEN SOM GJØR AT DEN IKKE KANNIBALISERER: spørsmålet må være ett
+   * INGEN tjenesteside og ingen post i /faq allerede eier. Kontrollert mot
+   * alle 65 unike spørsmål på nettstedet før hvert ble skrevet.
+   *
+   * Det utelukker det åpenbare — «hva koster X» og «hvordan foregår en
+   * produksjon» eies av tjenestesidene, «bør vi ansette selv» av /faq.
+   * Det som står igjen er spørsmålene en leser sitter med ETTER
+   * artikkelen, og som ingen kjøpsside har grunn til å stille.
+   *
+   * Broen er ikke spørsmålet, den er svaret: et ærlig svar på «bør vi
+   * starte med én stor film eller flere små» ender av seg selv ved to
+   * tjenestesider, uten å selge.
+   *
+   * BARE FIRE ARTIKLER HAR DETTE. De med bare ett eller to utledede par,
+   * der tillegget gir mest. Å skrive ni ville vært å fylle en kvote.
+   *
+   * SYNLIG PÅ SIDEN, ikke bare i markeringen. Google krever at
+   * FAQ-markering gjenspeiler innhold brukeren faktisk ser.
+   */
+  tilleggsfaq?: {
+    sporsmal: string;
+    svar: string;
+    lenker?: { sti: string; tekst: string }[];
+  }[];
 };
 
 /**
@@ -1014,6 +1042,13 @@ export const artikler: Artikkel[] = [
           "Reflektor er et SoMe-byrå i Oslo med fast pris. Abonnementet koster 30 000 kr/mnd og dekker strategi, én produksjonsdag i måneden, 8–10 videoer og publisering to ganger i uka på Instagram med krysspublisering til Facebook. Les mer om abonnementet.",
       },
     ],
+    tilleggsfaq: [
+      {
+        sporsmal: "Hvor mye innhold skal til før det virker?",
+        svar: "Mer enn de fleste tror, og jevnere enn de fleste klarer. Abonnementet vårt er bygget rundt to publiseringer i uken, hele året — 104 i året. Tallet er ikke magisk, men jevnheten er poenget: innhold som kommer i rykk og napp leses som at noen glemte det, og da hjelper det ikke hvor godt det enkelte innlegget var.",
+        lenker: [{ sti: "/", tekst: "løpende produksjon til fast månedspris" }],
+      },
+    ],
     lesVidere: [
       { sti: "/innholdsproduksjon", tekst: "innholdsproduksjon i praksis" },
     ],
@@ -1268,6 +1303,16 @@ export const artikler: Artikkel[] = [
           "Reflektor er et SoMe-byrå i Oslo med fast pris. Abonnementet koster 30 000 kr/mnd og dekker strategi, én produksjonsdag i måneden, 8–10 videoer og publisering to ganger i uka på Instagram med krysspublisering til Facebook. Les mer om abonnementet.",
       },
     ],
+    tilleggsfaq: [
+      {
+        sporsmal: "Bør vi starte med én stor film eller flere små?",
+        svar: "Flere små, i de fleste tilfeller. Én stor film er et øyeblikk; flere små er en tilstedeværelse, og det er tilstedeværelsen folk husker deg for. Unntaket er når dere har noe konkret å lansere og skal betale for å få det vist — da er det én film som skal bære kampanjen.",
+        lenker: [
+          { sti: "/videoproduksjon-i-oslo", tekst: "film til egne flater" },
+          { sti: "/reklamefilm", tekst: "reklamefilm for betalte flater" },
+        ],
+      },
+    ],
     lesVidere: [
       { sti: "/videoproduksjon-i-oslo", tekst: "video til egne flater" },
       { sti: "/reklamefilm", tekst: "reklamefilm for betalte flater" },
@@ -1412,6 +1457,19 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Reflektor er et SoMe-byrå i Oslo med fast pris. Abonnementet koster 30 000 kr/mnd og dekker strategi, én produksjonsdag i måneden, 8–10 videoer og publisering to ganger i uka på Instagram med krysspublisering til Facebook. Les mer om abonnementet.",
+      },
+    ],
+    tilleggsfaq: [
+      {
+        sporsmal:
+          "Hvor begynner man hvis man aldri har jobbet med employer branding før?",
+        svar: "Med det dere allerede har. De fleste bedrifter har en arbeidsplass og folk som gjør noe andre ikke ser — det er råmaterialet. Begynn med å vise det, ikke med å formulere en verdiplattform. En kandidat tror på et bilde av lokalet før hun tror på en setning om kulturen.",
+        lenker: [
+          {
+            sti: "/employer-branding-video-oslo",
+            tekst: "film som viser arbeidsplassen",
+          },
+        ],
       },
     ],
     lesVidere: [
@@ -1768,6 +1826,15 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Reflektor er et SoMe-byrå i Oslo med fast pris. Abonnementet koster 30 000 kr/mnd og dekker strategi, én produksjonsdag i måneden, 8–10 videoer og publisering to ganger i uka på Instagram med krysspublisering til Facebook. Les mer om abonnementet.",
+      },
+    ],
+    tilleggsfaq: [
+      {
+        sporsmal: "Hva skiller en historie fra en vanlig produktvideo?",
+        svar: "Hvem den handler om. En produktvideo handler om tingen. En historie handler om noen som gjorde noe, og produktet er med fordi det var der. Det siste er vanskeligere å lage og lettere å huske — og det krever at noen faktisk er til stede med kamera mens det skjer.",
+        lenker: [
+          { sti: "/videoproduksjon-i-oslo", tekst: "film til egne flater" },
+        ],
       },
     ],
     lesVidere: [
