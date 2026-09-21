@@ -56,10 +56,18 @@ export default function Forside() {
         sluttet å vise FAQ rich results 7. mai 2026.
       */}
       <OrganisasjonSchema />
+      {/*
+        `abonnementspris` er eksplisitt her og bare her. Fra 21.09.2026 er
+        prisblokken avslått som standard i TjenesteSchema, fordi de fire
+        prosjektsidene ikke koster 30 000 kr i måneden. Forsiden er den ene
+        siden der påstanden er sann.
+      */}
       <TjenesteSchema
         navn="Sosiale medier til fast månedspris"
         beskrivelse={hentTekst(front, "front.meta.description") ?? ""}
         sti="/"
+        tjenestetype="Løpende produksjon og publisering i sosiale medier"
+        abonnementspris
       />
       {/*
         Markeringen leser SAMME liste som seksjonen på siden. Før bygde den

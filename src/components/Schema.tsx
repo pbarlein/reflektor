@@ -104,15 +104,40 @@ export function OrganisasjonSchema() {
   );
 }
 
-/** Én Service per landingsside, koblet til Organization. */
+/**
+ * Én Service per landingsside, koblet til Organization.
+ *
+ * `abonnementspris` ER VALGFRI, OG STANDARD ER AV — endret 21.09.2026.
+ *
+ * Komponenten hardkodet abonnementsprisen inn i `offers` for hver eneste
+ * side som brukte den. Det var riktig så lenge den bare sto på forsiden.
+ * Med fem tjenestesider blir det feil markering på fire av dem: en
+ * reklamefilm er et prosjekt, ikke 30 000 kr i måneden, og en maskin som
+ * leser JSON-LD har ingen måte å se at påstanden ikke gjelder.
+ *
+ * Feil pris i markeringen er verre enn ingen pris. Ingen pris er en
+ * manglende opplysning; feil pris er en usann opplysning, og den forplanter
+ * seg til det som siterer den.
+ *
+ * Prosjektsidene sender derfor ikke inn prisen. De får `offers` først når
+ * Reflektor har en fra-pris å oppgi — se TBD-ene i src/content/tjenester.ts.
+ *
+ * `serviceType` er nytt og er anti-kannibalisering på maskinnivå: fem
+ * Service-noder med identisk type og beskrivelse er fem sider som sier det
+ * samme til det som leser markeringen. Se docs/sidearkitektur.md.
+ */
 export function TjenesteSchema({
   navn,
   beskrivelse,
   sti,
+  tjenestetype,
+  abonnementspris = false,
 }: {
   navn: string;
   beskrivelse: string;
   sti: string;
+  tjenestetype?: string;
+  abonnementspris?: boolean;
 }) {
   const data = {
     "@context": "https://schema.org",
@@ -120,52 +145,57 @@ export function TjenesteSchema({
     name: navn,
     description: beskrivelse,
     url: `${basisUrl()}${sti}`,
+    ...(tjenestetype ? { serviceType: tjenestetype } : {}),
     provider: { "@id": ORG_ID },
     areaServed: "NO",
-    offers: {
-      "@type": "Offer",
-      price: tilbud.prisPerManed,
-      priceCurrency: tilbud.valuta,
-      // Prisen er per måned. Uten enheten leser en maskin 30 000 som
-      // engangsbeløp, og da er markeringen verre enn ingen markering.
-      priceSpecification: {
-        "@type": "UnitPriceSpecification",
-        price: tilbud.prisPerManed,
-        priceCurrency: tilbud.valuta,
-        unitCode: "MON",
-        billingIncrement: 1,
-      },
-      availability: "https://schema.org/InStock",
-    },
-    /*
-     * Hva som inngår, som STRUKTUR og ikke bare som HTML.
-     *
-     * Punktene står allerede synlig på forsiden, men bare som en liste i
-     * markupen. `hasOfferCatalog` er schema.orgs måte å si «dette er
-     * delene tjenesten består av», og den koster ingenting: den leses av
-     * det som leser JSON-LD, og ignoreres av alt annet.
-     *
-     * Ingen rich result kommer ut av dette — Google har ingen funksjon som
-     * viser en tjenestes innhold. Grunnen er den samme som for
-     * aggregateRating: språkmodellene henter entitetsfakta fra JSON-LD, de
-     * kjører ikke JavaScript, og «hva inngår i abonnementet» er nettopp
-     * spørsmålet noen stiller en svarmotor.
-     *
-     * Verdiene leses fra tilbud.inngar. Ingen ny tekst — det er de samme
-     * setningene som står synlig, og de kan ikke gli fra hverandre.
-     *
-     * UNNTAKENE ER IKKE MARKERT OPP. Schema.org har ingen ærlig måte å si
-     * «dette inngår ikke». Å presse dem inn i en description ville gjort
-     * markeringen dårligere enn å la være.
-     */
-    hasOfferCatalog: {
-      "@type": "OfferCatalog",
-      name: "Dette inngår",
-      itemListElement: tilbud.inngar.map((punkt) => ({
-        "@type": "Offer",
-        itemOffered: { "@type": "Service", name: punkt },
-      })),
-    },
+    ...(!abonnementspris
+      ? {}
+      : {
+          offers: {
+            "@type": "Offer",
+            price: tilbud.prisPerManed,
+            priceCurrency: tilbud.valuta,
+            // Prisen er per måned. Uten enheten leser en maskin 30 000 som
+            // engangsbeløp, og da er markeringen verre enn ingen markering.
+            priceSpecification: {
+              "@type": "UnitPriceSpecification",
+              price: tilbud.prisPerManed,
+              priceCurrency: tilbud.valuta,
+              unitCode: "MON",
+              billingIncrement: 1,
+            },
+            availability: "https://schema.org/InStock",
+          },
+          /*
+           * Hva som inngår, som STRUKTUR og ikke bare som HTML.
+           *
+           * Punktene står allerede synlig på forsiden, men bare som en liste i
+           * markupen. `hasOfferCatalog` er schema.orgs måte å si «dette er
+           * delene tjenesten består av», og den koster ingenting: den leses av
+           * det som leser JSON-LD, og ignoreres av alt annet.
+           *
+           * Ingen rich result kommer ut av dette — Google har ingen funksjon som
+           * viser en tjenestes innhold. Grunnen er den samme som for
+           * aggregateRating: språkmodellene henter entitetsfakta fra JSON-LD, de
+           * kjører ikke JavaScript, og «hva inngår i abonnementet» er nettopp
+           * spørsmålet noen stiller en svarmotor.
+           *
+           * Verdiene leses fra tilbud.inngar. Ingen ny tekst — det er de samme
+           * setningene som står synlig, og de kan ikke gli fra hverandre.
+           *
+           * UNNTAKENE ER IKKE MARKERT OPP. Schema.org har ingen ærlig måte å si
+           * «dette inngår ikke». Å presse dem inn i en description ville gjort
+           * markeringen dårligere enn å la være.
+           */
+          hasOfferCatalog: {
+            "@type": "OfferCatalog",
+            name: "Dette inngår",
+            itemListElement: tilbud.inngar.map((punkt) => ({
+              "@type": "Offer",
+              itemOffered: { "@type": "Service", name: punkt },
+            })),
+          },
+        }),
   };
 
   return (
