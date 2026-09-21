@@ -85,17 +85,41 @@ export type Medie = {
 /**
  * Et innebygd eksempel fra Instagram.
  *
- * `visninger` og `likes` er OFFENTLIGE tall hentet med Supermetrics
- * (Instagram Public Data / Business Discovery). De skal ALDRI settes for
- * hånd — poenget med feltet er at «denne presterte godt» er etterprøvbart
- * og ikke en påstand. `hentet` er datoen tallet ble hentet; tallet vokser
- * etterpå, og uten dato blir det feil av seg selv.
+ * ── TO REGLER FOR HVA SOM KAN STÅ HER ─────────────────────────────────────
+ *
+ * 1. KONTOEN SKAL VÆRE ET SELSKAP SOM SELGER NOE. Ikke en kokk, ikke en
+ *    reiseskribent, ikke en skaper som lever av rekkevidden sin. En
+ *    produsent som ser et matlagingsklipp med tjue millioner visninger,
+ *    tenker med rette: «fint, men hva gjør jeg med en hudklinikk, en
+ *    isbutikk, et konsulentselskap eller et bemanningsbyrå?» Eksempelet
+ *    skal svare på det spørsmålet, ikke reise det.
+ *
+ * 2. KONTOEN SKAL VÆRE BLANT DE BESTE I VERDEN PÅ DETTE, ikke bare
+ *    lokalt dyktig. `hvem` og `folgere` står der for å gjøre nettopp det
+ *    tydelig: leseren skal se hvem selskapet er og hvor stort det er uten
+ *    å lete.
+ *
+ * ── TALLENE ───────────────────────────────────────────────────────────────
+ *
+ * `visninger`, `likes` og `folgere` er OFFENTLIGE tall hentet med
+ * Supermetrics (Instagram Public Data / Business Discovery). De skal ALDRI
+ * settes for hånd — poenget med feltene er at «denne presterte godt» er
+ * etterprøvbart og ikke en påstand. `hentet` er datoen tallene ble hentet;
+ * de vokser etterpå, og uten dato blir de feil av seg selv.
  */
 export type Eksempeldata = {
   /** Full permalenke til reelen. Kortkoden hentes ut av den. */
   url: string;
   /** Brukernavnet uten krøllalfa. */
   konto: string;
+  /**
+   * Én linje: hvem selskapet er, hva det selger og til hvem. Dette er
+   * feltet som gjør at eksempelet treffer en produsent som skal lage
+   * innhold for en kunde — ikke for en influenser.
+   */
+  hvem: string;
+  /** Antall følgere på hentedatoen. Dokumentert, ikke anslått. */
+  folgere: number;
   visninger: number;
   likes: number;
   /** ISO-dato for når tallene ble hentet. */

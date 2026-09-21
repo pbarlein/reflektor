@@ -31,7 +31,7 @@ function blokktekst(blokk: Blokk): string {
     case "tabell":
       return [...blokk.kolonner, ...blokk.rader.flat()].join(" ");
     case "eksempel":
-      return `${blokk.data.seEtter} ${blokk.data.konto}`;
+      return `${blokk.data.seEtter} ${blokk.data.konto} ${blokk.data.hvem}`;
   }
 }
 

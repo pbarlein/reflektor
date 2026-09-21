@@ -5,7 +5,6 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
 import { Godkjentbanner } from "@/components/Godkjenning";
 import { Innhold, Kildeliste } from "@/components/Innhold";
-import { Medieflate } from "@/components/Medieflate";
 import { Oppsummering } from "@/components/Oppsummering";
 import { Rubrikkort } from "@/components/Rubrikkort";
 import { finnKategori } from "@/content/kategorier";
@@ -126,18 +125,24 @@ export default async function Rubrikkside({ params }: Props) {
             </p>
 
             {/*
-              MEDIEFLATEN STÅR ETTER INGRESSEN, ikke før overskriften. Et
-              stort bilde øverst dytter tittelen under folden på en telefon
-              — og tittelen er det eneste som forteller om man har åpnet
-              riktig rubrikk.
+              INGEN TOPPBILDE HER. Det sto en 21:9-flate på dette stedet.
+              Den er fjernet, av to grunner som begge er målbare:
 
-              Bredere enn 16:9: i full spaltebredde er 16:9 rundt 760 px
-              høyt, og da er oppsummeringen under folden på en vanlig
-              skjerm.
+              1. DEN VAR USKARP, og måtte være det. Kildene i /medier er
+                 stående reels på 540 × 960. En 21:9-flate i full
+                 spaltebredde er rundt 1200 px bred. 540 piksler strukket
+                 til 1200 er uskarpt uansett hvor god originalen er.
+
+              2. DEN DYTTET TEKSTEN NED. Rubrikkene er oppslagsverk. Den
+                 som åpner «De første tre sekundene» skal lese, ikke se på
+                 et bilde som illustrerer at vi lager film.
+
+              Media hører fortsatt hjemme på KORTENE. Der er flaten liten
+              nok til at 540 px holder, og der gjør bildene jobben sin: de
+              viser hva vi leverer. Inne i en fagartikkel gjør de det ikke.
+
+              `rubrikk.medie` brukes derfor fortsatt — bare av Rubrikkort.
             */}
-            <div className="relative mt-8 aspect-[21/9] overflow-hidden rounded-medie border border-kant bg-dempet">
-              <Medieflate medie={rubrikk.medie} prioritert />
-            </div>
           </header>
 
           <div className="mt-8 lg:sticky lg:top-24 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:mt-0">

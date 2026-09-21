@@ -162,6 +162,25 @@ test("eksempler har permalenke, konto, tall og dato", () => {
         `${r.slug}: «hentet» må være en ISO-dato`);
       assert.ok(d.seEtter.length > 40,
         `${r.slug}: «se etter» må si noe konkret, ikke bare navngi teknikken`);
+
+      /*
+       * HVEM SELSKAPET ER, OG HVOR STORT DET ER.
+       *
+       * Eksemplene skal komme fra selskaper som selger et produkt eller en
+       * tjeneste, og fra konti som er blant de beste i verden på dette.
+       * Ingen av delene kan en test avgjøre alene — men den kan kreve at
+       * påstanden STÅR DER, i en form leseren kan etterprøve selv ved å
+       * åpne kontoen.
+       *
+       * Følgertallet er dokumentert på samme måte som visningstallet:
+       * hentet, ikke anslått. Grensen på hundre tusen er ikke magisk. Den
+       * er der for å stoppe det som vil skje ellers — at noen finner et
+       * fint klipp fra en liten konto og kaller det verdensklasse.
+       */
+      assert.ok(d.hvem.length > 40,
+        `${r.slug}: «hvem» må si hva selskapet selger, ikke bare navnet`);
+      assert.ok(Number.isInteger(d.folgere) && d.folgere > 100_000,
+        `${r.slug}: følgertallet mangler, eller kontoen er for liten til å kalles verdensklasse`);
     }
   }
 });

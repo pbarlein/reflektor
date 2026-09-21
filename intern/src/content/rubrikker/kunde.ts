@@ -235,8 +235,8 @@ export const KUNDE: readonly Rubrikk[] = [
     kategori: "kunde",
     medie: {
       type: "bilde",
-      fil: "arbeid/industri-vegg",
-      alt: "Boks i nærbilde med væske som spruter",
+      fil: "arbeid/bekkestua",
+      alt: "To personer passerer hverandre i motlys fra et vindu",
     },
     oppdatert: "2026-09-21",
     lesetid: 4,

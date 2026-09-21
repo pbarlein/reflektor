@@ -118,13 +118,29 @@ export const RESEARCH: readonly Rubrikk[] = [
       {
         type: "eksempel",
         data: {
-          url: "https://www.instagram.com/reel/DbfagiNMwsw/",
-          konto: "topjaw",
-          visninger: 1149786,
-          likes: 38613,
+          url: "https://www.instagram.com/reel/DaUc3J4k0iX/",
+          konto: "milwaukeetool",
+          hvem: "Milwaukee Tool — amerikansk verktøyprodusent. Selger elektroverktøy til håndverkere og industri gjennom forhandlere.",
+          folgere: 2348719,
+          visninger: 2460388,
+          likes: 16154,
           hentet: "2026-09-21",
           seEtter:
-            "Servering, etter oppskriften i tabellen: produktet på nært hold, rett ovenfra, med stedsnavnet som tekst fra bilde én. Kort kjøpsavstand — du kan bestille bord i kveld. Prøv å se for deg det samme grepet brukt på en maskinleverandør.",
+            "Raden «Industri og B2B» gjort om til film. Ingen humor, ingen musikkvideo, ikke et ansikt: verktøyet gjør jobben sin, filmet lavt og tett nok til at en elektriker ser nøyaktig hva som skjer. Bildeteksten er tre påstander om nytte og et produktnavn. Det er alt — og det er det de vil ha.",
+        },
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DcJYckzCYPB/",
+          konto: "mckinseyco",
+          hvem: "McKinsey & Company — internasjonalt konsulentselskap. Selger strategirådgivning og lederutvikling til toppledelser og styrer.",
+          folgere: 490772,
+          visninger: 25574,
+          likes: 279,
+          hentet: "2026-09-21",
+          seEtter:
+            "Samme tabell, raden «Tjenester og rådgivning». Et selskap som selger lederutvikling, selger ingenting i denne videoen — det viser et menneske som tenker høyt, i en serie med fast tittel og fast format. Og se på tallet: 25 574 visninger mot Milwaukees 2,5 millioner. Begge er riktige. Et konsulentselskaps kunder er noen tusen mennesker, ikke noen millioner, og en video som treffer dem er verdt mer enn en som treffer alle andre.",
         },
       },
       { type: "seksjon", id: "avstand", tittel: "Kjøpsavstanden endrer alt" },
