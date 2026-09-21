@@ -23,6 +23,12 @@ import { sokeTekst, treffer } from "@/lib/sok";
  * `includes` over femti strenger er raskere enn å laste et søkebibliotek,
  * og den kan ikke bli utdatert i forhold til innholdet.
  */
+/**
+ * Ord som finnes i brødteksten, men ikke i noen rubrikktittel. Det er
+ * hele demonstrasjonen: søket finner setningen, ikke bare overskriften.
+ */
+const FORSLAG = ["romtone", "hvitbalanse", "mygg", "emneknagg", "oppsigelse"];
+
 export function Sok({ rubrikker }: { rubrikker: readonly Rubrikk[] }) {
   const [sok, settSok] = useState("");
 
@@ -47,15 +53,61 @@ export function Sok({ rubrikker }: { rubrikker: readonly Rubrikk[] }) {
         <label htmlFor="sok" className="sr-only">
           Søk i alt innhold
         </label>
+        {/*
+          FORSTØRRELSESGLASSET ER `aria-hidden`. Etiketten over sier allerede
+          hva feltet er, og `type="search"` sier det til teknologien. Ikonet
+          er der for øyet, som en pekepinn på at feltet er hovedinngangen og
+          ikke et filter på noe i nærheten.
+        */}
+        <svg
+          aria-hidden
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          className="pointer-events-none absolute top-1/2 left-5 size-5 -translate-y-1/2 text-blekk-svak"
+        >
+          <circle cx="11" cy="11" r="6.5" />
+          <path d="m16 16 4.5 4.5" />
+        </svg>
         <input
           id="sok"
           type="search"
           value={sok}
           onChange={(e) => settSok(e.target.value)}
-          placeholder="Søk i alt — også i brødteksten. Prøv «romtone», «hook» eller «oppsigelse»."
-          className="w-full rounded-interaktiv border border-kant bg-kort px-4 py-3.5 text-[1rem] text-blekk placeholder:text-blekk-svak focus:border-aksent focus:outline-none"
+          placeholder="Søk i alt — også midt i brødteksten"
+          className="w-full rounded-interaktiv border border-kant bg-kort py-4 pr-5 pl-13 text-[1.0625rem] text-blekk shadow-[0_1px_2px_rgba(20,20,20,0.04)] transition-colors placeholder:text-blekk-svak hover:border-kant-sterk focus:border-aksent focus:outline-none motion-reduce:transition-none"
         />
       </div>
+
+      {/*
+        FORSLAGENE ER KLIKKBARE, ikke pynt i en plassholder.
+
+        Plassholderen sa før «Prøv «romtone», «hook» eller «oppsigelse»» —
+        men en plassholder forsvinner i det man begynner å skrive, og den
+        kan ikke trykkes på. Som knapper gjør de to ting: de viser at søket
+        går i brødteksten og ikke bare i titlene, og de gir den som ikke vet
+        hva hen leter etter et sted å begynne.
+
+        Ordene er valgt fordi de IKKE står i noen rubrikktittel. Et søk på
+        «romtone» som gir treff, beviser poenget på ett klikk.
+      */}
+      {!soker && (
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <span className="text-[0.8125rem] text-blekk-svak">Prøv</span>
+          {FORSLAG.map((f) => (
+            <button
+              key={f}
+              type="button"
+              onClick={() => settSok(f)}
+              className="rounded-interaktiv border border-kant bg-kort px-3 py-1.5 text-[0.8125rem] text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+      )}
 
       {soker && (
         <div className="mt-8">
@@ -64,10 +116,7 @@ export function Sok({ rubrikker }: { rubrikker: readonly Rubrikk[] }) {
             uten at noe flytter fokus. Uten den får en skjermleserbruker
             ingen beskjed om at søket ga null treff.
           */}
-          <p
-            aria-live="polite"
-            className="text-[0.9375rem] text-blekk-dempet"
-          >
+          <p aria-live="polite" className="text-[0.9375rem] text-blekk-dempet">
             {treff.length === 0 ? (
               <>
                 Ingen treff på «{sok.trim()}».{" "}

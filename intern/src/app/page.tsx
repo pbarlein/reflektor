@@ -26,14 +26,13 @@ export default async function Forside() {
   return (
     <>
       <Container>
-        <div className="pt-8 pb-12 sm:pt-12">
-          <p className="text-[0.9375rem] text-blekk-dempet">
-            Hei, {fornavn(bruker)}.
-          </p>
-
-          <div className="mt-5 sm:mt-7">
-            <Maalet />
-          </div>
+        <div className="pt-6 pb-12 sm:pt-8">
+          {/*
+            HILSENEN ER FLYTTET INN I HEROEN. Den sto som en ensom linje
+            over et kort og skjøv alt ned uten å si noe. Inne i heroen, på
+            linje med etiketten, gjør den samme jobb på null piksler.
+          */}
+          <Maalet navn={fornavn(bruker)} />
 
           {/*
             SØKET STÅR FOR SEG, over radene og under målet.
@@ -44,7 +43,7 @@ export default async function Forside() {
             alltid samme sted, og det søker i brødteksten og ikke bare i
             titlene.
           */}
-          <div className="mt-10 sm:mt-12">
+          <div className="mt-8 sm:mt-10">
             <Sok rubrikker={RUBRIKKER} />
           </div>
         </div>
