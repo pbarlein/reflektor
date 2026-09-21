@@ -64,6 +64,13 @@ export type Blokk =
    * selv; en video viser bare noen som følger den. Se Figur.tsx.
    */
   | { type: "figur"; navn: "trygg-sone" | "utsnitt" | "bildeutsnitt"; tekst: string }
+  /**
+   * Innebygd eksempel fra Instagram. Brukes der en teknikk må SES for å
+   * forstås, og der vårt eget arbeid ville bundet forklaringen til én
+   * måte å gjøre det på. Se Eksempel.tsx for hvorfor det er offisiell
+   * innbygging og ikke en kopi.
+   */
+  | { type: "eksempel"; data: Eksempeldata }
   /** Kort advarsel eller presisering. Rammet inn, ett sted i teksten. */
   | { type: "merknad"; tekst: string }
   | { type: "sitat"; tekst: string; kilde: string };
@@ -73,6 +80,28 @@ export type Medie = {
   /** Sti under /medier, uten filendelse. Video forutsetter .mp4 + .jpg. */
   fil: string;
   alt: string;
+};
+
+/**
+ * Et innebygd eksempel fra Instagram.
+ *
+ * `visninger` og `likes` er OFFENTLIGE tall hentet med Supermetrics
+ * (Instagram Public Data / Business Discovery). De skal ALDRI settes for
+ * hånd — poenget med feltet er at «denne presterte godt» er etterprøvbart
+ * og ikke en påstand. `hentet` er datoen tallet ble hentet; tallet vokser
+ * etterpå, og uten dato blir det feil av seg selv.
+ */
+export type Eksempeldata = {
+  /** Full permalenke til reelen. Kortkoden hentes ut av den. */
+  url: string;
+  /** Brukernavnet uten krøllalfa. */
+  konto: string;
+  visninger: number;
+  likes: number;
+  /** ISO-dato for når tallene ble hentet. */
+  hentet: string;
+  /** Hva leseren skal se etter. Uten denne er det bare en fin video. */
+  seEtter: string;
 };
 
 export type Kilde = {

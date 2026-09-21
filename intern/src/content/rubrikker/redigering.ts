@@ -42,6 +42,30 @@ export const REDIGERING: readonly Rubrikk[] = [
           "Det mest interessante i hele videoen skal være synlig eller antydet med en gang.",
         ],
       },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/Da8ut-0zODu/",
+          konto: "joshuaweissman",
+          visninger: 20490442,
+          likes: 675689,
+          hentet: "2026-09-21",
+          seEtter:
+            "Åpningsbildet: to hender som presser en visp ned i en avokado. Det gir ikke mening ennå, og det er hele poenget — du må se videre for å forstå hva som skjer. Dette er «brudd i mønsteret» i sin reneste form.",
+        },
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/Dax9UuXzmKX/",
+          konto: "joshuaweissman",
+          visninger: 9788946,
+          likes: 32825,
+          hentet: "2026-09-21",
+          seEtter:
+            "Den starter midt i handlingen — væsken helles i panna i bilde én. Ingen introduksjon, ingen «i dag skal jeg vise dere». Sammenlign med hvor mange bedriftsvideoer som bruker de samme tre sekundene på en logo.",
+        },
+      },
       { type: "seksjon", id: "koster", tittel: "Hva som koster deg seeren" },
       {
         type: "merknad",
@@ -125,6 +149,18 @@ export const REDIGERING: readonly Rubrikk[] = [
         type: "merknad",
         tekst:
           "Tekst som ligger for lavt er dekket på noen skjermstørrelser og synlig på andre — og du ser det ikke i redigeringsprogrammet. Legg tekstingen i midtre tredjedel av høyden, ikke nederst.",
+      },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DaXT0z8MNAi/",
+          konto: "topjaw",
+          visninger: 1010828,
+          likes: 20333,
+          hentet: "2026-09-21",
+          seEtter:
+            "Tekstplakaten ligger i midtfeltet, ikke nederst, og den er stor nok til å leses på en armlengdes avstand. Den står der fra bilde én — du vet hva videoen handler om før du har bestemt deg for å se den.",
+        },
       },
       { type: "seksjon", id: "auto", tittel: "Automatikk er et utkast" },
       {

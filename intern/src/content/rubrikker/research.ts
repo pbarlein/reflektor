@@ -115,6 +115,18 @@ export const RESEARCH: readonly Rubrikk[] = [
           ],
         ],
       },
+      {
+        type: "eksempel",
+        data: {
+          url: "https://www.instagram.com/reel/DbfagiNMwsw/",
+          konto: "topjaw",
+          visninger: 1149786,
+          likes: 38613,
+          hentet: "2026-09-21",
+          seEtter:
+            "Servering, etter oppskriften i tabellen: produktet på nært hold, rett ovenfra, med stedsnavnet som tekst fra bilde én. Kort kjøpsavstand — du kan bestille bord i kveld. Prøv å se for deg det samme grepet brukt på en maskinleverandør.",
+        },
+      },
       { type: "seksjon", id: "avstand", tittel: "Kjøpsavstanden endrer alt" },
       {
         type: "avsnitt",

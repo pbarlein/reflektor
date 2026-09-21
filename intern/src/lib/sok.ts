@@ -30,6 +30,8 @@ function blokktekst(blokk: Blokk): string {
       return blokk.steg.map((s) => `${s.tittel} ${s.tekst}`).join(" ");
     case "tabell":
       return [...blokk.kolonner, ...blokk.rader.flat()].join(" ");
+    case "eksempel":
+      return `${blokk.data.seEtter} ${blokk.data.konto}`;
   }
 }
 

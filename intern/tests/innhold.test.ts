@@ -134,3 +134,55 @@ test("ansvarlig er en rolle, ikke et personnavn", () => {
     );
   }
 });
+
+test("eksempler har permalenke, konto, tall og dato", () => {
+  /*
+   * Poenget med eksempelblokken er at «denne presterte godt» skal være
+   * etterprøvbart. Da må URL-en peke på en reel som kan åpnes, kontoen må
+   * stå der, tallene må være tall — og datoen må finnes, fordi et
+   * visningstall uten dato blir feil av seg selv etter hvert som det
+   * vokser.
+   */
+  for (const r of RUBRIKKER) {
+    for (const b of r.innhold) {
+      if (b.type !== "eksempel") continue;
+      const d = b.data;
+      assert.match(
+        d.url,
+        /^https:\/\/www\.instagram\.com\/reel\/[A-Za-z0-9_-]+\/$/,
+        `${r.slug}: «${d.url}» er ikke en reel-permalenke`,
+      );
+      assert.ok(d.konto.length > 0 && !d.konto.startsWith("@"),
+        `${r.slug}: konto skal være brukernavn uten krøllalfa`);
+      assert.ok(Number.isInteger(d.visninger) && d.visninger > 0,
+        `${r.slug}: visninger mangler eller er ikke et heltall`);
+      assert.ok(Number.isInteger(d.likes) && d.likes > 0,
+        `${r.slug}: likes mangler eller er ikke et heltall`);
+      assert.match(d.hentet, /^\d{4}-\d{2}-\d{2}$/,
+        `${r.slug}: «hentet» må være en ISO-dato`);
+      assert.ok(d.seEtter.length > 40,
+        `${r.slug}: «se etter» må si noe konkret, ikke bare navngi teknikken`);
+    }
+  }
+});
+
+test("eksempler bruker ikke Reflektors egen konto", () => {
+  /*
+   * Eksemplene i fagartiklene skal vise HÅNDVERKET, ikke oss. Bruker vi
+   * vårt eget arbeid til å forklare en teknikk, binder vi forklaringen til
+   * én måte å gjøre det på — og fagbiblioteket blir en portefølje.
+   *
+   * Vårt eget arbeid hører hjemme på forsiden og på kortene, der det
+   * bygger stolthet. Ikke her.
+   */
+  for (const r of RUBRIKKER) {
+    for (const b of r.innhold) {
+      if (b.type !== "eksempel") continue;
+      assert.ok(
+        !/reflektor/i.test(b.data.konto),
+        `${r.slug}: eksempelet bruker Reflektors egen konto`,
+      );
+    }
+  }
+});
+

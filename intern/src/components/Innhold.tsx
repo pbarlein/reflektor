@@ -1,3 +1,4 @@
+import { Eksempel } from "@/components/Eksempel";
 import { Figur } from "@/components/Figur";
 import type { Blokk, Kilde } from "@/content/rubrikktype";
 
@@ -182,6 +183,9 @@ function Enkeltblokk({ blokk }: { blokk: Blokk }) {
 
     case "figur":
       return <Figur navn={blokk.navn} tekst={blokk.tekst} />;
+
+    case "eksempel":
+      return <Eksempel data={blokk.data} />;
 
     case "merknad":
       return (
