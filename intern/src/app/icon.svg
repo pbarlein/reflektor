@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Fanikonet. Dyp brun flate med merkevareprikken, som logoen i
+       toppfeltet. Bevisst IKKE hovedsidens ikon: en fane fra intranettet
+       skal ikke se ut som en fane fra reflektor.no. -->
+  <rect width="32" height="32" rx="7" fill="#1B0F0C"/>
+  <circle cx="16" cy="16" r="6" fill="#DE4826"/>
+</svg>

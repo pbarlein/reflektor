@@ -1,0 +1,261 @@
+@import "tailwindcss";
+
+/*
+ * Tokens fra hovedsiden, i uendret rekkefølge og alle i SAMME lag.
+ *
+ * `layer(base)` er ikke kosmetikk — det er den samme rettelsen som ble gjort
+ * i hovedprosjektet 16.09.2026. CSS utenfor et lag slår alle lag uansett
+ * spesifisitet, og `overstyringer.css` setter h1, h2, h3 og body direkte.
+ * Ulaget ville hver eneste Tailwind-klasse for sporing, linjeavstand og
+ * tekstbryting på en overskrift vært uten virkning.
+ *
+ * ALLE SJU I SAMME LAG, ikke bare én: legger man én av dem i et lag, snus
+ * forholdet mellom dem, og merkevarefargene ryker.
+ */
+@import "../styles/tokens/colors.css" layer(base);
+@import "../styles/tokens/typography.css" layer(base);
+@import "../styles/tokens/spacing.css" layer(base);
+@import "../styles/tokens/radius.css" layer(base);
+@import "../styles/tokens/motion.css" layer(base);
+@import "../styles/tokens/elevation.css" layer(base);
+@import "../styles/tokens/overstyringer.css" layer(base);
+
+/*
+ * ══════════════════════════════════════════════════════════════════════════
+ * INTRANETTETS EGNE VERDIER
+ * ══════════════════════════════════════════════════════════════════════════
+ *
+ * De står HER og ikke i tokens/, slik at `cp ../src/styles/tokens/*.css`
+ * aldri kan overskrive dem. Tokens er merkevaren; dette er intranettets
+ * bruk av den.
+ *
+ * HELE SIDEN LIGGER PÅ DYPT BRUNT. På salgssiden er den brune flaten et
+ * kapittelskille som brukes én til to ganger — der er beige hovedflaten, og
+ * poenget med brunt er at det bryter. Her er premisset et annet: dette er et
+ * verktøy, ikke en salgsside, og bestillingen var at hele siden skal ha
+ * dette uttrykket. Da må det finnes flere dybder å bygge med, ellers blir
+ * alt ett flatt brunt rektangel.
+ *
+ * Tre nivåer, alle målt mot bone #F5F0E8 (WCAG 2.1, regnet lokalt):
+ *
+ *   --flate-bunn   #1B0F0C  16,52  sidebakgrunn, dypest
+ *   --surface-dyp  #2E1C14  14,32  paneler (arvet token, urørt)
+ *   --flate-hevet  #38241A  12,90  celler inne i paneler
+ *
+ * Og tekstnivåene, mot det grunneste av de tre (#38241A — verste tilfelle):
+ *
+ *   bone    #F5F0E8  12,90  ✓ AAA
+ *   dempet  #C9BDB5   7,96  ✓ AAA
+ *   svak    #A08E84   4,67  ✓ AA    ← tredje nivå, nytt her
+ *   aksent+ #F0704F   4,97  ✓ AA
+ *   merke   #DE4826   3,53  ✗       ← merkevareoransjen stryker, som på
+ *                                     salgssiden. Bruk aldri den som tekst
+ *                                     på brunt. Se overstyringer.css.
+ */
+:root {
+  --flate-bunn: #1b0f0c;
+  --flate-hevet: #38241a;
+  /* Tredje tekstnivå. Til metadata som dato og lesetid, der dempet er for
+     nær brødteksten til å lese som underordnet. */
+  --tekst-svak-pa-dyp: #a08e84;
+
+  /*
+   * UGODKJENT-MARKØREN. Den skal være den mest påtrengende fargen på siden,
+   * fordi den er det eneste som skiller et utkast fra vedtatt praksis.
+   *
+   * #F0704F mot #2E1C14 gir 5,52 — AA, og det er den samme lysnede oransjen
+   * paletten allerede bruker. Merkevareoransjen er IKKE et alternativ her:
+   * 3,92 stryker, og markøren er akkurat det elementet som ikke får være
+   * vanskelig å lese.
+   */
+  --varsel: #f0704f;
+  --varsel-flate: rgba(240, 112, 79, 0.14);
+}
+
+@theme inline {
+  --color-bunn: var(--flate-bunn);
+  --color-dyp: var(--surface-dyp);
+  --color-hevet: var(--flate-hevet);
+
+  --color-pa-dyp: var(--text-on-dyp);
+  --color-pa-dyp-dempet: var(--text-on-dyp-muted);
+  --color-pa-dyp-svak: var(--tekst-svak-pa-dyp);
+
+  --color-aksent: var(--aksent-pa-dyp);
+  --color-kant-pa-dyp: var(--kant-pa-dyp);
+  --color-varsel: var(--varsel);
+
+  --font-sans: var(--font-poppins), "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-display-serif), Georgia, "Times New Roman", serif;
+
+  --radius-interaktiv: var(--radius-interaktiv);
+  --radius-flate: var(--radius-flate);
+  --radius-medie: var(--radius-medie);
+}
+
+@layer base {
+  body {
+    background: var(--flate-bunn);
+    color: var(--text-on-dyp);
+    font-size: var(--type-body-size);
+    line-height: var(--leading-normal);
+    /* Ikke --tracking-body: den er negativ, og små grader skal ha null eller
+       positiv sporing. Se overstyringer.css. */
+    letter-spacing: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Headeren er klistret. Ankere og TASTATURFOKUS må stoppe under den —
+   det siste er WCAG 2.2, 2.4.11 Focus Not Obscured (AA), ikke kosmetikk. */
+html {
+  scroll-padding-top: 5.5rem;
+}
+
+/*
+ * GLASSFLATEN. Samme oppskrift som prisseksjonen på salgssiden, og av samme
+ * grunn: glass trenger noe å bryte mot, ellers er det bare et lysere
+ * rektangel. Strukturen er to store, myke radialer i merkevareoransje.
+ *
+ * Alfaverdiene er holdt lave. Hver prosent lysner flaten og senker
+ * kontrasten på teksten oppå — og tallene i kommentaren øverst forutsetter
+ * #2E1C14, ikke #2E1C14 pluss et oransje slør.
+ */
+.glassflate {
+  background-color: var(--surface-dyp);
+  background-image:
+    radial-gradient(
+      68rem 40rem at 12% 0%,
+      rgba(222, 72, 38, 0.34),
+      transparent 60%
+    ),
+    radial-gradient(
+      52rem 34rem at 92% 100%,
+      rgba(240, 112, 79, 0.26),
+      transparent 62%
+    );
+}
+
+/*
+ * Dempet variant til de lange listene. Samme flate, halve styrken på
+ * radialene: et panel som fyller en hel skjerm med full glød, blir en
+ * gradientflate i stedet for et kort.
+ */
+.glassflate-rolig {
+  background-color: var(--surface-dyp);
+  background-image:
+    radial-gradient(
+      60rem 36rem at 8% 0%,
+      rgba(222, 72, 38, 0.16),
+      transparent 62%
+    ),
+    radial-gradient(
+      44rem 30rem at 96% 100%,
+      rgba(240, 112, 79, 0.12),
+      transparent 64%
+    );
+}
+
+/*
+ * KORTENE HENTES INN NÅR DE KOMMER I SYNSFELTET — ren CSS, ingen
+ * IntersectionObserver, ingen JavaScript.
+ *
+ * `@supports`-GJERDET ER DET SOM GJØR `both` TRYGT. Fyllmodusen holder
+ * kortet på `from`-tilstanden — altså usynlig — helt til tidslinjen når
+ * området. Det er riktig oppførsel når tidslinjen finnes, og katastrofalt
+ * når den ikke gjør det: Firefox har `animation-timeline` bak flagg, og
+ * uten gjerdet ville hvert kort ligget usynlig for alltid.
+ *
+ * Fordi HELE regelen står inne i `@supports`, finnes verken animasjonen
+ * eller fyllmodusen der støtten mangler. Feilmodus blir «kortene står
+ * ferdig innhentet», som er den eneste akseptable.
+ *
+ * MERK at et kort som ligger under folden, derfor er `opacity: 0` til man
+ * ruller til det. Det er synlig i et fullside-skjermbilde, som fanger hele
+ * dokumentet uten å rulle — der står de nederste kortene tomme. Det er en
+ * egenskap ved skjermbildet, ikke en feil på siden.
+ *
+ * MERK: forelderen kan ikke ha overflow-hidden. Et element med overflow er
+ * en rullecontainer, og da fester view() seg til den i stedet for til
+ * dokumentet.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes kort-inn {
+      from {
+        opacity: 0;
+        transform: translateY(1rem);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .kort-inn {
+      animation: kort-inn linear both;
+      animation-timeline: view();
+      animation-range: entry 6% cover 26%;
+    }
+  }
+}
+
+/*
+ * Trekkspill på rubrikksiden og i hjelpeteksten.
+ *
+ * Høyden på et <details> lar seg ikke animere med vanlig CSS —
+ * `height: auto` er ikke en animerbar verdi. `interpolate-size` og
+ * `::details-content` løser det. Alt ligger bak @supports: der det ikke
+ * støttes, åpner det momentant, altså slik <details> alltid har oppført seg.
+ */
+@supports (interpolate-size: allow-keywords) and selector(::details-content) {
+  @media (prefers-reduced-motion: no-preference) {
+    .trekkspill {
+      interpolate-size: allow-keywords;
+    }
+
+    .trekkspill::details-content {
+      height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition:
+        height 240ms ease,
+        content-visibility 240ms allow-discrete,
+        opacity 180ms ease;
+    }
+
+    .trekkspill[open]::details-content {
+      height: auto;
+      opacity: 1;
+    }
+  }
+}
+
+/*
+ * Fokusmarkeringen står ULAGET MED VILJE. Den skal vinne over alt annet — en
+ * klasse som fjerner omrisset på en knapp, skal ikke kunne gjøre den usynlig
+ * for tastaturbrukere.
+ *
+ * Oransjen er den lysnede varianten, ikke merkevareoransjen: ringen tegnes
+ * på brunt overalt i dette prosjektet, og #DE4826 gir 3,92 mot #2E1C14.
+ */
+:focus-visible {
+  outline: 2px solid var(--aksent-pa-dyp);
+  outline-offset: 2px;
+}
+
+/*
+ * Ingen bevegelse betyr ingen bevegelse. Gjentatt her fordi
+ * overstyringer.css sin regel ligger i @layer base og kan tapes mot en
+ * komponentklasse; denne står ulaget.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,16 @@
+/node_modules
+/.next/
+/out/
+/build
+*.tsbuildinfo
+next-env.d.ts
+.env*
+# ...men malen SKAL inn. Uten den må den neste som setter opp
+# prosjektet, gjette hvilke variabler som finnes.
+!.env.eksempel
+.vercel
+.DS_Store
+
+# Media kopieres inn fra hovedprosjektets /public av scripts/hent-medier.mts.
+# Se skriptet for hvorfor de ikke sjekkes inn her.
+/public/medier/
