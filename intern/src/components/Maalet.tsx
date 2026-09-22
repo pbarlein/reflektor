@@ -1,103 +1,128 @@
 import Link from "next/link";
 
 /**
- * Forsidens toppdel: de tre verdiene, og målene som følger av dem.
+ * Forsidens toppdel: én setning folk skal kunne gjenta.
  *
- * ── REKKEFØLGEN ER SELVE POENGET ──────────────────────────────────────────
+ * ── HVORFOR DETTE ER ÉN SETNING OG IKKE TRE PUNKTER (omskrevet 22.09.2026) ─
  *
- * Første versjon hadde målene øverst og «hvordan» under. Det var feil vei.
- * Ingen kan gå på jobb og jobbe direkte mot «at faste kunder aldri sier
- * opp» — det er et utfall, ikke en handling. Det man kan gjøre noe med, er
- * å være proaktiv, forberedt og entusiastisk i dag.
+ * Versjonen før denne satte de tre verdiene som tre rader, hver med sin egen
+ * forklaringslinje. Pål leste de tre linjene som «byråvåsete» — og han hadde
+ * rett. «Forskjellen på godt nok og noe vi står inne for» er en setning ingen
+ * sier høyt, og ingen husker.
  *
- * Derfor står verdiene øverst og målene under: det vi bestemmer selv er
- * årsaken, målene er konsekvensen.
+ * Teksten her er hans, ordrett. Den gjør tre ting punktlisten ikke gjorde:
+ * den kan gjentas, den sier hvem som skal si det (kunden, når hen anbefaler
+ * oss videre), og den binder verdiene til målene i samme åndedrag.
  *
- * ── HVORFOR DETTE ER EN LISTE OG IKKE TRE KORT (omskrevet 22.09.2026) ─────
+ * DEN SKAL IKKE OMSKRIVES. Ikke «strammes», ikke «varieres». Copy kommer fra
+ * Reflektor — se copy-protokollen i AGENTS.md. At «Dette er» står to ganger
+ * er ikke en gjentakelse som skal fjernes; det er to like ledd som holder
+ * setningen sammen.
  *
- * Versjonen før denne satte de tre verdiene i tre like kolonner. Da ble
- * hvert ord like stort som en tredjedel av bredden — altså ikke stort. Med
- * forklaring, rubrikknavn og en avsluttende bunntekst inni samme flate
- * havnet ordene i konkurranse med sin egen brødtekst, og verdiene leste
- * som tre små kort blant mange andre kort lenger nede.
+ * ── DE TRE ORDENE ER LENKER, INNE I SETNINGEN ─────────────────────────────
  *
- * Nå er de tre rader over hele bredden. Ett ord per rad får hele skjermen,
- * og skalerer med den (`clamp`). Prisen er høyde; gevinsten er at det er
- * umulig å bla forbi uten å ha lest dem. Radformen gir dessuten et
- * treffområde på hele bredden, som er merkbart bedre på telefon enn tre
- * smale kort ved siden av hverandre.
+ * Alternativet var en egen lenkerad under. Den ville sagt de tre ordene to
+ * ganger på samme flate, og det er nøyaktig det «minimer tekst» handler om.
  *
- * Teksten er skåret til det som må stå: én etikett, ett ord og én linje per
- * verdi. Rubrikknavnet ligger i `aria-label`, så skjermleseren får vite
- * hvor lenken går uten at flaten må si det to ganger.
+ * Lenkene er merket med BÅDE farge og understrek. Farge alene er ikke nok
+ * (WCAG 1.4.1) — og i en setning satt i versaler er understreket dessuten
+ * det eneste som skiller «et ord som er uthevet» fra «et ord du kan trykke
+ * på». `aria-label` sier hvor lenken går, siden ordet i setningen ikke
+ * nevner rubrikken den fører til.
  *
- * ── FARGESKIFTET GJØR JOBBEN EN SETNING GJORDE FØR ────────────────────────
+ * Treffområdet er 39 px høyt på telefon, altså under de 44 px WCAG 2.5.5
+ * ber om. Det er tillatt: 2.5.8 gjør uttrykkelig unntak for lenker inne i
+ * en setning, der høyden er bundet av linjeavstanden til teksten rundt.
+ * Setningen er poenget her, og den skal ikke luftes ut for å gi plass.
  *
- * Den gamle versjonen forklarte med ord at målene er utfall og ikke
- * oppgaver. Nå ligger de på en egen flate i en annen farge, under de tre
- * radene. Årsak på mørk flate, konsekvens på oransje. Det sier det samme
- * uten å be noen lese et avsnitt til.
+ * ── FARGESKIFTET LIGGER DER SETNINGEN SNUR ────────────────────────────────
+ *
+ * Setningen bytter selv retning midtveis: først hva vi gjør, så hva det skal
+ * føre til. Flatebyttet fra mørk til oransje ligger på nøyaktig det skiftet.
+ * Da gjør typografien det samme som ordene, i stedet for å pynte på dem.
  *
  * ── FULL BREDDE ───────────────────────────────────────────────────────────
  *
- * Seksjonen ligger utenfor `Container` og har sin egen indre bredde, på
- * samme måte som radene. Et avrundet kort inne i en marg ville gjort den
- * til nok et kort. Én flate fra kant til kant er det eneste elementet på
- * siden som ikke ser ut som innhold — og det er nettopp det den ikke er.
+ * Seksjonen ligger utenfor `Container` og har sin egen indre bredde, som
+ * radene lenger nede. Et avrundet kort inne i en marg ville gjort den til
+ * nok et kort. Én flate fra kant til kant er det eneste elementet på siden
+ * som ikke ser ut som innhold — og det er nettopp det den ikke er.
  *
  * ── KONTRASTENE ER REGNET (WCAG 2.1) ──────────────────────────────────────
  *
  * Mot #1C1310:
  *   #F6F4F1 bone            16,63  ✓ AAA
  *   #C9BDB4 dempet           9,93  ✓ AAA
- *   #F08A70 oransje-300      7,46  ✓ AAA — oransjen for småtekst her
+ *   #F08A70 oransje-300      7,46  ✓ AAA — lenkefargen i setningen
  *   #A4968C                  6,36  ✓ AA
  *
- * Mot #932E17 (konsekvensflaten):
+ * Mot #932E17 (målflaten):
  *   #FFFFFF                  7,94  ✓ AAA
  *   #FDF0EC oransje-050      7,13  ✓ AAA
  *
- * Merk at merkeoransjen #DE4826 IKKE brukes som flate bak tekst: den gir
- * 4,40 mot nærsvart, altså under AA for brødtekstgrad. #932E17 er samme
- * farge lenger ned i paletten, og den bærer hvit tekst i alle grader.
+ * Merkeoransjen #DE4826 brukes IKKE som flate bak tekst: den gir 4,40 mot
+ * nærsvart, under AA for brødtekstgrad. #932E17 er samme farge lenger ned i
+ * paletten, og den bærer hvit tekst i alle grader.
  */
 
 /**
- * De tre tingene vi faktisk bestemmer selv.
+ * De tre ordene i setningen som er lenker.
  *
- * Ordene er Påls, fra «Ved å alltid være proaktiv, godt forberedt og
- * entusiastisk». Linjen under hvert ord er hentet fra rubrikken det lenker
- * til, slik at toppdelen ikke kan si noe annet enn fagteksten.
+ * `ord` er skrevet i versaler fordi det er slik Pål skrev setningen, ikke
+ * som en typografisk effekt. Rekkefølgen er setningens — den kan ikke
+ * sorteres om.
  */
 const VERDIENE = [
   {
-    ord: "Proaktiv",
-    utdyp: "Vi kommer med noe, i stedet for å spørre om noe.",
+    ord: "PROAKTIVE",
     slug: "proaktiv-kundekontakt",
     rubrikk: "Proaktiv kontakt mellom produksjonsdagene",
   },
   {
-    ord: "Forberedt",
-    utdyp: "Kunden merker det på ett sekund — og fraværet på mindre.",
+    ord: "GODT FORBEREDT",
     slug: "forberedt-til-kundemote",
     rubrikk: "Godt forberedt til kundemøte",
   },
   {
-    ord: "Entusiastisk",
-    utdyp: "Forskjellen på godt nok og noe vi står inne for.",
+    ord: "ENTUSIASTISKE",
     slug: "stolthet-og-standard",
     rubrikk: "Stolthet og standard",
   },
 ] as const;
 
-/** Konsekvensen. Ordrett fra Pål. */
+/** Målene, som de står i setningens siste ledd. */
 const MALENE = [
-  "Faste kunder sier ikke opp.",
+  "Faste kunder blir værende.",
   "Engangskunder kommer tilbake.",
 ] as const;
 
 /** Samme indre bredde og polstring som radene lenger nede på siden. */
 const INNE = "mx-auto w-full max-w-[88rem] px-5 sm:px-8";
+
+/**
+ * Ett av de tre ordene.
+ *
+ * `whitespace-nowrap`: «GODT FORBEREDT» er to ord og én lenke. Uten den
+ * brakk den over linjeskiftet, og da så den ut som to understrekede
+ * fragmenter i stedet for ett ord man kan trykke på.
+ *
+ * `decoration-[0.06em]` og ikke `underline-offset` alene: i versaler ligger
+ * understreket tett på bokstavene uansett, og en tynn strek forsvinner i
+ * serifene. Den tykner ved peker og fokus i stedet for å endre farge, slik
+ * at forskjellen også syns for den som ikke ser farger.
+ */
+function Verdiord({ i }: { i: number }) {
+  const v = VERDIENE[i];
+  return (
+    <Link
+      href={`/rubrikk/${v.slug}`}
+      aria-label={`${v.ord} — les «${v.rubrikk}»`}
+      className="rounded-interaktiv whitespace-nowrap text-[#F08A70] underline decoration-[rgba(240,138,112,0.45)] decoration-[0.06em] underline-offset-[0.16em] transition-[text-decoration-color] hover:decoration-[#F08A70] focus-visible:decoration-[#F08A70] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F08A70] motion-reduce:transition-none"
+    >
+      {v.ord}
+    </Link>
+  );
+}
 
 export function Maalet({ navn }: { navn: string }) {
   return (
@@ -116,106 +141,42 @@ export function Maalet({ navn }: { navn: string }) {
       />
 
       <h2 id="verdiene" className="sr-only">
-        Verdiene våre, og målene som følger av dem
+        Slik jobber vi, og hva det skal føre til
       </h2>
 
       <div className={`relative ${INNE}`}>
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 pt-9 pb-7 sm:pt-12 sm:pb-9">
-          <p className="font-sans text-xs font-medium tracking-[0.12em] text-[#F08A70] uppercase">
-            Dette bestemmer vi selv
-          </p>
-          <p className="text-[0.9375rem] text-[#A4968C]">Hei, {navn}.</p>
-        </div>
+        <p className="pt-8 text-[0.9375rem] text-[#A4968C] sm:pt-11">
+          Hei, {navn}.
+        </p>
 
-        <ol className="border-t border-[rgba(255,255,255,0.14)]">
-          {VERDIENE.map((v, i) => (
-            <li
-              key={v.ord}
-              className="border-b border-[rgba(255,255,255,0.14)]"
-            >
-              <Link
-                href={`/rubrikk/${v.slug}`}
-                aria-label={`${v.ord} — les «${v.rubrikk}»`}
-                /*
-                  Negativ marg + polstring: flatevasken ved peker skal dekke
-                  litt MER enn teksten, ellers ser den ut som en ramme rundt
-                  ordet i stedet for en rad som lyser opp.
-                */
-                className="group -mx-3 block rounded-interaktiv px-3 py-5 transition-colors hover:bg-[rgba(255,255,255,0.035)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F08A70] sm:-mx-4 sm:px-4 sm:py-7"
-              >
-                {/*
-                  FASTE KOLONNER, IKKE `auto`. Med automatisk bredde ville
-                  «Entusiastisk» skjøvet sin forklaring lenger ut enn
-                  «Proaktiv» sin, og de tre linjene hadde startet på tre
-                  ulike steder. Faste brøker gir én loddrett linje ned
-                  gjennom ordene og én ned gjennom forklaringene.
-                */}
-                <div className="grid grid-cols-[2.25rem_minmax(0,1fr)] items-baseline gap-x-4 gap-y-2 sm:grid-cols-[3rem_minmax(0,0.78fr)_minmax(0,1fr)_1.75rem] sm:gap-x-6">
-                  <span
-                    aria-hidden
-                    className="font-sans text-[0.8125rem] leading-none font-medium tabular-nums text-[#F08A70]"
-                  >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
+        {/*
+          MÅLET ER TRE TIL FIRE LINJER, ikke én lang. `max-w` i `ch` binder
+          bredden til tegn og ikke til piksler, så linjelengden holder seg
+          når skriftgraden vokser med vinduet.
+        */}
+        <p className="display mt-5 max-w-[30ch] text-[clamp(1.875rem,5.6vw,4.25rem)] leading-[1.06] tracking-[-0.02em] text-balance sm:mt-7">
+          Vi er alltid <Verdiord i={0} />, <Verdiord i={1} /> og{" "}
+          <Verdiord i={2} />.
+        </p>
 
-                  <span className="display block text-[clamp(2.5rem,8.5vw,5rem)] leading-[0.92] tracking-[-0.035em] transition-colors group-hover:text-[#F08A70]">
-                    {v.ord}
-                  </span>
+        <p className="mt-5 max-w-[56ch] text-[1.0625rem] leading-relaxed text-pretty text-[#C9BDB4] sm:mt-6 sm:text-[1.25rem]">
+          Dette er det kundene skal si når de anbefaler oss videre.
+        </p>
 
-                  {/*
-                    `col-start-2` på mobil: forklaringen legger seg under
-                    ordet og på linje med det, ikke under tallet. Uten det
-                    får linjen fire tegn ekstra innrykk som ingenting annet
-                    på siden har.
-                  */}
-                  {/*
-                    PILA STÅR INLINE PÅ TELEFON, i egen kolonne fra sm.
-
-                    Som egen rutecelle på telefon fikk den en linje helt for
-                    seg selv under forklaringen — femti piksler per rad for å
-                    vise en pil som ikke pekte på noe. Inline etter siste ord
-                    koster null høyde og sier det samme.
-                  */}
-                  <span className="col-start-2 block text-[0.9375rem] leading-relaxed text-pretty text-[#C9BDB4] sm:col-start-3 sm:text-base">
-                    {v.utdyp}{" "}
-                    <span
-                      aria-hidden
-                      className="inline-block text-[#F08A70] transition-transform group-hover:translate-x-1 motion-reduce:transition-none sm:hidden"
-                    >
-                      →
-                    </span>
-                  </span>
-
-                  <span
-                    aria-hidden
-                    className="hidden text-[1.25rem] leading-none text-[#F08A70] transition-transform group-hover:translate-x-1.5 motion-reduce:transition-none sm:col-start-4 sm:block sm:justify-self-end"
-                  >
-                    →
-                  </span>
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ol>
+        <div className="h-9 sm:h-12" />
       </div>
 
       {/*
-        KONSEKVENSFLATEN. Egen farge, full bredde, rett under den siste
-        hårstreken. Skiftet er hele argumentet: over streken står det vi
-        gjør, under står det som kommer ut av det.
+        MÅLFLATEN. Setningens siste ledd, på egen farge. Skiftet ligger der
+        teksten selv snur: fra hva vi gjør, til hva det skal føre til.
       */}
       <div className="relative bg-[#932E17] text-white">
         <div className={INNE}>
-          <div className="flex flex-wrap items-baseline gap-x-6 gap-y-1 pt-8 sm:pt-10">
-            <p className="font-sans text-xs font-medium tracking-[0.12em] text-[#FDF0EC] uppercase">
-              Derfor
-            </p>
-            <p className="text-[0.9375rem] text-[#FDF0EC]">
-              Målene er utfall. De tre over er det vi gjør noe med.
-            </p>
-          </div>
+          <p className="pt-8 text-[1.0625rem] leading-relaxed text-pretty text-[#FDF0EC] sm:pt-10 sm:text-[1.25rem]">
+            Dette er hva som skal til for å oppnå målene våre:
+          </p>
 
-          <ul className="grid gap-x-12 gap-y-4 pt-5 pb-9 sm:grid-cols-2 sm:pt-6 sm:pb-11">
+          <ul className="grid gap-x-12 gap-y-4 pt-4 pb-9 sm:grid-cols-2 sm:pt-5 sm:pb-11">
             {MALENE.map((mal) => (
               <li
                 key={mal}
