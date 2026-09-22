@@ -53,6 +53,33 @@ export const tilbud = {
   posterPerUke: 2,
   kanaler: ["Instagram", "Facebook"],
   strategiforslagVirkedager: 3,
+
+  /*
+   * FRA-PRIS PÅ ENKELTPROSJEKTER. Oppgitt av Pål 22.09.2026.
+   *
+   * «Alle faste samarbeid i henhold til hovedtjenesten er 30K per måned,
+   * og enkeltjobber starter på 40K.»
+   *
+   * Tallet står HER og ikke på de fire tjenestesidene, selv om det er der
+   * det vises. Fire kopier av samme pris er fire steder den kan gli fra
+   * hverandre neste gang den endres — og en side som oppgir feil pris er
+   * verre enn en som ikke oppgir noen.
+   *
+   * De to tallene hører sammen og skal leses sammen: 30 000 i måneden for
+   * det løpende, fra 40 000 for et enkeltprosjekt. Det er hele prismodellen
+   * i to setninger, og det er mer enn de fleste norske byråer oppgir.
+   */
+  fraPrisProsjekt: 40000,
+
+  /*
+   * Hva som faktisk avgjør prisen på et prosjekt. Påls ordlyd, strammet:
+   * «omfang, antall produksjonsdager, kompleksitetsnivå i etterarbeid».
+   */
+  prisdrivere: [
+    "Omfanget av det som skal lages",
+    "Antall produksjonsdager",
+    "Hvor mye etterarbeid filmen krever",
+  ],
   /** Ekstra produksjonsdag for reklamefilm, produktfoto o.l. */
   ekstraProduksjonsdag: 30000,
 

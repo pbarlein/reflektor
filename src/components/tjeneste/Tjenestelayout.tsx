@@ -41,11 +41,17 @@ export function Tjenestelayout({
       <BrodsmuleSchema
         ledd={[{ navn: "Hjem", sti: "/" }, { navn: side.h1 }]}
       />
+      {/*
+        `fraPris` på alle fem. Fra 22.09.2026 har prosjektsidene en
+        verifisert fra-pris fra Pål, og den markeres opp som minstepris —
+        ikke som pris. Se TjenesteSchema for hvorfor forskjellen betyr noe.
+      */}
       <TjenesteSchema
         navn={side.h1}
         beskrivelse={side.beskrivelse}
         sti={side.sti}
         tjenestetype={side.tjenestetype}
+        fraPris
       />
       <FaqSchema qa={side.faq.map((f) => ({ sporsmal: f.sporsmal, svar: f.svar }))} />
 
@@ -207,9 +213,21 @@ export function Tjenestelayout({
                   <h3 className="display text-2xl text-balance sm:text-[1.75rem]">
                     {s.sporsmal}
                   </h3>
-                  <p className="mt-4 leading-relaxed text-pretty text-blekk-dempet">
-                    <Tekst>{s.svar}</Tekst>
-                  </p>
+                  {/*
+                    SVARET KAN VÆRE FLERE AVSNITT. Delt på blank linje og
+                    rendret som egne <p>. Før dette lå alt i én <p>, og
+                    linjeskiftene i kilden kollapset — to avsnitt ble til
+                    ett langt. Prissvarene er nettopp det: fakta først, så
+                    det som nyanserer dem.
+                  */}
+                  {s.svar.split("\n\n").map((avsnitt, j) => (
+                    <p
+                      key={j}
+                      className="mt-4 leading-relaxed text-pretty text-blekk-dempet"
+                    >
+                      <Tekst>{avsnitt}</Tekst>
+                    </p>
+                  ))}
 
                   {s.punkter && (
                     <ul className="mt-6 grid gap-3">

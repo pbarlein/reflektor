@@ -1,4 +1,4 @@
-import { site } from "./site";
+import { site, tilbud } from "./site";
 
 /**
  * Tjenestesidene.
@@ -82,6 +82,13 @@ export type Tjenesteside = {
 
 const KONTAKT = { sti: "/#kontakt", tekst: "Få et forslag" };
 
+/**
+ * Tall med mellomrom som tusenskille, slik prisen skrives ellers på
+ * nettstedet: «30 000 kr/mnd». Aldri med mva-notasjon — låst ramme i
+ * AGENTS.md kapittel 0.3.
+ */
+const kr = (n: number) => new Intl.NumberFormat("nb-NO").format(n);
+
 /* ────────────────────────────────────────────────────────────────────
    /reklamefilm — filmen dere betaler for å få vist
    ──────────────────────────────────────────────────────────────────── */
@@ -113,7 +120,7 @@ export const reklamefilm: Tjenesteside = {
     },
     {
       sporsmal: "Hva koster en reklamefilm?",
-      svar: "TBD(reklamefilm.pris — fra-pris for en produksjon, og hva som skiller en liten fra en stor)",
+      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nDere kan påvirke tallet selv. Holder dere lokasjon og eventuelle statister eller skuespillere, går prisen ned — og på en reklamefilm er det ofte de to postene som veier mest.`,
     },
     {
       sporsmal: "Hva skiller en reklamefilm fra en vanlig bedriftsvideo?",
@@ -125,11 +132,20 @@ export const reklamefilm: Tjenesteside = {
     },
     {
       sporsmal: "Hvordan foregår en produksjon?",
-      svar: "TBD(reklamefilm.prosess — de faktiske stegene fra forespørsel til levert film, med hvem som gjør hva)",
+      svar: "Sju steg, og dere er med på alle de avgjørende. Vi begynner med et introduksjonsmøte, og dere får et løsningsforslag med pris før noe settes i gang.",
+      punkter: [
+        "Introduksjonsmøte — hva skal filmen gjøre?",
+        "Løsningsforslag fra oss, med pris",
+        "Gjennomgang og korrigeringer sammen med dere",
+        "Koordinering av statister, skuespillere og lokasjon",
+        "Dato for produksjon settes",
+        "Opptaksdag",
+        "Etterarbeid og korrigeringer",
+      ],
     },
     {
       sporsmal: "Hvem har Reflektor produsert for?",
-      svar: "Reflektor har produsert foto og video for blant andre Anton Sport, The Well, Peppes Pizza, Egon og Baker Brun. TBD(reklamefilm.kunder — hvilke av disse, eller hvilke andre, som har hatt reklamefilm eller tv-reklame)",
+      svar: "Reflektor har laget reklamefilm for Vitusapotek, Peppes Pizza og Samlerhuset. Utover reklamefilm har vi produsert foto og video for blant andre Anton Sport, The Well, Egon og Baker Brun.",
     },
   ],
   faq: [
@@ -195,11 +211,11 @@ export const videoproduksjon: Tjenesteside = {
     },
     {
       sporsmal: "Hva koster videoproduksjon for bedrift?",
-      svar: "TBD(videoproduksjon.pris — fra-pris for en produksjonsdag, og hva som påvirker den)",
+      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nHolder dere lokasjon og eventuelle medvirkende selv, går prisen ned.`,
     },
     {
       sporsmal: "Hvor mange filmer får vi ut av én dag?",
-      svar: "Det avhenger av hvor mye som skal rigges om underveis. Til sammenligning er abonnementet vårt bygget på at én produksjonsdag gir 8–10 ferdige videoer — men da filmer vi løpende innhold, ikke fire ulike oppsett med lyssetting. TBD(videoproduksjon.antall — realistisk antall for en prosjektdag)",
+      svar: "Det kommer an på kompleksitet og omfang, og vi tilpasser til det hver enkelt kunde faktisk trenger. Er volum viktigere enn produksjonsverdi, er det planleggingen som avgjør — da legger vi dagen opp for å nå et bestemt antall. Til sammenligning er abonnementet bygget på at én produksjonsdag gir 8–10 ferdige videoer, men da filmer vi løpende innhold og rigger ikke om mellom hvert oppsett. Si hva tallet skal være, så planlegger vi mot det.",
     },
     {
       sporsmal: "Hvem produserer Reflektor for?",
@@ -227,7 +243,7 @@ export const videoproduksjon: Tjenesteside = {
     },
     {
       sporsmal: "Hvor lang tid tar det?",
-      svar: "TBD(videoproduksjon.leveringstid — fra opptak til ferdig film)",
+      svar: "Vi leverer som regel innen to uker etter opptaksdagen. Haster det, sier dere fra i planleggingen — ved spesielle behov tilrettelegger vi for raskere leveranse.",
     },
   ],
   pris: null,
@@ -239,7 +255,11 @@ export const videoproduksjon: Tjenesteside = {
    ──────────────────────────────────────────────────────────────────── */
 
 export const employerBranding: Tjenesteside = {
-  bilde: { fil: "fabrikk-vegg", alt: "Ansatte i arbeidstøy i et produksjonslokale", fokus: "center 30%" },
+  bilde: {
+    fil: "fabrikk-vegg",
+    alt: "Ansatte i arbeidstøy i et produksjonslokale",
+    fokus: "center 30%",
+  },
   sti: "/employer-branding-video-oslo",
   tittel: "Employer branding-video | Film som gjør folk til søkere",
   beskrivelse:
@@ -276,7 +296,7 @@ export const employerBranding: Tjenesteside = {
     },
     {
       sporsmal: "Hva koster en employer branding-video?",
-      svar: "TBD(employerbranding.pris — fra-pris, og hva som skiller en enkel fra en omfattende)",
+      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nMen én film er ett øyeblikk. Å være en aktuell og attraktiv arbeidsgiver er ikke en kampanje — det er noe folk må se over tid, også når dere ikke lyser ut en stilling. Kontinuitet er nøkkelen, og det er derfor mange ender med et løpende samarbeid i stedet for en enkeltproduksjon.`,
     },
     {
       sporsmal: "Hvor skal filmen brukes?",
@@ -311,7 +331,11 @@ export const employerBranding: Tjenesteside = {
    ──────────────────────────────────────────────────────────────────── */
 
 export const event: Tjenesteside = {
-  bilde: { fil: "aktivering-vegg", alt: "Utendørs aktivering med stand og publikum", fokus: "center 40%" },
+  bilde: {
+    fil: "aktivering-vegg",
+    alt: "Utendørs aktivering med stand og publikum",
+    fokus: "center 40%",
+  },
   sti: "/eventfotograf-eventvideo",
   tittel: "Eventfotograf og eventvideo | Dekning av arrangementer",
   beskrivelse:
@@ -335,11 +359,11 @@ export const event: Tjenesteside = {
     },
     {
       sporsmal: "Hva koster eventfotograf?",
-      svar: "TBD(event.pris — fra-pris for en halv og en hel dag)",
+      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nFor arrangementer er kveldsarbeid den vanligste fordyrende faktoren, sammen med hvor mange som må være til stede samtidig.`,
     },
     {
       sporsmal: "Når får vi materialet?",
-      svar: "TBD(event.leveringstid — og om det finnes en hurtigleveranse for bilder som skal ut samme kveld)",
+      svar: "Som regel innen to uker. Men der det er essensielt å få deler av leveransen ut samme kveld eller dagen etter, imøtekommer vi som regel det — si fra i planleggingen, så legger vi opp dagen etter det.",
     },
     {
       sporsmal: "Foto, film, eller begge deler?",
@@ -409,8 +433,8 @@ export const innholdsproduksjon: Tjenesteside = {
       sporsmal: "Prosjekt eller abonnement — hva trenger dere?",
       svar: "Et prosjekt løser én oppgave med en start og en slutt: en lansering, en kampanje, en stilling som skal fylles. Et abonnement løser et problem som ikke tar slutt — at kanalene må fylles hver uke, hele året. De fleste som spør om innholdsproduksjon trenger et prosjekt først, og oppdager etter hvert at de også trenger kalenderen.",
       punkter: [
-        "Prosjekt: én leveranse, avtalt omfang, egen pris",
-        `Abonnement: ${site.kontakt.firma} produserer og publiserer løpende, ${new Intl.NumberFormat("nb-NO").format(30000)} kr/mnd`,
+        `Prosjekt: én leveranse, avtalt omfang, fra ${kr(tilbud.fraPrisProsjekt)} kr`,
+        `Abonnement: ${site.kontakt.firma} produserer og publiserer løpende, ${kr(tilbud.prisPerManed)} kr/mnd`,
       ],
     },
     {
@@ -466,8 +490,7 @@ export const eiker = [
     sti: "/videoproduksjon-i-oslo",
     navn: "Videoproduksjon",
     flate: "Egne flater — nettside, tjenesteside, skjerm",
-    beskrivelse:
-      "Filmen som forklarer, til folk som allerede har funnet dere.",
+    beskrivelse: "Filmen som forklarer, til folk som allerede har funnet dere.",
   },
   {
     sti: "/employer-branding-video-oslo",

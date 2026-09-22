@@ -2007,3 +2007,80 @@ en FAQ ingen kan lese hjelper ingen.
 Resultat: **null ny duplisering.** De fire som står igjen er forside ↔
 `/faq`, som er bevisst — forsiden viser et utvalg av samme liste, og
 forsiden var holdt utenfor denne runden.
+
+---
+
+## A62 — De ni TBD-ene er fylt. 22.09.2026
+
+Pål svarte på fire spørsmål. Alle ni hull er lukket, og `content:check`
+melder for første gang «Ingen TBD-markører i øvrig innhold heller».
+
+### Prismodellen var ett svar, ikke fire
+
+Pål: «alle faste samarbeid i henhold til hovedtjenesten er 30K per måned,
+og enkeltjobber starter på 40K.»
+
+Det er hele prismodellen i én setning, og den er lik på alle fire
+prosjektsidene. Tallet ligger derfor i `tilbud.fraPrisProsjekt` i
+site.ts, ikke som fire kopier i `tjenester.ts`. Fire kopier er fire steder
+prisen kan gli fra hverandre neste gang den endres, og en side som oppgir
+feil pris er verre enn en som ikke oppgir noen.
+
+Prisdriverne — omfang, antall produksjonsdager, etterarbeid — ligger
+samme sted, av samme grunn.
+
+**To åpne tall er mer enn de fleste norske byråer oppgir.** Det var
+allerede Reflektors sterkeste kort mot konkurrentene på abonnementet;
+nå gjelder det prosjektene også.
+
+### Nyansen per side
+
+Grunnteksten er lik, men hver side har ett avsnitt til fra Påls eget
+svar:
+
+| Side | Tillegget |
+|---|---|
+| Reklamefilm | Holder kunden lokasjon og statister, går prisen ned — og på en reklamefilm veier de to postene ofte mest |
+| Videoproduksjon | Samme, kortere |
+| Employer branding | «Én film er ett øyeblikk.» Kontinuitet er nøkkelen for å være en attraktiv arbeidsgiver, og det er derfor mange ender med et løpende samarbeid |
+| Event | Kveldsarbeid er den vanligste fordyrende faktoren |
+
+Employer branding-tillegget er broen fra prosjekt til abonnement, og den
+er ærlig: en rekrutteringsfilm er en kampanje, men det å være aktuell som
+arbeidsgiver er ikke det.
+
+### Fra-prisen er markert opp som MINSTEPRIS
+
+`PriceSpecification.minPrice`, ikke `Offer.price`. Forskjellen er ikke
+pedantisk: `price` betyr «dette koster det», og det ville vært usant for
+noe som starter på 40 000 og kan ende hvor som helst. `minPrice` er
+schema.orgs måte å si «fra», og det er nøyaktig påstanden vi kan belegge.
+
+### Tre nye kundenavn, verifisert
+
+Reklamefilm for **Vitusapotek, Peppes Pizza og Samlerhuset**. Oppgitt av
+Pål. Vitusapotek og Samlerhuset er nye i prosjektet — de står ikke i
+logorekka, og skal ikke inn der uten logofiler.
+
+Setningen skiller eksplisitt: reklamefilm for de tre, foto og video
+ellers for de andre. AGENTS.md krever at produksjonskunder aldri
+fremstilles som noe de ikke er, og det gjelder begge veier.
+
+### To feil funnet i egen implementasjon
+
+**Løst anførselstegn på alle fire prissvarene.** Rest fra måten jeg satte
+sammen malstrengene. Synlig i produksjon som `… til stede samtidig."`
+
+**Avsnittsskiftene kollapset.** Jeg skrev prissvarene som to avsnitt —
+fakta først, så nyansen — men layouten rendret hele `svar` i én `<p>`, og
+HTML slår sammen tomrom. De to avsnittene ble til én lang blokk. Layouten
+deler nå på blank linje.
+
+### Status
+
+Null TBD, null axe-brudd på tjue sider, 21 tester grønne, lenkesjekk
+grønn. **Hver tekst på nettstedet er nå komplett.**
+
+Det som gjenstår før lansering er ikke tekst: GTM-triggerne i containeren,
+Apollo/Clarity i personvernerklæringen, og 301-en for
+`/sosiale-medier-byra` på cutover.

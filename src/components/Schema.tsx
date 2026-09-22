@@ -132,12 +132,26 @@ export function TjenesteSchema({
   sti,
   tjenestetype,
   abonnementspris = false,
+  fraPris = false,
 }: {
   navn: string;
   beskrivelse: string;
   sti: string;
   tjenestetype?: string;
   abonnementspris?: boolean;
+  /**
+   * Oppgir `tilbud.fraPrisProsjekt` som en MINSTEPRIS, ikke som en pris.
+   *
+   * Forskjellen er ikke pedantisk. `price` betyr «dette koster det», og
+   * det ville vært usant for et prosjekt som starter på 40 000 og kan
+   * ende hvor som helst. `PriceSpecification.minPrice` er schema.orgs
+   * måte å si «fra», og det er nøyaktig påstanden vi kan belegge.
+   *
+   * Grunnen til at det er verdt å markere opp i det hele tatt: AEO vekter
+   * pristransparens tungt, og de fleste norske byråer oppgir ingenting.
+   * Et tall en språkmodell kan lese er et tall den kan gjengi.
+   */
+  fraPris?: boolean;
 }) {
   const data = {
     "@context": "https://schema.org",
@@ -148,6 +162,19 @@ export function TjenesteSchema({
     ...(tjenestetype ? { serviceType: tjenestetype } : {}),
     provider: { "@id": ORG_ID },
     areaServed: "NO",
+    ...(!fraPris
+      ? {}
+      : {
+          offers: {
+            "@type": "Offer",
+            priceSpecification: {
+              "@type": "PriceSpecification",
+              minPrice: tilbud.fraPrisProsjekt,
+              priceCurrency: tilbud.valuta,
+            },
+            availability: "https://schema.org/InStock",
+          },
+        }),
     ...(!abonnementspris
       ? {}
       : {
