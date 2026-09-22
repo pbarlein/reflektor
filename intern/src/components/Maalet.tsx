@@ -41,6 +41,12 @@ import Link from "next/link";
  * føre til. Flatebyttet fra mørk til oransje ligger på nøyaktig det skiftet.
  * Da gjør typografien det samme som ordene, i stedet for å pynte på dem.
  *
+ * Siste ledd er det eneste som er kortet ned fra Påls opprinnelige ordlyd,
+ * med hans ja: «Dette er hva som skal til for å oppnå målene våre» ble til
+ * «Da når vi målene våre». Grunnen er at «Dette er» ellers sto tre ganger på
+ * samme flate, og at «Da» gjør årsaksforholdet i ett ord der den lange
+ * varianten brukte syv. Selve målene er urørt.
+ *
  * ── FULL BREDDE ───────────────────────────────────────────────────────────
  *
  * Seksjonen ligger utenfor `Container` og har sin egen indre bredde, som
@@ -171,16 +177,38 @@ export function Maalet({ navn }: { navn: string }) {
         teksten selv snur: fra hva vi gjør, til hva det skal føre til.
       */}
       <div className="relative bg-[#932E17] text-white">
-        <div className={INNE}>
-          <p className="pt-8 text-[1.0625rem] leading-relaxed text-pretty text-[#FDF0EC] sm:pt-10 sm:text-[1.25rem]">
-            Dette er hva som skal til for å oppnå målene våre:
+        <div className={`${INNE} pt-8 pb-9 sm:pt-10 sm:pb-11`}>
+          {/*
+            PILA GJØR ÅRSAKSFORHOLDET SYNLIG. Den peker ned fra den mørke
+            flaten og inn i denne. Ett tegn sier det et avsnitt sa før, og
+            det er `aria-hidden` fordi ordene ved siden av sier det samme.
+          */}
+          <p className="flex items-baseline gap-2.5 text-[1.0625rem] leading-relaxed text-[#FDF0EC] sm:text-[1.1875rem]">
+            <span aria-hidden className="leading-none">
+              ↓
+            </span>
+            Da når vi målene våre
           </p>
 
-          <ul className="grid gap-x-12 gap-y-4 pt-4 pb-9 sm:grid-cols-2 sm:pt-5 sm:pb-11">
-            {MALENE.map((mal) => (
+          {/*
+            STREKEN OVER OG SKILLET MELLOM. To mål uten noe imellom leste som
+            to løsrevne setninger med et tilfeldig mellomrom. En hårstrek over
+            begge og én mellom dem gjør dem til ett par — og paret er poenget:
+            de er de to eneste utfallene vi måler oss på.
+
+            Loddrett skille fra sm, vannrett på telefon, fordi rutenettet
+            legger dem under hverandre der.
+          */}
+          <ul className="mt-5 grid border-t border-[rgba(255,255,255,0.3)] sm:mt-6 sm:grid-cols-2">
+            {MALENE.map((mal, i) => (
               <li
                 key={mal}
-                className="display text-[clamp(1.5rem,3.6vw,2.25rem)] leading-[1.08] tracking-[-0.025em] text-balance"
+                className={
+                  "display py-6 text-[clamp(1.625rem,4vw,2.5rem)] leading-[1.08] tracking-[-0.025em] text-balance sm:py-8 " +
+                  (i === 0
+                    ? "sm:pr-10"
+                    : "border-t border-[rgba(255,255,255,0.3)] sm:border-t-0 sm:border-l sm:border-l-[rgba(255,255,255,0.3)] sm:pl-10")
+                }
               >
                 {mal}
               </li>
