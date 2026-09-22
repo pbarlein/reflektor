@@ -11,6 +11,7 @@ import {
 } from "@/content/rubrikker";
 import { erRedaktor } from "@/lib/redaktor";
 import { krevBruker } from "@/lib/tilgang";
+import { lesetid } from "@/lib/lesetid";
 
 export const metadata: Metadata = { title: "Til gjennomgang" };
 
@@ -98,7 +99,7 @@ export default async function Gjennomgang() {
                 </h2>
                 <p className="text-[0.9375rem] text-blekk-dempet">
                   {rubrikker.length} tekster ·{" "}
-                  {rubrikker.reduce((s, r) => s + r.lesetid, 0)} minutter i alt
+                  {rubrikker.reduce((s, r) => s + lesetid(r), 0)} minutter i alt
                 </p>
               </div>
 
@@ -116,7 +117,7 @@ export default async function Gjennomgang() {
                         {r.tittel}
                       </span>
                       <span className="text-[0.8125rem] text-blekk-svak tabular-nums">
-                        {r.lesetid} min
+                        {lesetid(r)} min
                       </span>
                     </Link>
                   </li>

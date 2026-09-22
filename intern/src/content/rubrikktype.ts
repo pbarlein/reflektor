@@ -194,8 +194,11 @@ export type Rubrikk = {
   medie: Medie;
   /** ISO-dato. Vises som «oppdatert» og brukes til sortering på nyhet. */
   oppdatert: string;
-  /** Anslått lesetid i minutter. */
-  lesetid: number;
+  /**
+   * MERK: lesetid er IKKE et felt her. Den regnes av innholdet, i
+   * src/lib/lesetid.ts. Et håndsatt tall er riktig den dagen det settes og
+   * feil fra neste gang teksten røres.
+   */
   godkjent: boolean;
   /** Rolle som eier rutinen og må kvalitetssikre den. Aldri et personnavn. */
   ansvarlig: string;

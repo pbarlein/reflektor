@@ -13,6 +13,7 @@ import { I_DRIFT, finnRubrikk, rubrikkerIKategori } from "@/content/rubrikker";
 import { lesetilstander } from "@/lib/lesing";
 import { lestAvBrukeren } from "@/lib/lesing-server";
 import { krevBruker } from "@/lib/tilgang";
+import { lesetid } from "@/lib/lesetid";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -132,7 +133,7 @@ export default async function Rubrikkside({ params }: Props) {
             <p className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.8125rem] text-blekk-svak">
               <time dateTime={rubrikk.oppdatert}>Oppdatert {dato}</time>
               <span aria-hidden>·</span>
-              <span>{rubrikk.lesetid} min</span>
+              <span>{lesetid(rubrikk)} min</span>
               <span aria-hidden>·</span>
               <span>Eier: {rubrikk.ansvarlig}</span>
             </p>

@@ -6,6 +6,7 @@ import { Medieflate } from "@/components/Medieflate";
 import { finnKategori } from "@/content/kategorier";
 import type { Rubrikk } from "@/content/rubrikktype";
 import type { Lesetilstand } from "@/lib/lesing";
+import { lesetid } from "@/lib/lesetid";
 
 /**
  * Ett kort i en rad.
@@ -96,7 +97,7 @@ export function Rubrikkort({
         <div className="mt-auto flex items-center justify-between gap-3 border-t border-kant pt-3">
           <Godkjentmerke godkjent={rubrikk.godkjent} />
           <span className="text-[0.75rem] tracking-[0.02em] text-blekk-svak">
-            {rubrikk.lesetid} min
+            {lesetid(rubrikk)} min
           </span>
         </div>
       </div>

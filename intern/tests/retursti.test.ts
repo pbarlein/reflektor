@@ -12,7 +12,10 @@ import { trygtNeste } from "../src/lib/retursti.ts";
  * faktisk tar, og hver av dem har vært en ekte CVE i et ekte produkt.
  */
 test("beholder en vanlig intern sti", () => {
-  assert.equal(trygtNeste("/rubrikk/lyd-kan-ikke-reddes"), "/rubrikk/lyd-kan-ikke-reddes");
+  assert.equal(
+    trygtNeste("/rubrikk/lyd-kan-ikke-reddes"),
+    "/rubrikk/lyd-kan-ikke-reddes",
+  );
   assert.equal(trygtNeste("/?filter=opptak"), "/?filter=opptak");
 });
 

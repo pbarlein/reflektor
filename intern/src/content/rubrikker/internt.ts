@@ -22,7 +22,6 @@ export const INTERNT: readonly Rubrikk[] = [
       alt: "Kamera rigget på stativ i en døråpning under en produksjonsdag",
     },
     oppdatert: "2026-09-21",
-    lesetid: 2,
     godkjent: true,
     ansvarlig: "Daglig leder",
     kilde: "Påls egne ord, gjengitt ordrett og uten omskrivinger.",
@@ -87,7 +86,6 @@ export const INTERNT: readonly Rubrikk[] = [
       alt: "Person med bagasje på vei gjennom en parkeringskjeller",
     },
     oppdatert: "2026-09-22",
-    lesetid: 3,
     godkjent: true,
     ansvarlig: "Daglig leder",
     kilde:
@@ -168,7 +166,6 @@ export const INTERNT: readonly Rubrikk[] = [
       alt: "Bakevarer på brett i en disk",
     },
     oppdatert: "2026-09-22",
-    lesetid: 4,
     godkjent: true,
     ansvarlig: "Daglig leder",
     kilde:

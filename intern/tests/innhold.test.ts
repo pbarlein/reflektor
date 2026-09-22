@@ -3,6 +3,7 @@ import test from "node:test";
 
 import { KATEGORIER } from "../src/content/kategorier.ts";
 import { I_DRIFT, RUBRIKKER } from "../src/content/rubrikker/index.ts";
+import { lesetid } from "../src/lib/lesetid.ts";
 
 /**
  * Innholdet er data, og data kan være feil på måter typene ikke fanger.
@@ -150,6 +151,21 @@ test("kilder har tittel, url og sjekkdato", () => {
         `${r.slug}: ugyldig sjekkdato (${k.sjekket})`,
       );
     }
+  }
+});
+
+/**
+ * Lesetiden regnes, men den kan fortsatt bli tullete hvis noen endrer
+ * formelen. To til tjue minutter er rammen: under to er ikke verdt en
+ * lenke, over tjue er ikke en rubrikk lenger.
+ */
+test("regnet lesetid ligger innenfor to og tjue minutter", () => {
+  for (const r of RUBRIKKER) {
+    const min = lesetid(r);
+    assert.ok(
+      Number.isInteger(min) && min >= 2 && min <= 20,
+      `${r.slug} får lesetid ${min}`,
+    );
   }
 });
 

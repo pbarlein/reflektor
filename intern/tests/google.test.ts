@@ -40,7 +40,9 @@ test("et gyldig Workspace-token slipper gjennom", () => {
 });
 
 test("begge Googles utstederformer godtas", () => {
-  assert.ok(lesIdToken(token({ ...GYLDIG, iss: "accounts.google.com" }), OPPSETT));
+  assert.ok(
+    lesIdToken(token({ ...GYLDIG, iss: "accounts.google.com" }), OPPSETT),
+  );
 });
 
 test("feil utsteder avvises", () => {
@@ -54,14 +56,20 @@ test("token utstedt til en ANNEN app avvises", () => {
   // Uten aud-sjekken kan et token fra en hvilken som helst annen
   // Google-app brukes her. Det er den klassiske «confused deputy».
   assert.equal(
-    lesIdToken(token({ ...GYLDIG, aud: "annen-app.apps.googleusercontent.com" }), OPPSETT),
+    lesIdToken(
+      token({ ...GYLDIG, aud: "annen-app.apps.googleusercontent.com" }),
+      OPPSETT,
+    ),
     null,
   );
 });
 
 test("utløpt token avvises", () => {
   assert.equal(
-    lesIdToken(token({ ...GYLDIG, exp: Math.floor(Date.now() / 1000) - 10 }), OPPSETT),
+    lesIdToken(
+      token({ ...GYLDIG, exp: Math.floor(Date.now() / 1000) - 10 }),
+      OPPSETT,
+    ),
     null,
   );
 });

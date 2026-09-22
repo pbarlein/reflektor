@@ -25,10 +25,7 @@ function sett(navn: string, verdi: string | undefined): void {
   else env[navn] = verdi;
 }
 
-function med(
-  nodeEnv: string | undefined,
-  flagg: string | undefined,
-): boolean {
+function med(nodeEnv: string | undefined, flagg: string | undefined): boolean {
   const forrigeEnv = env.NODE_ENV;
   const forrigeFlagg = env.INTERN_DEV_INNLOGGING;
   try {
