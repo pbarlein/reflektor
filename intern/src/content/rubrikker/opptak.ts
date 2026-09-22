@@ -9,6 +9,7 @@ export const OPPTAK: readonly Rubrikk[] = [
     sammendrag:
       "Dårlig lys kan løftes, skjevt bilde kan beskjæres, og feil farge kan rettes. Dårlig lyd er borte for godt. Her er sjekken som må gå før første opptak.",
     kategori: "opptak",
+    status: "lansert",
     medie: {
       type: "video",
       fil: "reels/thewell",
@@ -113,6 +114,7 @@ export const OPPTAK: readonly Rubrikk[] = [
     sammendrag:
       "Kundens lokale er sjelden bygget for å filmes i. Hva du gjør med dagslys, taklys og blandet lys når du har minutter og ikke timer.",
     kategori: "opptak",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/bekkestua",
@@ -230,6 +232,7 @@ export const OPPTAK: readonly Rubrikk[] = [
     sammendrag:
       "Innholdet skal virke i feeden og kunne brukes fritt av kunden etterpå. Det stiller to krav til samme bilde, og plattformen spiser mer av det enn du tror.",
     kategori: "opptak",
+    status: "gjennomgang",
     medie: {
       type: "video",
       fil: "reels/goretex",
@@ -331,6 +334,7 @@ export const OPPTAK: readonly Rubrikk[] = [
     sammendrag:
       "De fleste vi filmer er ikke skuespillere, og mange gruer seg. Hvordan du får noe ekte ut av en som er ukomfortabel — på fem minutter.",
     kategori: "opptak",
+    status: "lansert",
     medie: {
       type: "bilde",
       fil: "arbeid/portrett-vegg",
@@ -449,6 +453,7 @@ export const OPPTAK: readonly Rubrikk[] = [
     sammendrag:
       "Mangel på dekningsbilder er den vanligste grunnen til at en redigering tar dobbelt så lang tid som den skulle.",
     kategori: "opptak",
+    status: "gjennomgang",
     medie: {
       type: "video",
       fil: "arbeid/matcha",
@@ -529,6 +534,7 @@ export const OPPTAK: readonly Rubrikk[] = [
     sammendrag:
       "Vi er gjester i noen andres arbeidsdag. Hvordan du får det du trenger uten å stoppe driften — og hvorfor det avgjør om vi blir invitert tilbake.",
     kategori: "opptak",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/dag4-vegg",

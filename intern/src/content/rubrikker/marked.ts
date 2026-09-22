@@ -17,7 +17,8 @@ export const MARKED: readonly Rubrikk[] = [
     tittel: "Sosiale medier i Norge — tallene som faktisk gjelder",
     sammendrag:
       "Det meste som siteres om SoMe er amerikansk. Her er hva vi vet om det norske markedet, og hva det betyr for hvilke kanaler vi anbefaler.",
-    kategori: "marked",
+    kategori: "research",
+    status: "gjennomgang",
     medie: {
       type: "video",
       fil: "reels/zeroh",
@@ -96,7 +97,8 @@ export const MARKED: readonly Rubrikk[] = [
     tittel: "Når plattformene endrer noe",
     sammendrag:
       "Formater, anbefalinger og grensesnitt endrer seg flere ganger i året. Rutinen for å fange det opp før en kunde spør.",
-    kategori: "marked",
+    kategori: "publisering",
+    status: "gjennomgang",
     medie: {
       type: "video",
       fil: "reels/gekko",
@@ -157,7 +159,8 @@ export const MARKED: readonly Rubrikk[] = [
     tittel: "Spørsmål kunder stiller — og hva vi svarer",
     sammendrag:
       "Dette er rammen for et levende dokument. De samme spørsmålene kommer igjen og igjen, og svarene bør ikke improviseres hver gang.",
-    kategori: "marked",
+    kategori: "kunde",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/stallen-1600",
@@ -212,7 +215,8 @@ export const MARKED: readonly Rubrikk[] = [
     tittel: "AI i innholdsproduksjon",
     sammendrag:
       "Spørsmålet kommer i stadig flere møter, og det kommer i to former. Dette er rammen for et standpunkt Reflektor må ta selv.",
-    kategori: "marked",
+    kategori: "posisjon",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/fabrikk-vegg",

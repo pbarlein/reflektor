@@ -16,6 +16,7 @@ export const KUNDE: readonly Rubrikk[] = [
     sammendrag:
       "Pris er nesten aldri grunnen. Undersøkelser peker på det samme hver gang: manglende initiativ og dårlig kommunikasjon. Begge deler er innenfor vår kontroll.",
     kategori: "kunde",
+    status: "lansert",
     medie: {
       type: "video",
       fil: "reels/egon",
@@ -113,6 +114,7 @@ export const KUNDE: readonly Rubrikk[] = [
     sammendrag:
       "Kunden ser oss én dag i måneden. De resterende tjuetre er det opp til oss om vi finnes. En rytme som gjør «proaktiv» til noe konkret.",
     kategori: "kunde",
+    status: "lansert",
     medie: {
       type: "bilde",
       fil: "arbeid/pa-vei",
@@ -185,6 +187,7 @@ export const KUNDE: readonly Rubrikk[] = [
     sammendrag:
       "De fleste konflikter med kunder er forventninger som aldri ble uttalt. Fem ting som skal være sagt høyt i oppstarten.",
     kategori: "kunde",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/stallen-1600",
@@ -240,6 +243,7 @@ export const KUNDE: readonly Rubrikk[] = [
     sammendrag:
       "Noe kommer til å gå galt. Måten du sier fra på avgjør om det blir en ripe eller et brudd.",
     kategori: "kunde",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/bekkestua",
@@ -313,6 +317,7 @@ export const KUNDE: readonly Rubrikk[] = [
     sammendrag:
       "Kritikk er informasjon, men den kommer sjelden pent pakket. Slik tar du imot den uten å bli defensiv, og uten å love bort mer enn vi kan holde.",
     kategori: "kunde",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/peppes2-vegg",
@@ -381,6 +386,7 @@ export const KUNDE: readonly Rubrikk[] = [
     sammendrag:
       "Et møte uten struktur blir en statusoppdatering. Fire deler som gjør at kunden går ut med noe de ikke hadde da de kom inn.",
     kategori: "kunde",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/scene-vegg",

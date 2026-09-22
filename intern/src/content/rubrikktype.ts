@@ -167,6 +167,17 @@ export type Rubrikk = {
   /** Permanent og unikt. Se forklaringen over Medie. Endres aldri. */
   nr: number;
   /**
+   * Om rubrikken er i drift, eller ligger til gjennomgang.
+   *
+   * Huben lanserer med to rubrikker per kategori. Resten er skrevet, lagret
+   * og søkbar — men den ansatte ser dem ikke, fordi en fasit ikke kan være
+   * halvt vedtatt. De ligger på /gjennomgang til noen har sagt ja.
+   *
+   * INGENTING SLETTES. Det er hele poenget med feltet: teksten finnes, den
+   * er versjonert, og den kan settes i drift med ett ord.
+   */
+  status: "lansert" | "gjennomgang";
+  /**
    * Satt på ÉN rubrikk om gangen, og bare når det er sant: grunnen til at
    * nettopp denne skal leses nå. Vises i «Start her» øverst på forsiden.
    *

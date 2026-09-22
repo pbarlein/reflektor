@@ -15,7 +15,8 @@ export const FORRETNING: readonly Rubrikk[] = [
     tittel: "Hvordan Reflektor tjener penger",
     sammendrag:
       "Modellen er enkel nok til å forklares på to minutter, og den forklarer nesten alle valgene vi tar. Her er den.",
-    kategori: "forretning",
+    kategori: "posisjon",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/kontor",
@@ -101,7 +102,8 @@ export const FORRETNING: readonly Rubrikk[] = [
     tittel: "Hva du faktisk påvirker",
     sammendrag:
       "Det er lett å tro at forretningen er noe andre styrer. Her er de fire tingene hver enkelt av oss påvirker, uke for uke.",
-    kategori: "forretning",
+    kategori: "posisjon",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/goretex2-vegg",
@@ -157,7 +159,8 @@ export const FORRETNING: readonly Rubrikk[] = [
     tittel: "Hvorfor vi har fast pris",
     sammendrag:
       "Vi har ingen timepriser, ingen etterfakturering og ingen tillegg for ekstra runder. Det er en posisjonering, og den har konsekvenser for hvordan vi jobber.",
-    kategori: "forretning",
+    kategori: "posisjon",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/kafe1-1600",
@@ -224,7 +227,8 @@ export const FORRETNING: readonly Rubrikk[] = [
     tittel: "Hva en produksjonsdag egentlig koster",
     sammendrag:
       "Ikke i kroner, for de tallene hører ikke hjemme her. Men i det som faktisk brukes opp: tid, oppmerksomhet og kundens tålmodighet.",
-    kategori: "forretning",
+    kategori: "posisjon",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/dag4-vegg",

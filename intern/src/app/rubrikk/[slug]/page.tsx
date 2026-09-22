@@ -9,11 +9,7 @@ import { Lesesporing } from "@/components/Lesesporing";
 import { Oppsummering } from "@/components/Oppsummering";
 import { Rubrikkort } from "@/components/Rubrikkort";
 import { finnKategori } from "@/content/kategorier";
-import {
-  RUBRIKKER,
-  finnRubrikk,
-  rubrikkerIKategori,
-} from "@/content/rubrikker";
+import { I_DRIFT, finnRubrikk, rubrikkerIKategori } from "@/content/rubrikker";
 import { lesetilstander } from "@/lib/lesing";
 import { lestAvBrukeren } from "@/lib/lesing-server";
 import { krevBruker } from "@/lib/tilgang";
@@ -30,7 +26,7 @@ type Props = { params: Promise<{ slug: string }> };
  * en 404 i bruk.
  */
 export async function generateStaticParams() {
-  return RUBRIKKER.map((r) => ({ slug: r.slug }));
+  return I_DRIFT.map((r) => ({ slug: r.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -58,7 +54,7 @@ export default async function Rubrikkside({ params }: Props) {
    * HELE samlingen, ikke mot de fire — NY-grensa er en egenskap ved huben,
    * ikke ved den enkelte raden.
    */
-  const tilstander = lesetilstander(RUBRIKKER, lest, new Date());
+  const tilstander = lesetilstander(I_DRIFT, lest, new Date());
 
   const dato = new Date(rubrikk.oppdatert).toLocaleDateString("nb-NO", {
     day: "numeric",
@@ -167,6 +163,25 @@ export default async function Rubrikkside({ params }: Props) {
           </div>
 
           <div className="min-w-0 lg:col-start-1 lg:row-start-2">
+            {rubrikk.status === "gjennomgang" && (
+              /*
+                IKKE I DRIFT. Rubrikken er ikke lenket til fra huben og
+                ligger ikke i søket, men en direktelenke virker fortsatt —
+                og da må det stå hva man ser på. En tekst som ser ut som
+                resten, men ikke er vedtatt, er den dyreste forvekslingen
+                huben kan tilby.
+              */
+              <div className="mt-8 rounded-flate border border-kant-sterk bg-dempet px-5 py-4">
+                <p className="font-sans text-xs font-medium tracking-[0.08em] text-blekk uppercase">
+                  Ikke i drift
+                </p>
+                <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-blekk">
+                  Denne teksten ligger til gjennomgang og vises ikke i huben.
+                  Den er ikke søkbar og ikke lenket til fra noen rad.
+                </p>
+              </div>
+            )}
+
             <div className="mt-8">
               <Godkjentbanner rubrikk={rubrikk} />
             </div>

@@ -9,6 +9,7 @@ export const REDIGERING: readonly Rubrikk[] = [
     sammendrag:
       "Beslutningen om å bli eller dra tas før seeren rekker å tenke. Hva som skal skje der, og de fire tingene som garantert koster deg dem.",
     kategori: "redigering",
+    status: "lansert",
     medie: {
       type: "video",
       fil: "reels/antonburst",
@@ -111,6 +112,7 @@ export const REDIGERING: readonly Rubrikk[] = [
     sammendrag:
       "Teksting inngår i leveransen, og de fleste ser uten lyd. Slik settes den så den er lesbar på en telefon i sollys — og ikke havner bak grensesnittet.",
     kategori: "redigering",
+    status: "lansert",
     medie: {
       type: "video",
       fil: "reels/zeroh",
@@ -221,6 +223,7 @@ export const REDIGERING: readonly Rubrikk[] = [
     sammendrag:
       "Alt du laster opp blir komprimert på nytt. Du kan ikke unngå det, men du kan levere noe som tåler behandlingen.",
     kategori: "redigering",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/noods",
@@ -299,6 +302,7 @@ export const REDIGERING: readonly Rubrikk[] = [
     sammendrag:
       "Rask klipping er ikke automatisk bedre. Rytmen skal følge innholdet og bransjen, ikke en trend.",
     kategori: "redigering",
+    status: "gjennomgang",
     medie: {
       type: "video",
       fil: "reels/antonsport",
@@ -384,6 +388,7 @@ export const REDIGERING: readonly Rubrikk[] = [
     sammendrag:
       "Musikk kan bære en video eller ødelegge den. Og rettighetene er ikke en detalj — det er kundens konto som rammes.",
     kategori: "redigering",
+    status: "gjennomgang",
     medie: {
       type: "video",
       fil: "arbeid/kakao",

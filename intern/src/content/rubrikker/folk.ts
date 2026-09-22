@@ -15,7 +15,8 @@ export const FOLK: readonly Rubrikk[] = [
     tittel: "Hva som faktisk holder folk gående",
     sammendrag:
       "Motivasjon er ikke et humør. Det er tre behov som enten blir dekket eller ikke — og alle tre kan påvirkes av hvordan vi jobber sammen.",
-    kategori: "folk",
+    kategori: "standard",
+    status: "gjennomgang",
     medie: {
       type: "video",
       fil: "reels/produksjonsdag",
@@ -111,7 +112,8 @@ export const FOLK: readonly Rubrikk[] = [
     tittel: "De første nitti dagene",
     sammendrag:
       "Hvordan vi tar imot en ny kollega avgjør hvor fort de blir gode, og om de blir værende. Forskningen er tydelig på hva som virker.",
-    kategori: "folk",
+    kategori: "standard",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/dag1-1600",
@@ -221,7 +223,8 @@ export const FOLK: readonly Rubrikk[] = [
     tittel: "Tilbakemelding som virker",
     sammendrag:
       "«Fin video» hjelper ingen. Slik gir du en tilbakemelding som faktisk gjør neste jobb bedre — og slik tar du imot en.",
-    kategori: "folk",
+    kategori: "standard",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/portrett-vegg",
@@ -292,7 +295,8 @@ export const FOLK: readonly Rubrikk[] = [
     tittel: "Å bli bedre med vilje",
     sammendrag:
       "Erfaring alene gjør deg ikke bedre — den gjør deg raskere på det du allerede gjør. Slik bruker du jobben til faktisk å utvikle deg.",
-    kategori: "folk",
+    kategori: "standard",
+    status: "gjennomgang",
     medie: {
       type: "video",
       fil: "reels/goretex",
@@ -357,7 +361,8 @@ export const FOLK: readonly Rubrikk[] = [
     tittel: "Stolthet og standard",
     sammendrag:
       "Hva som skiller noe som er godt nok fra noe vi vil sette navnet vårt på — og hvorfor den forskjellen er verdt tiden den koster.",
-    kategori: "folk",
+    kategori: "standard",
+    status: "lansert",
     medie: {
       type: "bilde",
       fil: "arbeid/mat1-1600",
@@ -425,7 +430,8 @@ export const FOLK: readonly Rubrikk[] = [
     tittel: "Når du står fast",
     sammendrag:
       "Alle står fast. Det som skiller folk er hvor lenge de blir stående før de spør. Her er når og hvordan.",
-    kategori: "folk",
+    kategori: "standard",
+    status: "lansert",
     medie: {
       type: "bilde",
       fil: "arbeid/kafe2-vegg",

@@ -1,12 +1,30 @@
 /**
  * Kategoriene.
  *
- * TI KATEGORIER I TRE BOLKER, og rekkefølgen er lesningens rekkefølge, ikke
- * en alfabetisk liste.
+ * ÅTTE KATEGORIER I TRE BOLKER, og rekkefølgen er lesningens rekkefølge,
+ * ikke en alfabetisk liste.
  *
  *   1. HÅNDVERKET   de fem fasene en produksjon faktisk går gjennom
  *   2. KUNDEN       det som avgjør om kunden blir
- *   3. OSS          folk, forretning og det som skjer utenfor huset
+ *   3. OSS          standarden vår, og hva vi selger
+ *
+ * ── TO KATEGORIER BLE FJERNET, OG ÉN BYTTET NAVN ──────────────────────────
+ *
+ * «Folk og fag» het det før, og innholdet var i hovedsak allmenn
+ * arbeidspsykologi: motivasjonsteori, tilbakemeldingsmodeller, bevisst
+ * øving. Godt stoff, men det kunne stått i hvilken som helst håndbok, og
+ * en hub som skal være fasit for hvordan REFLEKTOR jobber, blir svakere av
+ * stoff som ikke er vårt. Kategorien heter nå «Standarden» og holder det
+ * som faktisk er operativt: hva som aldri går ut, og hva du gjør når du
+ * står fast.
+ *
+ * «Forretningsforståelse» og «Slik gjør vi det» sa det samme to ganger —
+ * begge hadde en tekst om pris. De er slått sammen til «Reflektor sin
+ * markedsposisjon», som er det de egentlig handlet om.
+ *
+ * «Markedet utenfor» er borte som kategori. Innholdet der er ferskvare med
+ * en holdbarhet på uker, og et oppslagsverk er feil form for det. Det blir
+ * en datert nyhetsstrøm i stedet.
  *
  * ── HVORFOR RADER OG IKKE FILTER ──────────────────────────────────────────
  *
@@ -32,10 +50,8 @@ export type KategoriId =
   | "redigering"
   | "publisering"
   | "kunde"
-  | "folk"
-  | "forretning"
-  | "internt"
-  | "marked";
+  | "standard"
+  | "posisjon";
 
 export type Bolk = "handverk" | "kunde" | "oss";
 
@@ -106,34 +122,19 @@ export const KATEGORIER: readonly Kategori[] = [
     bolk: "kunde",
   },
   {
-    id: "folk",
-    navn: "Folk og fag",
-    kort: "Folk",
+    id: "standard",
+    navn: "Standarden",
+    kort: "Standard",
     beskrivelse:
-      "Hvordan man blir god her, hvordan man hjelper andre å bli det, og hva som holder folk gående.",
+      "Hva som aldri går ut av huset, og hva du gjør når noe står fast midt i en dag.",
     bolk: "oss",
   },
   {
-    id: "forretning",
-    navn: "Forretningsforståelse",
-    kort: "Forretning",
+    id: "posisjon",
+    navn: "Reflektor sin markedsposisjon",
+    kort: "Posisjon",
     beskrivelse:
-      "Hvordan Reflektor tjener penger, og hva hver enkelt av oss faktisk påvirker.",
-    bolk: "oss",
-  },
-  {
-    id: "internt",
-    navn: "Slik gjør vi det",
-    kort: "Internt",
-    beskrivelse:
-      "Hva vi selger, hva vi har blitt enige om, og hva som gjelder uansett.",
-    bolk: "oss",
-  },
-  {
-    id: "marked",
-    navn: "Markedet utenfor",
-    kort: "Marked",
-    beskrivelse: "Plattformene, bransjen, og hva kunder spør om akkurat nå.",
+      "Hva vi selger, hva vi ikke selger, og hvorfor vi sier prisen høyt når resten av bransjen lar være.",
     bolk: "oss",
   },
 ] as const;
@@ -150,7 +151,7 @@ export const BOLKER: Record<Bolk, { navn: string; ingress: string }> = {
   },
   oss: {
     navn: "Oss",
-    ingress: "Folkene, forretningen og verden rundt.",
+    ingress: "Standarden vi holder, og det vi faktisk selger.",
   },
 };
 

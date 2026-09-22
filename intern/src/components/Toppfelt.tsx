@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Logo } from "@/components/Logo";
+import { erRedaktor } from "@/lib/redaktor";
 import { hentBruker } from "@/lib/tilgang";
 
 /**
@@ -28,6 +29,20 @@ export async function Toppfelt() {
         </Link>
 
         <div className="flex items-center gap-4">
+          {/*
+            GJENNOMGANGSKNAPPEN VISES KUN FOR REDAKTØRER. For alle andre
+            finnes den ikke — ikke nedtonet, ikke låst. En knapp man ikke
+            kan bruke, er en knapp man lurer på hva gjør.
+          */}
+          {erRedaktor(bruker) && (
+            <Link
+              href="/gjennomgang"
+              className="rounded-interaktiv border border-[color:var(--varsel-kant)] bg-[color:var(--varsel-flate)] px-3.5 py-1.5 text-[0.8125rem] font-medium text-varsel transition-colors hover:border-varsel motion-reduce:transition-none"
+            >
+              Til gjennomgang
+            </Link>
+          )}
+
           {/*
             E-POSTEN OG IKKE NAVNET, der det er plass. På et intranett er
             det verdifulle å se HVILKEN konto man er innlogget med — folk

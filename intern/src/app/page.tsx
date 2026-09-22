@@ -5,7 +5,7 @@ import { Rad } from "@/components/Rad";
 import { Sok } from "@/components/Sok";
 import { BOLKER, type Bolk } from "@/content/kategorier";
 import {
-  RUBRIKKER,
+  I_DRIFT,
   antallUgodkjente,
   kategorierMedInnhold,
 } from "@/content/rubrikker";
@@ -27,6 +27,13 @@ export default async function Forside() {
   const grupper = kategorierMedInnhold();
 
   /*
+   * ALT REGNES MOT `I_DRIFT`, IKKE MOT ALT SOM ER SKREVET.
+   *
+   * Framdriften skal vise «3 av 16 lest», ikke «3 av 50» — de trettifire
+   * andre er ikke noe den ansatte kan lese, og en teller som aldri kan bli
+   * full er en teller ingen bryr seg om. Søket går samme vei: finner man
+   * en tekst som ikke er i drift, har skjulingen ingen verdi.
+   *
    * LESESTATUSEN REGNES ÉN GANG, HER.
    *
    * Ikke per kort. Om et kort skal merkes NY avhenger av hvor mange andre
@@ -36,9 +43,9 @@ export default async function Forside() {
    */
   const lest = await lestAvBrukeren();
   const tilstander = Object.fromEntries(
-    lesetilstander(RUBRIKKER, lest, new Date()),
+    lesetilstander(I_DRIFT, lest, new Date()),
   );
-  const neste = nesteRubrikk(RUBRIKKER, lest);
+  const neste = nesteRubrikk(I_DRIFT, lest);
 
   // Bolkene i rekkefølge, med kategoriene sine. Se kategorier.ts for hvorfor
   // rekkefølgen er håndverk → kunde → oss.
@@ -62,8 +69,8 @@ export default async function Forside() {
           */}
           <div className="mt-8 sm:mt-10">
             <Fremdrift
-              antall={RUBRIKKER.length}
-              lest={RUBRIKKER.filter((r) => lest.has(r.nr)).length}
+              antall={I_DRIFT.length}
+              lest={I_DRIFT.filter((r) => lest.has(r.nr)).length}
               neste={neste}
               ugodkjente={antallUgodkjente()}
             />
@@ -79,7 +86,7 @@ export default async function Forside() {
             titlene.
           */}
           <div className="mt-8 sm:mt-10">
-            <Sok rubrikker={RUBRIKKER} tilstander={tilstander} />
+            <Sok rubrikker={I_DRIFT} tilstander={tilstander} />
           </div>
         </div>
       </Container>

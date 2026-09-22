@@ -9,6 +9,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
     sammendrag:
       "Én dag skal dekke en måned. Det går bare opp hvis dagen planlegges i oppsett, ikke som en liste med opptak.",
     kategori: "planlegging",
+    status: "lansert",
     medie: {
       type: "video",
       fil: "reels/produksjonsdag",
@@ -120,6 +121,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
     sammendrag:
       "Testen er om en kollega som ikke var med i planleggingen kan filme dagen med listen i hånda. Her er hva som må stå der, og hva som bare er støy.",
     kategori: "planlegging",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/helios-1600",
@@ -184,6 +186,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
     sammendrag:
       "Tjue minutter på lokasjon i forveien sparer to timer på produksjonsdagen. Det du skal se etter er sjelden det du tror.",
     kategori: "planlegging",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/drone-1600",
@@ -236,6 +239,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
     sammendrag:
       "«Godt forberedt» er det andre ordet i målet vårt. Her er hva det betyr konkret, i minuttene før du går inn.",
     kategori: "planlegging",
+    status: "lansert",
     medie: {
       type: "bilde",
       fil: "arbeid/scene-vegg",
@@ -296,6 +300,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
     sammendrag:
       "Hvordan en måneds poster settes sammen så det blir variasjon uten at det blir tilfeldig. En enkel miks som tåler å gjentas.",
     kategori: "planlegging",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/dag6-vegg",

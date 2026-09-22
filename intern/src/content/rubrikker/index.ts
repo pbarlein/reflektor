@@ -73,6 +73,47 @@ export const RUBRIKKER: readonly Rubrikk[] = [
   }
 }
 
+/**
+ * Rubrikkene en ansatt faktisk ser.
+ *
+ * HUBEN LANSERER MED TO PER KATEGORI. Resten er skrevet og lagret, men
+ * ligger til gjennomgang. Begrunnelsen er enkel: en fasit kan ikke være
+ * halvt vedtatt. Femti tekster der førtisju bærer et rødt utkastmerke, er
+ * ikke en kilde til sannhet — det er et forslag med mye tekst.
+ *
+ * Alt som IKKE er i drift, finnes fortsatt: i søket for den som leter, og
+ * samlet på /gjennomgang for den som skal godkjenne.
+ */
+export const I_DRIFT: readonly Rubrikk[] = RUBRIKKER.filter(
+  (r) => r.status === "lansert",
+);
+
+export const TIL_GJENNOMGANG: readonly Rubrikk[] = RUBRIKKER.filter(
+  (r) => r.status === "gjennomgang",
+);
+
+/**
+ * EN TREDJE FEIL SOM TAS VED MODULLASTING: en kategori uten innhold i drift.
+ *
+ * Forsiden viser én rad per kategori. En kategori der alt ligger til
+ * gjennomgang, ville gitt en overskrift med tomrom under — og det ser ut
+ * som om siden er ødelagt, ikke som om innholdet er på vei.
+ */
+{
+  const antall = new Map<string, number>();
+  for (const r of RUBRIKKER.filter((r) => r.status === "lansert")) {
+    antall.set(r.kategori, (antall.get(r.kategori) ?? 0) + 1);
+  }
+  for (const k of KATEGORIER) {
+    if (!antall.get(k.id)) {
+      throw new Error(
+        `Kategorien «${k.navn}» har ingen rubrikker i drift. ` +
+          `Enten skal den ha minst én, eller så skal den fjernes fra KATEGORIER.`,
+      );
+    }
+  }
+}
+
 export function finnRubrikk(slug: string): Rubrikk | undefined {
   return RUBRIKKER.find((r) => r.slug === slug);
 }
@@ -84,7 +125,7 @@ export function finnRubrikk(slug: string): Rubrikk | undefined {
  * det er en redaksjonell beslutning — se `prioritet` i rubrikktype.ts.
  */
 export function rubrikkerIKategori(id: KategoriId): readonly Rubrikk[] {
-  return RUBRIKKER.filter((r) => r.kategori === id).sort(
+  return I_DRIFT.filter((r) => r.kategori === id).sort(
     (a, b) => b.prioritet - a.prioritet,
   );
 }
@@ -98,7 +139,23 @@ export function kategorierMedInnhold() {
 }
 
 export function antallUgodkjente(): number {
-  return RUBRIKKER.filter((r) => !r.godkjent).length;
+  return I_DRIFT.filter((r) => !r.godkjent).length;
+}
+
+/** Til gjennomgangssiden: det som venter, gruppert etter hvem som eier det. */
+export function gjennomgangPerRolle() {
+  const roller = new Map<string, Rubrikk[]>();
+  for (const r of TIL_GJENNOMGANG) {
+    const liste = roller.get(r.ansvarlig) ?? [];
+    liste.push(r);
+    roller.set(r.ansvarlig, liste);
+  }
+  return [...roller.entries()]
+    .map(([rolle, rubrikker]) => ({
+      rolle,
+      rubrikker: rubrikker.sort((a, b) => b.prioritet - a.prioritet),
+    }))
+    .sort((a, b) => b.rubrikker.length - a.rubrikker.length);
 }
 
 export type { Rubrikk, Blokk, Medie, Kilde, Punkt } from "../rubrikktype.ts";

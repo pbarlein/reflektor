@@ -10,13 +10,12 @@ import type { Rubrikk } from "../rubrikktype.ts";
 export const INTERNT: readonly Rubrikk[] = [
   {
     slug: "malet",
-    fremhevet:
-      "Start her. Alt annet i huben er midler til de to målene, og det er lettere å bruke et oppslagsverk når man vet hva det sikter mot.",
     nr: 11,
     tittel: "Målet: at kunder blir, og at de kommer tilbake",
     sammendrag:
       "De to målene alle i Reflektor jobber mot, og den ene måten vi kommer dit på. Alt annet i denne huben er midler til dette.",
-    kategori: "internt",
+    kategori: "posisjon",
+    status: "gjennomgang",
     medie: {
       type: "video",
       fil: "reels/produksjonsdag",
@@ -74,11 +73,14 @@ export const INTERNT: readonly Rubrikk[] = [
 
   {
     slug: "hva-abonnementet-inneholder",
+    fremhevet:
+      "Start her. Du kan ikke si noe troverdig til en kunde før du vet nøyaktig hva vi har lovet dem — og hva vi ikke har.",
     nr: 12,
     tittel: "Hva abonnementet inneholder — og hva det ikke gjør",
     sammendrag:
       "Leveransen, prisen og vilkårene ordrett slik de står på nettsiden. Kunn dette før du snakker med en kunde om omfang.",
-    kategori: "internt",
+    kategori: "posisjon",
+    status: "lansert",
     medie: {
       type: "bilde",
       fil: "arbeid/pa-vei",
@@ -150,7 +152,8 @@ export const INTERNT: readonly Rubrikk[] = [
     tittel: "Prisen sier vi høyt",
     sammendrag:
       "Pristransparens er den ene posisjoneringen Reflektor faktisk eier. Slik skrives prisen, og hvorfor vi aldri er vage om den.",
-    kategori: "internt",
+    kategori: "posisjon",
+    status: "lansert",
     medie: {
       type: "bilde",
       fil: "arbeid/dag6-vegg",

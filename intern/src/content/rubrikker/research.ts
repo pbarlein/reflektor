@@ -9,6 +9,7 @@ export const RESEARCH: readonly Rubrikk[] = [
     sammendrag:
       "Den samme oppskriften virker ikke for en restaurant og en industribedrift. Her er forskjellene som faktisk betyr noe, og hvordan du leser dem.",
     kategori: "research",
+    status: "lansert",
     medie: {
       type: "bilde",
       fil: "arbeid/noods",
@@ -227,6 +228,7 @@ export const RESEARCH: readonly Rubrikk[] = [
     sammendrag:
       "En halvtimes arbeid som gjør første strategiforslag konkret i stedet for generelt. Hva du ser etter, og hva du skal la være å notere.",
     kategori: "research",
+    status: "gjennomgang",
     medie: {
       type: "video",
       fil: "reels/gekko",
@@ -298,6 +300,7 @@ export const RESEARCH: readonly Rubrikk[] = [
     sammendrag:
       "Beslutningen om å bli eller dra tas før sekund tre. Her er hva som er dokumentert om åpninger, og hvordan du bygger et bibliotek i stedet for å finne opp én hver gang.",
     kategori: "research",
+    status: "lansert",
     medie: {
       type: "video",
       fil: "reels/antonburst",
@@ -442,6 +445,7 @@ export const RESEARCH: readonly Rubrikk[] = [
     sammendrag:
       "Ledelsen vet hva bedriften vil si. De i førstelinja vet hva folk faktisk lurer på. Fire spørsmål som gir en måneds innhold.",
     kategori: "research",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/servering",
@@ -501,6 +505,7 @@ export const RESEARCH: readonly Rubrikk[] = [
     sammendrag:
       "«Alle» er ikke en målgruppe, men en persona full av påfunn er ikke bedre. Slik beskriver du mottakeren på en måte som faktisk endrer hva du filmer.",
     kategori: "research",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/peppes1-1600",

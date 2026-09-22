@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { RUBRIKKER } from "../src/content/rubrikker/index.ts";
+import { KATEGORIER } from "../src/content/kategorier.ts";
+import { I_DRIFT, RUBRIKKER } from "../src/content/rubrikker/index.ts";
 import type { Rubrikk } from "../src/content/rubrikktype.ts";
 import {
   NY_MAKS,
@@ -43,6 +44,55 @@ test("hver rubrikk har et unikt nr", () => {
   }
 });
 
+test("hver kategori har nøyaktig to rubrikker i drift", () => {
+  /*
+   * Huben lanserte med to per kategori, og tallet er en redaksjonell
+   * beslutning, ikke en tilfeldighet. Blir det tre i én og én i en annen,
+   * er radene på forsiden ikke lenger like mye verdt — og da er det tatt
+   * en beslutning ingen har tatt.
+   */
+  for (const k of KATEGORIER) {
+    const antall = I_DRIFT.filter((r) => r.kategori === k.id).length;
+    assert.equal(
+      antall,
+      2,
+      `«${k.navn}» har ${antall} rubrikker i drift, ikke 2`,
+    );
+  }
+});
+
+test("alt som er skrevet har en gyldig status, og ingenting er tapt", () => {
+  for (const r of RUBRIKKER) {
+    assert.ok(
+      r.status === "lansert" || r.status === "gjennomgang",
+      `${r.slug}: ugyldig status «${r.status}»`,
+    );
+  }
+  assert.equal(
+    I_DRIFT.length + RUBRIKKER.filter((r) => r.status === "gjennomgang").length,
+    RUBRIKKER.length,
+    "alle rubrikker skal være enten i drift eller til gjennomgang",
+  );
+});
+
+test("den fremhevede rubrikken er i drift", () => {
+  /*
+   * «Start her» på forsiden peker på den fremhevede. Ligger den til
+   * gjennomgang, sender forsiden den ansatte til en side som ikke er
+   * vedtatt — og det er den ene lenken alle nye følger først.
+   *
+   * Dette skjedde faktisk: «Målet» var fremhevet, og ble tatt ut av
+   * lanseringen. Testen finnes fordi feilen ble gjort.
+   */
+  for (const r of RUBRIKKER.filter((x) => x.fremhevet)) {
+    assert.equal(
+      r.status,
+      "lansert",
+      `${r.slug} er fremhevet, men ligger til gjennomgang`,
+    );
+  }
+});
+
 test("høyst én rubrikk er fremhevet, og den sier hvorfor", () => {
   /*
    * «Start her» peker på én ting. To fremhevede rubrikker peker i to
@@ -75,7 +125,10 @@ test("bitmasken for hele huben får plass i en informasjonskapsel", () => {
    * Blir den stor igjen, er valget feil og skal tas opp på nytt.
    */
   const lengde = skrivMaske(RUBRIKKER.map((r) => r.nr)).length;
-  assert.ok(lengde < 120, `bitmasken er ${lengde} tegn — for mye for en kapsel`);
+  assert.ok(
+    lengde < 120,
+    `bitmasken er ${lengde} tegn — for mye for en kapsel`,
+  );
 });
 
 test("tom og ødelagt kapsel gir tomt sett, ikke en feil", () => {
@@ -142,7 +195,11 @@ test("neste rubrikk er den fremhevede, ellers høyest prioritet", () => {
   const b = lag(2, "2026-09-01", { prioritet: 99 });
   const c = lag(3, "2026-09-01", { prioritet: 50, fremhevet: "Start her." });
 
-  assert.equal(nesteRubrikk([a, b, c], new Set())?.slug, "r3", "fremhevet først");
+  assert.equal(
+    nesteRubrikk([a, b, c], new Set())?.slug,
+    "r3",
+    "fremhevet først",
+  );
   assert.equal(
     nesteRubrikk([a, b, c], new Set([3]))?.slug,
     "r2",

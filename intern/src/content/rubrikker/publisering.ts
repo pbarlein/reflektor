@@ -9,6 +9,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
     sammendrag:
       "Kunden kjøper ikke 8–10 videoer. De kjøper at kontoen aldri står stille. Slik fordeles en måneds materiale så rytmen tåler at noe går galt.",
     kategori: "publisering",
+    status: "lansert",
     medie: {
       type: "video",
       fil: "reels/soulcake",
@@ -88,6 +89,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
     sammendrag:
       "Visninger er det minst nyttige tallet på skjermen. Her er hva du faktisk skal se på, og hvordan du snakker om det med en kunde uten å love noe.",
     kategori: "publisering",
+    status: "lansert",
     medie: {
       type: "bilde",
       fil: "arbeid/kontor",
@@ -202,6 +204,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
     sammendrag:
       "Bildeteksten leses av dem som allerede har stoppet. Hva den skal gjøre, og hvorfor emneknagger ikke hører hjemme i den.",
     kategori: "publisering",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/mat2-vegg",
@@ -276,6 +279,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
     sammendrag:
       "Det som publiseres på Instagram krysspubliseres til Facebook. Hva som følger med automatisk, og hva som må sjekkes for hånd.",
     kategori: "publisering",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/aktivering-vegg",
@@ -330,6 +334,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
     sammendrag:
       "Det kommer til å skje, jevnlig. Hvordan du finner ut hvorfor uten å overtolke, og hva du sier til kunden.",
     kategori: "publisering",
+    status: "gjennomgang",
     medie: {
       type: "bilde",
       fil: "arbeid/spa",
@@ -381,6 +386,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
     sammendrag:
       "Noen bransjer har regler for hva som kan sies i markedsføring. Bryter vi dem, er det kunden som får tilsynet på nakken. Her er hva du må vite for å stille riktig spørsmål.",
     kategori: "publisering",
+    status: "gjennomgang",
     medie: {
       type: "video",
       fil: "arbeid/spa",
