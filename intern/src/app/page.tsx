@@ -53,28 +53,33 @@ export default async function Forside() {
 
   return (
     <>
-      <Container>
-        <div className="pt-6 pb-12 sm:pt-8">
-          {/*
-            HILSENEN ER FLYTTET INN I HEROEN. Den sto som en ensom linje
-            over et kort og skjøv alt ned uten å si noe. Inne i heroen, på
-            linje med etiketten, gjør den samme jobb på null piksler.
-          */}
-          <Maalet navn={fornavn(bruker)} />
+      {/*
+        TOPPDELEN LIGGER UTENFOR CONTAINEREN, fra kant til kant.
 
+        Den har sin egen indre bredde som er identisk med containerens, så
+        teksten står på linje med alt annet — men flaten under teksten
+        stopper ikke i en usynlig marg. Det er det eneste elementet på
+        siden som ikke skal se ut som innhold.
+
+        HILSENEN LIGGER INNE I DEN. Den sto som en ensom linje over et kort
+        og skjøv alt ned uten å si noe. Inne i toppdelen, på linje med
+        etiketten, gjør den samme jobb på null piksler.
+      */}
+      <Maalet navn={fornavn(bruker)} />
+
+      <Container>
+        <div className="pt-10 pb-12 sm:pt-12">
           {/*
             FRAMDRIFTEN STÅR FØR SØKET. Søket er for den som vet hva hen
             leter etter. Den som ikke vet, trenger én dør — ikke et felt
             hen ikke vet hva skal fylles med.
           */}
-          <div className="mt-8 sm:mt-10">
-            <Fremdrift
-              antall={I_DRIFT.length}
-              lest={I_DRIFT.filter((r) => lest.has(r.nr)).length}
-              neste={neste}
-              ugodkjente={antallUgodkjente()}
-            />
-          </div>
+          <Fremdrift
+            antall={I_DRIFT.length}
+            lest={I_DRIFT.filter((r) => lest.has(r.nr)).length}
+            neste={neste}
+            ugodkjente={antallUgodkjente()}
+          />
 
           {/*
             SØKET STÅR FOR SEG, over radene og under målet.
