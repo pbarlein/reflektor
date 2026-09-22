@@ -15,14 +15,15 @@ export const OPPTAK: readonly Rubrikk[] = [
       fil: "reels/thewell",
       alt: "Behandling ved en flislagt vegg i dempet lys",
     },
-    oppdatert: "2026-09-21",
-    lesetid: 5,
+    oppdatert: "2026-09-22",
+    lesetid: 6,
     godkjent: false,
     ansvarlig: "Produsent",
     prioritet: 100,
     oppsummering: [
       { tekst: "Hvorfor lyd er i en egen klasse", anker: "klasse" },
       { tekst: "Sjekken på hver nye lokasjon", anker: "sjekk" },
+      { tekst: "Avstand slår alt annet utstyr", anker: "avstand" },
       {
         tekst: "Romtone: tretti sekunder som redder klippingen",
         anker: "romtone",
@@ -87,6 +88,22 @@ export const OPPTAK: readonly Rubrikk[] = [
             "Her er samme grep brukt utendørs, og grunnen er en annen: vind. En mygg på kragen, tett på munnen, gir lyd som tåler luft i bevegelse. Legg også merke til at lyset er jevnt og kommer forfra, uten harde skygger i ansiktet. De har valgt sted for lyd og lys i samme vurdering, ikke først det ene og så det andre.",
         },
       },
+      { type: "seksjon", id: "avstand", tittel: "Avstand slår utstyr" },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det tredje punktet på lista er det viktigste, og det er fysikk og ikke smak. Lydstyrke faller med kvadratet av avstanden: dobler du avstanden fra munnen til mikrofonen, får du omtrent en fjerdedel av lydenergien inn. Rommet — ventilasjonen, kjøledisken, folkene i bakgrunnen — står derimot omtrent like sterkt uansett hvor mikrofonen er.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Konsekvensen er at avstand ikke bare gjør stemmen svakere. Den gjør forholdet mellom stemme og rom dårligere, og det forholdet er det du ikke kan reparere etterpå. En rimelig mygg tjue centimeter fra munnen slår en dyr mikrofon to meter unna, hver gang. Det er derfor svaret på «lyden ble dårlig» nesten aldri er bedre utstyr, men kortere avstand.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "En ting til, som går motsatt vei av magefølelsen: du skal ikke spille inn høyt for at det skal bli «høyt nok». Kringkasting og strømmetjenester normaliserer lydstyrke på leveransen — den europeiske anbefalingen EBU R 128 setter for eksempel et felles målnivå for hele programmet — og det samme gjør plattformene vi publiserer på. Et opptak som klipper i toppene, er ødelagt for godt. Et opptak som er litt lavt, men rent, løftes på et sekund.",
+      },
       { type: "seksjon", id: "romtone", tittel: "Romtone" },
       {
         type: "avsnitt",
@@ -103,6 +120,26 @@ export const OPPTAK: readonly Rubrikk[] = [
         type: "avsnitt",
         tekst:
           "Hør på lyden mens det filmes, ikke bare før. En mikrofon som løsner midt i en tagning, hører du med en gang og ser aldri. Det samme gjelder en jakke som skraper, et armbånd som klirrer og en telefon i lomma som gir interferens.",
+      },
+    ],
+    kilder: [
+      {
+        tittel:
+          "Point Source Audio: 4 methods of lav mic placement — hvorfor avstand til munnen er avgjørende",
+        url: "https://www.point-sourceaudio.com/best-place-to-put-a-lavalier/",
+        sjekket: "2026-09-22",
+      },
+      {
+        tittel:
+          "Sweetwater inSync: Inverse Square Law — lydnivå faller 6 dB per dobling av avstand",
+        url: "https://www.sweetwater.com/insync/inverse-square-law/",
+        sjekket: "2026-09-22",
+      },
+      {
+        tittel:
+          "EBU R 128 (v5.0, november 2023): Loudness normalisation and permitted maximum level of audio signals",
+        url: "https://tech.ebu.ch/publications/r128",
+        sjekket: "2026-09-22",
       },
     ],
   },
@@ -340,8 +377,8 @@ export const OPPTAK: readonly Rubrikk[] = [
       fil: "arbeid/portrett-vegg",
       alt: "Portrett av en person utendørs i dagslys",
     },
-    oppdatert: "2026-09-21",
-    lesetid: 5,
+    oppdatert: "2026-09-22",
+    lesetid: 7,
     godkjent: false,
     ansvarlig: "Produsent",
     prioritet: 94,
@@ -353,6 +390,7 @@ export const OPPTAK: readonly Rubrikk[] = [
       { tekst: "Fem grep som virker nesten alltid", anker: "grep" },
       { tekst: "Aldri be noen «være naturlig»", anker: "naturlig" },
       { tekst: "Når du skal gi deg", anker: "gi-deg" },
+      { tekst: "Samtykke: hva som faktisk kreves", anker: "samtykke" },
     ],
     innhold: [
       { type: "seksjon", id: "nervos", tittel: "Nervøsitet syns" },
@@ -365,6 +403,16 @@ export const OPPTAK: readonly Rubrikk[] = [
         type: "avsnitt",
         tekst:
           "Det er også en kundeleveranse. En ansatt som fikk en dårlig opplevelse foran kamera, sier nei neste gang. Da har vi gjort neste produksjonsdag vanskeligere.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Én ting er verdt å vite, fordi du kan si den høyt: folk overvurderer systematisk hvor mye andre legger merke til dem. Gilovich, Medvec og Savitsky kalte det rampelyseffekten og målte den i flere forsøk — deltakerne trodde langt flere ville huske hva de hadde på seg eller hva de sa, enn det som faktisk var tilfelle. Vi tar utgangspunkt i vår egen opplevelse av situasjonen og justerer for lite for at andre ikke sitter inni den.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Praktisk: «ingen kommer til å se på håret ditt, de ser på det du gjør» er ikke en høflighet. Det er dokumentert riktig, og det er verdt å si det som om du vet det — for det gjør du.",
       },
       { type: "seksjon", id: "grep", tittel: "Fem grep" },
       {
@@ -432,16 +480,57 @@ export const OPPTAK: readonly Rubrikk[] = [
         tekst:
           "Det er den mest brukte og minst nyttige regien som finnes. Den gir personen en oppgave hen ikke kan løse, og bekrefter samtidig at hen ikke er naturlig nå. Gi en konkret handling i stedet: «se på meg, ikke i kameraet», «fortell det til meg som om jeg aldri har vært her».",
       },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det er ikke bare klønete — det virker motsatt vei. Wegners teori om ironiske prosesser beskriver hvorfor: for å kontrollere at du ikke virker anspent, må du hele tiden lete etter tegn på at du er det. Kontrollen krever altså at du overvåker nøyaktig det du prøver å unngå, og under press og tidsnød tar overvåkningen over. Å be noen slutte å virke nervøs, er å be dem tenke på nervøsiteten sin.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Derfor virker en handling bedre enn en instruks om å føle noe. «Skjær opp den ene til» gir noe å gjøre. «Slapp av» gir noe å passe på.",
+      },
       { type: "seksjon", id: "gi-deg", tittel: "Når du skal gi deg" },
       {
         type: "avsnitt",
         tekst:
           "Noen kommer ikke til å bli komfortable, og det er greit. Da filmer du hendene, arbeidet og resultatet i stedet, og bruker stemmen til noen andre. En video uten ansiktet deres er uendelig mye bedre enn en video der de ser ulykkelige ut.",
       },
+      { type: "seksjon", id: "samtykke", tittel: "Samtykke" },
+      {
+        type: "avsnitt",
+        tekst:
+          "Datatilsynet skiller mellom portrettbilder, der én eller flere bestemte personer er hovedmotivet, og situasjonsbilder, der ingen enkeltperson er i fokus. Hovedregelen er at arbeidsgiver alltid bør spørre om samtykke før bilder eller film der ansatte kan gjenkjennes, publiseres. Alt vi lager for en kunde er i praksis portrett: vi filmer bestemte mennesker, tett på, for å publisere det.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "I praksis betyr det tre ting. Spør før du filmer, ikke etter. Si hvor det skal publiseres — «Instagram og Facebook for arbeidsgiveren din» er konkret nok. Og godta et nei uten å forhandle: et samtykke som ble gitt fordi sjefen sto i rommet, er ikke verdt papiret.",
+      },
       {
         type: "merknad",
         tekst:
-          "Spør alltid om samtykke til at opptaket brukes, og si hvor det skal publiseres. Det er både riktig og påkrevd — og det er lettere å spørre før enn å fjerne etterpå.",
+          "Ansvaret for samtykke ligger hos kunden som arbeidsgiver, ikke hos oss. Men det er vi som står der med kameraet, og det er vi som oppdager at ingen har spurt. Spør, og si fra til kundeansvarlig hvis svaret er uklart.",
+      },
+    ],
+    kilder: [
+      {
+        tittel:
+          "Datatilsynet: Bilder av ansatte på nett — portrettbilder, situasjonsbilder og samtykke",
+        url: "https://www.datatilsynet.no/personvern-pa-ulike-omrader/personvern-pa-arbeidsplassen/bilder-ansatte_nett/",
+        sjekket: "2026-09-22",
+      },
+      {
+        tittel:
+          "Gilovich, Medvec & Savitsky (2000): The spotlight effect in social judgment. Journal of Personality and Social Psychology 78(2), 211–222",
+        url: "https://doi.org/10.1037/0022-3514.78.2.211",
+        sjekket: "2026-09-22",
+      },
+      {
+        tittel:
+          "Wegner (1994): Ironic processes of mental control. Psychological Review 101(1), 34–52",
+        url: "https://doi.org/10.1037/0033-295X.101.1.34",
+        sjekket: "2026-09-22",
       },
     ],
   },

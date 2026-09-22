@@ -15,8 +15,8 @@ export const REDIGERING: readonly Rubrikk[] = [
       fil: "reels/antonburst",
       alt: "Nærbilde av en sko som sparker opp jord i fart",
     },
-    oppdatert: "2026-09-21",
-    lesetid: 5,
+    oppdatert: "2026-09-22",
+    lesetid: 6,
     godkjent: false,
     ansvarlig: "Redigerer",
     prioritet: 100,
@@ -36,6 +36,16 @@ export const REDIGERING: readonly Rubrikk[] = [
         type: "avsnitt",
         tekst:
           "En video i en feed konkurrerer ikke med andre videoer. Den konkurrerer med tommelen. Seeren har ikke valgt å se på noe bestemt, og avgjørelsen tas på det som er i bildet — ikke på det som kommer.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Instagram har publisert hva de faktisk anslår for en reel: hvor sannsynlig det er at du deler den videre, at du ser den helt ut, at du liker den, og at du går til lydsiden. To av de fire avgjøres i praksis av åpningen. Den som drar etter to sekunder, verken fullfører eller deler.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Legg til at mye av avspillingen skjer uten lyd. I en studie med 161 deltakere ble det samme tekstede innholdet vist med og uten lyd: uten lyd rapporterte deltakerne langt høyere anstrengelse og frustrasjon, og de brukte lengre tid på hver undertekst. Åpningen må altså gi mening for noen som ikke hører noe, og som allerede jobber hardere enn du tror.",
       },
       { type: "seksjon", id: "skal", tittel: "Hva som skal skje" },
       {
@@ -103,6 +113,20 @@ export const REDIGERING: readonly Rubrikk[] = [
           "Se videoen på telefonen, uten lyd, i en feed. Er det noe som gjør at du ikke drar videre? Er svaret nei, er det åpningen som må endres — ikke resten.",
       },
     ],
+    kilder: [
+      {
+        tittel:
+          "Instagram: Instagram Ranking Explained — How Our Algorithm Works",
+        url: "https://about.instagram.com/blog/announcements/instagram-ranking-explained",
+        sjekket: "2026-09-22",
+      },
+      {
+        tittel:
+          "Szarkowska m.fl. (2024): Watching subtitled videos with the sound off. PLOS ONE 19(10), e0306251",
+        url: "https://doi.org/10.1371/journal.pone.0306251",
+        sjekket: "2026-09-22",
+      },
+    ],
   },
 
   {
@@ -118,8 +142,8 @@ export const REDIGERING: readonly Rubrikk[] = [
       fil: "reels/zeroh",
       alt: "Folk samlet ved en stand på et utendørsarrangement",
     },
-    oppdatert: "2026-09-21",
-    lesetid: 5,
+    oppdatert: "2026-09-22",
+    lesetid: 6,
     godkjent: false,
     ansvarlig: "Redigerer",
     prioritet: 92,
@@ -135,12 +159,27 @@ export const REDIGERING: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Teksting står i leveransen, og den er ikke et tilgjengelighetstillegg — det er standardmåten innhold i en feed blir sett på. Mesteparten av avspillingen skjer uten lyd, på steder der lyd ikke er et alternativ.",
+          "Teksting står i leveransen, og den er ikke et tilgjengelighetstillegg — det er standardmåten innhold i en feed blir sett på. Store deler av avspillingen skjer uten lyd, på steder der lyd ikke er et alternativ.",
       },
       {
         type: "avsnitt",
         tekst:
           "Den gjør også innholdet tilgjengelig for folk som ikke hører godt. Det er en selvfølge, og det er verdt å si høyt: vi tekster alt, uten at noen må be om det.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det er verdt å vite hva teksting faktisk gjør og ikke gjør. En studie med 161 deltakere viste de samme tekstede videoene med og uten lyd. Forståelsen holdt seg nesten like høy uten lyd — 78 mot 81 prosent. Tekstingen gjorde altså jobben sin.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Men den gjorde den dyrere for seeren. Uten lyd oppga deltakerne klart høyere opplevd vanskelighet, innsats og frustrasjon, de følte seg mindre dratt inn i innholdet og likte det mindre. Blikkmålingene viste hvorfor: de brukte lengre tid på hver undertekst og hoppet sjeldnere over dem, fordi teksten var den eneste kanalen igjen.",
+      },
+      {
+        type: "merknad",
+        tekst:
+          "Dette er det praktiske poenget i hele rubrikken. Uten lyd er tekstingen ikke en støtte til innholdet — den ER innholdet, og den leses saktere enn du tror. Derfor: færre ord, lenger på skjermen, og aldri to tekster som konkurrerer om blikket samtidig.",
       },
       { type: "seksjon", id: "krav", tittel: "Fem krav" },
       {
@@ -212,6 +251,12 @@ export const REDIGERING: readonly Rubrikk[] = [
           "Meta Business Help Centre: About text overlays and the Safe Zone for ads in Stories and Reels",
         url: "https://www.facebook.com/business/help/980593475366490/",
         sjekket: "2026-09-21",
+      },
+      {
+        tittel:
+          "Szarkowska, Ragni, Szkriba, Black, Orrego-Carmona & Kruger (2024): Watching subtitled videos with the sound off affects viewers’ comprehension, cognitive load, immersion, enjoyment, and gaze patterns. PLOS ONE 19(10), e0306251",
+        url: "https://doi.org/10.1371/journal.pone.0306251",
+        sjekket: "2026-09-22",
       },
     ],
   },

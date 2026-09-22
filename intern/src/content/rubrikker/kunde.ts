@@ -22,8 +22,8 @@ export const KUNDE: readonly Rubrikk[] = [
       fil: "reels/egon",
       alt: "Anrettede retter på et bord, sett ovenfra",
     },
-    oppdatert: "2026-09-21",
-    lesetid: 6,
+    oppdatert: "2026-09-22",
+    lesetid: 7,
     godkjent: false,
     ansvarlig: "Daglig leder",
     prioritet: 100,
@@ -44,6 +44,16 @@ export const KUNDE: readonly Rubrikk[] = [
         type: "avsnitt",
         tekst:
           "Legg merke til hva som IKKE står der. Ikke «for dårlig kvalitet på videoene». Ikke «for lite kreativt». De tre handler alle om hvordan kunden opplever å jobbe med oss mellom leveransene.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Innvendingen mot slike undersøkelser er rimelig: folk oppgir ikke alltid den virkelige grunnen til at de gikk. Derfor er det verdt å kjenne til ett forsøk som måler det motsatte veien. Retana, Forman og Wu fulgte 2 673 nye kunder hos en skytjenesteleverandør. 366 av dem ble plukket ut til å få uoppfordret hjelp i gang — ingen bedre produkt, bare kontakt de ikke hadde bedt om. Blant dem ble frafallet den første uken halvert.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det er ikke vår bransje, og effekten avtok etter den første uken. Men det er et kontrollert forsøk, og det peker samme vei som undersøkelsene: initiativet fra leverandøren er i seg selv det som holder på folk.",
       },
       {
         type: "merknad",
@@ -104,6 +114,12 @@ export const KUNDE: readonly Rubrikk[] = [
         url: "https://focus-digital.co/average-marketing-agency-churn/",
         sjekket: "2026-09-21",
       },
+      {
+        tittel:
+          "Retana, Forman & Wu (2016): Proactive Customer Education, Customer Retention, and Demand for Technology Support — Evidence from a Field Experiment. Manufacturing & Service Operations Management 18(1), 34–50",
+        url: "https://doi.org/10.1287/msom.2015.0547",
+        sjekket: "2026-09-22",
+      },
     ],
   },
 
@@ -120,8 +136,8 @@ export const KUNDE: readonly Rubrikk[] = [
       fil: "arbeid/pa-vei",
       alt: "Person med bagasje på vei gjennom en parkeringskjeller",
     },
-    oppdatert: "2026-09-21",
-    lesetid: 5,
+    oppdatert: "2026-09-22",
+    lesetid: 6,
     godkjent: false,
     ansvarlig: "Kundeansvarlig",
     prioritet: 96,
@@ -176,6 +192,30 @@ export const KUNDE: readonly Rubrikk[] = [
         type: "merknad",
         tekst:
           "Et forslag trenger ikke være stort for å telle. Det må bare være ditt, og det må vise at du har sett på dem siden sist.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "At retningen betyr noe i seg selv, er målt. I et feltforsøk hos en skytjenesteleverandør fikk 366 av 2 673 nye kunder uoppfordret hjelp i gang. De stilte 19,6 prosent færre spørsmål den første uken, brukte tjenesten 46,6 prosent mer i løpet av de neste åtte månedene, og frafallet den første uken ble halvert. Produktet var identisk. Det eneste som skilte gruppene, var hvem som tok kontakt først.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Legg merke til det andre tallet også: de spurte MINDRE. Proaktiv kontakt er ikke mer arbeid som legges oppå det du allerede gjør. Det flytter arbeidet til et tidspunkt du velger selv, fra et tidspunkt kunden velger.",
+      },
+    ],
+    kilder: [
+      {
+        tittel:
+          "Retana, Forman & Wu (2016): Proactive Customer Education, Customer Retention, and Demand for Technology Support — Evidence from a Field Experiment. Manufacturing & Service Operations Management 18(1), 34–50",
+        url: "https://doi.org/10.1287/msom.2015.0547",
+        sjekket: "2026-09-22",
+      },
+      {
+        tittel:
+          "ALM Corp: Why clients fire marketing agencies — common reasons and warning signs",
+        url: "https://almcorp.com/blog/why-clients-fire-marketing-agencies-retention-scripts/",
+        sjekket: "2026-09-21",
       },
     ],
   },

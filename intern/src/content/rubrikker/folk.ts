@@ -368,8 +368,8 @@ export const FOLK: readonly Rubrikk[] = [
       fil: "arbeid/mat1-1600",
       alt: "Fire personer i arbeidstøy samlet i et produksjonslokale",
     },
-    oppdatert: "2026-09-21",
-    lesetid: 4,
+    oppdatert: "2026-09-22",
+    lesetid: 5,
     godkjent: false,
     ansvarlig: "Daglig leder",
     prioritet: 72,
@@ -391,6 +391,16 @@ export const FOLK: readonly Rubrikk[] = [
         type: "avsnitt",
         tekst:
           "En bedrifts kvalitetsnivå er ikke det beste den har levert. Det er det dårligste den har sluppet gjennom. Kunden husker ikke snittet — de husker den ene videoen som var uskarp, og de lurer på om neste blir sånn.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Dette er ikke en ordspråk. Baumeister og kollegene gikk i 2001 gjennom forskningen på tvers av hverdagshendelser, relasjoner, inntrykk av andre mennesker og læring, og fant det samme overalt: negative hendelser veier tyngre enn positive av samme størrelse. Negative inntrykk dannes raskere, huskes bedre og er vanskeligere å endre enn positive.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Regnestykket for oss blir ubehagelig enkelt. Ni gode videoer og én dårlig er ikke ni minus én. Den dårlige teller mer, den sitter lenger, og den er det kunden nevner når noen spør hvordan det går med byrået deres.",
       },
       { type: "seksjon", id: "aldri", tittel: "Fem ting som aldri går ut" },
       {
@@ -422,6 +432,14 @@ export const FOLK: readonly Rubrikk[] = [
         kilde: "Utkast — til diskusjon",
       },
     ],
+    kilder: [
+      {
+        tittel:
+          "Baumeister, Bratslavsky, Finkenauer & Vohs (2001): Bad is stronger than good. Review of General Psychology 5(4), 323–370",
+        url: "https://doi.org/10.1037/1089-2680.5.4.323",
+        sjekket: "2026-09-22",
+      },
+    ],
   },
 
   {
@@ -437,8 +455,8 @@ export const FOLK: readonly Rubrikk[] = [
       fil: "arbeid/kafe2-vegg",
       alt: "Person i rosa hettegenser utendørs med armene hevet",
     },
-    oppdatert: "2026-09-21",
-    lesetid: 3,
+    oppdatert: "2026-09-22",
+    lesetid: 4,
     godkjent: false,
     ansvarlig: "Produsent",
     prioritet: 64,
@@ -446,6 +464,7 @@ export const FOLK: readonly Rubrikk[] = [
       { tekst: "Tjue minutter, så spør", anker: "tjue" },
       { tekst: "Slik spør du så du får et svar", anker: "hvordan" },
       { tekst: "Er du på lokasjon: ring", anker: "lokasjon" },
+      { tekst: "Hvorfor terskelen for å spørre er for høy", anker: "terskel" },
     ],
     innhold: [
       { type: "seksjon", id: "tjue", tittel: "Tjue minutter" },
@@ -470,6 +489,34 @@ export const FOLK: readonly Rubrikk[] = [
         type: "merknad",
         tekst:
           "Det er alltid greit å ringe. Ingen her kommer til å synes at du forstyrret.",
+      },
+      {
+        type: "seksjon",
+        id: "terskel",
+        tittel: "Hvorfor terskelen er for høy",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Grunnen til at folk venter for lenge, er sjelden at de er sta. Den er at de tror de er til bry. Flynn og Bohns målte dette direkte: folk undervurderte med opptil femti prosent hvor sannsynlig det var at andre ville si ja til en direkte forespørsel om hjelp.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Forklaringen de fant, er verdt å kjenne. Den som spør, tenker på hva det koster den andre å si ja — tid, avbrudd, bry. Den som blir spurt, kjenner mest på hva det koster å si nei. Derfor sier folk ja langt oftere enn vi regner med, og derfor er kollegaen din mindre irritert enn du frykter.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det har en konsekvens som går begge veier. Du skal spørre tidligere enn det føles naturlig. Og når noen spør deg, skal du huske at de brukte mer mot på det enn du tror.",
+      },
+    ],
+    kilder: [
+      {
+        tittel:
+          "Flynn & Lake (Bohns) (2008): If you need help, just ask — underestimating compliance with direct requests for help. Journal of Personality and Social Psychology 95(1), 128–143",
+        url: "https://doi.org/10.1037/0022-3514.95.1.128",
+        sjekket: "2026-09-22",
       },
     ],
   },

@@ -298,7 +298,7 @@ export const RESEARCH: readonly Rubrikk[] = [
     nr: 48,
     tittel: "Åpninger som faktisk holder på folk",
     sammendrag:
-      "Beslutningen om å bli eller dra tas før sekund tre. Her er hva som er dokumentert om åpninger, og hvordan du bygger et bibliotek i stedet for å finne opp én hver gang.",
+      "Åpningen er det eneste i en ferdig video du kan bytte uten å filme på nytt. Her er hva Instagram selv sier avgjør distribusjon, og hvordan du bygger et bibliotek i stedet for å finne opp én åpning hver gang.",
     kategori: "research",
     status: "lansert",
     medie: {
@@ -306,8 +306,8 @@ export const RESEARCH: readonly Rubrikk[] = [
       fil: "reels/antonburst",
       alt: "Nærbilde av en sko som sparker opp jord i fart",
     },
-    oppdatert: "2026-09-21",
-    lesetid: 5,
+    oppdatert: "2026-09-22",
+    lesetid: 6,
     godkjent: false,
     ansvarlig: "Produsent",
     prioritet: 90,
@@ -326,11 +326,21 @@ export const RESEARCH: readonly Rubrikk[] = [
         tekst:
           "En hook er de første ordene eller det første bildet. Den avgjør om noen ser videre, og den er det eneste elementet i en ferdig video som kan byttes uten å filme på nytt. Det gjør den til det billigste stedet å bli bedre.",
       },
-      { type: "seksjon", id: "vet", tittel: "Hva vi vet" },
+      { type: "seksjon", id: "vet", tittel: "Hva vi faktisk vet" },
       {
         type: "avsnitt",
         tekst:
-          "To ting er godt nok dokumentert til å legges til grunn. Det første: beslutningen tas svært tidlig, innen de første sekundene. Det andre: teksting øker hvor lenge folk blir — de fleste ser uten lyd.",
+          "Instagram har selv publisert hva som styrer distribusjonen. For reels er de viktigste anslagene plattformen gjør: hvor sannsynlig det er at du deler videoen videre, at du ser den helt ut, at du liker den, og at du går til lydsiden. Legg merke til rekkefølgen — deling og fullføring står foran likes. Åpningen har derfor én jobb, og det er å kjøpe de neste sekundene.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det andre vi vet, handler om hva som skjer når lyden er av. En studie med 161 deltakere viste det samme tekstede innholdet med og uten lyd. Uten lyd falt forståelsen fra 81 til 78 prosent — en liten forskjell. Men opplevd anstrengelse og frustrasjon steg kraftig, og deltakerne brukte lengre tid på å lese hver undertekst og hoppet sjeldnere over dem.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det praktiske poenget er ikke at folk forstår mindre uten lyd. Det er at de jobber hardere for det samme. En åpning som krever lyd for å gi mening, tar betalt før den har levert noe — og seeren har et alternativ som er ett sveip unna.",
       },
       {
         type: "merknad",
@@ -430,6 +440,18 @@ export const RESEARCH: readonly Rubrikk[] = [
       },
     ],
     kilder: [
+      {
+        tittel:
+          "Instagram: Instagram Ranking Explained — How Our Algorithm Works",
+        url: "https://about.instagram.com/blog/announcements/instagram-ranking-explained",
+        sjekket: "2026-09-22",
+      },
+      {
+        tittel:
+          "Szarkowska m.fl. (2024): Watching subtitled videos with the sound off affects viewers’ comprehension, cognitive load, immersion, enjoyment, and gaze patterns. PLOS ONE 19(10)",
+        url: "https://doi.org/10.1371/journal.pone.0306251",
+        sjekket: "2026-09-22",
+      },
       {
         tittel: "Metricool: Instagram Reel analytics — retention and skip rate",
         url: "https://metricool.com/instagram-reel-analytics/",

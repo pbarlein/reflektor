@@ -15,14 +15,18 @@ export const PLANLEGGING: readonly Rubrikk[] = [
       fil: "reels/produksjonsdag",
       alt: "Kamera rigget på stativ i en døråpning under en produksjonsdag",
     },
-    oppdatert: "2026-09-21",
-    lesetid: 6,
+    oppdatert: "2026-09-22",
+    lesetid: 7,
     godkjent: false,
     ansvarlig: "Produsent",
     prioritet: 100,
     oppsummering: [
       { tekst: "Regnestykket som må gå opp", anker: "regnestykke" },
       { tekst: "Planlegg etter oppsett, ikke etter video", anker: "oppsett" },
+      {
+        tekst: "Hvorfor hver omstilling koster mer enn den ser ut",
+        anker: "bytte",
+      },
       { tekst: "Fem steg fra liste til dagsplan", anker: "steg" },
       { tekst: "Luken du alltid skal legge inn", anker: "luke" },
       { tekst: "Det som oftest velter en dag", anker: "velter" },
@@ -44,6 +48,22 @@ export const PLANLEGGING: readonly Rubrikk[] = [
         type: "avsnitt",
         tekst:
           "Typisk lander 8–10 videoer på tre til fem oppsett. Er det flere enn fem, er dagen for spredt, og da mister du tid du trodde du hadde.",
+      },
+      { type: "seksjon", id: "bytte", tittel: "Hvorfor omstilling koster" },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det er lett å tro at kostnaden ved å hoppe mellom oppgaver er tiden du bruker på å flytte stativet. Den er større enn som så. Rubinstein, Meyer og Evans viste i fire eksperimenter at selve omstillingen mellom to oppgaver koster tid i seg selv, og at kostnaden vokser jo mer sammensatte reglene for oppgavene er.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "En produksjonsdag er nettopp sammensatte regler: lys, lyd, utsnitt, hvem som er med og hva videoen skal si. Bytter du oppsett åtte ganger fordi listen din er sortert etter video, betaler du den kostnaden åtte ganger — og du betaler den i konsentrasjon, ikke bare i minutter. Det er derfor en dag med fire oppsett og ti videoer er roligere enn en dag med ti oppsett og ti videoer, selv om opptakene er like mange.",
+      },
+      {
+        type: "merknad",
+        tekst:
+          "Forskningen er gjort i laboratorium, på enklere oppgaver enn en produksjonsdag. Retningen er godt dokumentert, men ikke bruk den som et tall — bruk den som en grunn til å gruppere.",
       },
       {
         type: "eksempel",
@@ -110,6 +130,20 @@ export const PLANLEGGING: readonly Rubrikk[] = [
         type: "merknad",
         tekst:
           "Skal kunden ha stillbilder, må det avklares i planleggingen. Si det som et spørsmål hver gang, ikke vent på at de skal komme på det.",
+      },
+    ],
+    kilder: [
+      {
+        tittel:
+          "Rubinstein, Meyer & Evans (2001): Executive control of cognitive processes in task switching. Journal of Experimental Psychology: Human Perception and Performance 27(4), 763–797",
+        url: "https://doi.org/10.1037/0096-1523.27.4.763",
+        sjekket: "2026-09-22",
+      },
+      {
+        tittel:
+          "Reflektor: leveransen slik den står på nettsiden — én produksjonsdag i måneden, 8–10 videoer",
+        url: "https://www.reflektor.no/sosiale-medier-byra",
+        sjekket: "2026-09-22",
       },
     ],
   },
@@ -245,8 +279,8 @@ export const PLANLEGGING: readonly Rubrikk[] = [
       fil: "arbeid/scene-vegg",
       alt: "Presentasjon foran storskjerm i en konferansesal",
     },
-    oppdatert: "2026-09-21",
-    lesetid: 3,
+    oppdatert: "2026-09-22",
+    lesetid: 4,
     godkjent: false,
     ansvarlig: "Kundeansvarlig",
     prioritet: 90,
@@ -284,11 +318,30 @@ export const PLANLEGGING: readonly Rubrikk[] = [
         tekst:
           "Forslaget trenger ikke være stort. «Dere har en ny rett på menyen fra mandag — vi filmer den først på neste produksjonsdag» er nok. Poenget er retningen: vi kommer med noe, i stedet for å be om noe.",
       },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det er ikke bare god tone. Undersøkelser av hvorfor kunder bytter byrå lander gjentatte ganger på manglende proaktiv rådgivning som en av toppårsakene — altså nøyaktig det å møte opp uten å ha noe med seg. Og i et feltforsøk hos en skytjenesteleverandør ble frafallet den første uken halvert blant de kundene som fikk uoppfordret hjelp i gang, sammenlignet med dem som måtte spørre selv. Initiativet var hele forskjellen.",
+      },
       { type: "seksjon", id: "tall", tittel: "Når du ikke kan tallet" },
       {
         type: "avsnitt",
         tekst:
           "Si at du sjekker og svarer samme dag. Et anslag som viser seg å være feil, koster mer enn en times venting — og det koster på et sted som er dyrt å reparere, nemlig om kunden kan stole på det du sier.",
+      },
+    ],
+    kilder: [
+      {
+        tittel:
+          "Retana, Forman & Wu (2016): Proactive Customer Education, Customer Retention, and Demand for Technology Support — Evidence from a Field Experiment. Manufacturing & Service Operations Management 18(1), 34–50",
+        url: "https://doi.org/10.1287/msom.2015.0547",
+        sjekket: "2026-09-22",
+      },
+      {
+        tittel:
+          "ALM Corp: Why clients fire marketing agencies — common reasons and warning signs",
+        url: "https://almcorp.com/blog/why-clients-fire-marketing-agencies-retention-scripts/",
+        sjekket: "2026-09-21",
       },
     ],
   },

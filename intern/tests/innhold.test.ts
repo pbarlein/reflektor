@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { KATEGORIER } from "../src/content/kategorier.ts";
-import { RUBRIKKER } from "../src/content/rubrikker/index.ts";
+import { I_DRIFT, RUBRIKKER } from "../src/content/rubrikker/index.ts";
 
 /**
  * Innholdet er data, og data kan være feil på måter typene ikke fanger.
@@ -38,9 +38,7 @@ test("hver rubrikk har minst tre oppsummeringspunkter", () => {
 
 test("seksjons-id-er er unike innenfor hver rubrikk", () => {
   for (const r of RUBRIKKER) {
-    const ider = r.innhold
-      .filter((b) => b.type === "seksjon")
-      .map((b) => b.id);
+    const ider = r.innhold.filter((b) => b.type === "seksjon").map((b) => b.id);
     assert.equal(
       new Set(ider).size,
       ider.length,
@@ -118,6 +116,43 @@ test("godkjent innhold oppgir alltid kilde", () => {
   }
 });
 
+/**
+ * En rubrikk i drift er en fasit noen følger på en produksjonsdag. Da skal
+ * påstandene i den kunne følges tilbake til noe som ikke er oss.
+ *
+ * Testen gjelder BARE rubrikker i drift. Utkast til gjennomgang får ligge
+ * uten kilder — det er nettopp det gjennomgangen er til for.
+ */
+test("hver rubrikk i drift oppgir minst én kilde", () => {
+  for (const r of I_DRIFT) {
+    assert.ok(
+      r.kilder && r.kilder.length > 0,
+      `${r.slug} er i drift uten en eneste kilde`,
+    );
+  }
+});
+
+test("kilder har tittel, url og sjekkdato", () => {
+  const dato = /^\d{4}-\d{2}-\d{2}$/;
+  for (const r of RUBRIKKER) {
+    for (const k of r.kilder ?? []) {
+      assert.ok(
+        k.tittel.trim().length > 10,
+        `${r.slug}: kildetittel er for kort`,
+      );
+      assert.ok(
+        k.url.startsWith("https://"),
+        `${r.slug}: kilde uten https-lenke (${k.url})`,
+      );
+      assert.match(
+        k.sjekket,
+        dato,
+        `${r.slug}: ugyldig sjekkdato (${k.sjekket})`,
+      );
+    }
+  }
+});
+
 test("ansvarlig er en rolle, ikke et personnavn", () => {
   // Å tildele en navngitt kollega en oppgave hen ikke har sagt ja til, er
   // ikke vårt å gjøre. Se rubrikktype.ts.
@@ -152,16 +187,27 @@ test("eksempler har permalenke, konto, tall og dato", () => {
         /^https:\/\/www\.instagram\.com\/reel\/[A-Za-z0-9_-]+\/$/,
         `${r.slug}: «${d.url}» er ikke en reel-permalenke`,
       );
-      assert.ok(d.konto.length > 0 && !d.konto.startsWith("@"),
-        `${r.slug}: konto skal være brukernavn uten krøllalfa`);
-      assert.ok(Number.isInteger(d.visninger) && d.visninger > 0,
-        `${r.slug}: visninger mangler eller er ikke et heltall`);
-      assert.ok(Number.isInteger(d.likes) && d.likes > 0,
-        `${r.slug}: likes mangler eller er ikke et heltall`);
-      assert.match(d.hentet, /^\d{4}-\d{2}-\d{2}$/,
-        `${r.slug}: «hentet» må være en ISO-dato`);
-      assert.ok(d.seEtter.length > 40,
-        `${r.slug}: «se etter» må si noe konkret, ikke bare navngi teknikken`);
+      assert.ok(
+        d.konto.length > 0 && !d.konto.startsWith("@"),
+        `${r.slug}: konto skal være brukernavn uten krøllalfa`,
+      );
+      assert.ok(
+        Number.isInteger(d.visninger) && d.visninger > 0,
+        `${r.slug}: visninger mangler eller er ikke et heltall`,
+      );
+      assert.ok(
+        Number.isInteger(d.likes) && d.likes > 0,
+        `${r.slug}: likes mangler eller er ikke et heltall`,
+      );
+      assert.match(
+        d.hentet,
+        /^\d{4}-\d{2}-\d{2}$/,
+        `${r.slug}: «hentet» må være en ISO-dato`,
+      );
+      assert.ok(
+        d.seEtter.length > 40,
+        `${r.slug}: «se etter» må si noe konkret, ikke bare navngi teknikken`,
+      );
 
       /*
        * HVEM SELSKAPET ER, OG HVOR STORT DET ER.
@@ -177,10 +223,14 @@ test("eksempler har permalenke, konto, tall og dato", () => {
        * er der for å stoppe det som vil skje ellers — at noen finner et
        * fint klipp fra en liten konto og kaller det verdensklasse.
        */
-      assert.ok(d.hvem.length > 40,
-        `${r.slug}: «hvem» må si hva selskapet selger, ikke bare navnet`);
-      assert.ok(Number.isInteger(d.folgere) && d.folgere > 100_000,
-        `${r.slug}: følgertallet mangler, eller kontoen er for liten til å kalles verdensklasse`);
+      assert.ok(
+        d.hvem.length > 40,
+        `${r.slug}: «hvem» må si hva selskapet selger, ikke bare navnet`,
+      );
+      assert.ok(
+        Number.isInteger(d.folgere) && d.folgere > 100_000,
+        `${r.slug}: følgertallet mangler, eller kontoen er for liten til å kalles verdensklasse`,
+      );
     }
   }
 });
@@ -229,4 +279,3 @@ test("eksempler bruker ikke Reflektors egen konto", () => {
     }
   }
 });
-

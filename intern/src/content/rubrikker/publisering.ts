@@ -15,7 +15,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
       fil: "reels/soulcake",
       alt: "To personer med kaffe foran en rosa vegg",
     },
-    oppdatert: "2026-09-21",
+    oppdatert: "2026-09-22",
     lesetid: 5,
     godkjent: false,
     ansvarlig: "Kundeansvarlig",
@@ -79,6 +79,25 @@ export const PUBLISERING: readonly Rubrikk[] = [
         tekst:
           "Det er ukene der nesten alle andre slutter å publisere. Det er også ukene der kontinuitet er lettest å merke — i vår favør. En konto som går som vanlig i fellesferien, ser ut som en bedrift som har orden på seg.",
       },
+      {
+        type: "avsnitt",
+        tekst:
+          "Grunnen til at rytmen behandles som selve produktet, er ikke at plattformen straffer hull. Det vet vi ikke. Grunnen er kunden: undersøkelser av hvorfor kunder bytter byrå peker gjentatte ganger på manglende kommunikasjon og at byrået ikke får vist hva som faktisk leveres. Et hull i feeden er det mest synlige beviset et abonnement kan gi på at ingenting skjer — og det er synlig for kunden hver eneste dag det varer.",
+      },
+    ],
+    kilder: [
+      {
+        tittel:
+          "ALM Corp: Why clients fire marketing agencies — common reasons and warning signs",
+        url: "https://almcorp.com/blog/why-clients-fire-marketing-agencies-retention-scripts/",
+        sjekket: "2026-09-21",
+      },
+      {
+        tittel:
+          "Reflektor: leveransen slik den står på nettsiden — publisering to ganger i uken med krysspublisering",
+        url: "https://www.reflektor.no/sosiale-medier-byra",
+        sjekket: "2026-09-22",
+      },
     ],
   },
 
@@ -95,8 +114,8 @@ export const PUBLISERING: readonly Rubrikk[] = [
       fil: "arbeid/kontor",
       alt: "Nærbilde av en person i strikkegenser, filmet i dempet lys",
     },
-    oppdatert: "2026-09-21",
-    lesetid: 6,
+    oppdatert: "2026-09-22",
+    lesetid: 7,
     godkjent: false,
     ansvarlig: "Kundeansvarlig",
     prioritet: 94,
@@ -150,6 +169,16 @@ export const PUBLISERING: readonly Rubrikk[] = [
           "Enkeltposter svinger voldsomt, av grunner ingen kontrollerer. Se på ti poster, ikke én. Det du leter etter er mønstre: hvilken type innhold som gjentatte ganger gjør det bedre enn snittet på samme konto.",
       },
       {
+        type: "avsnitt",
+        tekst:
+          "Feilen har et navn. Tversky og Kahneman kalte den troen på loven om små tall: vi behandler et lite utvalg som om det var representativt for helheten. De fant den hos yrkesforskere som burde visst bedre — så du skal ikke regne med at du er immun fordi du er oppmerksom på den.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Praktisk betyr det at «den videoen gikk dårlig, vi slutter med den typen» er en konklusjon du ikke har dekning for etter én post. Etter ti poster av samme type, har du det.",
+      },
+      {
         type: "merknad",
         tekst:
           "Sammenlign alltid en konto med seg selv, aldri med en annen. Følgertall, bransje og historikk gjør sammenligning på tvers av kontoer meningsløs.",
@@ -193,6 +222,20 @@ export const PUBLISERING: readonly Rubrikk[] = [
         tekst:
           "Vi ser at de to videoene der noen forklarer noe, ble lagret mest. Vi tror folk bruker dem som oppslag. Neste måned lager vi tre av den typen.",
         kilde: "Eksempel på hvordan det kan sies",
+      },
+    ],
+    kilder: [
+      {
+        tittel:
+          "Instagram: Instagram Ranking Explained — How Our Algorithm Works",
+        url: "https://about.instagram.com/blog/announcements/instagram-ranking-explained",
+        sjekket: "2026-09-22",
+      },
+      {
+        tittel:
+          "Tversky & Kahneman (1971): Belief in the law of small numbers. Psychological Bulletin 76(2), 105–110",
+        url: "https://doi.org/10.1037/h0031322",
+        sjekket: "2026-09-22",
       },
     ],
   },

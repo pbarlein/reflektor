@@ -86,7 +86,7 @@ export const INTERNT: readonly Rubrikk[] = [
       fil: "arbeid/pa-vei",
       alt: "Person med bagasje på vei gjennom en parkeringskjeller",
     },
-    oppdatert: "2026-09-21",
+    oppdatert: "2026-09-22",
     lesetid: 3,
     godkjent: true,
     ansvarlig: "Daglig leder",
@@ -144,6 +144,14 @@ export const INTERNT: readonly Rubrikk[] = [
           "Vi sier dette tydelig og tidlig, fordi «SoMe-byrå» betyr ulike ting hos ulike leverandører. Ærligheten er salgsargumentet — ikke et forbehold vi helst skulle vært foruten.",
       },
     ],
+    kilder: [
+      {
+        tittel:
+          "Reflektor: leveranse, pris og vilkår slik de står på nettsiden",
+        url: "https://www.reflektor.no/sosiale-medier-byra",
+        sjekket: "2026-09-22",
+      },
+    ],
   },
 
   {
@@ -159,8 +167,8 @@ export const INTERNT: readonly Rubrikk[] = [
       fil: "arbeid/dag6-vegg",
       alt: "Bakevarer på brett i en disk",
     },
-    oppdatert: "2026-09-21",
-    lesetid: 2,
+    oppdatert: "2026-09-22",
+    lesetid: 4,
     godkjent: true,
     ansvarlig: "Daglig leder",
     kilde:
@@ -168,6 +176,7 @@ export const INTERNT: readonly Rubrikk[] = [
     prioritet: 88,
     oppsummering: [
       { tekst: "Slik skrives prisen", anker: "skrives" },
+      { tekst: "Hvorfor åpenheten virker", anker: "hvorfor" },
       { tekst: "De andre tallene", anker: "tall" },
       { tekst: "Når du blir usikker", anker: "usikker" },
     ],
@@ -177,6 +186,22 @@ export const INTERNT: readonly Rubrikk[] = [
         type: "avsnitt",
         tekst:
           "«30 000 kr/mnd». Aldri med mva-notasjon, aldri som «fra», aldri som «ta kontakt for pris». Den står åpent på nettsiden, og det er et bevisst valg: bransjen er full av byråer som ikke oppgir pris, og det er nettopp derfor vi gjør det.",
+      },
+      { type: "seksjon", id: "hvorfor", tittel: "Hvorfor åpenheten virker" },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det nærmeste vi kommer et vitenskapelig belegg, er forskning på kostnadsåpenhet. Mohan, Buell og John testet i seks studier hva som skjer når en bedrift frivillig viser hva et produkt koster å lage. Effekten var positiv, og den gikk gjennom tillit: åpenheten leses som at bedriften deler noe den kunne holdt skjult, og den tilliten gjør folk mer villige til å kjøpe. I et felteksperiment hos en nettbutikk økte salget.",
+      },
+      {
+        type: "merknad",
+        tekst:
+          "Vær presis hvis du bruker dette i et møte. Forskningen handler om å vise KOSTNADER, ikke pris, og den er gjort på forbrukere og ikke på bedriftskunder. Mekanismen — frivillig åpenhet om noe ubehagelig skaper tillit — er den som overføres. Ikke tallene.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det praktiske poenget er hvorfor vi ikke bare oppgir prisen, men oppgir den uten forbehold. «Fra 30 000» og «ta kontakt for pris» er begge signaler om at det finnes noe vi ikke vil si ennå. Da er det ikke lenger åpenhet — da er det en invitasjon til en forhandling, og hele fordelen er borte.",
       },
       { type: "seksjon", id: "tall", tittel: "De andre tallene" },
       {
@@ -192,6 +217,20 @@ export const INTERNT: readonly Rubrikk[] = [
         type: "avsnitt",
         tekst:
           "Blir du usikker på et tall i et kundemøte: si at du sjekker og kommer tilbake samme dag. Et omtrentlig tall som viser seg å være feil, koster mer enn en times venting.",
+      },
+    ],
+    kilder: [
+      {
+        tittel:
+          "Mohan, Buell & John (2020): Lifting the Veil — The Benefits of Cost Transparency. Marketing Science 39(6), 1105–1121",
+        url: "https://doi.org/10.1287/mksc.2019.1200",
+        sjekket: "2026-09-22",
+      },
+      {
+        tittel:
+          "Reflektor: prisen slik den står åpent på nettsiden — 30 000 kr/mnd",
+        url: "https://www.reflektor.no/sosiale-medier-byra",
+        sjekket: "2026-09-22",
       },
     ],
   },
