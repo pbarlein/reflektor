@@ -35,7 +35,7 @@ slipper deg inn uten Google. Den virker **aldri** i en deploy — se
 Andre kommandoer:
 
 ```bash
-npm test             # 24 tester: sesjon, OAuth-krav, åpen videresending
+npm test             # 56 tester: sesjon, OAuth-krav, innhold, lesestatus
 npm run lint
 npm run build
 npm run medier       # kopierer bilder og klipp fra ../public
@@ -64,24 +64,40 @@ Workspace.
      Google godtar kun adresser den har sett før. Mangler en, får brukeren
      `redirect_uri_mismatch` fra Google — ikke fra oss.
 
-> ### ⚠️ LISTEN OVER ER EN OPPSKRIFT, IKKE EN FASIT
+4. Kopier **Client ID** og **Client secret** inn i miljøvariablene.
+
+### Hva som FAKTISK er registrert
+
+Verifisert 23.09.2026 ved å lese listen i Google Cloud Console. Fire
+adresser, i denne rekkefølgen:
+
+```
+https://reflektor-intern-reflektor.vercel.app/api/auth/retur
+http://localhost:3000/api/auth/retur
+https://reflektor-intern.vercel.app/api/auth/retur
+https://reflektor-intern-git-claude-beautiful-lovelace-dy56f2-reflektor.vercel.app/api/auth/retur
+```
+
+De to første sto der fra oppsettet. De to siste ble lagt til 23.09.2026,
+fordi prosjektet har tre aliaser og siden sender den adressen brukeren
+faktisk står på — se `returadresse()` i `src/lib/google.ts`. Hvert alias er
+en egen adresse for Google.
+
+Branch-aliaset (den fjerde) kan slettes når arbeidet er merget.
+
+> ### ⚠️ DENNE LISTEN KAN IKKE UTLEDES — DEN MÅ LESES
 >
-> Den sier hva som SKAL legges inn. Den sier ikke hva som ER lagt inn.
+> 22.09.2026 ble oppskriften over lest som om den var denne listen, og tre
+> ulike adresser ble delt ut som «denne virker». To av dem sto ikke i
+> Google i det hele tatt.
 >
-> 22.09.2026 ble den lest som en fasit, og tre ulike adresser ble delt ut
-> som «denne virker». Alle tre ga `redirect_uri_mismatch`. Ingen av dem var
-> verifisert mot Google — de var hentet herfra.
+> Listen finnes ingen andre steder enn i Google Cloud Console. Den kan ikke
+> utledes fra koden, fra Vercel, eller fra denne filen. Et `curl`-kall mot
+> Googles autorisasjonsendepunkt svarer heller ikke: uten innlogget sesjon
+> får ALLE adresser 302 til innloggingssiden, også adresser som ikke
+> finnes. Det var den testen som fikk gjetningen til å se verifisert ut.
 >
-> **Den eneste måten å vite hva som er registrert, er å åpne klienten i
-> Google Cloud Console og lese listen.** Den kan ikke utledes fra koden, fra
-> Vercel, eller fra denne filen. Et `curl`-kall mot Googles autorisasjons-
-> endepunkt svarer heller ikke: uten innlogget sesjon får alle adresser 302
-> til innloggingssiden, også adresser som ikke finnes.
->
-> Når noen har lest listen: skriv den inn HER, med dato, og merk den
-> verifisert. Da slipper neste person å gjette.
->
-> **Status nå: ikke verifisert.** 4. Kopier **Client ID** og **Client secret** inn i miljøvariablene.
+> Endrer noen listen: oppdater blokken over, med dato.
 
 ### Miljøvariabler
 
