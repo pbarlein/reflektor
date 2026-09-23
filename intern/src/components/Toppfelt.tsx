@@ -28,7 +28,26 @@ export async function Toppfelt() {
           <Logo />
         </Link>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
+          {/*
+            «LAG DOKUMENT» STÅR I TOPPFELTET, IKKE PÅ FORSIDEN ALENE.
+
+            Den brukes midt i noe annet: du sitter i rubrikken om
+            produksjonsdagen og skal lage planen, eller du er på vei ut døra
+            og trenger et samtykkeskjema. En inngang som bare finnes på
+            forsiden, krever at du først forlater det du holder på med.
+
+            Teksten kortes til «Dokument» under sm. Knappen skal ikke
+            konkurrere med logoen om plassen på en telefon.
+          */}
+          <Link
+            href="/dokument"
+            className="rounded-interaktiv border border-aksent bg-aksent px-3.5 py-1.5 text-[0.8125rem] font-medium text-[color:var(--text-on-accent)] transition-colors hover:bg-[color:var(--action-primary-hover)] hover:border-[color:var(--action-primary-hover)] motion-reduce:transition-none"
+          >
+            <span className="sm:hidden">Dokument</span>
+            <span className="hidden sm:inline">Lag dokument</span>
+          </Link>
+
           {/*
             GJENNOMGANGSKNAPPEN VISES KUN FOR REDAKTØRER. For alle andre
             finnes den ikke — ikke nedtonet, ikke låst. En knapp man ikke
