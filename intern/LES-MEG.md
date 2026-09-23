@@ -108,9 +108,35 @@ Branch-aliaset (den fjerde) kan slettes når arbeidet er merget.
 | `GOOGLE_CLIENT_SECRET`  | Ja      | Fra steg 3.                                          |
 | `TILLATT_DOMENE`        | Nei     | Domenet som slipper inn. Standard `reflektor.no`.    |
 | `INTERN_DEV_INNLOGGING` | Nei     | Kun lokalt. Se over.                                 |
+| `ANTHROPIC_API_KEY`     | Nei     | Skrur på «Lag dokument». Se under.                   |
 
 Mangler noe av dette, sier innloggingssiden hva som mangler. Den feiler ikke
 stille.
+
+### «Lag dokument» og API-nøkkelen
+
+Uten `ANTHROPIC_API_KEY` virker malene og skjemaene som før — knappen «Lag
+dokumentet» svarer da at generatoren ikke er skrudd på, og «Kopier
+instruksen» er veien videre. Ingenting går i stykker.
+
+Med nøkkelen satt kaller `/api/dokument` Claude og strømmer dokumentet
+tilbake i nettleseren.
+
+Nøkkelen lages på <https://console.anthropic.com> og legges inn i Vercel
+under Project → Settings → Environment Variables. Den skal **ikke** hete
+noe med `NEXT_PUBLIC_` — da havner den i nettleseren og er ikke lenger en
+hemmelighet.
+
+**Hva det koster.** Modellen er `claude-opus-5`: 5 dollar per million
+inn-tokens, 25 per million ut. En instruks er typisk rundt 900 tokens inn,
+og et ferdig ensidersdokument noen tusen ut. Det lander på størrelsesorden
+0,10–0,25 dollar per dokument. Forbruket ses i konsollen.
+
+**Hva som holder kostnaden nede.** Ruta bygger instruksen selv fra mal og
+felter — den tar aldri imot ferdig tekst fra klienten, så nøkkelen kan ikke
+brukes til noe annet enn de åtte malene. Hvert felt kappes på 4 000 tegn,
+hele instruksen på 24 000, og svaret på 20 000 tokens. Se kommentarene i
+`src/app/api/dokument/route.ts`.
 
 **Bytter du `SESJON_HEMMELIGHET`, logges alle ut.** Det er den raskeste måten
 å kaste ut alle sesjoner på hvis noe skulle skje.

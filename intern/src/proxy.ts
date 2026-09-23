@@ -31,6 +31,21 @@ export async function proxy(foresporsel: NextRequest) {
   }
 
   /*
+   * API-RUTER FÅR 401, IKKE EN VIDERESENDING.
+   *
+   * En `fetch()` følger 307-en videre til /logg-inn og får en HTML-side
+   * tilbake. Klienten prøver da å lese den som JSON, feiler, og viser
+   * «noe gikk galt» — i stedet for «du er logget ut», som er det som
+   * faktisk skjedde. En API-klient skal få en statuskode den kan handle på.
+   *
+   * Dette er fortsatt bare det optimistiske laget: hver rute sjekker
+   * sesjonen selv. Se src/lib/tilgang.ts.
+   */
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.json({ feil: "ikke-innlogget" }, { status: 401 });
+  }
+
+  /*
    * `neste` tar brukeren dit hen faktisk skulle, etter innlogging. Uten den
    * lander enhver delt lenke til en rubrikk på forsiden, og mottakeren må
    * lete seg fram igjen.

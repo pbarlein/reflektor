@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
+import { Markdown } from "@/components/Markdown";
 import { byggInstruks } from "@/content/maler";
 import type { Felt, Mal } from "@/content/maltype";
 
@@ -15,12 +16,18 @@ import type { Felt, Mal } from "@/content/maltype";
  * du skriver. Da ser man hva Claude faktisk får — inkludert listen over hva
  * som IKKE ble fylt ut.
  *
- * ── HVORFOR DET IKKE KALLES EN API HER ────────────────────────────────────
+ * ── TO VEIER UT, OG HVORFOR BEGGE FINNES ──────────────────────────────────
  *
- * Intranettet har ingen API-nøkkel til Anthropic, og en nøkkel i denne
- * appen ville vært en kostnad og en hemmelighet noen må eie. Kopier-knappen
- * koster to sekunder ekstra og null kroner. Skal det bli ett trykk senere,
- * er det `byggInstruks` som allerede gjør jobben — da byttes bare knappen.
+ * «Lag dokumentet» sender skjemaet til /api/dokument, som kjører det mot
+ * Claude og strømmer teksten tilbake. Det er hovedveien.
+ *
+ * «Kopier instruksen» er ikke en rest fra før API-et kom. Den er der for
+ * den som vil videre i en samtale — justere tonen, legge ved kundens
+ * profilpakke, be om en variant. Et ferdig dokument er et svar; instruksen
+ * er en samtale man kan fortsette.
+ *
+ * KLIENTEN SENDER ALDRI INSTRUKSEN TIL SERVEREN. Den sender mal-slug og
+ * feltene, og serveren bygger instruksen på nytt. Se route.ts for hvorfor.
  *
  * ── PÅKREVDE FELT ─────────────────────────────────────────────────────────
  *
@@ -139,9 +146,15 @@ function Feltet({
   );
 }
 
+type Tilstand = "klar" | "skriver" | "ferdig" | "feil";
+
 export function Malskjema({ mal }: { mal: Mal }) {
   const [verdier, setVerdier] = useState<Verdier>(() => standardverdier(mal));
-  const [kopiert, setKopiert] = useState(false);
+  const [kopiert, setKopiert] = useState<"" | "instruks" | "dokument">("");
+  const [dokument, setDokument] = useState("");
+  const [tilstand, setTilstand] = useState<Tilstand>("klar");
+  const [feilmelding, setFeilmelding] = useState("");
+  const avbryt = useRef<AbortController | null>(null);
 
   const instruks = useMemo(() => byggInstruks(mal, verdier), [mal, verdier]);
 
@@ -151,21 +164,97 @@ export function Malskjema({ mal }: { mal: Mal }) {
 
   const sett = (id: string, v: string) => {
     setVerdier((f) => ({ ...f, [id]: v }));
-    setKopiert(false);
+    setKopiert("");
   };
 
-  async function kopier() {
+  async function kopier(hva: "instruks" | "dokument") {
     try {
-      await navigator.clipboard.writeText(instruks);
-      setKopiert(true);
+      await navigator.clipboard.writeText(
+        hva === "instruks" ? instruks : dokument,
+      );
+      setKopiert(hva);
     } catch {
       /*
        * Klarte vi ikke å skrive til utklippstavlen — eldre nettleser, eller
-       * en side uten HTTPS — er instruksen fortsatt synlig nedenfor og kan
-       * merkes manuelt. Da er det bedre å la knappen stå urørt enn å si at
-       * noe ble kopiert som ikke ble det.
+       * en side uten HTTPS — er teksten fortsatt synlig og kan merkes
+       * manuelt. Da er det bedre å la knappen stå urørt enn å si at noe ble
+       * kopiert som ikke ble det.
        */
-      setKopiert(false);
+      setKopiert("");
+    }
+  }
+
+  function lastNed() {
+    const navn = `${mal.slug}-${new Date().toISOString().slice(0, 10)}.md`;
+    const url = URL.createObjectURL(
+      new Blob([dokument], { type: "text/markdown;charset=utf-8" }),
+    );
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = navn;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  /**
+   * Strømmer dokumentet inn mens det skrives.
+   *
+   * Teksten legges på fortløpende, ikke når alt er ferdig. Et dokument tar
+   * titalls sekunder, og en tom boks i et halvt minutt ser ut som at
+   * ingenting skjer.
+   */
+  async function lagDokument() {
+    avbryt.current?.abort();
+    const styring = new AbortController();
+    avbryt.current = styring;
+
+    setDokument("");
+    setFeilmelding("");
+    setTilstand("skriver");
+    setKopiert("");
+
+    try {
+      const svar = await fetch("/api/dokument", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mal: mal.slug, verdier }),
+        signal: styring.signal,
+      });
+
+      if (!svar.ok || !svar.body) {
+        const kode = await svar
+          .json()
+          .then((d: { feil?: string }) => d.feil)
+          .catch(() => "ukjent");
+        setFeilmelding(
+          kode === "mangler-nokkel"
+            ? "Dokumentgeneratoren er ikke skrudd på ennå. ANTHROPIC_API_KEY mangler i Vercel. Bruk «Kopier instruksen» i mellomtiden."
+            : kode === "ikke-innlogget"
+              ? "Du er logget ut. Last siden på nytt."
+              : kode === "for-lang"
+                ? "Skjemaet er for langt. Kort ned de lange feltene."
+                : "Noe gikk galt. Prøv igjen.",
+        );
+        setTilstand("feil");
+        return;
+      }
+
+      const leser = svar.body.getReader();
+      const dekoder = new TextDecoder();
+      for (;;) {
+        const { done, value } = await leser.read();
+        if (done) break;
+        const bit = dekoder.decode(value, { stream: true });
+        setDokument((d) => d + bit);
+      }
+      setTilstand("ferdig");
+    } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") {
+        setTilstand(dokument ? "ferdig" : "klar");
+        return;
+      }
+      setFeilmelding("Mistet forbindelsen. Prøv igjen.");
+      setTilstand("feil");
     }
   }
 
@@ -175,7 +264,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
         className="flex flex-col gap-7"
         onSubmit={(e) => {
           e.preventDefault();
-          void kopier();
+          void lagDokument();
         }}
       >
         {mal.felt.map((f) => (
@@ -189,68 +278,133 @@ export function Malskjema({ mal }: { mal: Mal }) {
       </form>
 
       {/*
-        INSTRUKSEN ER KLISTRET PÅ STORE SKJERMER. Skjemaet er langt, og en
-        instruks man må rulle tilbake til for å se, er en instruks ingen
-        leser. På telefon ligger den under, der den hører hjemme.
+        RESULTATET ER KLISTRET PÅ STORE SKJERMER. Skjemaet er langt, og et
+        dokument man må rulle tilbake til for å se, blir ikke lest mens det
+        skrives. På telefon ligger det under, der det hører hjemme.
       */}
       <div className="lg:sticky lg:top-24 lg:self-start">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <h2 className="text-[1.25rem] tracking-[-0.015em]">
-            Instruksen til Claude
-          </h2>
-          <p className="text-[0.8125rem] text-blekk-svak">
-            {instruks.length.toLocaleString("nb-NO")} tegn
-          </p>
-        </div>
-
-        {/*
-          NØYTRAL, IKKE RØD. Denne står der fra første sekund, før noen har
-          rukket å skrive noe — og et skjema som møter deg med en rød
-          feilmelding du ikke har fortjent, er et skjema man ikke stoler på.
-          Den røde fargen er reservert for «Utkast» i resten av huben.
-        */}
-        {mangler.length > 0 && (
-          <p className="mt-3 rounded-interaktiv border border-kant bg-dempet px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-blekk-dempet">
+        {mangler.length > 0 && tilstand === "klar" && (
+          <p className="mb-4 rounded-interaktiv border border-kant bg-dempet px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-blekk-dempet">
             <span className="font-medium text-blekk">
               {mangler.length === 1
                 ? "Dokumentet trenger ett felt til:"
                 : `Dokumentet trenger ${mangler.length} felt til:`}
             </span>{" "}
-            {mangler.map((f) => f.etikett).join(", ")}. Du kan kopiere likevel —
-            da skriver Claude TBD i stedet for å gjette.
+            {mangler.map((f) => f.etikett).join(", ")}. Du kan lage det likevel
+            — da skriver Claude TBD i stedet for å gjette.
           </p>
         )}
 
-        <div className="mt-4 flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             type="button"
-            onClick={() => void kopier()}
+            onClick={() =>
+              tilstand === "skriver"
+                ? avbryt.current?.abort()
+                : void lagDokument()
+            }
             className="rounded-interaktiv bg-aksent px-4 py-2.5 text-[0.9375rem] font-medium text-[color:var(--text-on-accent)] transition-colors hover:bg-[color:var(--action-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-aksent motion-reduce:transition-none"
           >
-            {kopiert ? "Kopiert ✓" : "Kopier instruksen"}
+            {tilstand === "skriver"
+              ? "Avbryt"
+              : dokument
+                ? "Lag på nytt"
+                : "Lag dokumentet"}
           </button>
-          <a
-            href="https://claude.ai/new"
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-interaktiv border border-kant px-4 py-2.5 text-[0.9375rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
-          >
-            Åpne Claude ↗
-          </a>
+
+          {dokument && tilstand !== "skriver" && (
+            <>
+              <button
+                type="button"
+                onClick={() => void kopier("dokument")}
+                className="rounded-interaktiv border border-kant px-4 py-2.5 text-[0.9375rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
+              >
+                {kopiert === "dokument" ? "Kopiert ✓" : "Kopier dokumentet"}
+              </button>
+              <button
+                type="button"
+                onClick={lastNed}
+                className="rounded-interaktiv border border-kant px-4 py-2.5 text-[0.9375rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
+              >
+                Last ned
+              </button>
+            </>
+          )}
         </div>
 
         {/*
-          `aria-live` på statusen, ikke på knappeteksten. Uten den er
-          «Kopiert ✓» en endring en skjermleser ikke nevner, og da vet
-          brukeren ikke om trykket gjorde noe.
+          `aria-live` på en egen, skjult linje. Knappeteksten endrer seg, men
+          en tekstendring i en knapp er ikke noe en skjermleser nevner av seg
+          selv — og da vet man ikke om trykket gjorde noe.
         */}
         <p aria-live="polite" className="sr-only">
-          {kopiert ? "Instruksen er kopiert til utklippstavlen." : ""}
+          {tilstand === "skriver"
+            ? "Claude skriver dokumentet."
+            : tilstand === "ferdig"
+              ? "Dokumentet er ferdig."
+              : kopiert
+                ? "Kopiert til utklippstavlen."
+                : ""}
         </p>
 
-        <pre className="mt-5 max-h-[32rem] overflow-auto rounded-flate border border-kant bg-dempet p-4 font-sans text-[0.8125rem] leading-relaxed whitespace-pre-wrap text-blekk-dempet">
-          {instruks}
-        </pre>
+        {feilmelding && (
+          <p className="mt-4 rounded-interaktiv border border-[color:var(--varsel-kant)] bg-[color:var(--varsel-flate)] px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-varsel">
+            {feilmelding}
+          </p>
+        )}
+
+        {(dokument || tilstand === "skriver") && (
+          <div className="mt-5 max-h-[38rem] overflow-y-auto rounded-flate border border-kant bg-kort p-6 sm:p-8">
+            {dokument ? (
+              <Markdown kilde={dokument} />
+            ) : (
+              <p className="text-[0.9375rem] text-blekk-svak">
+                Claude leser gjennom skjemaet …
+              </p>
+            )}
+            {tilstand === "skriver" && dokument && (
+              <span
+                aria-hidden
+                className="mt-1 inline-block h-4 w-[2px] animate-pulse bg-aksent align-middle"
+              />
+            )}
+          </div>
+        )}
+
+        {/*
+          INSTRUKSEN LIGGER SAMMENFOLDET. Den er ikke det man kom for, men
+          den er verdt å kunne se: hva Claude faktisk fikk, inkludert listen
+          over felt som sto tomme. Og den kan tas med inn i en samtale hvis
+          dokumentet trenger en runde til.
+        */}
+        <details className="mt-6 rounded-flate border border-kant bg-dempet">
+          <summary className="cursor-pointer list-none px-4 py-3 text-[0.875rem] font-medium text-blekk-dempet transition-colors hover:text-blekk motion-reduce:transition-none">
+            Se instruksen Claude får · {instruks.length.toLocaleString("nb-NO")}{" "}
+            tegn
+          </summary>
+          <div className="border-t border-kant px-4 py-4">
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => void kopier("instruks")}
+                className="rounded-interaktiv border border-kant bg-kort px-3.5 py-2 text-[0.875rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
+              >
+                {kopiert === "instruks" ? "Kopiert ✓" : "Kopier instruksen"}
+              </button>
+              <a
+                href="https://claude.ai/new"
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-interaktiv border border-kant bg-kort px-3.5 py-2 text-[0.875rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
+              >
+                Åpne Claude ↗
+              </a>
+            </div>
+            <pre className="mt-4 max-h-[24rem] overflow-auto font-sans text-[0.8125rem] leading-relaxed whitespace-pre-wrap text-blekk-dempet">
+              {instruks}
+            </pre>
+          </div>
+        </details>
       </div>
     </div>
   );
