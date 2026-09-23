@@ -107,7 +107,7 @@ export const OPPTAK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Ta alltid opp tretti sekunder romtone på hver lokasjon: bare rommet, uten folk og uten bevegelse. Det tar et halvt minutt, og det redder hver eneste klippovergang der to opptak med ulik bakgrunnsstøy møtes.",
+          "Ta alltid opp tretti sekunder romtone på hver lokasjon: bare rommet, uten folk og uten bevegelse. Det tar et halvt minutt, og det redder klippovergangene der to opptak med ulik bakgrunnsstøy møtes.",
       },
       {
         type: "avsnitt",
@@ -408,17 +408,16 @@ export const OPPTAK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Praktisk: «ingen kommer til å se på håret ditt, de ser på det du gjør» er ikke en høflighet. Det er dokumentert riktig, og det er verdt å si det som om du vet det — for det gjør du.",
+          "Praktisk: «ingen kommer til å se på håret ditt, de ser på det du gjør» er ikke en høflighet. Det er dokumentert, og det er verdt å si det som om du vet det.",
       },
       { type: "seksjon", id: "grep", tittel: "Fem grep" },
       {
         type: "steg",
         steg: [
           {
-            tittel:
-              "1 — Start med kameraet i gang, uten å si det er en tagning",
+            tittel: "1 — Start opptaket før dere er i gang",
             tekst:
-              "Det beste taket er nesten alltid det som skjer før personen tror det gjelder. Si «jeg bare sjekker lyden», og still det første spørsmålet der.",
+              "Det beste taket er nesten alltid det første, før personen har rukket å spenne seg. Sett kameraet i gang mens dere fortsatt snakker om noe annet, og still det første spørsmålet der. Du trenger ikke skjule at det går — det er ikke opptaket som gjør folk nervøse, det er «nå gjelder det».",
           },
           {
             tittel: "2 — Still spørsmål om noe de kan",
@@ -490,7 +489,7 @@ export const OPPTAK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Noen kommer ikke til å bli komfortable, og det er greit. Da filmer du hendene, arbeidet og resultatet i stedet, og bruker stemmen til noen andre. En video uten ansiktet deres er uendelig mye bedre enn en video der de ser ulykkelige ut.",
+          "Noen kommer ikke til å bli komfortable, og det er greit. Da filmer du hendene, arbeidet og resultatet i stedet, og bruker stemmen til noen andre. En video uten ansiktet deres er mye bedre enn en video der de ser ulykkelige ut.",
       },
       { type: "seksjon", id: "samtykke", tittel: "Samtykke" },
       {

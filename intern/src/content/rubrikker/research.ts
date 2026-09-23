@@ -39,7 +39,7 @@ export const RESEARCH: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Det finnes råd som gjelder alle: lyd må være ren, de første sekundene avgjør, teksting er ikke valgfritt. Men mesteparten av det som står i en SoMe-guide gjelder én type bedrift, og guiden sier sjelden hvilken. Derfor virker det utmerket for kafeen og pinlig for maskinleverandøren.",
+          "Det finnes råd som gjelder alle: lyd må være ren, åpningen avgjør om noen ser videre, teksting er ikke valgfritt. Men mesteparten av det som står i en SoMe-guide gjelder én type bedrift, og guiden sier sjelden hvilken. Derfor virker det utmerket for kafeen og pinlig for maskinleverandøren.",
       },
       {
         type: "avsnitt",
@@ -75,7 +75,7 @@ export const RESEARCH: readonly Rubrikk[] = [
       {
         type: "merknad",
         tekst:
-          "Still de fire i oppstartsmøtet og skriv ned svarene. De tar tre minutter og styrer hele produksjonsplanen.",
+          "Still de fire i oppstartsmøtet og skriv ned svarene. De tar noen minutter, og de styrer resten av produksjonsplanen.",
       },
       { type: "seksjon", id: "tabell", tittel: "Slik faller bransjene ut" },
       {
@@ -108,7 +108,7 @@ export const RESEARCH: readonly Rubrikk[] = [
             "Trening, velvære, behandling",
             "Følelsen etterpå, og den som utfører",
             "Jevnt, med tydelige topper i januar og august",
-            "Løfter om resultat. Se rubrikken om hva vi ikke kan love",
+            "Løfter om resultat. Helse og skjønnhet har egne regler for hva som kan påstås",
           ],
           [
             "Industri og B2B",
@@ -183,7 +183,7 @@ export const RESEARCH: readonly Rubrikk[] = [
         type: "punkter",
         punkter: [
           "Å bruke kafé-tempoet på en fagbedrift. Rask klipping og trendlyd på en video om toleransekrav leser som at vi ikke forstår hva de driver med.",
-          "Å bruke fagtempoet på en kafé. En rolig, forklarende video om råvarer der folk egentlig bare skal se om det ser godt ut, kaster bort de tre sekundene vi har.",
+          "Å bruke fagtempoet på en kafé. En rolig, forklarende video om råvarer der folk egentlig bare skal se om det ser godt ut, kaster bort åpningen.",
           "Å anta at «folk vil se folk» betyr det samme overalt. I servering er det gjestene og kokkene. I industri er det fagpersonen som kan forklare noe. I behandling er det den som skal ta i deg — der handler valget om trygghet, ikke sjarm.",
         ],
       },
@@ -202,7 +202,7 @@ export const RESEARCH: readonly Rubrikk[] = [
       {
         type: "merknad",
         tekst:
-          "Er du i tvil om en bransje har markedsføringsregler, så har den det. Spør før du filmer, ikke etter.",
+          "Helse, finans, alkohol og markedsføring mot barn har alle egne regler. Er du usikker på om kundens bransje har det, spør kundeansvarlig før du filmer — ikke etter.",
       },
     ],
     kilder: [
@@ -321,7 +321,7 @@ export const RESEARCH: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "En hook er de første ordene eller det første bildet. Den avgjør om noen ser videre, og den er det eneste elementet i en ferdig video som kan byttes uten å filme på nytt. Det gjør den til det billigste stedet å bli bedre.",
+          "En hook er de første ordene eller det første bildet. At den kan byttes uten å filme på nytt, gjør den til det billigste stedet i hele produksjonen å bli bedre.",
       },
       { type: "seksjon", id: "vet", tittel: "Hva vi faktisk vet" },
       {

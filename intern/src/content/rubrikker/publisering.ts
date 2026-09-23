@@ -151,12 +151,12 @@ export const PUBLISERING: readonly Rubrikk[] = [
           [
             "Lagringer og delinger",
             "Om innholdet var nyttig nok til å tas vare på",
-            "Det sterkeste signalet vi har. Lag mer av det som lagres",
+            "Deling står først blant signalene Instagram selv oppgir. Lag mer av det som lagres og deles",
           ],
           [
             "Profilbesøk etter en post",
             "Om noen ble nysgjerrige på bedriften",
-            "Nærmest et kjøpssignal, og verdt mer oppmerksomhet enn visningstallet",
+            "Et sterkere tegn på interesse enn en like, og verdt mer oppmerksomhet enn visningstallet",
           ],
         ],
       },

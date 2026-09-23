@@ -7,7 +7,7 @@ export const REDIGERING: readonly Rubrikk[] = [
     nr: 41,
     tittel: "De første tre sekundene",
     sammendrag:
-      "Beslutningen om å bli eller dra tas før seeren rekker å tenke. Hva som skal skje der, og de fire tingene som garantert koster deg dem.",
+      "Åpningen avgjør om noen ser videre. Her er hva som skal skje der, og de fire tingene som oftest koster oss seeren.",
     kategori: "redigering",
     status: "lansert",
     medie: {
@@ -24,7 +24,7 @@ export const REDIGERING: readonly Rubrikk[] = [
       { tekst: "Fire ting som skal skje tidlig", anker: "skal" },
       { tekst: "Fire ting som koster deg seeren", anker: "koster" },
       {
-        tekst: "Den vanligste feilen: det gode ligger på tjue sekunder",
+        tekst: "Den vanligste feilen: det gode ligger for langt inn",
         anker: "tjue",
       },
       { tekst: "Testen du gjør på deg selv", anker: "test" },
@@ -39,7 +39,7 @@ export const REDIGERING: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Instagram har publisert hva de faktisk anslår for en reel: hvor sannsynlig det er at du deler den videre, at du ser den helt ut, at du liker den, og at du går til lydsiden. To av de fire avgjøres i praksis av åpningen. Den som drar etter to sekunder, verken fullfører eller deler.",
+          "Instagram har publisert hva de faktisk anslår for en reel: hvor sannsynlig det er at du deler den videre, at du ser den helt ut, at du liker den, og at du går til lydsiden. To av de fire avgjøres i praksis av åpningen — den som drar med en gang, verken fullfører eller deler.",
       },
       {
         type: "avsnitt",
@@ -86,14 +86,18 @@ export const REDIGERING: readonly Rubrikk[] = [
       },
       { type: "seksjon", id: "koster", tittel: "Hva som koster deg seeren" },
       {
-        type: "merknad",
-        tekst:
-          "De fire er logoanimasjonen, «hei og velkommen til», en oppbygging som forklarer hva videoen skal handle om, og stillhet. Alle fire er vanlige, og alle fire er bortkastede sekunder.",
+        type: "punkter",
+        punkter: [
+          "Logoanimasjonen. Ingen har sveipet seg fram til en logo.",
+          "«Hei og velkommen til». Hilsenen er til deg, ikke til seeren.",
+          "En oppbygging som forklarer hva videoen skal handle om. Bare vis det.",
+          "Stillhet. Et sekund uten lyd eller bevegelse leses som at videoen ikke har begynt.",
+        ],
       },
       {
         type: "seksjon",
         id: "tjue",
-        tittel: "Det gode ligger på tjue sekunder",
+        tittel: "Det gode ligger for langt inn",
       },
       {
         type: "avsnitt",

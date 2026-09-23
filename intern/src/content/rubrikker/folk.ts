@@ -390,7 +390,7 @@ export const FOLK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Dette er ikke en ordspråk. Baumeister og kollegene gikk i 2001 gjennom forskningen på tvers av hverdagshendelser, relasjoner, inntrykk av andre mennesker og læring, og fant det samme overalt: negative hendelser veier tyngre enn positive av samme størrelse. Negative inntrykk dannes raskere, huskes bedre og er vanskeligere å endre enn positive.",
+          "Dette er ikke bare et ordtak. Baumeister og kollegene gikk i 2001 gjennom forskningen på tvers av hverdagshendelser, relasjoner, inntrykk av andre mennesker og læring, og fant det samme overalt: negative hendelser veier tyngre enn positive av samme størrelse. Negative inntrykk dannes raskere, huskes bedre og er vanskeligere å endre enn positive.",
       },
       {
         type: "avsnitt",
@@ -508,7 +508,7 @@ export const FOLK: readonly Rubrikk[] = [
     kilder: [
       {
         tittel:
-          "Flynn & Lake (Bohns) (2008): If you need help, just ask — underestimating compliance with direct requests for help. Journal of Personality and Social Psychology 95(1), 128–143",
+          "Flynn & Lake (2008): If you need help, just ask — underestimating compliance with direct requests for help. Journal of Personality and Social Psychology 95(1), 128–143",
         url: "https://doi.org/10.1037/0022-3514.95.1.128",
         sjekket: "2026-09-22",
       },

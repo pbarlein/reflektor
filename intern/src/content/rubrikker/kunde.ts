@@ -142,6 +142,7 @@ export const KUNDE: readonly Rubrikk[] = [
     oppsummering: [
       { tekst: "Tjuetre dager uten oss", anker: "dager" },
       { tekst: "Fire kontaktpunkter i måneden", anker: "punkter" },
+      { tekst: "Slik låser du leveringsdatoen", anker: "dato" },
       {
         tekst: "Retningen, ikke hyppigheten, gjør det proaktivt",
         anker: "retning",
@@ -161,7 +162,7 @@ export const KUNDE: readonly Rubrikk[] = [
           {
             tittel: "Dagen etter produksjonsdagen",
             tekst:
-              "Send en kort melding med ett bilde eller ett klipp fra dagen. Det er ikke en statusrapport, men et tegn på at materialet er i hus og at noen allerede jobber med det.",
+              "Takk for dagen, og lås leveringsdatoen hvis den ikke allerede er låst. Ikke send materiale — det skaper bare merarbeid når dagen etter ikke er fristen uansett.",
           },
           {
             tittel: "Når første video er ute",
@@ -179,6 +180,26 @@ export const KUNDE: readonly Rubrikk[] = [
               "Bekreft tid, sted og hvem som stiller. Dette er også siste frist for å melde behov for stillbilder, siden de deler kapasitet med video.",
           },
         ],
+      },
+      { type: "seksjon", id: "dato", tittel: "Slik låser du datoen" },
+      {
+        type: "avsnitt",
+        tekst:
+          "Leveringsdato skal helst avtales før eller under opptaket. Er den ikke det, avtales den dagen etter — og da er det du som sier datoen.",
+      },
+      {
+        type: "punkter",
+        punkter: [
+          "Si ÉN dato. Ikke «i løpet av neste uke», ikke «rundt månedsskiftet». En uke er ikke en frist, det er et område kunden fyller med forventninger.",
+          "Datoen er din, ikke kundens. Regn den ut fra hva du har i produksjon fra før og hvem som er tilgjengelig — ikke fra når det hadde vært hyggelig å levere.",
+          "Si den som en opplysning, ikke et spørsmål. «Dere har materialet torsdag 9. oktober» gjør jobben. «Når trenger dere det?» flytter avgjørelsen til den som ikke vet hva den koster.",
+          "Legg inn margin. En dato du holder er verdt mer enn en tidlig dato du sprekker på — og den du sprekker på, er den kunden husker.",
+        ],
+      },
+      {
+        type: "merknad",
+        tekst:
+          "Ber kunden om noe tidligere, er det en forhandling og ikke en ordre. Da sier du hva som må vike for å få det til, og lar dem velge. Det er forskjellen på å være imøtekommende og å love noe du ikke kan holde.",
       },
       { type: "seksjon", id: "retning", tittel: "Retningen" },
       {
