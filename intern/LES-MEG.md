@@ -56,27 +56,42 @@ Workspace.
    - Fyll inn appnavn og support-e-post.
 3. **APIs & Services → Credentials → Create credentials → OAuth client ID**
    - Application type: **Web application**
-   - **Authorized redirect URIs** — disse tre, ordrett:
+   - **Authorized redirect URIs** — én per adresse siden skal nås på, ordrett:
      ```
-     https://reflektor-intern-reflektor.vercel.app/api/auth/retur
-     https://reflektor-intern-git-claude-beautiful-lovelace-dy56f2-reflektor.vercel.app/api/auth/retur
+     https://<vertsnavnet>/api/auth/retur
      http://localhost:3000/api/auth/retur
      ```
-     Den andre er branch-aliaset og kan sløyfes når arbeidet er merget.
-     Får dere eget domene senere, må det legges inn her også.
      Google godtar kun adresser den har sett før. Mangler en, får brukeren
      `redirect_uri_mismatch` fra Google — ikke fra oss.
-4. Kopier **Client ID** og **Client secret** inn i miljøvariablene.
+
+> ### ⚠️ LISTEN OVER ER EN OPPSKRIFT, IKKE EN FASIT
+>
+> Den sier hva som SKAL legges inn. Den sier ikke hva som ER lagt inn.
+>
+> 22.09.2026 ble den lest som en fasit, og tre ulike adresser ble delt ut
+> som «denne virker». Alle tre ga `redirect_uri_mismatch`. Ingen av dem var
+> verifisert mot Google — de var hentet herfra.
+>
+> **Den eneste måten å vite hva som er registrert, er å åpne klienten i
+> Google Cloud Console og lese listen.** Den kan ikke utledes fra koden, fra
+> Vercel, eller fra denne filen. Et `curl`-kall mot Googles autorisasjons-
+> endepunkt svarer heller ikke: uten innlogget sesjon får alle adresser 302
+> til innloggingssiden, også adresser som ikke finnes.
+>
+> Når noen har lest listen: skriv den inn HER, med dato, og merk den
+> verifisert. Da slipper neste person å gjette.
+>
+> **Status nå: ikke verifisert.** 4. Kopier **Client ID** og **Client secret** inn i miljøvariablene.
 
 ### Miljøvariabler
 
-| Variabel | Påkrevd | Hva den gjør |
-|---|---|---|
-| `SESJON_HEMMELIGHET` | Ja | Nøkkelen sesjonscookien signeres med. Minst 32 tegn. |
-| `GOOGLE_CLIENT_ID` | Ja | Fra steg 3. |
-| `GOOGLE_CLIENT_SECRET` | Ja | Fra steg 3. |
-| `TILLATT_DOMENE` | Nei | Domenet som slipper inn. Standard `reflektor.no`. |
-| `INTERN_DEV_INNLOGGING` | Nei | Kun lokalt. Se over. |
+| Variabel                | Påkrevd | Hva den gjør                                         |
+| ----------------------- | ------- | ---------------------------------------------------- |
+| `SESJON_HEMMELIGHET`    | Ja      | Nøkkelen sesjonscookien signeres med. Minst 32 tegn. |
+| `GOOGLE_CLIENT_ID`      | Ja      | Fra steg 3.                                          |
+| `GOOGLE_CLIENT_SECRET`  | Ja      | Fra steg 3.                                          |
+| `TILLATT_DOMENE`        | Nei     | Domenet som slipper inn. Standard `reflektor.no`.    |
+| `INTERN_DEV_INNLOGGING` | Nei     | Kun lokalt. Se over.                                 |
 
 Mangler noe av dette, sier innloggingssiden hva som mangler. Den feiler ikke
 stille.
@@ -88,13 +103,23 @@ stille.
 
 ## Deploy — allerede satt opp
 
-| | |
-|---|---|
-| Vercel-prosjekt | `reflektor-intern` (eget, ved siden av `reflektor-ny`) |
-| Root Directory | `intern` |
-| Node | 22.x |
-| «Include files outside root» | **på** — byggen trenger `../public` |
-| URL | https://reflektor-intern-reflektor.vercel.app |
+|                              |                                                        |
+| ---------------------------- | ------------------------------------------------------ |
+| Vercel-prosjekt              | `reflektor-intern` (eget, ved siden av `reflektor-ny`) |
+| Root Directory               | `intern`                                               |
+| Node                         | 22.x                                                   |
+| «Include files outside root» | **på** — byggen trenger `../public`                    |
+| URL                          | https://reflektor-intern.vercel.app                    |
+
+Tre aliaser peker på samme prosjekt, og alle tre serverer siste
+produksjonsdeploy: `reflektor-intern.vercel.app`,
+`reflektor-intern-reflektor.vercel.app` og branch-aliaset
+`reflektor-intern-git-claude-beautiful-lovelace-dy56f2-reflektor.vercel.app`.
+
+Det er `reflektor-intern.vercel.app` som skal brukes og registreres hos
+Google. Hvert alias er en egen adresse for Google, og siden sender den
+adressen brukeren faktisk står på — se `returadresse()` i
+`src/lib/google.ts`. Deles en av de andre ut, må også DEN ligge i listen.
 
 Alle fire miljøvariablene er satt i alle tre miljøer. Innloggingen virker.
 
@@ -118,14 +143,14 @@ Project → Settings → Deployment Protection → Vercel Authentication.
 
 ### Verifisert på den deployede siden
 
-| Sjekk | Resultat |
-|---|---|
-| `/robots.txt` uten innlogging | 200, `Disallow: /` |
-| Forsiden uten innlogging | 307 → `/logg-inn` |
-| Dyplenke uten innlogging | 307 → `/logg-inn?neste=%2Frubrikk%2Fmalet` |
-| `noindex` | både HTTP-header og `<meta>` |
-| `POST /api/auth/dev` | **404** — dev-døra finnes ikke i produksjon |
-| Google-flyten | riktig `client_id`, `redirect_uri`, `hd=reflektor.no`, PKCE S256 |
+| Sjekk                         | Resultat                                                         |
+| ----------------------------- | ---------------------------------------------------------------- |
+| `/robots.txt` uten innlogging | 200, `Disallow: /`                                               |
+| Forsiden uten innlogging      | 307 → `/logg-inn`                                                |
+| Dyplenke uten innlogging      | 307 → `/logg-inn?neste=%2Frubrikk%2Fmalet`                       |
+| `noindex`                     | både HTTP-header og `<meta>`                                     |
+| `POST /api/auth/dev`          | **404** — dev-døra finnes ikke i produksjon                      |
+| Google-flyten                 | riktig `client_id`, `redirect_uri`, `hd=reflektor.no`, PKCE S256 |
 
 Det nest siste er den viktigste: de to betingelsene i `src/lib/utvikling.ts`
 holder i en ekte deploy, ikke bare i en test.
@@ -196,11 +221,11 @@ rutine er dyrere enn feil salgstekst.
 
 De tre godkjente er godkjente fordi de er **hentet, ikke skrevet**:
 
-| Rubrikk | Kilde |
-|---|---|
-| Målet | Påls egne ord, ordrett |
+| Rubrikk                     | Kilde                                   |
+| --------------------------- | --------------------------------------- |
+| Målet                       | Påls egne ord, ordrett                  |
 | Hva abonnementet inneholder | `src/content/site.ts` i hovedprosjektet |
-| Prisen sier vi høyt | AGENTS.md kap. 0.3 + `site.ts` |
+| Prisen sier vi høyt         | AGENTS.md kap. 0.3 + `site.ts`          |
 
 **Slik godkjenner du en rubrikk:** rett teksten til det som faktisk gjelder,
 sett `godkjent: true`, og fyll `kilde` med hvem som godkjente og når. Telleren
