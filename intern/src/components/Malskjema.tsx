@@ -171,6 +171,18 @@ export function Malskjema({ mal }: { mal: Mal }) {
   const [rettelse, setRettelse] = useState("");
   const [forMye, setForMye] = useState(false);
 
+  /*
+   * ── OPPLASTING ER HOVEDVEIEN DER MALEN HAR DEN ────────────────────────
+   *
+   * Feltene er skjult til noen ber om dem. Det er ikke for å spare plass —
+   * det er for å gjøre det åpenbare valget til det enkleste. En produsent
+   * som ser sytten felt og et opplastingsfelt, fyller ut sytten felt.
+   */
+  const [fil, setFil] = useState<{ navn: string; data: string } | null>(null);
+  const [filfeil, setFilfeil] = useState("");
+  const [viserFelter, setViserFelter] = useState(!mal.opplasting);
+  const [drar, setDrar] = useState(false);
+
   const avbryt = useRef<AbortController | null>(null);
   const arkRef = useRef<Arkhandtak | null>(null);
   const resultatRef = useRef<HTMLDivElement>(null);
@@ -217,6 +229,40 @@ export function Malskjema({ mal }: { mal: Mal }) {
       .join("-");
   }, [kunde, mal.navn, idag]);
 
+  /**
+   * Leser PDF-en til base64 i nettleseren.
+   *
+   * `readAsDataURL` gir «data:application/pdf;base64,...», og alt etter
+   * kommaet er det API-et vil ha. Grensen speiler serverens, så brukeren
+   * får beskjed før filen er sendt og ikke etter.
+   */
+  async function lesFil(f: File) {
+    setFilfeil("");
+    if (f.type !== "application/pdf") {
+      setFilfeil(
+        "Det må være en PDF. Eksporter planen på nytt hvis du har den som noe annet.",
+      );
+      return;
+    }
+    if (f.size > 2_500_000) {
+      setFilfeil(
+        `Filen er ${(f.size / 1_000_000).toFixed(1)} MB, og taket er 2,5 MB. En eksportert plan er som regel under 1 MB — er din større, er den sannsynligvis skannet.`,
+      );
+      return;
+    }
+    const data = await new Promise<string>((løs, avvis) => {
+      const leser = new FileReader();
+      leser.onload = () => løs(String(leser.result).split(",")[1] ?? "");
+      leser.onerror = () => avvis(leser.error);
+      leser.readAsDataURL(f);
+    }).catch(() => "");
+    if (!data) {
+      setFilfeil("Klarte ikke å lese filen. Prøv å laste den opp på nytt.");
+      return;
+    }
+    setFil({ navn: f.name, data });
+  }
+
   async function kopier() {
     try {
       await navigator.clipboard.writeText(instruks);
@@ -262,6 +308,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
         body: JSON.stringify({
           mal: mal.slug,
           verdier,
+          ...(fil ? { fil: { type: "application/pdf", data: fil.data } } : {}),
           ...(retting && nyeste ? { forrige: nyeste, rettelse: retting } : {}),
         }),
         signal: styring.signal,
@@ -279,7 +326,11 @@ export function Malskjema({ mal }: { mal: Mal }) {
               ? "Du er logget ut. Last siden på nytt."
               : kode === "for-lang"
                 ? "Skjemaet er for langt. Kort ned de lange feltene."
-                : "Noe gikk galt. Prøv igjen.",
+                : kode === "fil-for-stor"
+                  ? "Filen er for stor. Taket er 2,5 MB."
+                  : kode === "ugyldig-fil"
+                    ? "Filen ble ikke godtatt. Den må være en PDF."
+                    : "Noe gikk galt. Prøv igjen.",
         );
         setTilstand("feil");
         return;
@@ -358,16 +409,113 @@ export function Malskjema({ mal }: { mal: Mal }) {
           if (tilstand !== "jobber") void kjor();
         }}
       >
-        {mal.felt.map((f) => (
-          <Feltet
-            key={f.id}
-            felt={f}
-            verdi={verdier[f.id] ?? ""}
-            sett={(v) => sett(f.id, v)}
-          />
-        ))}
+        {/*
+          OPPLASTINGEN LIGGER FØRST, OG DEN ER IKKE ET ALTERNATIV BLANT
+          LIKEVERDIGE. Den står alene til noen ber om feltene.
+        */}
+        {mal.opplasting && (
+          <div className="flex flex-col gap-3">
+            <div>
+              <p className={ETIKETT}>{mal.opplasting.etikett}</p>
+              <span className={HJELP}>{mal.opplasting.hjelp}</span>
+            </div>
 
-        {mangler.length > 0 && !utgaver.length && (
+            {fil ? (
+              <div className="flex items-center justify-between gap-3 rounded-flate border border-aksent bg-[color:var(--surface-accent-soft)] px-4 py-3.5">
+                <span className="min-w-0 truncate text-[0.9375rem] text-blekk">
+                  {fil.navn}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setFil(null)}
+                  className="shrink-0 text-[0.875rem] font-medium text-aksent-tekst underline underline-offset-4"
+                >
+                  Fjern
+                </button>
+              </div>
+            ) : (
+              <label
+                /*
+                 * DRAG OG SLIPP MÅ FAKTISK VIRKE.
+                 *
+                 * Teksten sier «eller dra den hit». Et felt som sier det
+                 * uten å ta imot et slipp, er verre enn et som ikke sier
+                 * det: nettleseren åpner PDF-en i stedet, og produsenten
+                 * mister siden med skjemaet på.
+                 */
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDrar(true);
+                }}
+                onDragLeave={() => setDrar(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDrar(false);
+                  const f = e.dataTransfer.files?.[0];
+                  if (f) void lesFil(f);
+                }}
+                className={`flex cursor-pointer flex-col items-center gap-1.5 rounded-flate border border-dashed bg-kort px-5 py-9 text-center transition-colors hover:border-aksent hover:bg-[color:var(--surface-accent-soft)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-aksent motion-reduce:transition-none ${
+                  drar
+                    ? "border-aksent bg-[color:var(--surface-accent-soft)]"
+                    : "border-kant-sterk"
+                }`}
+              >
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  className="sr-only"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) void lesFil(f);
+                    /* Samme fil to ganger på rad gir ingen change uten dette. */
+                    e.target.value = "";
+                  }}
+                />
+                <span className="text-[0.9375rem] font-medium text-blekk">
+                  Velg PDF
+                </span>
+                <span className="text-[0.8125rem] text-blekk-svak">
+                  eller dra den hit
+                </span>
+              </label>
+            )}
+
+            {filfeil && (
+              <p className="rounded-interaktiv border border-[color:var(--varsel-kant)] bg-[color:var(--varsel-flate)] px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-varsel">
+                {filfeil}
+              </p>
+            )}
+
+            {!viserFelter && (
+              <button
+                type="button"
+                onClick={() => setViserFelter(true)}
+                className="self-start text-[0.9375rem] font-medium text-blekk-dempet underline underline-offset-4 transition-colors hover:text-blekk motion-reduce:transition-none"
+              >
+                eller fyll ut felter
+              </button>
+            )}
+
+            {viserFelter && fil && (
+              <p className="text-[0.8125rem] leading-relaxed text-pretty text-blekk-svak">
+                Feltene under gjelder foran planen der de sier noe annet. Lar du
+                dem stå tomme, hentes svaret fra planen.
+              </p>
+            )}
+          </div>
+        )}
+
+        {viserFelter &&
+          mal.felt.map((f) => (
+            <Feltet
+              key={f.id}
+              felt={f}
+              verdi={verdier[f.id] ?? ""}
+              sett={(v) => sett(f.id, v)}
+            />
+          ))}
+
+        {mangler.length > 0 && !utgaver.length && !fil && viserFelter && (
           <p className="rounded-interaktiv border border-kant bg-dempet px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-blekk-dempet">
             <span className="font-medium text-blekk">
               {mangler.length === 1
@@ -394,7 +542,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
                 : "Lag dokumentet"}
           </button>
 
-          {urort && tilstand !== "jobber" && (
+          {urort && viserFelter && tilstand !== "jobber" && (
             <button
               type="button"
               onClick={() => setVerdier(eksempelverdier(mal))}
@@ -405,12 +553,11 @@ export function Malskjema({ mal }: { mal: Mal }) {
           )}
         </div>
 
-        {urort && tilstand !== "jobber" && (
+        {urort && viserFelter && tilstand !== "jobber" && (
           <p className="-mt-4 text-[0.8125rem] leading-relaxed text-pretty text-blekk-svak">
             Eksempelet er en ekte, komplett utfylling. Det viser hvor mye som
             hører hjemme i hvert felt, og lar deg se hva malen gjør før du
-            bruker den på en kunde. Knappen forsvinner så snart du skriver
-            selv.
+            bruker den på en kunde. Knappen forsvinner så snart du skriver selv.
           </p>
         )}
 

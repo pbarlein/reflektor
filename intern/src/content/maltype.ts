@@ -127,6 +127,26 @@ export type Mal = {
   /** Når i løpet man lager det. Konkret tidspunkt, ikke «ved behov». */
   naar: string;
   skisse: readonly Skissedel[];
+  /**
+   * Malen tar imot et dokument som hovedinngang.
+   *
+   * ── HVORFOR OPPLASTING SLÅR SKJEMA FOR NOEN MALER ─────────────────────
+   *
+   * Opptakslisten bygges bakover fra produksjonsplanen. Skriver produsenten
+   * den av inn i et skjema, gjør hen to ting: bruker tid på å gjengi noe
+   * som allerede finnes, og bestemmer underveis hva som er verdt å ta med.
+   * Det siste er det farlige — det som ikke blir skrevet av, finnes ikke
+   * for den som lager listen.
+   *
+   * Er planen lastet opp, har Claude hele grunnlaget. Derfor ligger
+   * opplastingen først, og feltene er noe man må be om å få se.
+   */
+  opplasting?: {
+    /** Over opplastingsfeltet. Sier hvilket dokument som hører hjemme her. */
+    etikett: string;
+    /** Én linje under. Hva Claude bruker det til. */
+    hjelp: string;
+  };
   /** Slugger til rubrikker som styrer innholdet. Vises som lenker. */
   rubrikker?: readonly string[];
   felt: readonly Felt[];

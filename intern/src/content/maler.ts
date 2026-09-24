@@ -212,6 +212,11 @@ export const MALER: readonly Mal[] = [
   {
     slug: "opptaksliste",
     fase: "På opptak",
+    opplasting: {
+      etikett: "Last opp produksjonsplanen",
+      hjelp:
+        "Opptakslisten bygges bakover fra planen. Har Claude hele planen, slipper du å skrive den av — og ingenting faller ut fordi du ikke rakk å ta det med.",
+    },
     navn: "Opptaksliste",
     kort: "Listen den som filmer har i hånda på dagen. Ett opptak per linje, sortert etter oppsett.",
     ansvarlig: "Produsent",
@@ -887,6 +892,7 @@ function ensiderregelen(): string {
 export function byggInstruks(
   mal: Mal,
   verdier: Readonly<Record<string, string>>,
+  medVedlegg = false,
 ): string {
   const utfylt = mal.felt
     .map((f) => [f, (verdier[f.id] ?? "").trim()] as const)
@@ -910,6 +916,25 @@ export function byggInstruks(
     "",
     `INFORMASJONEN\n${utfylt.length ? utfylt.join("\n") : "- (ingenting utfylt)"}`,
   ];
+
+  /*
+   * ── VEDLEGGET ER GRUNNLAGET, IKKE ET TILLEGG ──────────────────────────
+   *
+   * Uten denne bolken leser modellen vedlegget som bakgrunnsstoff og
+   * bygger dokumentet av de tomme feltene. Rekkefølgen må sies eksplisitt:
+   * vedlegget først, skjemaet som korrigering.
+   */
+  if (medVedlegg) {
+    deler.push(
+      "",
+      [
+        "VEDLEGGET",
+        "Det er lagt ved et dokument over. DET er datagrunnlaget ditt — les det først, og bygg dokumentet av innholdet i det.",
+        "Feltene under INFORMASJONEN er utfylt av produsenten i tillegg. De gjelder foran vedlegget der de sier noe annet. Er et felt tomt, henter du svaret fra vedlegget.",
+        "Står noe verken i vedlegget eller i feltene, skriver du TBD(...). Du gjetter ikke, og du henter ikke noe fra andre kilder.",
+      ].join("\n"),
+    );
+  }
 
   if (mangler.length) {
     deler.push(
@@ -995,9 +1020,10 @@ export function byggRettelse(
   verdier: Readonly<Record<string, string>>,
   forrige: Ark,
   rettelse: string,
+  medVedlegg = false,
 ): string {
   return [
-    byggInstruks(mal, verdier),
+    byggInstruks(mal, verdier, medVedlegg),
     "",
     "── DOKUMENTET SLIK DET STÅR NÅ ──",
     JSON.stringify(forrige),

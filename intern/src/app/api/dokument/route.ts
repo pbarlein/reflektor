@@ -48,6 +48,19 @@ const FELTGRENSE = 4_000;
 const RETTELSEGRENSE = 1_500;
 const INSTRUKSGRENSE = 32_000;
 
+/*
+ * ── HVORFOR TAKET ER SÅ LAVT ──────────────────────────────────────────────
+ *
+ * API-et tar imot 32 MB. Vercel gjør det ikke: en serverless-funksjon
+ * avviser forespørsler over 4,5 MB, og base64 gjør en fil en tredjedel
+ * større. 2,5 MB rå PDF blir omtrent 3,4 MB på tråden, og det er innenfor
+ * med margin.
+ *
+ * Til sammenligning er produksjonsplanen for Jordbærpikene 113 kB. Taket
+ * treffer i praksis bare filer som er skannet i stedet for eksportert.
+ */
+const FILGRENSE = 2_500_000;
+
 const VERKTOY = "lever_dokument";
 
 export async function POST(foresporsel: NextRequest) {
@@ -73,6 +86,7 @@ export async function POST(foresporsel: NextRequest) {
     verdier,
     forrige,
     rettelse,
+    fil,
   } = (kropp ?? {}) as Record<string, unknown>;
 
   const mal = typeof slug === "string" ? malFraSlug(slug) : undefined;
@@ -99,10 +113,29 @@ export async function POST(foresporsel: NextRequest) {
   const tekstRettelse =
     typeof rettelse === "string" ? rettelse.trim().slice(0, RETTELSEGRENSE) : "";
 
+  /*
+   * VEDLEGGET SLIPPES BARE INN DER MALEN BER OM DET.
+   *
+   * `opplasting` på malen er tillatelsen. Uten den kan ingen bruke ruta til
+   * å sende vilkårlige PDF-er gjennom Reflektors API-nøkkel.
+   */
+  let vedlegg: string | null = null;
+  if (mal.opplasting && fil && typeof fil === "object") {
+    const f = fil as Record<string, unknown>;
+    if (typeof f.data !== "string" || f.type !== "application/pdf") {
+      return NextResponse.json({ feil: "ugyldig-fil" }, { status: 400 });
+    }
+    /* Base64 er 4 tegn per 3 byte. Vi måler på råstørrelsen. */
+    if ((f.data.length * 3) / 4 > FILGRENSE) {
+      return NextResponse.json({ feil: "fil-for-stor" }, { status: 413 });
+    }
+    vedlegg = f.data;
+  }
+
   const instruks =
     forrigeArk && tekstRettelse
-      ? byggRettelse(mal, rene, forrigeArk, tekstRettelse)
-      : byggInstruks(mal, rene);
+      ? byggRettelse(mal, rene, forrigeArk, tekstRettelse, vedlegg !== null)
+      : byggInstruks(mal, rene, vedlegg !== null);
 
   if (instruks.length > INSTRUKSGRENSE) {
     return NextResponse.json({ feil: "for-lang" }, { status: 413 });
@@ -126,7 +159,29 @@ export async function POST(foresporsel: NextRequest) {
       },
     ],
     tool_choice: { type: "tool", name: VERKTOY },
-    messages: [{ role: "user", content: instruks }],
+    messages: [
+      {
+        role: "user",
+        /*
+         * Dokumentblokken FØR teksten. Rekkefølgen er dokumentert i
+         * API-et: et vedlegg som kommer etter instruksen, leses som et
+         * tillegg til den i stedet for som grunnlaget den viser til.
+         */
+        content: vedlegg
+          ? [
+              {
+                type: "document" as const,
+                source: {
+                  type: "base64" as const,
+                  media_type: "application/pdf" as const,
+                  data: vedlegg,
+                },
+              },
+              { type: "text" as const, text: instruks },
+            ]
+          : instruks,
+      },
+    ],
   });
 
   const koder = new TextEncoder();
