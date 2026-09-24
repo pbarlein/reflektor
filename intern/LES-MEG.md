@@ -200,17 +200,40 @@ mellom Reflektor og kunden. Det unntaket står i malens egne regler.
 | «Include files outside root» | **på** — byggen trenger `../public`                    |
 | URL                          | https://reflektor-intern.vercel.app                    |
 
-Tre aliaser peker på samme prosjekt, og alle tre serverer siste
-produksjonsdeploy: `reflektor-intern.vercel.app`,
-`reflektor-intern-reflektor.vercel.app` og branch-aliaset
-`reflektor-intern-git-claude-beautiful-lovelace-dy56f2-reflektor.vercel.app`.
+Tre aliaser peker på samme prosjekt:
 
-Det er `reflektor-intern.vercel.app` som skal brukes og registreres hos
-Google. Hvert alias er en egen adresse for Google, og siden sender den
-adressen brukeren faktisk står på — se `returadresse()` i
-`src/lib/google.ts`. Deles en av de andre ut, må også DEN ligge i listen.
+| Alias | Følger nye deploys? | Registrert hos Google? |
+|---|---|---|
+| `reflektor-intern.vercel.app` | ja, automatisk | nei |
+| `reflektor-intern-git-claude-beautiful-lovelace-dy56f2-reflektor.vercel.app` | ja, automatisk | nei |
+| `reflektor-intern-reflektor.vercel.app` | **NEI — må pekes om manuelt** | ja |
 
-Alle fire miljøvariablene er satt i alle tre miljøer. Innloggingen virker.
+> **DEN ENE ADRESSEN FOLK LOGGER INN PÅ, FLYTTER SEG IKKE AV SEG SELV.**
+>
+> `reflektor-intern-reflektor.vercel.app` er den eneste av de tre som er
+> registrert som redirect-URI hos Google, og dermed den eneste innloggingen
+> virker på. Den er også den eneste Vercel IKKE flytter automatisk.
+>
+> Resultatet, hvis ingen tenker på det: du deployer, alt ser riktig ut i
+> Vercel, og brukeren logger inn og ser en uke gammel versjon uten å skjønne
+> hvorfor. Det har skjedd to ganger — 23.09 og 24.09.
+>
+> **Etter hver deploy: pek aliaset om til den nye deployen.** I Vercel gjøres
+> det under Deployments → riktig deploy → ⋯ → Assign Domain. Claude Code kan
+> gjøre det direkte med Vercel-verktøyet `assign_alias`, og skal gjøre det
+> som en fast del av hver deploy uten å bli bedt om det.
+>
+> Varig fiks, når noen gidder: registrer `reflektor-intern.vercel.app` som
+> redirect-URI hos Google også, og bruk den i stedet. Se lista over
+> redirect-URI-er lenger opp — den må leses, ikke utledes.
+
+Hvert alias er en egen adresse for Google, og siden sender den adressen
+brukeren faktisk står på — se `returadresse()` i `src/lib/google.ts`. Deles
+en av de andre ut, må også DEN ligge i listen hos Google.
+
+Miljøvariablene er satt. `ANTHROPIC_API_KEY` ligger bare på Production —
+det holder, fordi alle deploys i dette prosjektet bygges som production, også
+de fra branch. Innloggingen virker.
 
 > **Ikke deploy dette fra salgssidens Vercel-prosjekt.** To prosjekter mot
 > samme repo er poenget: intranettet skal kunne deployes uten å røre
