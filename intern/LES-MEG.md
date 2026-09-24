@@ -138,6 +138,20 @@ brukes til noe annet enn de åtte malene. Hvert felt kappes på 4 000 tegn,
 hele instruksen på 24 000, og svaret på 20 000 tokens. Se kommentarene i
 `src/app/api/dokument/route.ts`.
 
+**Verifisert mot det ekte API-et 24.09.2026.** Fire maler kjørt gjennom hele
+veien — skjema, rute, strøm, visning. Første tegn kom etter 0,9–1,6 sekunder,
+ferdig dokument etter 8–40 sekunder avhengig av hvor lang malen er.
+
+Den runden fant én feil, og den er verdt å huske: husregelen sa uforbeholdent
+at «abonnementsprisen skrives 30 000 kr/mnd», og modellen leste det som en
+oppfordring til å nevne prisen. Den skrev «Abonnementet er 30 000 kr/mnd» inn
+i en produksjonsplan for en kunde ingen hadde sagt var abonnent — oppdiktet,
+og i strid med at produksjonskunder aldri omtales som SoMe-abonnenter. Regelen
+er nå betinget, og pris, bruksrett, oppsigelse og bindingstid er eksplisitt
+forbudt med mindre det står i skjemaet. **En formatregel er også en
+oppfordring.** Skriver du nye husregler i `byggInstruks`, si først OM noe skal
+med, deretter hvordan det skrives.
+
 **Bytter du `SESJON_HEMMELIGHET`, logges alle ut.** Det er den raskeste måten
 å kaste ut alle sesjoner på hvis noe skulle skje.
 

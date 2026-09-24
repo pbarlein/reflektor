@@ -785,7 +785,15 @@ export function byggInstruks(
   const regler = [
     ...(mal.regler ?? []),
     "Ikke finn på tall, navn, priser, kundenavn eller resultater. Står det ikke i informasjonen over, skal det stå TBD(det som mangler).",
-    "Abonnementsprisen skrives «30 000 kr/mnd», aldri med mva-notasjon og aldri som «fra».",
+    /*
+     * PRISREGELEN MÅ VÆRE BETINGET. Sto det bare «prisen skrives 30 000
+     * kr/mnd», leste modellen det som en oppfordring til å nevne prisen —
+     * og skrev «Abonnementet er 30 000 kr/mnd» inn i en produksjonsplan
+     * for en kunde ingen har sagt er abonnent. Det er både oppdiktet og i
+     * strid med at produksjonskunder aldri omtales som SoMe-abonnenter.
+     */
+    "Pris, bruksrett, oppsigelse, bindingstid og andre avtalevilkår skal IKKE inn i dokumentet med mindre det står i informasjonen over. Du skal ikke gjette hva som er avtalt.",
+    "Står abonnementsprisen i informasjonen, skrives den «30 000 kr/mnd» — aldri med mva-notasjon og aldri som «fra».",
     "Skriv fullstendige setninger. Ingen engelske uttrykk der det finnes norske.",
     "Konkret framfor generelt. «Kokken lager burgere mens vi filmer» er konkret. «Vi dokumenterer produksjonen» er det ikke.",
   ];

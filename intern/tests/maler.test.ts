@@ -83,6 +83,22 @@ test("instruksen bærer husreglene, også når skjemaet er tomt", () => {
     const tom = byggInstruks(m, {});
     assert.match(tom, /Ikke finn på tall/, `${m.slug} mangler oppdikt-regelen`);
     assert.match(tom, /30 000 kr\/mnd/, `${m.slug} mangler prisregelen`);
+    /*
+     * Prisregelen må være BETINGET. En uforbeholden «prisen skrives
+     * 30 000 kr/mnd» fikk modellen til å skrive prisen inn i en
+     * produksjonsplan der ingen hadde oppgitt den. Se kommentaren i
+     * byggInstruks.
+     */
+    assert.match(
+      tom,
+      /Står abonnementsprisen i informasjonen/,
+      `${m.slug}: prisregelen er ikke betinget`,
+    );
+    assert.match(
+      tom,
+      /Pris, bruksrett, oppsigelse, bindingstid/,
+      `${m.slug} mangler regelen mot oppdiktede avtalevilkår`,
+    );
     assert.match(tom, /IKKE OPPGITT/, `${m.slug} lister ikke tomme felt`);
     for (const r of m.regler ?? []) {
       assert.ok(tom.includes(r), `${m.slug}: en egen regel falt ut`);
