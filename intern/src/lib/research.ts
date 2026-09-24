@@ -47,7 +47,16 @@ const MODELL = "claude-opus-5";
  * det hele tatt, etter å ha betalt for alle søkene.
  */
 const MAKS_TOKENS = 16_000;
-const MAKS_SOK = 6;
+/*
+ * ── TRE SØK, NED FRA SEKS ─────────────────────────────────────────────────
+ *
+ * Bestilt 24.09.2026: «bruk mindre tid på nettet». Med publiseringstallene
+ * i instruksen er nettsøket ikke lenger hovedkilden — det er to spørsmål
+ * tallene ikke svarer på: hvem de selger til, og hva som er ferskt. Tre søk
+ * dekker begge med margin, og researchen ble samtidig tolv sekunder
+ * raskere.
+ */
+const MAKS_SOK = 3;
 /** `pause_turn` betyr at serververktøyet trenger en runde til. */
 const MAKS_FORTSETTELSER = 2;
 /*
@@ -63,6 +72,8 @@ export async function kjorResearch({
   mal,
   kunde,
   lokasjon,
+  publisering = "",
+  strategi = "",
   påSøk,
   signal,
 }: {
@@ -70,11 +81,18 @@ export async function kjorResearch({
   mal: Mal;
   kunde: string;
   lokasjon: string;
+  /** Målte publiseringstall, ferdig formatert. Tom streng når vi ikke har dem. */
+  publisering?: string;
+  /** Lenken til SoMe-strategien, hvis vi har den. */
+  strategi?: string;
   påSøk: (spørring: string) => void;
   signal?: AbortSignal;
 }): Promise<Research | null> {
   const meldinger: Anthropic.MessageParam[] = [
-    { role: "user", content: researchInstruks(mal, kunde, lokasjon) },
+    {
+      role: "user",
+      content: researchInstruks(mal, kunde, lokasjon, publisering, strategi),
+    },
   ];
 
   /*
@@ -94,7 +112,7 @@ export async function kjorResearch({
           max_tokens: MAKS_TOKENS,
           thinking: { type: "adaptive" },
           system:
-            "Du er researcher for et norsk innholdsbyrå. Du svarer aldri av hukommelsen om norske bedrifter — du søker. Du oppgir kilde på alt, og du sier tydelig fra om det du ikke fant.",
+            "Du er researcher for et norsk innholdsbyrå, og du svarer på ett spørsmål: hva skal vi lage for denne kunden. Målte publiseringstall veier tyngre enn noe en bedrift skriver om seg selv. Du søker sparsomt, du oppgir kilde på alt du henter fra nettet, og du sier tydelig fra om det du ikke fant.",
           tools: [
             {
               type: "web_search_20260209",

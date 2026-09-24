@@ -36,7 +36,13 @@ function Overskrift({ barn }: { barn: string }) {
   );
 }
 
-function Punkter({ punkter, lys = false }: { punkter: string[]; lys?: boolean }) {
+function Punkter({
+  punkter,
+  lys = false,
+}: {
+  punkter: string[];
+  lys?: boolean;
+}) {
   return (
     <ul className="mt-[2mm] flex flex-col gap-[1.6mm]">
       {punkter.map((p, i) => (

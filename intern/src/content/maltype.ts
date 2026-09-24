@@ -75,6 +75,22 @@ export type Felt = {
    * En fast dato i et eksempel er feil dato fra og med dagen etter.
    */
   eksempelDager?: number;
+  /**
+   * Feltet er GRUNNLAG, ikke innhold.
+   *
+   * ── HVORFOR DET MÅTTE SKILLES ─────────────────────────────────────────
+   *
+   * Et Instagram-brukernavn og en lenke til SoMe-strategien styrer hva
+   * Claude undersøker før dokumentet skrives. De skal aldri stå i
+   * dokumentet selv — kunden vet hva kontoen sin heter, og en
+   * produksjonsplan med en Canva-lenke i seg er en plan med en arbeidsnotis
+   * limt inn.
+   *
+   * Uten dette skillet havnet slike felt under INFORMASJONEN sammen med
+   * oppmøtetid og kontaktperson, og da er det bare et spørsmål om tid før
+   * ett av dem dukker opp i en tabellcelle hos kunden.
+   */
+  grunnlag?: true;
 };
 
 /**

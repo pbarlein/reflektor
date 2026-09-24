@@ -1,5 +1,5 @@
 import { TAK, delforklaring, type Ark } from "./arktype.ts";
-import type { Mal } from "./maltype.ts";
+import type { Felt, Mal } from "./maltype.ts";
 
 /**
  * De åtte malene. Se maltype.ts for hva feltene betyr og hvor formatet
@@ -21,6 +21,54 @@ import type { Mal } from "./maltype.ts";
  * Produksjonsplanen lages hver måned for hver kunde; leveranseoversikten
  * følger hver leveranse.
  */
+/**
+ * Feltene som styrer hva Claude undersøker, ikke hva dokumentet sier.
+ *
+ * ── HVORFOR DE ER DE SAMME TRE OVERALT ────────────────────────────────────
+ *
+ * Bestilt 24.09.2026: «en produksjonsplan skal tross alt bestemme hva som
+ * skal filmes. bruk mindre tid på nettet, og gjør kall i supermetrics for å
+ * få oversikt over hva som faktisk publiseres av kunden, konkurrenter og
+ * kartlegg virale virkemidler.»
+ *
+ * De ligger på de tre malene der spørsmålet er «hva skal vi lage»:
+ * produksjonsplanen, publiseringsplanen og månedsrapporten. På en
+ * samtykkeerklæring eller et befaringsnotat ville de vært tre felt til å
+ * hoppe over.
+ *
+ * Ingen av dem er påkrevd. Et tomt felt gir en tynnere research, ikke en
+ * stoppet produksjon — og strategilenken finner Claude som regel selv.
+ */
+const GRUNNLAGSFELT: readonly Felt[] = [
+  {
+    id: "instagram",
+    etikett: "Kundens Instagram",
+    type: "tekst",
+    grunnlag: true,
+    hjelp:
+      "Brukernavnet. Claude henter hva de faktisk har publisert det siste året, og hvilke formater som gikk.",
+    plassholder: "@brukernavn",
+  },
+  {
+    id: "konkurrenter",
+    etikett: "Konkurrenter på Instagram",
+    type: "tekst",
+    grunnlag: true,
+    hjelp:
+      "Inntil tre brukernavn, skilt med komma. Grunnlaget for hva som faktisk går i bransjen.",
+    plassholder: "@konkurrent, @konkurrent",
+  },
+  {
+    id: "somestrategi",
+    etikett: "Lenke til SoMe-strategi i Canva",
+    type: "tekst",
+    grunnlag: true,
+    hjelp:
+      "Har du ikke lenken, lar du feltet stå tomt. Claude leter etter den i e-posten med kunden selv.",
+    plassholder: "https://www.canva.com/design/...",
+  },
+];
+
 export const MALER: readonly Mal[] = [
   {
     slug: "produksjonsplan",
@@ -190,6 +238,7 @@ export const MALER: readonly Mal[] = [
         plassholder:
           "Oktober: ingen produksjon, Rosa sløyfe i avdelingene. November: én dag, disk og bestselgere. Desember: én dag, catering og varm drikke.",
       },
+      ...GRUNNLAGSFELT,
     ],
     oppdrag:
       "Ensideren kunden får før produksjonsdagen: hva som skjer, hva vi trenger fra dem, og hva de får. Overskriften er «Reflektor × [Kunde] [Lokasjon]». Undertittelen er én setning med produksjonsdagen, stedet og Når materiellet publiseres." +
@@ -742,6 +791,7 @@ export const MALER: readonly Mal[] = [
         eksempel:
           "Vi filmer to tilberedninger til i november, og legger nærbildet først i klippet i stedet for etter anslaget.",
       },
+      ...GRUNNLAGSFELT,
     ],
     oppdrag:
       "Månedsrapporten kunden får i første uke av måneden. Den svarer på hva vi gjorde, hva vi ser i tallene, og hva vi gjør med det. Overskriften er kunden og måneden." +
@@ -815,6 +865,7 @@ export const MALER: readonly Mal[] = [
         type: "tekst",
         standard: "Instagram, med krysspublisering til Facebook",
       },
+      ...GRUNNLAGSFELT,
     ],
     oppdrag:
       "Publiseringsplanen for én måned: hva som går ut hvilken dag, i hvilken kanal. Overskriften er kunden og måneden." +
@@ -895,12 +946,20 @@ export function byggInstruks(
   medVedlegg = false,
   research = "",
 ): string {
-  const utfylt = mal.felt
+  /*
+   * Grunnlagsfeltene holdes utenfor BEGGE listene. De er ikke innhold som
+   * mangler, og de er ikke innhold som er fylt ut — de er noe Claude har
+   * undersøkt med, og de har allerede gjort jobben sin før instruksen
+   * bygges. Står de under IKKE OPPGITT, blir de til TBD(...) i dokumentet.
+   */
+  const innhold = mal.felt.filter((f) => !f.grunnlag);
+
+  const utfylt = innhold
     .map((f) => [f, (verdier[f.id] ?? "").trim()] as const)
     .filter(([, v]) => v.length > 0)
     .map(([f, v]) => `- ${f.etikett}: ${f.type === "dato" ? norskDato(v) : v}`);
 
-  const mangler = mal.felt
+  const mangler = innhold
     .filter((f) => !(verdier[f.id] ?? "").trim())
     .map((f) => `- ${f.etikett}`);
 
@@ -1076,6 +1135,16 @@ export function byggRettelse(
 export function eksempelverdier(mal: Mal): Record<string, string> {
   const ut: Record<string, string> = {};
   for (const f of mal.felt) {
+    /*
+     * GRUNNLAGSFELTENE FYLLES IKKE UT AV EKSEMPELET.
+     *
+     * De er oppslagsnøkler, ikke innhold. Et påfunnet brukernavn gir et
+     * ekte oppslag mot en konto som ikke finnes, og produsenten får «Ikke
+     * hentet: @konkurrent» i grunnlagspanelet uten å ha bedt om noe. Et
+     * eksempel skal vise hvor mye som hører hjemme i et felt — her ville
+     * det vist en feil.
+     */
+    if (f.grunnlag) continue;
     if (f.type === "dato") {
       const dag = new Date();
       dag.setUTCHours(12, 0, 0, 0);

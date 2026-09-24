@@ -240,7 +240,7 @@ export function lesArk(rått: unknown, mal: Mal): Ark | null {
 
   const tekst = (v: unknown, tak: number): string =>
     typeof v === "string" ? v.trim().slice(0, tak) : "";
-  const liste = <T,>(v: unknown, tak: number, kart: (x: unknown) => T | null) =>
+  const liste = <T>(v: unknown, tak: number, kart: (x: unknown) => T | null) =>
     Array.isArray(v)
       ? v
           .slice(0, tak)
@@ -262,7 +262,9 @@ export function lesArk(rått: unknown, mal: Mal): Ark | null {
         tittel: tekst(b.tittel, TAK.delTittel),
         punkter:
           liste<string>(b.punkter, TAK.punkter, (p) =>
-            typeof p === "string" && p.trim() ? p.trim().slice(0, TAK.punkt) : null,
+            typeof p === "string" && p.trim()
+              ? p.trim().slice(0, TAK.punkt)
+              : null,
           ) ?? [],
       };
     };
@@ -286,7 +288,9 @@ export function lesArk(rått: unknown, mal: Mal): Ark | null {
         Array.isArray(r2)
           ? r2
               .slice(0, TAK.kolonner)
-              .map((c) => (typeof c === "string" ? c.trim().slice(0, TAK.celle) : ""))
+              .map((c) =>
+                typeof c === "string" ? c.trim().slice(0, TAK.celle) : "",
+              )
           : null,
       ),
       boks: boks(d.boks) ?? undefined,

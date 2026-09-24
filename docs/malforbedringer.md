@@ -60,3 +60,40 @@ Ingen ennå. Fyll inn her når noe går igjen.
 
 | Dato | Mal | Hva som blir bedt om | Antall ganger |
 |---|---|---|---|
+
+## 24.09.2026 — researchen ble snudd fra nettsøk til publiseringsdata
+
+**Bestilt:** «en produksjonsplan skal tross alt bestemme hva som skal
+filmes. bruk mindre tid på nettet, og gjør kall i supermetrics for å få
+oversikt over hva som faktisk publiseres av kunden, konkurrenter og kartlegg
+virale virkemidler i relasjon til hva som er fordelaktig og gjennomførbart
+for reflektor.»
+
+**Hva som var galt:** researchen brukte seks nettsøk på å finne ut hvem
+bedriften var, og leverte i praksis en omskrevet «om oss»-side. Ingenting i
+den svarte på spørsmålet dokumentet faktisk skal svare på — hva skal kamera
+peke på den dagen.
+
+**Hva som ble gjort:**
+
+- Nye grunnlagsfelt (`grunnlag: true` i maltype.ts) på produksjonsplan,
+  publiseringsplan og månedsrapport: kundens Instagram, konkurrenter, og
+  lenke til SoMe-strategien i Canva. De styrer hva Claude undersøker og
+  skrives aldri inn i dokumentet. To tester holder det skillet.
+- `src/lib/supermetrics.ts` henter hva kontoene faktisk har publisert siste
+  år, fordelt på format, med median og ikke snitt.
+- Nettsøket er redusert fra seks til tre søk, og har fått et smalere
+  oppdrag: hvem de selger til, og hva som er ferskt.
+- Researchen har fått `virkemidler` — virale virkemidler avgrenset til det
+  Reflektor kan lage på én produksjonsdag med to personer. Rammene står
+  eksplisitt i instruksen, ellers foreslås det daglig publisering og
+  filmteam.
+- Rekkefølgen er snudd: e-post og tall FØRST, så research. Researchen skal
+  bygge på dem, ikke omvendt.
+- Briefen leter spesifikt etter en Canva-lenke med SoMe-strategien.
+
+**Status på Supermetrics:** ikke i drift. Reflektors abonnement er
+Claude-koblingen (produktkode CNCT), ikke API-produktet, og modulen er
+mørk uten `SUPERMETRICS_API_KEY`. Kontrakten er lest i dokumentasjonen og
+kjørt mot en lokal etterligning — ikke mot en ekte nøkkel. Kommentaren øverst
+i `intern/src/lib/supermetrics.ts` sier hva som gjenstår.

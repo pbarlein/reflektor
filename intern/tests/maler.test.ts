@@ -227,6 +227,13 @@ test("hvert felt er nevnt i oppdraget, strukturen eller reglene", () => {
       .join(" ")
       .toLowerCase();
     for (const f of m.felt) {
+      /*
+       * Grunnlagsfelt SKAL ikke stå i strukturen. De styrer hva Claude
+       * undersøker, og de holdes bevisst ute av dokumentet — se `grunnlag`
+       * i maltype.ts. Regelen for dem er den motsatte, og den står i sin
+       * egen test under.
+       */
+      if (f.grunnlag) continue;
       assert.ok(
         tekst.includes(f.etikett.toLowerCase()),
         `${m.slug}: feltet «${f.etikett}» er ikke nevnt noe sted, og blir dermed plassert på slump`,
@@ -246,7 +253,11 @@ test("oppdraget sier fra om at hodet allerede finnes", () => {
       /Ikke gjenta noe av det/,
       `${m.slug}: oppdraget advarer ikke mot å gjenta hodet`,
     );
-    assert.match(m.oppdrag, /Overskriften er/, `${m.slug}: hva er overskriften?`);
+    assert.match(
+      m.oppdrag,
+      /Overskriften er/,
+      `${m.slug}: hva er overskriften?`,
+    );
   }
 });
 
@@ -279,6 +290,8 @@ test("eksempelet fyller hvert eneste felt", () => {
   for (const m of MALER) {
     const v = eksempelverdier(m);
     for (const f of m.felt) {
+      /* Oppslagsnøkler fylles ikke ut av eksempelet. Se `eksempelverdier`. */
+      if (f.grunnlag) continue;
       assert.ok(
         (v[f.id] ?? "").trim().length > 0,
         `${m.slug}: feltet «${f.etikett}» har ingen eksempelverdi`,
@@ -323,6 +336,69 @@ test("datoeksempler er datoer, og de flytter seg med dagen", () => {
       if ((f.eksempelDager ?? 14) > 0) {
         assert.ok(v[f.id] > idag, `${m.slug}/${f.id} skulle ligget fram i tid`);
       }
+    }
+  }
+});
+
+/**
+ * ── GRUNNLAGSFELT MÅ FAKTISK BRUKES TIL NOE ───────────────────────────────
+ *
+ * Testen over slipper grunnlagsfeltene forbi kravet om at hvert felt skal
+ * være nevnt i strukturen. Uten en erstatning ville den unntaksregelen vært
+ * en bakdør: et hvilket som helst felt kunne merkes `grunnlag` og forsvinne
+ * ut av all kontroll — synlig i skjemaet, fylt ut av produsenten, og brukt
+ * av ingenting.
+ *
+ * Derfor denne listen. Den er kort med vilje. Skal et nytt grunnlagsfelt
+ * inn, må noe i serveren først lære seg å lese det, og id-en må føres opp
+ * her sammen med hvem som bruker den.
+ */
+const GRUNNLAG_SOM_BRUKES: Record<string, string> = {
+  /** `hentPublisering` i src/lib/supermetrics.ts slår opp kontoen. */
+  instagram: "supermetrics",
+  /** Samme oppslag, som sammenligningsgrunnlag. */
+  konkurrenter: "supermetrics",
+  /** Sendes inn i researchen, og letes etter i e-posten når den er tom. */
+  somestrategi: "research + brief",
+};
+
+test("hvert grunnlagsfelt leses av noe på serveren", () => {
+  for (const m of MALER) {
+    for (const f of m.felt) {
+      if (!f.grunnlag) continue;
+      assert.ok(
+        GRUNNLAG_SOM_BRUKES[f.id],
+        `${m.slug}: «${f.etikett}» er merket grunnlag, men ingenting leser den. Et felt ingen bruker er verre enn ikke noe felt — produsenten fyller det ut og tror det telte.`,
+      );
+    }
+  }
+});
+
+/**
+ * Grunnlagsfeltene skal ALDRI havne i instruksens innholdsdel. Et
+ * Instagram-brukernavn under INFORMASJONEN blir før eller siden en
+ * tabellcelle hos kunden, og en Canva-lenke i en produksjonsplan er en
+ * arbeidsnotis på avveie.
+ */
+test("grunnlagsfelt står verken under INFORMASJONEN eller IKKE OPPGITT", () => {
+  for (const m of MALER) {
+    const grunnlag = m.felt.filter((f) => f.grunnlag);
+    if (!grunnlag.length) continue;
+
+    const verdier = Object.fromEntries(
+      grunnlag.map((f) => [f.id, "@noeutfylt"]),
+    );
+    for (const ut of [byggInstruks(m, verdier), byggInstruks(m, {})]) {
+      for (const f of grunnlag) {
+        assert.ok(
+          !ut.includes(`- ${f.etikett}`),
+          `${m.slug}: «${f.etikett}» er ført opp som innhold i instruksen`,
+        );
+      }
+      assert.ok(
+        !ut.includes("@noeutfylt"),
+        `${m.slug}: verdien av et grunnlagsfelt lekket inn i instruksen`,
+      );
     }
   }
 });

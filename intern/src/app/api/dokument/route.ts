@@ -9,15 +9,16 @@ import {
   researchTilTekst,
   type Research,
 } from "@/content/researchtype";
-import {
-  ferskNok,
-  hentKunde,
-  husKunde,
-  husRettelse,
-} from "@/lib/hukommelse";
+import { ferskNok, hentKunde, husKunde, husRettelse } from "@/lib/hukommelse";
 import { kjorBrief } from "@/lib/brief";
 import { sokEpost } from "@/lib/gmail";
 import { kjorResearch } from "@/lib/research";
+import {
+  hentPublisering,
+  publiseringTilTekst,
+  rensBrukernavn,
+  type Publisering,
+} from "@/lib/supermetrics";
 import { hentBruker } from "@/lib/tilgang";
 
 /**
@@ -45,11 +46,12 @@ import { hentBruker } from "@/lib/tilgang";
  *
  * Ikke teksten. Én NDJSON-linje per hendelse:
  *
+ *   {"fase": "epost"}      — leser e-post med kunden, henter tall
+ *   {"brief": {...}}       — det som sto i e-posten, med hvilke meldinger
+ *   {"publisering": {...}} — hva kunden og konkurrentene faktisk publiserer
  *   {"fase": "research"}   — undersøker kunden
  *   {"sok": "..."}         — dette søkes det på nå
  *   {"research": {...}}    — det som ble funnet, med kilder
- *   {"fase": "epost"}      — leser e-post med kunden
- *   {"brief": {...}}       — det som sto i e-posten, med hvilke meldinger
  *   {"fase": "skriver"}    — dokumentet skrives
  *   {"fremdrift": 3}       — så mange deler er ferdig utfylt
  *   {"ark": {...}}         — det ferdige dokumentet
@@ -147,7 +149,9 @@ export async function POST(foresporsel: NextRequest) {
    */
   const forrigeArk = forrige ? lesArk(forrige, mal) : null;
   const tekstRettelse =
-    typeof rettelse === "string" ? rettelse.trim().slice(0, RETTELSEGRENSE) : "";
+    typeof rettelse === "string"
+      ? rettelse.trim().slice(0, RETTELSEGRENSE)
+      : "";
 
   /*
    * VEDLEGGET SLIPPES BARE INN DER MALEN BER OM DET.
@@ -213,28 +217,99 @@ export async function POST(foresporsel: NextRequest) {
 
       try {
         /*
-         * ── FASE 1: FINN UT HVEM KUNDEN ER ────────────────────────────────
+         * ── REKKEFØLGEN BLE SNUDD 24.09.2026 ──────────────────────────────
+         *
+         * Før: research på nettet, så e-post, så skriv. Det ga en research
+         * som ikke visste hva kunden selv hadde sagt, og som ikke hadde
+         * sett et eneste innlegg de faktisk hadde publisert.
+         *
+         * Nå ligger e-posten og publiseringstallene først, og begge går
+         * inn i researchen. Da søker den på det den ikke allerede vet, og
+         * den kan bygge på målte tall i stedet for på «om oss»-siden.
+         */
+        const kunde = (rene.kunde ?? "").trim();
+        const ferskBestilt = friskResearch === true;
+        let brukt = research;
+
+        /*
+         * ── FASE 1: E-POST OG TALL, SAMTIDIG ──────────────────────────────
+         *
+         * De to har ingenting med hverandre å gjøre, og begge tar tid.
+         * Etter hverandre er de tjue sekunder; samtidig er de tolv.
+         */
+        let brief: Brief | null = null;
+        let publisering: Publisering | null = null;
+
+        if (kunde) {
+          send({ fase: "epost" });
+
+          /*
+           * Kontoene produsenten har oppgitt. Er feltene tomme, gir
+           * `hentPublisering` null og researchen kjører uten tall — det er
+           * en tynnere research, ikke en feil.
+           */
+          const konkurrenter = (rene.konkurrenter ?? "")
+            .split(/[,;\n]/)
+            .map(rensBrukernavn)
+            .filter(Boolean);
+
+          const [poster, tall] = await Promise.all([
+            sokEpost(bruker.epost, kunde, stopp.signal),
+            hentPublisering({
+              kunde: rene.instagram ?? "",
+              konkurrenter,
+              signal: stopp.signal,
+            }),
+          ]);
+
+          publisering = tall;
+          if (publisering) send({ publisering });
+
+          if (poster.length) {
+            brief = await kjorBrief({
+              klient,
+              mal,
+              kunde,
+              poster,
+              signal: stopp.signal,
+            });
+            if (brief) send({ brief });
+          }
+        }
+
+        /*
+         * STRATEGIEN: FELTET FØRST, E-POSTEN ETTER.
+         *
+         * Har produsenten limt inn lenken, er det den som gjelder — hen har
+         * sett begge deler og valgt. Er feltet tomt, brukes den Claude fant
+         * i e-posten, som er hele grunnen til at den letes etter.
+         */
+        const strategi =
+          (rene.somestrategi ?? "").trim() || (brief?.strategi ?? "");
+
+        /*
+         * ── FASE 2: FINN UT HVEM KUNDEN ER ────────────────────────────────
          *
          * Hoppes over når klienten allerede har researchen, og når vi ikke
          * vet hvem kunden er. Uten et navn er det ingenting å slå opp, og
          * et søk på ingenting koster penger og gir støy.
-         */
-        let brukt = research;
-        const kunde = (rene.kunde ?? "").trim();
-        const ferskBestilt = friskResearch === true;
-
-        /*
-         * HUKOMMELSEN FØRST.
          *
-         * Researchen koster søk og tjue sekunder. Det Jordbærpikene driver
-         * med, endrer seg ikke mellom en produksjonsplan i oktober og en
-         * opptaksliste i november. Er den lagret og fersk, brukes den —
-         * med mindre produsenten uttrykkelig har bedt om en ny.
+         * HUKOMMELSEN FØRST. Researchen koster søk og tjue sekunder. Det
+         * Jordbærpikene driver med, endrer seg ikke mellom en
+         * produksjonsplan i oktober og en opptaksliste i november. Er den
+         * lagret og fersk, brukes den — med mindre produsenten uttrykkelig
+         * har bedt om en ny.
          */
         if (!brukt && kunde && !ferskBestilt) {
           const minne = await hentKunde(kunde);
-          if (minne?.research && ferskNok(minne.research)) {
-            brukt = minne.research;
+          /*
+           * Lagret research har vært utenfor huset, akkurat som arket og
+           * researchen klienten sender tilbake. Den valideres på vei inn —
+           * et minne lagret før `virkemidler` fantes, mangler feltet.
+           */
+          const lest = minne?.research ? lesResearch(minne.research) : null;
+          if (lest && minne?.research && ferskNok(minne.research)) {
+            brukt = { ...lest, hentet: minne.research.hentet };
             send({ research: brukt, fra: "hukommelse" });
           }
         }
@@ -246,6 +321,8 @@ export async function POST(foresporsel: NextRequest) {
             mal,
             kunde,
             lokasjon: (rene.lokasjon ?? "").trim(),
+            publisering: publisering ? publiseringTilTekst(publisering) : "",
+            strategi,
             påSøk: (q) => send({ sok: q }),
             signal: stopp.signal,
           });
@@ -263,28 +340,21 @@ export async function POST(foresporsel: NextRequest) {
         }
 
         /*
-         * ── FASE 2: LES E-POSTEN MED KUNDEN ───────────────────────────────
+         * Grunnlaget, i den rekkefølgen det skal veie.
          *
-         * Kjøres hver gang, også ved rettelser: en brief som kom i går skal
-         * ikke bli borte bak en research fra forrige måned. Har brukeren
-         * ikke gitt Gmail-tilgang, gir `sokEpost` tom liste og steget
-         * hoppes over uten at noe sies om det.
+         * Publiseringstallene er målte og står først. Researchen er
+         * slutninger fra dem pluss noen søk. E-posten er kundens egne ord,
+         * og den står sist fordi det som står sist, blir lest sist — og
+         * `briefTilTekst` sier selv at den veier tyngst av alt.
          */
-        let brief: Brief | null = null;
-        if (kunde) {
-          const poster = await sokEpost(bruker.epost, kunde, stopp.signal);
-          if (poster.length) {
-            send({ fase: "epost" });
-            brief = await kjorBrief({
-              klient,
-              mal,
-              kunde,
-              poster,
-              signal: stopp.signal,
-            });
-            if (brief) send({ brief });
-          }
-        }
+        const grunnlaget = () =>
+          [
+            publisering ? publiseringTilTekst(publisering, true) : "",
+            brukt ? researchTilTekst(brukt) : "",
+            brief ? briefTilTekst(brief) : "",
+          ]
+            .filter(Boolean)
+            .join("\n\n");
 
         // ── FASE 3: SKRIV DOKUMENTET ─────────────────────────────────────
         const instruks =
@@ -295,24 +365,9 @@ export async function POST(foresporsel: NextRequest) {
                 forrigeArk,
                 tekstRettelse,
                 vedlegg !== null,
-                [
-                  brukt ? researchTilTekst(brukt) : "",
-                  brief ? briefTilTekst(brief) : "",
-                ]
-                  .filter(Boolean)
-                  .join("\n\n"),
+                grunnlaget(),
               )
-            : byggInstruks(
-                mal,
-                rene,
-                vedlegg !== null,
-                [
-                  brukt ? researchTilTekst(brukt) : "",
-                  brief ? briefTilTekst(brief) : "",
-                ]
-                  .filter(Boolean)
-                  .join("\n\n"),
-              );
+            : byggInstruks(mal, rene, vedlegg !== null, grunnlaget());
 
         if (instruks.length > INSTRUKSGRENSE) {
           send({ feil: "Skjemaet er for langt. Kort ned de lange feltene." });
@@ -365,8 +420,11 @@ export async function POST(foresporsel: NextRequest) {
                           type: "image" as const,
                           source: {
                             type: "base64" as const,
-                            media_type:
-                              b.type as "image/png" | "image/jpeg" | "image/webp" | "image/gif",
+                            media_type: b.type as
+                              | "image/png"
+                              | "image/jpeg"
+                              | "image/webp"
+                              | "image/gif",
                             data: b.data,
                           },
                         })),

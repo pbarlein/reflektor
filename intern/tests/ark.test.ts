@@ -19,7 +19,10 @@ test("delene er malens skisse uten toppen", () => {
   for (const m of MALER) {
     const d = deleneI(m);
     assert.ok(!d.includes("topp"), `${m.slug}: toppen er ikke en del`);
-    assert.equal(d.length, m.skisse.length - (m.skisse.includes("topp") ? 1 : 0));
+    assert.equal(
+      d.length,
+      m.skisse.length - (m.skisse.includes("topp") ? 1 : 0),
+    );
     assert.ok(d.length >= 2, `${m.slug}: for få deler til et dokument`);
   }
 });

@@ -149,7 +149,11 @@ export async function husKunde(
  * ingenting når noen gang tre.
  */
 export async function husRettelse(mal: string, tekst: string): Promise<void> {
-  const ren = tekst.trim().toLowerCase().replace(/\s+/g, " ").replace(/[.!?]+$/, "");
+  const ren = tekst
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .replace(/[.!?]+$/, "");
   if (ren.length < 4) return;
 
   const sti = `laerdom/${nokkel(mal)}.json`;
@@ -165,11 +169,15 @@ export async function husRettelse(mal: string, tekst: string): Promise<void> {
   }
 
   /* Hyppigst først, og et tak så filen ikke vokser i det uendelige. */
-  fra.rettelser.sort((a, b) => b.antall - a.antall || b.sist.localeCompare(a.sist));
+  fra.rettelser.sort(
+    (a, b) => b.antall - a.antall || b.sist.localeCompare(a.sist),
+  );
   await skriv(sti, { mal, rettelser: fra.rettelser.slice(0, 200) });
 }
 
-export async function hentRettelser(mal: string): Promise<Rettelsesminne | null> {
+export async function hentRettelser(
+  mal: string,
+): Promise<Rettelsesminne | null> {
   return les<Rettelsesminne>(`laerdom/${nokkel(mal)}.json`);
 }
 
@@ -198,6 +206,8 @@ export async function husGoogletoken(
 }
 
 export async function hentGoogletoken(epost: string): Promise<string | null> {
-  const d = await les<{ refreshToken?: string }>(`google/${nokkel(epost)}.json`);
+  const d = await les<{ refreshToken?: string }>(
+    `google/${nokkel(epost)}.json`,
+  );
   return d?.refreshToken ?? null;
 }

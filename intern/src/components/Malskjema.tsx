@@ -8,6 +8,7 @@ import { Arkramme, type Arkhandtak } from "@/components/Arkramme";
 import { deleneI, type Ark as ArkData } from "@/content/arktype";
 import type { Brief } from "@/content/brieftype";
 import type { Research } from "@/content/researchtype";
+import type { Publisering } from "@/lib/supermetrics";
 import { byggInstruks, eksempelverdier } from "@/content/maler";
 import type { Felt, Mal } from "@/content/maltype";
 
@@ -170,9 +171,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
 
   const [tilstand, setTilstand] = useState<Tilstand>("klar");
   const [gjort, setGjort] = useState(0);
-  const [fase, setFase] = useState<"research" | "epost" | "skriver">(
-    "skriver",
-  );
+  const [fase, setFase] = useState<"research" | "epost" | "skriver">("skriver");
   const [sok, setSok] = useState<string[]>([]);
   /*
    * Researchen holdes på tvers av rettelser. Å slå opp bedriften på nytt
@@ -182,6 +181,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
   const [research, setResearch] = useState<Research | null>(null);
   const [fraMinne, setFraMinne] = useState(false);
   const [brief, setBrief] = useState<Brief | null>(null);
+  const [publisering, setPublisering] = useState<Publisering | null>(null);
   const [feilmelding, setFeilmelding] = useState("");
   const [rettelse, setRettelse] = useState("");
   const [forMye, setForMye] = useState(false);
@@ -218,6 +218,8 @@ export function Malskjema({ mal }: { mal: Mal }) {
 
   const instruks = useMemo(() => byggInstruks(mal, verdier), [mal, verdier]);
   const deler = useMemo(() => deleneI(mal), [mal]);
+
+  const grunnlagsfelt = mal.felt.filter((f) => f.grunnlag);
 
   const mangler = mal.felt.filter(
     (f) => f.paakrevd && !(verdier[f.id] ?? "").trim(),
@@ -374,9 +376,16 @@ export function Malskjema({ mal }: { mal: Mal }) {
 
     setTilstand("jobber");
     setGjort(0);
-    setFase(research && !friskResearch ? "skriver" : "research");
+    /*
+     * Rekkefølgen er e-post → research → skriv, og førstesteget avhenger av
+     * hva vi allerede har. Har klienten researchen, hoppes begge
+     * undersøkelsene over — men e-posten leses på nytt hver gang, så
+     * «epost» er riktig start så snart vi vet hvem kunden er.
+     */
+    setFase(research && !friskResearch ? "skriver" : "epost");
     setSok([]);
     setBrief(null);
+    setPublisering(null);
     setFeilmelding("");
 
     try {
@@ -414,10 +423,10 @@ export function Malskjema({ mal }: { mal: Mal }) {
                 : kode === "bilde-for-stort"
                   ? "Et av bildene er for stort. Taket er 1,5 MB per bilde."
                   : kode === "fil-for-stor"
-                  ? "Filen er for stor. Taket er 2,5 MB."
-                  : kode === "ugyldig-fil"
-                    ? "Filen ble ikke godtatt. Den må være en PDF."
-                    : "Noe gikk galt. Prøv igjen.",
+                    ? "Filen er for stor. Taket er 2,5 MB."
+                    : kode === "ugyldig-fil"
+                      ? "Filen ble ikke godtatt. Den må være en PDF."
+                      : "Noe gikk galt. Prøv igjen.",
         );
         setTilstand("feil");
         return;
@@ -444,6 +453,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
           let h: {
             fase?: "research" | "epost" | "skriver";
             brief?: Brief;
+            publisering?: Publisering;
             sok?: string;
             research?: Research;
             fra?: string;
@@ -462,6 +472,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
             setSok((s) => [...s, q]);
           }
           if (h.brief) setBrief(h.brief);
+          if (h.publisering) setPublisering(h.publisering);
           if (h.research) {
             setResearch(h.research);
             setFraMinne(h.fra === "hukommelse");
@@ -488,7 +499,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
         setTilstand("feil");
         return;
       }
-        setRettelse("");
+      setRettelse("");
       setBilder([]);
       setBildefeil("");
       setTilstand("ferdig");
@@ -614,14 +625,51 @@ export function Malskjema({ mal }: { mal: Mal }) {
         )}
 
         {viserFelter &&
-          mal.felt.map((f) => (
-            <Feltet
-              key={f.id}
-              felt={f}
-              verdi={verdier[f.id] ?? ""}
-              sett={(v) => sett(f.id, v)}
-            />
-          ))}
+          mal.felt
+            .filter((f) => !f.grunnlag)
+            .map((f) => (
+              <Feltet
+                key={f.id}
+                felt={f}
+                verdi={verdier[f.id] ?? ""}
+                sett={(v) => sett(f.id, v)}
+              />
+            ))}
+
+        {/*
+          ── GRUNNLAGSFELTENE STÅR FOR SEG ─────────────────────────────────
+
+          De hører ikke til i skjemaet over. Et Instagram-brukernavn er ikke
+          en opplysning om produksjonsdagen — det er en nøkkel Claude slår
+          opp med, og ingenting av det havner i dokumentet.
+
+          Blandet inn mellom oppmøtetid og kontaktperson så de ut som noe man
+          måtte fylle ut. Her ser man at det er noe man KAN fylle ut, og hva
+          man får igjen for det.
+        */}
+        {viserFelter && grunnlagsfelt.length > 0 && (
+          <div className="flex flex-col gap-4 rounded-flate border border-kant bg-dempet px-4 py-4">
+            <div>
+              <h3 className="font-sans text-[0.75rem] font-medium tracking-[0.1em] text-blekk-svak uppercase">
+                Hva Claude skal undersøke
+              </h3>
+              <p className="mt-1.5 max-w-[60ch] text-[0.875rem] leading-relaxed text-pretty text-blekk-dempet">
+                Frivillig, og det er her dokumentet blir godt. Med
+                Instagram-kontoene henter Claude hva kunden og konkurrentene
+                faktisk har publisert det siste året, og hvilke formater som
+                gikk — i stedet for å gjette hva som er lurt å filme.
+              </p>
+            </div>
+            {grunnlagsfelt.map((f) => (
+              <Feltet
+                key={f.id}
+                felt={f}
+                verdi={verdier[f.id] ?? ""}
+                sett={(v) => sett(f.id, v)}
+              />
+            ))}
+          </div>
+        )}
 
         {mangler.length > 0 && !utgaver.length && !fil && viserFelter && (
           <p className="rounded-interaktiv border border-kant bg-dempet px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-blekk-dempet">
@@ -785,6 +833,10 @@ export function Malskjema({ mal }: { mal: Mal }) {
             <Grunnlag
               research={research}
               brief={brief}
+              publisering={publisering}
+              strategi={
+                (verdier.somestrategi ?? "").trim() || (brief?.strategi ?? "")
+              }
               fraMinne={fraMinne}
               påNyttOppslag={() => void kjor(undefined, true)}
             />
@@ -813,8 +865,8 @@ export function Malskjema({ mal }: { mal: Mal }) {
               </label>
               <span className="mt-1 block text-[0.8125rem] leading-snug text-blekk-svak">
                 Skriv det som til en kollega. «Slå sammen de to siste radene»,
-                «kort ned tidsplanen», «bytt ut Fredrik med Vivian». Du kan
-                lime inn et skjermbilde med {"\u2318"}V.
+                «kort ned tidsplanen», «bytt ut Fredrik med Vivian». Du kan lime
+                inn et skjermbilde med {"\u2318"}V.
               </span>
 
               {bilder.length > 0 && (

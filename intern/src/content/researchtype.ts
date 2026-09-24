@@ -49,6 +49,11 @@ export type Research = {
   publikum: Funn[];
   /** Fagpraksis for DENNE dokumenttypen i DENNE bransjen. */
   fagpraksis: Funn[];
+  /**
+   * Virkemidler som faktisk sprer innhold i denne bransjen, avgrenset til
+   * det Reflektor kan lage på én produksjonsdag med to personer.
+   */
+  virkemidler: Funn[];
   /** Det researchen ikke klarte å bekrefte. Skal ikke være tom av vane. */
   usikkert: string[];
   kilder: Kilde[];
@@ -83,7 +88,8 @@ const funnSkjema = {
       tekst: { type: "string" },
       kilde: {
         type: "string",
-        description: "URL-en funnet kommer fra. Utelat hvis det er din egen slutning.",
+        description:
+          "URL-en funnet kommer fra. Utelat hvis det er din egen slutning.",
       },
     },
     required: ["tekst"],
@@ -130,6 +136,11 @@ export function researchSkjema(): Record<string, unknown> {
         description:
           "Hva som er god praksis for akkurat denne dokumenttypen, for akkurat denne typen virksomhet. Ikke generelle råd om innholdsproduksjon.",
       },
+      virkemidler: {
+        ...funnSkjema,
+        description:
+          "Konkrete virkemidler som sprer innhold i denne bransjen, og som Reflektor kan lage på én produksjonsdag med to personer. Hvert punkt skal si HVA man gjør, ikke at man bør engasjere.",
+      },
       usikkert: {
         type: "array",
         items: { type: "string" },
@@ -151,44 +162,98 @@ export function researchSkjema(): Record<string, unknown> {
   };
 }
 
-/** Oppdraget researchfasen får. Malen avgjør hva det skal ledes etter. */
+/**
+ * Oppdraget researchfasen får.
+ *
+ * ── HVORFOR DEN BLE SNUDD 24.09.2026 ──────────────────────────────────────
+ *
+ * Bestilt: «en produksjonsplan skal tross alt bestemme hva som skal filmes.
+ * bruk mindre tid på nettet, og gjør kall i supermetrics for å få oversikt
+ * over hva som faktisk publiseres av kunden, konkurrenter og kartlegg
+ * virale virkemidler i relasjon til hva som er fordelaktig og
+ * gjennomførbart for reflektor.»
+ *
+ * Første utgave brukte seks søk på å finne ut hvem bedriften var. Det ga en
+ * pen oppsummering av «om oss»-siden deres, og null hjelp til spørsmålet
+ * dokumentet faktisk skal svare på: hva skal kamera peke på den dagen.
+ *
+ * Nå er rekkefølgen motsatt. Publiseringstallene ligger øverst i instruksen
+ * og er målte. Nettsøket er redusert til det ene spørsmålet tallene ikke kan
+ * svare på — selger de til folk eller til andre bedrifter — pluss det som er
+ * ferskt. Alt annet skal leses ut av det som faktisk er publisert.
+ */
 export function researchInstruks(
   mal: Mal,
   kunde: string,
   lokasjon: string,
+  /** Målte publiseringstall. Tom streng når vi ikke har dem. */
+  publisering = "",
+  /** SoMe-strategien i Canva, hvis produsenten har oppgitt lenken. */
+  strategi = "",
 ): string {
   return [
     `Du undersøker en kunde for Reflektor AS, et norsk byrå som lager foto og video til sosiale medier. En produsent skal straks lage dokumentet «${mal.navn}» for denne kunden, og du skal gi hen grunnlaget.`,
     "",
     `KUNDEN\n- Navn: ${kunde}${lokasjon ? `\n- Sted eller avdeling: ${lokasjon}` : ""}`,
     "",
-    "SØK PÅ NETTET FØR DU SVARER. Du skal ikke svare av hukommelsen — norske småbedrifter er ikke noe du kan. Søk på navnet, på navnet sammen med stedet, på org.nr. hvis du finner det, på nyheter, og på bransjen deres.",
+    publisering ? `${publisering}\n` : "",
+    strategi
+      ? `KUNDENS SOME-STRATEGI\nProdusenten har oppgitt at strategien ligger her: ${strategi}\nDu kan ikke åpne den. Nevn den under «usikkert» som noe produsenten bør lese mot dette grunnlaget, og ikke gjett hva som står i den.\n`
+      : "",
+    [
+      "SLIK PRIORITERER DU",
+      publisering
+        ? "Publiseringstallene over er MÅLT. De er det eneste grunnlaget ditt som ikke er noens egen påstand, og de skal bære det meste av svaret ditt. Les dem før du søker."
+        : "Vi har ingen publiseringstall for denne kunden. Da må nettsøket bære mer enn det pleier, men det er fortsatt ikke et bedriftsportrett du skal skrive.",
+      "Søk sparsomt. Du har tre søk, og de skal brukes på det tallene IKKE kan svare på: om de selger til forbrukere eller til bedrifter, og om noe ferskt er på gang. Ikke bruk et søk på å bekrefte noe du allerede kan se.",
+      "Du skriver ikke en presentasjon av bedriften. Du svarer på ett spørsmål: hva skal vi lage for dem, og hvorfor akkurat det.",
+    ].join("\n"),
     "",
     [
       "DETTE SKAL DU FINNE UT",
-      "1. Hva de faktisk driver med. Ikke hva bransjen driver med — hva DE gjør.",
-      "2. Om de selger til forbrukere eller til andre bedrifter. Dette er det viktigste enkeltfunnet: en plan for en leverandør som selger til kjøkkensjefer, ser ikke ut som en plan for en iskrembutikk. Tonen, hvem som skal på film, og hva som skal filmes, er forskjellig.",
-      "3. Struktur: én butikk eller femten, kjede eller frittstående, hvilke avdelinger, omtrent hvor mange ansatte.",
-      "4. Eierskap: hvem eier dem, er de del av et konsern, er de nylig kjøpt opp.",
-      "5. Ferskt siste tolv måneder som kan påvirke dokumentet.",
-      "6. Hvem som kjøper av dem, og hvordan.",
-      "7. Fagpraksis for akkurat dette dokumentet, for akkurat denne typen virksomhet.",
+      "1. Om de selger til forbrukere eller til andre bedrifter. Dette er det viktigste enkeltfunnet: en plan for en leverandør som selger til kjøkkensjefer, ser ikke ut som en plan for en iskrembutikk. Tonen, hvem som skal på film, og hva som skal filmes, er forskjellig.",
+      "2. Hva de faktisk publiserer, og hva som går. Hvilket format, hvor ofte, hvilke motiver. Er det stor forskjell på formatene, si det med tallene.",
+      "3. Hva konkurrentene gjør som kunden ikke gjør, og motsatt. Et hull er en anbefaling.",
+      "4. Virkemidler som sprer innhold i denne bransjen, OG som vi kan lage. Se rammene under — dette er det punktet det er lettest å bomme på.",
+      "5. Ferskt siste tolv måneder som kan påvirke dokumentet: nye avdelinger, kampanjer, sesong.",
+      "6. Struktur og eierskap, men bare der det endrer hva som filmes. Én butikk eller femten er relevant. Organisasjonsnummeret er det ikke.",
+    ].join("\n"),
+    "",
+    /*
+     * ── RAMMENE ER EKTE, OG DE MÅ STÅ ─────────────────────────────────────
+     *
+     * Uten dem foreslår modellen ukelange serier, daglig publisering og
+     * konsepter som krever et filmteam. Alt sammen «riktig» og ingenting av
+     * det gjennomførbart. Rammene under er hvordan Reflektor faktisk
+     * jobber, og de er hentet fra malverket — ikke funnet på her.
+     */
+    [
+      "SLIK JOBBER REFLEKTOR. ET VIRKEMIDDEL VI IKKE KAN LAGE, ER IKKE ET FUNN",
+      "- Én produksjonsdag hos kunden. To personer med alt utstyr.",
+      "- Dagen gir 8–10 leveranser, laget i tre til fem oppsett på stedet.",
+      "- Materialet publiseres over en måned, som regel to ganger i uken.",
+      "- Vi filmer det som finnes der: lokalet, folkene som jobber der, produktene deres.",
+      "- Vi har ikke skuespillere, studio, flere opptaksdager eller noen som publiserer for kunden fra dag til dag.",
+      "Et virkemiddel som krever at noen filmer seg selv hver dag, at vi følger en trend samme uke den oppstår, eller at det lages tretti klipp i måneden, er ikke gjennomførbart. Skriv det da ikke — eller skriv hvordan det kan gjøres om til noe som lar seg filme på én dag.",
     ].join("\n"),
     "",
     [
       "REGLER",
-      "Hvert funn skal ha en kilde. Finner du det ikke, er det ikke et funn — da hører det hjemme under «usikkert».",
+      "Hvert funn fra nettet skal ha en kilde. Finner du det ikke, er det ikke et funn — da hører det hjemme under «usikkert».",
+      "Slutninger fra publiseringstallene trenger ikke kilde. Tallene ER kilden, og de står i instruksen. Si hvilket tall du bygger på: «reels har median 8 400 visninger mot 260 likes på bilder» er en slutning, «video funker best» er en gjetning.",
       "Ikke gjett org.nr., omsetning, antall ansatte eller eierforhold. Slike tall er verdiløse hvis de er feil, og de blir stående i et dokument som går til kunden.",
       "Er du i tvil om du har funnet RIKTIG bedrift — mange norske navn går igjen — skriv det under «usikkert» i stedet for å bygge videre på det.",
       "«usikkert» skal ha innhold. En research som ikke sier hva den ikke fant, later som den vet mer enn den gjør.",
-      "Fagpraksis skal være konkret for denne bransjen og denne dokumenttypen. «Godt innhold engasjerer» er ikke fagpraksis.",
+      "Virkemidler skal være konkrete nok til å filmes. «Vis menneskene bak» er ikke et virkemiddel. «Kokken lager rettens vanskeligste steg i ett tak, uten klipp» er det.",
       "Skriv på norsk, i fullstendige setninger.",
     ].join("\n"),
     "",
-    `SLIK BRUKES DETTE\nProdusenten ser researchen din med kilder før dokumentet lages, og kan overprøve den. Dokumentet «${mal.navn}» skal deretter bygges på den. Skriv derfor det som faktisk endrer dokumentet, ikke alt du fant.`,
+    `SLIK BRUKES DETTE\nProdusenten ser researchen din med kilder før dokumentet lages, og kan overprøve den. Dokumentet «${mal.navn}» skal deretter bygges på den. Skriv derfor det som faktisk endrer hva vi lager, ikke alt du fant.`,
     "",
     `Kall ${RESEARCHVERKTOY} når du er ferdig.`,
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 /** Leser svaret og kapper alt som er for langt. Samme rolle som `lesArk`. */
@@ -229,6 +294,7 @@ export function lesResearch(rått: unknown): Omit<Research, "hentet"> | null {
     ferskt: funn(o.ferskt),
     publikum: funn(o.publikum),
     fagpraksis: funn(o.fagpraksis),
+    virkemidler: funn(o.virkemidler),
     usikkert: Array.isArray(o.usikkert)
       ? o.usikkert
           .slice(0, RTAK.usikkert)
@@ -267,6 +333,7 @@ export function researchTilTekst(r: Research): string {
     liste("Ferskt:", r.ferskt),
     liste("Publikum:", r.publikum),
     liste("Fagpraksis for dette dokumentet:", r.fagpraksis),
+    liste("Virkemidler som er gjennomførbare for oss:", r.virkemidler),
     r.usikkert.length
       ? `Ikke bekreftet:\n${r.usikkert.map((u) => `- ${u}`).join("\n")}`
       : "",

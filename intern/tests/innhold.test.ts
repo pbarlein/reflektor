@@ -4,6 +4,7 @@ import test from "node:test";
 import { KATEGORIER } from "../src/content/kategorier.ts";
 import { I_DRIFT, RUBRIKKER } from "../src/content/rubrikker/index.ts";
 import { lesetid } from "../src/lib/lesetid.ts";
+import { lesBrief } from "../src/content/brieftype.ts";
 
 /**
  * Innholdet er data, og data kan være feil på måter typene ikke fanger.
@@ -293,5 +294,49 @@ test("eksempler bruker ikke Reflektors egen konto", () => {
         `${r.slug}: eksempelet bruker Reflektors egen konto`,
       );
     }
+  }
+});
+
+/**
+ * ── STRATEGILENKA BLIR EN KNAPP, OG DA MÅ DEN VÆRE EKTE ───────────────────
+ *
+ * `brief.strategi` rendres som en lenke produsenten klikker på. Modellen har
+ * fått beskjed om ikke å konstruere en lenke, men en instruks er ikke en
+ * garanti — og en `javascript:`-lenke eller et domene som bare ligner på
+ * canva.com, er en åpen dør i et panel folk stoler på.
+ */
+test("bare ekte canva-lenker slipper gjennom som SoMe-strategi", () => {
+  const poster = [
+    { id: "1", emne: "e", fra: "f", dato: "2026-09-01", tekst: "t" },
+  ];
+
+  const godtatt = [
+    "https://www.canva.com/design/DAF123/view",
+    "https://canva.com/design/DAF123",
+  ];
+  for (const url of godtatt) {
+    assert.equal(
+      lesBrief({ funn: [], strategi: url }, poster)?.strategi,
+      url,
+      url,
+    );
+  }
+
+  const avvist = [
+    "javascript:alert(1)",
+    "http://www.canva.com/design/DAF123",
+    "https://canva.com.angriper.no/design",
+    "https://ikkecanva.com/design",
+    "https://notcanva.com/x",
+    "canva.com/design/DAF123",
+    "",
+    42,
+  ];
+  for (const url of avvist) {
+    assert.equal(
+      lesBrief({ funn: [], strategi: url }, poster)?.strategi,
+      "",
+      `${String(url)} skulle vært avvist`,
+    );
   }
 });

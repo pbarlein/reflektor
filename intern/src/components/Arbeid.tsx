@@ -25,9 +25,17 @@ import type { Skissedel } from "@/content/maltype";
  *    innholdet er på vei. Tre linjer, ikke en halv skjerm.
  */
 
+/*
+ * ── REKKEFØLGEN ER E-POST FØRST ───────────────────────────────────────────
+ *
+ * Snudd 24.09.2026, sammen med serveren. E-posten og publiseringstallene
+ * hentes før researchen, fordi researchen skal bygge på dem. Stripa må vise
+ * den rekkefølgen som faktisk skjer — en fremdriftsvisning som lyver om
+ * rekkefølgen, er verre enn ingen.
+ */
 const STEG = [
+  { id: "epost", navn: "Henter grunnlag" },
   { id: "research", navn: "Undersøker" },
-  { id: "epost", navn: "Leser e-post" },
   { id: "skriver", navn: "Skriver" },
 ] as const;
 
@@ -69,9 +77,9 @@ export function Arbeid({
     fase === "research"
       ? sok.length
         ? `Søker: ${sok[sok.length - 1]}`
-        : "Leser gjennom skjemaet"
+        : "Leser gjennom det som er publisert"
       : fase === "epost"
-        ? "Ser etter brief og instrukser i e-posten med kunden"
+        ? "Leser e-posten med kunden og henter publiseringstall"
         : gjort === 0
           ? "Legger opp dokumentet"
           : (ARBEIDSLINJE[deler[Math.min(gjort, deler.length - 1)]] ??

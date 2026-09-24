@@ -117,7 +117,8 @@ export async function autorisasjonsUrl(opts: {
      * verktøy. Det er noe annet enn at arbeidsgiver leser ansattes e-post,
      * som er strengt regulert.
      */
-    scope: "openid email profile https://www.googleapis.com/auth/gmail.readonly",
+    scope:
+      "openid email profile https://www.googleapis.com/auth/gmail.readonly",
     state: opts.state,
     code_challenge: await kodeUtfordring(opts.kodeVerifiser),
     code_challenge_method: "S256",
