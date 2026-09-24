@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { MALER, byggInstruks, malFraSlug } from "../src/content/maler.ts";
+import { FASER } from "../src/content/maltype.ts";
 import { RUBRIKKER } from "../src/content/rubrikker/index.ts";
 
 /**
@@ -82,22 +83,10 @@ test("instruksen bærer husreglene, også når skjemaet er tomt", () => {
   for (const m of MALER) {
     const tom = byggInstruks(m, {});
     assert.match(tom, /Ikke finn på tall/, `${m.slug} mangler oppdikt-regelen`);
-    assert.match(tom, /30 000 kr\/mnd/, `${m.slug} mangler prisregelen`);
-    /*
-     * Prisregelen må være BETINGET. En uforbeholden «prisen skrives
-     * 30 000 kr/mnd» fikk modellen til å skrive prisen inn i en
-     * produksjonsplan der ingen hadde oppgitt den. Se kommentaren i
-     * byggInstruks.
-     */
     assert.match(
       tom,
-      /Står abonnementsprisen i informasjonen/,
-      `${m.slug}: prisregelen er ikke betinget`,
-    );
-    assert.match(
-      tom,
-      /Pris, bruksrett, oppsigelse, bindingstid/,
-      `${m.slug} mangler regelen mot oppdiktede avtalevilkår`,
+      /skal ALDRI stå i det/,
+      `${m.slug} mangler forbudet mot forretningsvilkår`,
     );
     assert.match(tom, /IKKE OPPGITT/, `${m.slug} lister ikke tomme felt`);
     for (const r of m.regler ?? []) {
@@ -116,4 +105,72 @@ test("utfylte verdier havner i instruksen, tomme gjør det ikke", () => {
     "et felt med bare mellomrom skal telles som tomt",
   );
   assert.match(ut, /IKKE OPPGITT[\s\S]*- Lokasjon/);
+});
+
+/**
+ * ── PRISEN SKAL IKKE FINNES I MALVERKET ───────────────────────────────────
+ *
+ * Bestilt 24.09.2026: produsenter lager produksjonsdokumenter, ikke avtaler.
+ * Pris, honorar og oppsigelse står i tjenesteavtalen, som daglig leder eier.
+ *
+ * Denne testen leser hele maldataen som tekst — navn, hjelpetekster,
+ * plassholdere, struktur og regler — og slår ned på et beløp hvor som helst.
+ * Grunnen til at den er så grov: forrige gang sto prisen i en regel som var
+ * ment som en formatregel, og modellen leste den som en oppfordring.
+ */
+test("ingen mal nevner pris, honorar eller avtalevilkår", () => {
+  const forbudt = [
+    /\b\d[\d\s .]{2,}kr\b/i,
+    /\bkroner\b/i,
+    /\bkr\/mnd\b/i,
+    /\bhonorar/i,
+    /\btimesats/i,
+    /\bfaktur/i,
+    /\boppsigelse/i,
+    /\bbindingstid/i,
+    /\bmva\b/i,
+  ];
+  for (const m of MALER) {
+    /*
+     * Alt brukeren ser og alt dokumentet bygges av — men ikke `regler`.
+     * En regel MÅ kunne si «ikke skriv noe om honorar», og det er det
+     * motsatte av en overtredelse.
+     */
+    const { regler, ...resten } = m;
+    const tekst = JSON.stringify(resten);
+    for (const mønster of forbudt) {
+      assert.ok(
+        !mønster.test(tekst),
+        `${m.slug} nevner noe som hører hjemme i tjenesteavtalen: ${mønster}`,
+      );
+    }
+
+    /*
+     * Nevner en regel penger, skal den forby dem. En regel som forklarer
+     * HVORDAN prisen skrives, er nøyaktig feilen vi ble bitt av 23.09.
+     */
+    for (const regel of regler ?? []) {
+      if (!forbudt.some((f) => f.test(regel))) continue;
+      assert.match(
+        regel,
+        /\b(ikke|aldri|utenfor)\b/i,
+        `${m.slug}: en regel nevner penger uten å forby dem: «${regel}»`,
+      );
+    }
+  }
+});
+
+test("hver mal hører til en fase i produksjonen", () => {
+  for (const m of MALER) {
+    assert.ok(
+      FASER.includes(m.fase),
+      `${m.slug} har en fase som ikke finnes: ${m.fase}`,
+    );
+  }
+  for (const fase of FASER) {
+    assert.ok(
+      MALER.some((m) => m.fase === fase),
+      `fasen «${fase}» er tom, og da blir overskriften stående uten kort`,
+    );
+  }
 });

@@ -74,9 +74,32 @@ export type Skissedel =
   | "liste"
   | "signatur";
 
+/**
+ * Fasen i produksjonen malen hører til.
+ *
+ * ── HVORFOR MALENE ER GRUPPERT OG IKKE BARE LISTET ────────────────────────
+ *
+ * Malverket her skal dekke produksjon, og bare produksjon. Kundeavtaler,
+ * pris, honorar og oppsigelse hører hjemme i tjenesteavtalen, som daglig
+ * leder eier — ikke i et skjema en produsent fyller ut mellom to opptak.
+ *
+ * Fasen er hvordan den grensen holdes synlig. Et dokument som ikke passer
+ * inn i «før, på eller etter opptak», er sannsynligvis ikke et
+ * produksjonsdokument, og skal da ikke lages her.
+ */
+export type Fase = "Før opptak" | "På opptak" | "Etter opptak";
+
+export const FASER: readonly Fase[] = [
+  "Før opptak",
+  "På opptak",
+  "Etter opptak",
+];
+
 export type Mal = {
   slug: string;
   navn: string;
+  /** Hvor i produksjonen dokumentet hører hjemme. Styrer grupperingen. */
+  fase: Fase;
   /** Én setning på kortet. Hva dokumentet er til for. */
   kort: string;
   /** Rollen som vanligvis lager det. Aldri et personnavn. */

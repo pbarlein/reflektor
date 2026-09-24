@@ -4,12 +4,26 @@ import type { Mal } from "./maltype.ts";
  * De åtte malene. Se maltype.ts for hva feltene betyr og hvor formatet
  * kommer fra.
  *
- * REKKEFØLGEN ER BRUKSFREKVENS, ikke alfabet. Produksjonsplanen lages hver
- * måned for hver kunde; avtalen med medvirkende lages noen ganger i året.
+ * ── BARE PRODUKSJON ───────────────────────────────────────────────────────
+ *
+ * Alle malene hører til en fase i produksjonen: før, på eller etter opptak.
+ * Det er ikke en sorteringsidé, det er grensen. Kundeavtaler, tilbud,
+ * oppdragsbekreftelser og honoraravtaler lages ikke her — de eies og
+ * signeres av daglig leder, og vilkårene står i tjenesteavtalen.
+ *
+ * To maler er fjernet av den grunnen: «Avtale med medvirkende» og
+ * «Oppdragsbekreftelse». Den første er erstattet av samtykkeskjemaet, som
+ * dekker det produsenten faktisk trenger på en opptaksdag. Den andre har
+ * ingen erstatning her, og skal ikke få en.
+ *
+ * REKKEFØLGEN ER BRUKSFREKVENS innenfor hver fase, ikke alfabet.
+ * Produksjonsplanen lages hver måned for hver kunde; leveranseoversikten
+ * følger hver leveranse.
  */
 export const MALER: readonly Mal[] = [
   {
     slug: "produksjonsplan",
+    fase: "Før opptak",
     navn: "Produksjonsplan",
     kort: "Ensideren kunden får før produksjonsdagen. Tidsplan, hva vi trenger fra dem, og hva som leveres.",
     ansvarlig: "Produsent",
@@ -179,7 +193,86 @@ export const MALER: readonly Mal[] = [
   },
 
   {
+    slug: "opptaksliste",
+    fase: "På opptak",
+    navn: "Opptaksliste",
+    kort: "Listen den som filmer har i hånda på dagen. Ett opptak per linje, sortert etter oppsett.",
+    ansvarlig: "Produsent",
+    naar: "Kvelden før opptaksdagen",
+    skisse: ["topp", "fakta", "tabell", "liste"],
+    rubrikker: [
+      "produksjonsdag-som-gir-8-10",
+      "lyd-kan-ikke-reddes",
+      "de-forste-tre-sekundene",
+    ],
+    felt: [
+      { id: "kunde", etikett: "Kunde", type: "tekst", paakrevd: true },
+      {
+        id: "lokasjon",
+        etikett: "Lokasjon",
+        type: "tekst",
+        plassholder: "Jordbærpikene Storo",
+        paakrevd: true,
+      },
+      { id: "dato", etikett: "Opptaksdag", type: "dato" },
+      {
+        id: "oppsett",
+        etikett: "Oppsettene",
+        type: "lang",
+        hjelp:
+          "Ett per linje, i den rekkefølgen vi rigger dem. «1 Kjøkkenbenk · 2 Disken · 3 Gulvet i lokalet».",
+        paakrevd: true,
+      },
+      {
+        id: "leveranser",
+        etikett: "Hva som skal leveres",
+        type: "lang",
+        hjelp:
+          "De 8–10 leveransene fra produksjonsplanen. Listen bygges bakover fra dem.",
+        paakrevd: true,
+      },
+      {
+        id: "tale",
+        etikett: "Er det tale på dagen",
+        type: "valg",
+        hjelp: "Avgjør om mikrofon og stille lokale må inn i planen.",
+        valg: [
+          "Nei, bare romlyd",
+          "Ja, noen filmes mens de snakker",
+          "Både og",
+        ],
+        standard: "Nei, bare romlyd",
+      },
+      {
+        id: "spesielt",
+        etikett: "Noe som gjelder spesielt",
+        type: "lang",
+        hjelp:
+          "Et opptak som må tas før lokalet åpner, en detalj kunden har bedt om, noe som bare kan filmes én gang.",
+      },
+    ],
+    oppdrag:
+      "En intern opptaksliste. Testen er om en kollega som ikke var med i planleggingen kan filme dagen med listen i hånda. Den er et arbeidsdokument, ikke et dokument kunden ser.",
+    struktur: [
+      "Kunde, lokasjon og opptaksdag øverst, på én linje.",
+      "Én tabell med alle opptakene, sortert etter oppsettnummer. Kolonnene er: nr, oppsett, bildeutsnitt, kamera i ro eller bevegelse, hvem eller hva er i bildet, lyd, lengde i sekunder.",
+      "En kort liste nederst over det som må filmes før lokalet åpner, hvis noe må det.",
+      "En siste linje om hva som kan droppes hvis dagen blir kort.",
+    ],
+    regler: [
+      "Hvert opptak skal ha alle seks feltene: oppsett, bildeutsnitt, kamerabevegelse, motiv, lyd og lengde. Mangler ett, er listen ikke ferdig.",
+      "Bildeutsnitt skrives med ett av fire ord: totalt, halvnært, nært, detalj. Ikke «fint utsnitt av maten».",
+      "Lengde skrives i sekunder. «Kort» og «litt» er ikke lengder.",
+      "Sorter etter oppsett, ikke etter historien. Den som filmer flytter rigg, ikke fortelling.",
+      "Legg til en avkryssingskolonne helt til venstre. Listen skal krysses av underveis, ikke leses ferdig etterpå.",
+      "Skal noe skytes rent til skjermer i lokalet — uten tale og uten tekst — skal de opptakene være merket i selve tabellen. Den som filmer leser linjen, ikke innledningen.",
+      "Ikke skriv klippebeskrivelser eller musikkforslag. Det hører hjemme i redigeringen.",
+    ],
+  },
+
+  {
     slug: "samtykke-film-og-bilde",
+    fase: "På opptak",
     navn: "Samtykke til film og bilde",
     kort: "Skjemaet den som filmes signerer. Hva som tas opp, hvor det publiseres, og hvor lenge.",
     ansvarlig: "Produsent",
@@ -254,107 +347,90 @@ export const MALER: readonly Mal[] = [
       "Samtykket skal kunne trekkes tilbake. Si hvem personen kontakter, og at det ikke krever en begrunnelse.",
       "Ansvaret for samtykke ligger hos kunden som arbeidsgiver. Skjemaet skal si hvem som er behandlingsansvarlig.",
       "Ikke skriv juridisk stammespråk. «Du kan si nei, og det får ingen konsekvenser» er bedre enn «samtykket er frivillig og kan når som helst tilbakekalles».",
+      "Kanalene og varigheten i dette skjemaet er omfanget av personens eget samtykke, og de SKAL stå. Et samtykke uten kanal og tid er ikke et samtykke. Dette er ikke et forretningsvilkår mellom Reflektor og kunden, og den regelen gjelder ikke her.",
+      "Ikke skriv noe om honorar. Skal en medvirkende ha betalt, avtales det utenfor dette skjemaet.",
     ],
   },
 
   {
-    slug: "avtale-medvirkende",
-    navn: "Avtale med medvirkende",
-    kort: "Kontrakten med en innleid skuespiller eller modell. Rettigheter, bruk, honorar og varighet.",
-    ansvarlig: "Daglig leder",
-    naar: "Før opptaksdagen, sammen med at honoraret avtales",
-    skisse: ["topp", "fakta", "avsnitt", "liste", "signatur"],
+    slug: "leveranseoversikt",
+    fase: "Etter opptak",
+    navn: "Leveranseoversikt",
+    kort: "Det som følger med når materiellet overleveres. Hva som ligger hvor, i hvilket format, og hva som eventuelt mangler.",
+    ansvarlig: "Redigerer",
+    naar: "Samtidig som materiellet sendes",
+    skisse: ["topp", "fakta", "tabell", "avsnitt"],
+    rubrikker: ["teksting-og-tekstplakater", "stolthet-og-standard"],
     felt: [
+      { id: "kunde", etikett: "Kunde", type: "tekst", paakrevd: true },
+      { id: "dato", etikett: "Opptaksdagen det gjelder", type: "dato" },
       {
-        id: "kunde",
-        etikett: "Kunde produksjonen er for",
+        id: "hvor",
+        etikett: "Hvor filene ligger",
         type: "tekst",
+        hjelp: "Mappenavnet kunden får, ikke en beskrivelse av det.",
         paakrevd: true,
       },
       {
-        id: "medvirkende",
-        etikett: "Navn på medvirkende",
-        type: "tekst",
-        paakrevd: true,
-      },
-      {
-        id: "rolle",
-        etikett: "Hva vedkommende skal gjøre",
+        id: "leveranser",
+        etikett: "Hva som leveres",
         type: "lang",
-        plassholder:
-          "Spiller gjest i lokalet. Ingen replikker. Anslagsvis fire timer på location.",
-        paakrevd: true,
-      },
-      {
-        id: "dato",
-        etikett: "Opptaksdato",
-        type: "dato",
-        paakrevd: true,
-      },
-      {
-        id: "honorar",
-        etikett: "Honorar",
-        type: "tekst",
         hjelp:
-          "Beløp og om det er per dag eller for hele oppdraget. Skriv ikke tall du ikke har fått bekreftet.",
-        plassholder: "8 000 kr for hele oppdraget",
+          "Ett per linje. Filnavn først, så én setning om hva klippet er. «02-burger-grill.mp4 — burgeren fra rå til ferdig, 18 sek».",
         paakrevd: true,
       },
       {
-        id: "kanaler",
-        etikett: "Hvor materiellet kan brukes",
+        id: "formater",
+        etikett: "Formater i leveransen",
         type: "flervalg",
         valg: [
-          "Organisk i sosiale medier",
-          "Betalte annonser",
-          "Menyskjermer i lokalet",
-          "Kundens nettside",
-          "Reflektors egne kanaler som referanse",
+          "9:16 til Reels og Stories",
+          "1:1 til feed",
+          "16:9 til menyskjermer",
+          "Stillbilder",
         ],
-        standard: "Organisk i sosiale medier",
+        standard: "9:16 til Reels og Stories",
         paakrevd: true,
       },
       {
-        id: "geografi",
-        etikett: "Geografisk område",
+        id: "teksting",
+        etikett: "Teksting",
         type: "valg",
-        valg: ["Norge", "Norden", "Hele verden"],
-        standard: "Norge",
+        valg: [
+          "Tekstet, brent inn i bildet",
+          "Tekstet, egen fil",
+          "Uten tekst — skal stå på skjerm i lokalet",
+          "Blandet, står per fil",
+        ],
+        standard: "Tekstet, brent inn i bildet",
       },
       {
-        id: "varighet",
-        etikett: "Hvor lenge materiellet kan brukes",
-        type: "valg",
-        valg: ["Ett år", "To år", "Fem år", "Uten tidsbegrensning"],
-        standard: "To år",
-      },
-      {
-        id: "merknad",
-        etikett: "Særskilte vilkår",
+        id: "mangler",
+        etikett: "Det som ikke er med",
         type: "lang",
         hjelp:
-          "For eksempel eksklusivitet, konkurrerende merkevarer, eller noe vedkommende ikke vil gjøre.",
+          "Et opptak som ikke ble noe av, en leveranse som kommer senere, noe vi venter på fra kunden.",
       },
     ],
     oppdrag:
-      "En avtale mellom Reflektor AS og en innleid medvirkende. Den skal være kort, presis og leselig for noen uten juridisk bakgrunn.",
+      "En oversikt som følger materiellet når det overleveres. Den skal kunne leses på et halvt minutt og svare på: hva fikk vi, hvor ligger det, og mangler noe.",
     struktur: [
-      "Partene, med organisasjonsnummer for Reflektor og navn for medvirkende.",
-      "Hva oppdraget er: dato, sted, omtrent hvor lenge, og hva vedkommende skal gjøre.",
-      "Honorar: beløp, hva det dekker, og når det utbetales.",
-      "Rettigheter: hvilke kanaler, hvilket geografisk område, hvor lenge. Skriv det som en liste, ikke som en paragraf.",
-      "Hva som skjer hvis opptaket avlyses, og hvem som bærer kostnaden.",
-      "Signatur for begge parter, med dato.",
+      "Kunde, opptaksdag og hvor filene ligger, øverst.",
+      "Én tabell over leveransene: filnavn, hva klippet er, format, lengde, teksting.",
+      "En kort bolk om hva som er skutt rent uten lyd og tekst, hvis noe er det, og hvorfor de filene ser annerledes ut.",
+      "«Det som ikke er med» til slutt, med hva som skjer med det.",
     ],
     regler: [
-      "Rettighetene skal være avgrenset i KANAL, OMRÅDE og TID. En avtale som gir «fri bruk» uten avgrensning er ikke ryddig overfor den som signerer, og den er ikke nødvendig.",
-      "Skriv honoraret som bruttobeløp og si om vedkommende fakturerer eller får det som lønn. Er det ikke avklart, skriv TBD(avklares) — ikke gjett.",
-      "Ikke bruk ordet «modell» om en person som skal snakke. Bruk «medvirkende».",
+      "Filnavnet i tabellen skal være det faktiske filnavnet. En oversikt der navnene ikke stemmer, er verre enn ingen oversikt.",
+      "Er noe skutt rent for skjermer i lokalet, skal det stå eksplisitt at de filene mangler lyd og tekst med vilje. Ellers ser det ut som en feil.",
+      "«Det som ikke er med» skal stå selv om det bare er én ting. Kunden oppdager det uansett, og det er bedre at vi sier det først.",
+      "Ikke skriv noe om bruksrett, eierskap, betaling eller hva som inngår i abonnementet. Det står i tjenesteavtalen, og den eies ikke her.",
     ],
   },
 
   {
     slug: "befaringsnotat",
+    fase: "Før opptak",
     navn: "Befaringsnotat",
     kort: "Det du skriver ned på befaringen, så produksjonsdagen ikke møter noe uventet.",
     ansvarlig: "Produsent",
@@ -447,6 +523,7 @@ export const MALER: readonly Mal[] = [
 
   {
     slug: "oppsummering-kundemote",
+    fase: "Før opptak",
     navn: "Oppsummering etter kundemøte",
     kort: "Meldingen du sender etter møtet. Hva som ble bestemt, hva vi gjør, og datoen som gjelder.",
     ansvarlig: "Kundeansvarlig",
@@ -517,6 +594,7 @@ export const MALER: readonly Mal[] = [
 
   {
     slug: "manedsrapport",
+    fase: "Etter opptak",
     navn: "Månedsrapport til kunde",
     kort: "Hva vi ser i tallene, hva vi tror det betyr, og hva vi gjør med det neste måned.",
     ansvarlig: "Kundeansvarlig",
@@ -581,6 +659,7 @@ export const MALER: readonly Mal[] = [
 
   {
     slug: "publiseringsplan",
+    fase: "Etter opptak",
     navn: "Publiseringsplan for en måned",
     kort: "Måneden fordelt på faste dager, med det tidsavhengige låst først.",
     ansvarlig: "Kundeansvarlig",
@@ -639,84 +718,6 @@ export const MALER: readonly Mal[] = [
     ],
   },
 
-  {
-    slug: "oppdragsbekreftelse",
-    navn: "Oppdragsbekreftelse",
-    kort: "Bekreftelsen på en ekstra produksjonsdag utenfor abonnementet, med pris og omfang.",
-    ansvarlig: "Daglig leder",
-    naar: "Samme dag som omfanget er avtalt",
-    skisse: ["topp", "fakta", "liste", "signatur"],
-    rubrikker: ["prisen-sier-vi-hoyt", "hva-abonnementet-inneholder"],
-    felt: [
-      { id: "kunde", etikett: "Kunde", type: "tekst", paakrevd: true },
-      {
-        id: "kontakt",
-        etikett: "Kontaktperson hos kunden",
-        type: "tekst",
-        paakrevd: true,
-      },
-      {
-        id: "type",
-        etikett: "Hva slags oppdrag",
-        type: "valg",
-        valg: ["Ekstra produksjonsdag", "Reklamefilm", "Produktfoto", "Annet"],
-        standard: "Ekstra produksjonsdag",
-      },
-      {
-        id: "omfang",
-        etikett: "Hva som skal leveres",
-        type: "lang",
-        hjelp:
-          "Antall, format og hva det viser. Vær så konkret at ingen kan lese noe annet inn i det.",
-        paakrevd: true,
-      },
-      {
-        id: "dato",
-        etikett: "Opptaksdato",
-        type: "dato",
-      },
-      {
-        id: "levering",
-        etikett: "Leveringsdato",
-        type: "dato",
-        hjelp: "Én dato, satt ut fra vår kapasitet.",
-        paakrevd: true,
-      },
-      {
-        id: "pris",
-        etikett: "Pris",
-        type: "tekst",
-        hjelp:
-          "En ekstra produksjonsdag er 30 000 kr. Avviker denne, skriv beløpet du faktisk har avtalt.",
-        plassholder: "30 000 kr",
-        standard: "30 000 kr",
-        paakrevd: true,
-      },
-      {
-        id: "utenfor",
-        etikett: "Hva som ikke inngår",
-        type: "lang",
-        hjelp: "Det som lett kan misforstås som inkludert.",
-        plassholder:
-          "Annonsebudsjett. Håndtering av kommentarfelt. Ekstra redigeringsrunder utover to.",
-      },
-    ],
-    oppdrag:
-      "En kort oppdragsbekreftelse på e-post. Den skal fjerne enhver tvil om hva som leveres, når, og til hvilken pris — før arbeidet starter.",
-    struktur: [
-      "Én linje om hva som er avtalt.",
-      "Omfang, som en punktliste.",
-      "Datoer: opptak og levering.",
-      "Pris, som ett tall på én linje.",
-      "Hva som ikke inngår.",
-      "Én linje om hva kunden skal gjøre for å bekrefte.",
-    ],
-    regler: [
-      "Prisen skrives som ett tall, uten mva-notasjon, uten «fra» og uten forbehold. Er tallet usikkert, skal det ikke stå.",
-      "Abonnementsprisen er «30 000 kr/mnd». En ekstra produksjonsdag er 30 000 kr. Ikke bland dem.",
-      "«Hva som ikke inngår» er ikke et forbehold vi helst skulle vært foruten. Ærligheten er salgsargumentet — skriv det uten unnskyldninger.",
-    ],
-  },
 ] as const;
 
 export function malFraSlug(slug: string): Mal | undefined {
@@ -786,14 +787,24 @@ export function byggInstruks(
     ...(mal.regler ?? []),
     "Ikke finn på tall, navn, priser, kundenavn eller resultater. Står det ikke i informasjonen over, skal det stå TBD(det som mangler).",
     /*
-     * PRISREGELEN MÅ VÆRE BETINGET. Sto det bare «prisen skrives 30 000
-     * kr/mnd», leste modellen det som en oppfordring til å nevne prisen —
-     * og skrev «Abonnementet er 30 000 kr/mnd» inn i en produksjonsplan
-     * for en kunde ingen har sagt er abonnent. Det er både oppdiktet og i
-     * strid med at produksjonskunder aldri omtales som SoMe-abonnenter.
+     * PRIS OG AVTALEVILKÅR SKAL IKKE FINNES HER I DET HELE TATT.
+     *
+     * Først sto det bare at «abonnementsprisen skrives 30 000 kr/mnd» — en
+     * formatregel. Modellen leste den som en oppfordring og skrev prisen
+     * inn i en produksjonsplan for en kunde ingen hadde sagt var abonnent.
+     * Så ble regelen betinget. Det var fortsatt feil premiss.
+     *
+     * Malverket her er produksjonsdokumenter. Pris, honorar, oppsigelse,
+     * bindingstid, bruksrett og eierskap står i tjenesteavtalen, som daglig
+     * leder eier og signerer. En produsent som fyller ut et skjema mellom
+     * to opptak skal ikke kunne produsere noe som ser ut som en avtale —
+     * og et tall som er riktig i dag, er feil den dagen avtalen endres.
+     *
+     * Derfor står det ingen pris i denne filen. Ikke som eksempel heller.
      */
-    "Pris, bruksrett, oppsigelse, bindingstid og andre avtalevilkår skal IKKE inn i dokumentet med mindre det står i informasjonen over. Du skal ikke gjette hva som er avtalt.",
-    "Står abonnementsprisen i informasjonen, skrives den «30 000 kr/mnd» — aldri med mva-notasjon og aldri som «fra».",
+    "Dette er et produksjonsdokument. Forretningsvilkårene mellom Reflektor og kunden — pris, honorar, timesats, betaling, fakturering, oppsigelse, bindingstid, eierskap til materiellet og kundens bruksrett — skal ALDRI stå i det. Heller ikke som eksempel, og heller ikke hvis noen har skrevet det i et felt. Alt slikt er avtalt i tjenesteavtalen.",
+    "Må dokumentet likevel vise til slike vilkår for å gi mening, skriv «se tjenesteavtalen» og ikke noe mer.",
+    "Ikke omtal en kunde som abonnent, fast kunde eller engangskunde med mindre det står i informasjonen over.",
     "Skriv fullstendige setninger. Ingen engelske uttrykk der det finnes norske.",
     "Konkret framfor generelt. «Kokken lager burgere mens vi filmer» er konkret. «Vi dokumenterer produksjonen» er det ikke.",
   ];

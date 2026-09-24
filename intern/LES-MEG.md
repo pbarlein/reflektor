@@ -138,19 +138,52 @@ brukes til noe annet enn de åtte malene. Hvert felt kappes på 4 000 tegn,
 hele instruksen på 24 000, og svaret på 20 000 tokens. Se kommentarene i
 `src/app/api/dokument/route.ts`.
 
-**Verifisert mot det ekte API-et 24.09.2026.** Fire maler kjørt gjennom hele
-veien — skjema, rute, strøm, visning. Første tegn kom etter 0,9–1,6 sekunder,
-ferdig dokument etter 8–40 sekunder avhengig av hvor lang malen er.
+**Verifisert mot det ekte API-et 24.09.2026.** Alle åtte malene kjørt gjennom
+hele veien — skjema, rute, strøm, visning. Første tegn kommer etter rundt ett
+sekund, ferdig dokument etter 5–60 sekunder avhengig av hvor lang malen er.
 
 Den runden fant én feil, og den er verdt å huske: husregelen sa uforbeholdent
 at «abonnementsprisen skrives 30 000 kr/mnd», og modellen leste det som en
 oppfordring til å nevne prisen. Den skrev «Abonnementet er 30 000 kr/mnd» inn
 i en produksjonsplan for en kunde ingen hadde sagt var abonnent — oppdiktet,
-og i strid med at produksjonskunder aldri omtales som SoMe-abonnenter. Regelen
-er nå betinget, og pris, bruksrett, oppsigelse og bindingstid er eksplisitt
-forbudt med mindre det står i skjemaet. **En formatregel er også en
-oppfordring.** Skriver du nye husregler i `byggInstruks`, si først OM noe skal
-med, deretter hvordan det skrives.
+og i strid med at produksjonskunder aldri omtales som SoMe-abonnenter.
+**En formatregel er også en oppfordring.**
+
+---
+
+### Malverket dekker produksjon, og bare produksjon
+
+Bestilt 24.09.2026. Produsenter produserer; de lager ikke avtaler. Pris,
+honorar, timesats, fakturering, oppsigelse, bindingstid, eierskap og kundens
+bruksrett står i tjenesteavtalen, som daglig leder eier og signerer.
+Ingenting av det skal kunne komme ut av et skjema noen fyller ut mellom to
+opptak — og et tall som er riktig i dag, er feil den dagen avtalen endres.
+
+To maler ble fjernet av den grunnen:
+
+| Fjernet | Hvorfor | Hva du bruker i stedet |
+|---|---|---|
+| Avtale med medvirkende | Kontrakt med honorar og rettigheter | Samtykkeskjemaet, som har «innleid medvirkende» som valg. Skal noen ha betalt, avtales det utenfor intranettet. |
+| Oppdragsbekreftelse | Pris og omfang på et ekstra oppdrag | Ingenting her. Det er daglig leder sitt. |
+
+To produksjonsmaler kom inn: **Opptaksliste** (dagen selv) og
+**Leveranseoversikt** (overleveringen). Malene er nå gruppert i tre faser på
+`/dokument` — før, på og etter opptak. Grupperingen er ikke pynt, den er
+grensen: passer et dokument ikke inn i en av de tre, er det ikke et
+produksjonsdokument, og da skal det ikke lages her.
+
+To ting holder grensen når noen skal legge til en mal senere:
+
+- `byggInstruks` forbyr forretningsvilkår i klartekst, og ber modellen skrive
+  «se tjenesteavtalen» hvis dokumentet må vise til dem.
+- Testen «ingen mal nevner pris, honorar eller avtalevilkår» leser hele
+  maldataen og slår ned på et beløp hvor som helst. Nevner en `regel` penger,
+  må den forby dem — en regel som forklarer *hvordan* prisen skrives, er
+  nøyaktig feilen over.
+
+Samtykkeskjemaet er unntaket som bekrefter regelen: kanal og varighet SKAL stå
+der, fordi det er omfanget av personens eget samtykke og ikke et vilkår
+mellom Reflektor og kunden. Det unntaket står i malens egne regler.
 
 **Bytter du `SESJON_HEMMELIGHET`, logges alle ut.** Det er den raskeste måten
 å kaste ut alle sesjoner på hvis noe skulle skje.
