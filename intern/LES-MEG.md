@@ -239,6 +239,36 @@ systemet som viser hva som faktisk skjer, med modellens egne ord.
 ikke en forutsetning. En produsent som står og venter, er bedre tjent med
 et dokument uten research enn med en feilmelding.
 
+### Hukommelse: `BLOB_READ_WRITE_TOKEN`
+
+Intranettet husker to ting mellom økter, og begge er valgfrie.
+
+| Hva | Hvor | Hvorfor |
+|---|---|---|
+| Researchen per kunde | `kunde/<navn>.json` | Koster søk og tjue sekunder hver gang. Det kunden driver med endrer seg ikke mellom to dokumenter. Fersk i 30 dager. |
+| Rettelser per mal | `laerdom/<mal>.json` | Samme rettelse tre ganger er ikke en rettelse — det er en regel som mangler. Se `docs/malforbedringer.md`. |
+
+**Uten `BLOB_READ_WRITE_TOKEN` virker alt som før.** Researchen kjøres hver
+gang, rettelsene telles ikke, ingenting feiler. Hukommelse er en forbedring,
+ikke en forutsetning — samme mønster som `ANTHROPIC_API_KEY` har for
+generatoren. Hver funksjon i `src/lib/hukommelse.ts` svelger sine egne feil:
+en generator som stopper fordi en logglinje ikke lot seg skrive, er verre
+enn ingen logg.
+
+**Slik skrus den på.** Vercel → Storage → Create → Blob, region **arn1
+(Stockholm)** så dataene blir liggende i EU, og koble butikken til
+`reflektor-intern`. Vercel legger inn `BLOB_READ_WRITE_TOKEN` selv. Deretter
+en redeploy.
+
+**Alderen på researchen står i grensesnittet**, og «Slå opp på nytt» tvinger
+et nytt søk. Lagret research kan være en måned gammel, og «ferskt» er den
+delen som eldes fortest — en produsent som ikke vet at grunnlaget er fra
+forrige måned, oppdager ikke at kampanjen er over.
+
+**Kundenavnet blir til et filnavn**, og det kommer fra et fritekstfelt.
+`nokkel()` vasker det. Uten den vaskingen kan «../» i et kundenavn peke ut
+av mappen.
+
 ### Arket ligger i en iframe, og det er ikke en detalj
 
 Den første PDF-en fra denne funksjonen hadde **Apollo-utvidelsens logo i

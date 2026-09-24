@@ -177,6 +177,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
    * endrer seg ikke mellom to utgaver av samme dokument.
    */
   const [research, setResearch] = useState<Research | null>(null);
+  const [fraMinne, setFraMinne] = useState(false);
   const [feilmelding, setFeilmelding] = useState("");
   const [rettelse, setRettelse] = useState("");
   const [forMye, setForMye] = useState(false);
@@ -289,7 +290,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
    * pluss setningen om hva som skal endres — se byggRettelse i maler.ts for
    * hvorfor det ikke er en samtale som vokser.
    */
-  async function kjor(retting?: string) {
+  async function kjor(retting?: string, friskResearch = false) {
     const styring = new AbortController();
     avbryt.current = styring;
 
@@ -309,7 +310,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
 
     setTilstand("jobber");
     setGjort(0);
-    setFase(research ? "skriver" : "research");
+    setFase(research && !friskResearch ? "skriver" : "research");
     setSok([]);
     setFeilmelding("");
 
@@ -321,7 +322,8 @@ export function Malskjema({ mal }: { mal: Mal }) {
           mal: mal.slug,
           verdier,
           ...(fil ? { fil: { type: "application/pdf", data: fil.data } } : {}),
-          ...(research ? { research } : {}),
+          ...(research && !friskResearch ? { research } : {}),
+          ...(friskResearch ? { friskResearch: true } : {}),
           ...(retting && nyeste ? { forrige: nyeste, rettelse: retting } : {}),
         }),
         signal: styring.signal,
@@ -371,6 +373,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
             fase?: "research" | "skriver";
             sok?: string;
             research?: Research;
+            fra?: string;
             fremdrift?: number;
             ark?: ArkData;
             feil?: string;
@@ -385,7 +388,10 @@ export function Malskjema({ mal }: { mal: Mal }) {
             const q = h.sok;
             setSok((s) => [...s, q]);
           }
-          if (h.research) setResearch(h.research);
+          if (h.research) {
+            setResearch(h.research);
+            setFraMinne(h.fra === "hukommelse");
+          }
           if (typeof h.fremdrift === "number") setGjort(h.fremdrift);
           if (h.feil) {
             setFeilmelding(h.feil);
@@ -700,7 +706,13 @@ export function Malskjema({ mal }: { mal: Mal }) {
               </div>
             )}
 
-            {research && <Grunnlag research={research} />}
+            {research && (
+              <Grunnlag
+                research={research}
+                fraMinne={fraMinne}
+                påNyttOppslag={() => void kjor(undefined, true)}
+              />
+            )}
 
             <Arkramme
               ark={naavaerende}

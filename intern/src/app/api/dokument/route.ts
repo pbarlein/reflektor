@@ -8,6 +8,12 @@ import {
   researchTilTekst,
   type Research,
 } from "@/content/researchtype";
+import {
+  ferskNok,
+  hentKunde,
+  husKunde,
+  husRettelse,
+} from "@/lib/hukommelse";
 import { kjorResearch } from "@/lib/research";
 import { hentBruker } from "@/lib/tilgang";
 
@@ -98,6 +104,7 @@ export async function POST(foresporsel: NextRequest) {
     rettelse,
     fil,
     research: tidligereResearch,
+    friskResearch,
   } = (kropp ?? {}) as Record<string, unknown>;
 
   const mal = typeof slug === "string" ? malFraSlug(slug) : undefined;
@@ -177,6 +184,23 @@ export async function POST(foresporsel: NextRequest) {
          */
         let brukt = research;
         const kunde = (rene.kunde ?? "").trim();
+        const ferskBestilt = friskResearch === true;
+
+        /*
+         * HUKOMMELSEN FØRST.
+         *
+         * Researchen koster søk og tjue sekunder. Det Jordbærpikene driver
+         * med, endrer seg ikke mellom en produksjonsplan i oktober og en
+         * opptaksliste i november. Er den lagret og fersk, brukes den —
+         * med mindre produsenten uttrykkelig har bedt om en ny.
+         */
+        if (!brukt && kunde && !ferskBestilt) {
+          const minne = await hentKunde(kunde);
+          if (minne?.research && ferskNok(minne.research)) {
+            brukt = minne.research;
+            send({ research: brukt, fra: "hukommelse" });
+          }
+        }
 
         if (!brukt && kunde) {
           send({ fase: "research" });
@@ -194,7 +218,11 @@ export async function POST(foresporsel: NextRequest) {
            * står og venter, er bedre tjent med et dokument uten research
            * enn med en feilmelding.
            */
-          if (brukt) send({ research: brukt });
+          if (brukt) {
+            send({ research: brukt });
+            /* Lagringen skal aldri stoppe dokumentet. */
+            void husKunde(kunde, { research: brukt });
+          }
         }
 
         // ── FASE 2: SKRIV DOKUMENTET ─────────────────────────────────────
@@ -313,6 +341,13 @@ export async function POST(foresporsel: NextRequest) {
 
         send({ ark });
         kontroller.close();
+
+        /*
+         * Etter at dokumentet er sendt, ikke før. Hukommelsen er et
+         * biprodukt, og produsenten skal ikke vente på den.
+         */
+        if (kunde) void husKunde(kunde, { dokument: mal.slug });
+        if (tekstRettelse) void husRettelse(mal.slug, tekstRettelse);
       } catch (e) {
         if (e instanceof Error && e.name === "AbortError") {
           return kontroller.close();

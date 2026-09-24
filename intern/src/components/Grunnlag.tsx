@@ -51,7 +51,16 @@ function Funnliste({ tittel, funn }: { tittel: string; funn: Funn[] }) {
   );
 }
 
-export function Grunnlag({ research }: { research: Research }) {
+export function Grunnlag({
+  research,
+  fraMinne,
+  påNyttOppslag,
+}: {
+  research: Research;
+  /** Hentet fra hukommelsen, ikke slått opp nå. */
+  fraMinne: boolean;
+  påNyttOppslag: () => void;
+}) {
   const antall =
     research.struktur.length +
     research.eierskap.length +
@@ -63,7 +72,13 @@ export function Grunnlag({ research }: { research: Research }) {
     <details className="rounded-flate border border-kant bg-dempet">
       <summary className="cursor-pointer list-none px-4 py-3 text-[0.875rem] font-medium text-blekk-dempet transition-colors hover:text-blekk motion-reduce:transition-none">
         Grunnlaget Claude fant · {antall} funn fra {research.kilder.length}{" "}
-        kilder
+        kilder ·{" "}
+        {fraMinne
+          ? `slått opp ${new Intl.DateTimeFormat("nb-NO", {
+              day: "numeric",
+              month: "long",
+            }).format(new Date(research.hentet))}`
+          : "slått opp nå"}
         {research.usikkert.length > 0 && (
           <span className="text-varsel">
             {" "}
@@ -131,11 +146,26 @@ export function Grunnlag({ research }: { research: Research }) {
           </div>
         )}
 
-        <p className="border-t border-kant pt-4 text-[0.8125rem] leading-relaxed text-pretty text-blekk-svak">
-          Dette er bakgrunn for valgene i dokumentet, ikke innhold som skrives
-          inn i det. Stemmer noe ikke, rett det i feltet under arket — da
-          gjelder det du sier foran det Claude fant.
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-kant pt-4">
+          <p className="max-w-[52ch] text-[0.8125rem] leading-relaxed text-pretty text-blekk-svak">
+            Dette er bakgrunn for valgene i dokumentet, ikke innhold som
+            skrives inn i det. Stemmer noe ikke, rett det i feltet under arket
+            — da gjelder det du sier foran det Claude fant.
+          </p>
+          {/*
+            HVOR GAMMELT GRUNNLAGET ER, MÅ STÅ.
+            Lagret research kan være en måned gammel. «Ferskt» er den delen
+            som eldes fortest, og en produsent som ikke vet at grunnlaget er
+            fra forrige måned, oppdager ikke at kampanjen er over.
+          */}
+          <button
+            type="button"
+            onClick={påNyttOppslag}
+            className="h-fit shrink-0 rounded-interaktiv border border-kant bg-kort px-3.5 py-2 text-[0.8125rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
+          >
+            Slå opp på nytt
+          </button>
+        </div>
       </div>
     </details>
   );
