@@ -1,7 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse, type NextRequest } from "next/server";
 
-import { byggInstruks, malFraSlug } from "@/content/maler";
+import { arkSkjema, deleneI, lesArk } from "@/content/arktype";
+import { byggInstruks, byggRettelse, malFraSlug } from "@/content/maler";
 import { hentBruker } from "@/lib/tilgang";
 
 /**
@@ -9,41 +10,47 @@ import { hentBruker } from "@/lib/tilgang";
  *
  * ── SERVEREN BYGGER INSTRUKSEN, IKKE KLIENTEN ─────────────────────────────
  *
- * Ruta tar imot en mal-slug og de utfylte feltene — ALDRI en ferdig prompt.
- * Tok den imot fri tekst, ville enhver innlogget ansatt hatt en åpen kanal
- * til Reflektors API-nøkkel, til hva som helst. Nå er det bare de åtte
- * malene som kan kjøres, med feltene malen selv definerer.
+ * Ruta tar imot en mal-slug, de utfylte feltene, og — ved en rettelse —
+ * dokumentet slik det står pluss én setning om hva som skal endres. ALDRI
+ * en ferdig prompt. Tok den imot fri tekst som instruks, ville enhver
+ * innlogget ansatt hatt en åpen kanal til Reflektors API-nøkkel.
  *
- * Ukjente feltnøkler kastes. Det koster ingenting å være streng her.
+ * Rettelsen er fri tekst, og det er den eneste. Den havner i en avgrenset
+ * bolk nederst i en instruks serveren har bygget, med et tak på lengden.
+ * Dokumentet som sendes med, valideres mot skjemaet før det får komme inn
+ * igjen — se `lesArk`.
  *
- * ── KOSTNADEN ER BUNDET I BEGGE ENDER ─────────────────────────────────────
+ * ── SVARET ER STRUKTUR, IKKE TEKST ────────────────────────────────────────
  *
- * Inn: hvert felt kappes på FELTGRENSE tegn, og instruksen samlet på
- * INSTRUKSGRENSE. Ut: `max_tokens`. En ansatt som limer inn en hel e-posttråd
- * i et tekstfelt, skal ikke kunne gjøre én knapp til en stor regning.
+ * Claude svarer gjennom et verktøy med `input_schema`, ikke med markdown.
+ * Grunnen står i arktype.ts: markdown ble fire sider. Oppsettet er vårt, og
+ * Claude fyller ut delene.
  *
- * ── STREAMING, IKKE ETT SVAR ──────────────────────────────────────────────
+ * ── HVA SOM STRØMMES ──────────────────────────────────────────────────────
  *
- * Et dokument tar titalls sekunder å skrive. Uten streaming ville brukeren
- * sett en spinner uten framdrift, og serverless-plattformen kunne kuttet
- * forbindelsen før svaret var ferdig. Vi sender teksten videre fortløpende.
+ * Ikke teksten. Én NDJSON-linje per hendelse:
+ *
+ *   {"fremdrift": 3}   — så mange deler er ferdig utfylt
+ *   {"ark": {...}}     — det ferdige dokumentet
+ *   {"feil": "..."}    — noe gikk galt, på norsk
+ *
+ * Fremdriften telles ut av det halvferdige JSON-et som kommer inn. Den er
+ * målt, ikke simulert: en falsk framdriftslinje som står stille på 80 %
+ * mens noe henger, er verre enn ingen.
  */
 
 export const runtime = "nodejs";
-/** Dokumentene er alltid ferske. Ingenting her skal mellomlagres. */
 export const dynamic = "force-dynamic";
 
 const MODELL = "claude-opus-5";
-const MAKS_TOKENS = 20_000;
+const MAKS_TOKENS = 12_000;
 const FELTGRENSE = 4_000;
-const INSTRUKSGRENSE = 24_000;
+const RETTELSEGRENSE = 1_500;
+const INSTRUKSGRENSE = 32_000;
+
+const VERKTOY = "lever_dokument";
 
 export async function POST(foresporsel: NextRequest) {
-  /*
-   * INNLOGGING FØRST, FØR NOE ANNET. Proxy-laget slipper /api/* forbi for
-   * innloggingsflyten sin del, så denne ruta må sjekke selv. Se
-   * src/proxy.ts og src/lib/tilgang.ts.
-   */
   const bruker = await hentBruker();
   if (!bruker) {
     return NextResponse.json({ feil: "ikke-innlogget" }, { status: 401 });
@@ -61,20 +68,19 @@ export async function POST(foresporsel: NextRequest) {
     return NextResponse.json({ feil: "ugyldig-kropp" }, { status: 400 });
   }
 
-  const { mal: slug, verdier } = (kropp ?? {}) as {
-    mal?: unknown;
-    verdier?: unknown;
-  };
+  const {
+    mal: slug,
+    verdier,
+    forrige,
+    rettelse,
+  } = (kropp ?? {}) as Record<string, unknown>;
 
   const mal = typeof slug === "string" ? malFraSlug(slug) : undefined;
   if (!mal) {
     return NextResponse.json({ feil: "ukjent-mal" }, { status: 400 });
   }
 
-  /*
-   * Bare feltene malen kjenner, bare strenger, og bare så lange som
-   * FELTGRENSE. Alt annet fra klienten er uinteressant.
-   */
+  /* Bare feltene malen kjenner, bare strenger, bare så lange som grensen. */
   const rene: Record<string, string> = {};
   if (verdier && typeof verdier === "object") {
     for (const felt of mal.felt) {
@@ -85,90 +91,125 @@ export async function POST(foresporsel: NextRequest) {
     }
   }
 
-  const instruks = byggInstruks(mal, rene);
+  /*
+   * En rettelse krever BEGGE deler. Kommer det en rettelse uten et gyldig
+   * dokument å rette, er det en ny generering — ikke en halv en.
+   */
+  const forrigeArk = forrige ? lesArk(forrige, mal) : null;
+  const tekstRettelse =
+    typeof rettelse === "string" ? rettelse.trim().slice(0, RETTELSEGRENSE) : "";
+
+  const instruks =
+    forrigeArk && tekstRettelse
+      ? byggRettelse(mal, rene, forrigeArk, tekstRettelse)
+      : byggInstruks(mal, rene);
+
   if (instruks.length > INSTRUKSGRENSE) {
     return NextResponse.json({ feil: "for-lang" }, { status: 413 });
   }
 
   const klient = new Anthropic({ apiKey: nokkel });
+  const antallDeler = deleneI(mal).length;
 
   const strom = klient.messages.stream({
     model: MODELL,
     max_tokens: MAKS_TOKENS,
-    /*
-     * Adaptiv tenkning, men uten å sende resonnementet til klienten.
-     * Dokumentet er det leseren skal se; tankerekken ville bare vært støy
-     * i en tekstboks som fylles ut mens man ser på.
-     */
     thinking: { type: "adaptive" },
     system:
-      "Du skriver ferdige dokumenter på norsk for Reflektor AS. Svar med selve dokumentet i Markdown — ingen innledning, ingen forklaring etterpå, ingen kodeblokk rundt.",
+      "Du fyller ut produksjonsdokumenter på norsk for Reflektor AS. Du svarer alltid ved å kalle verktøyet, aldri med vanlig tekst.",
+    tools: [
+      {
+        name: VERKTOY,
+        description:
+          "Leverer det ferdige dokumentet som struktur. Kalles nøyaktig én gang.",
+        input_schema: arkSkjema(mal) as Anthropic.Tool["input_schema"],
+      },
+    ],
+    tool_choice: { type: "tool", name: VERKTOY },
     messages: [{ role: "user", content: instruks }],
   });
 
   const koder = new TextEncoder();
-  const kropp2 = new ReadableStream<Uint8Array>({
+  const ut = new ReadableStream<Uint8Array>({
     async start(kontroller) {
+      const send = (o: unknown) =>
+        kontroller.enqueue(koder.encode(`${JSON.stringify(o)}\n`));
+
       try {
-        for await (const hendelse of strom) {
+        let rå = "";
+        let sist = -1;
+
+        for await (const h of strom) {
           if (
-            hendelse.type === "content_block_delta" &&
-            hendelse.delta.type === "text_delta"
+            h.type === "content_block_delta" &&
+            h.delta.type === "input_json_delta"
           ) {
-            kontroller.enqueue(koder.encode(hendelse.delta.text));
+            rå += h.delta.partial_json;
+            /*
+             * Hver ferdig del har skrevet sin egen `"type":`. Å telle dem
+             * er en billig og ærlig måling av hvor langt Claude har kommet,
+             * uten å måtte tolke halvferdig JSON.
+             */
+            const ferdige = Math.min(
+              (rå.match(/"type"\s*:/g) ?? []).length,
+              antallDeler,
+            );
+            if (ferdige !== sist) {
+              sist = ferdige;
+              send({ fremdrift: ferdige, av: antallDeler });
+            }
           }
         }
 
-        /*
-         * `stop_reason` sjekkes ETTER strømmen. En avvisning eller et
-         * kuttet svar kommer ikke som en kastet feil — den kommer som et
-         * dokument som bare slutter midt i en setning, og det er verre enn
-         * en tydelig beskjed.
-         */
         const ferdig = await strom.finalMessage();
-        if (ferdig.stop_reason === "max_tokens") {
-          kontroller.enqueue(
-            koder.encode(
-              "\n\n---\n\n**Dokumentet ble kuttet fordi det ble for langt.** Kort ned de lange feltene i skjemaet og prøv igjen.",
-            ),
-          );
-        } else if (ferdig.stop_reason === "refusal") {
-          kontroller.enqueue(
-            koder.encode(
-              "\n\n---\n\n**Claude avslo å skrive dette.** Se over hva som står i feltene.",
-            ),
-          );
+
+        if (ferdig.stop_reason === "refusal") {
+          send({ feil: "Claude avslo å skrive dette. Se over feltene." });
+          return kontroller.close();
         }
+
+        const bruk = ferdig.content.find((b) => b.type === "tool_use");
+        const ark = bruk ? lesArk(bruk.input, mal) : null;
+
+        if (!ark) {
+          send({
+            feil:
+              ferdig.stop_reason === "max_tokens"
+                ? "Svaret ble for langt og stoppet midtveis. Kort ned de lange feltene og prøv igjen."
+                : "Claude svarte i et format vi ikke kunne lese. Prøv igjen.",
+          });
+          return kontroller.close();
+        }
+
+        send({ ark });
         kontroller.close();
       } catch (e) {
         /*
-         * Feilen kommer midt i en strøm som allerede er begynt, så den kan
-         * ikke bli en 500. Den skrives inn i teksten, der brukeren faktisk
-         * ser den.
+         * Feilen kommer i en strøm som allerede er begynt, så den kan ikke
+         * bli en 500. Den sendes som en linje klienten kan vise.
          */
-        const melding =
-          e instanceof Anthropic.AuthenticationError
-            ? "API-nøkkelen ble ikke godtatt. Sjekk ANTHROPIC_API_KEY i Vercel."
-            : e instanceof Anthropic.RateLimitError
-              ? "For mange forespørsler akkurat nå. Vent et minutt og prøv igjen."
-              : e instanceof Anthropic.APIError
-                ? `Feil fra API-et (${e.status}). Prøv igjen.`
-                : "Noe gikk galt underveis. Prøv igjen.";
-        kontroller.enqueue(koder.encode(`\n\n---\n\n**${melding}**`));
+        send({
+          feil:
+            e instanceof Anthropic.AuthenticationError
+              ? "API-nøkkelen ble ikke godtatt. Sjekk ANTHROPIC_API_KEY i Vercel."
+              : e instanceof Anthropic.RateLimitError
+                ? "For mange forespørsler akkurat nå. Vent et minutt og prøv igjen."
+                : e instanceof Anthropic.APIError
+                  ? `Feil fra API-et (${e.status}). Prøv igjen.`
+                  : "Noe gikk galt underveis. Prøv igjen.",
+        });
         kontroller.close();
       }
     },
     cancel() {
-      // Brukeren lukket fanen eller trykket avbryt. Da skal vi slutte å betale.
       strom.abort();
     },
   });
 
-  return new NextResponse(kropp2, {
+  return new NextResponse(ut, {
     headers: {
-      "Content-Type": "text/plain; charset=utf-8",
+      "Content-Type": "application/x-ndjson; charset=utf-8",
       "Cache-Control": "no-store",
-      // Slår av mellomlagring i proxyer som ellers ville holdt igjen strømmen.
       "X-Accel-Buffering": "no",
     },
   });

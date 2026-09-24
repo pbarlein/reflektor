@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 
-import { Markdown } from "@/components/Markdown";
-import { Utskrift } from "@/components/Utskrift";
+import { Arbeid } from "@/components/Arbeid";
+import { Arkramme, type Arkhandtak } from "@/components/Arkramme";
+import { deleneI, type Ark as ArkData } from "@/content/arktype";
 import { byggInstruks } from "@/content/maler";
 import type { Felt, Mal } from "@/content/maltype";
 
@@ -148,60 +148,50 @@ function Feltet({
   );
 }
 
-type Tilstand = "klar" | "skriver" | "ferdig" | "feil";
+type Tilstand = "klar" | "jobber" | "ferdig" | "feil";
 
 export function Malskjema({ mal }: { mal: Mal }) {
   const [verdier, setVerdier] = useState<Verdier>(() => standardverdier(mal));
-  const [kopiert, setKopiert] = useState<"" | "instruks" | "dokument">("");
-  const [dokument, setDokument] = useState("");
-  const [tilstand, setTilstand] = useState<Tilstand>("klar");
-  const [feilmelding, setFeilmelding] = useState("");
-  const avbryt = useRef<AbortController | null>(null);
+  const [kopiert, setKopiert] = useState(false);
 
+  /*
+   * HVER RETTELSE BLIR EN NY UTGAVE, IKKE EN OVERSKRIVING.
+   *
+   * Man ber om en endring, ser den, og oppdager at forrige utgave var
+   * bedre. Uten historikk er den borte, og eneste vei tilbake er å be om
+   * det motsatte og håpe. Utgavene koster ingenting å ta vare på.
+   */
+  const [utgaver, setUtgaver] = useState<ArkData[]>([]);
+  const [rettelser, setRettelser] = useState<string[]>([]);
+  const [vist, setVist] = useState(0);
+
+  const [tilstand, setTilstand] = useState<Tilstand>("klar");
+  const [gjort, setGjort] = useState(0);
+  const [feilmelding, setFeilmelding] = useState("");
+  const [rettelse, setRettelse] = useState("");
+  const [forMye, setForMye] = useState(false);
+
+  const avbryt = useRef<AbortController | null>(null);
+  const arkRef = useRef<Arkhandtak | null>(null);
+  const resultatRef = useRef<HTMLDivElement>(null);
 
   const instruks = useMemo(() => byggInstruks(mal, verdier), [mal, verdier]);
+  const deler = useMemo(() => deleneI(mal), [mal]);
 
   const mangler = mal.felt.filter(
     (f) => f.paakrevd && !(verdier[f.id] ?? "").trim(),
   );
 
-  const sett = (id: string, v: string) => {
-    setVerdier((f) => ({ ...f, [id]: v }));
-    setKopiert("");
-  };
-
-  async function kopier(hva: "instruks" | "dokument") {
-    try {
-      await navigator.clipboard.writeText(
-        hva === "instruks" ? instruks : dokument,
-      );
-      setKopiert(hva);
-    } catch {
-      /*
-       * Klarte vi ikke å skrive til utklippstavlen — eldre nettleser, eller
-       * en side uten HTTPS — er teksten fortsatt synlig og kan merkes
-       * manuelt. Da er det bedre å la knappen stå urørt enn å si at noe ble
-       * kopiert som ikke ble det.
-       */
-      setKopiert("");
-    }
-  }
-
+  const naavaerende = utgaver[vist];
+  const nyeste = utgaver.length ? utgaver[utgaver.length - 1] : undefined;
   const kunde = (verdier.kunde ?? "").trim();
   const idag = new Date().toISOString().slice(0, 10);
 
-  /**
-   * Filnavnet PDF-en foreslås med.
-   *
-   * Nettleseren bruker sidens tittel som forslag i «Lagre som PDF». Uten
-   * dette heter filen «Produksjonsplan — Reflektor internt», og den femte
-   * produksjonsplanen i nedlastingsmappen heter «Produksjonsplan (4)».
-   *
-   * Æ, Ø og Å skrives om. Ikke av nød — moderne filsystemer takler dem —
-   * men fordi filen skal videre som e-postvedlegg, og der er det fortsatt
-   * systemer som ikke gjør det.
-   */
-  function filnavn(): string {
+  const sett = (id: string, v: string) =>
+    setVerdier((f) => ({ ...f, [id]: v }));
+
+  /** Æ, Ø og Å skrives om: filen skal videre som e-postvedlegg. */
+  const filnavn = useMemo(() => {
     const reint = (t: string) =>
       t
         .toLowerCase()
@@ -213,49 +203,55 @@ export function Malskjema({ mal }: { mal: Mal }) {
     return [kunde && reint(kunde), reint(mal.navn), idag]
       .filter(Boolean)
       .join("-");
+  }, [kunde, mal.navn, idag]);
+
+  async function kopier() {
+    try {
+      await navigator.clipboard.writeText(instruks);
+      setKopiert(true);
+    } catch {
+      setKopiert(false);
+    }
   }
 
   /**
-   * Åpner nettleserens utskrift, som også er veien til PDF.
+   * Kjører én runde mot generatoren.
    *
-   * Tittelen byttes rett før og settes tilbake etterpå. `print()` blokkerer
-   * til dialogen er lukket i de fleste nettlesere, men ikke i alle — derfor
-   * ryddes den også opp på `afterprint`, som fyrer uansett.
+   * Uten `retting` er det en ny generering. Med, sendes utgaven som står nå
+   * pluss setningen om hva som skal endres — se byggRettelse i maler.ts for
+   * hvorfor det ikke er en samtale som vokser.
    */
-  function skrivUt() {
-    const forrige = document.title;
-    document.title = filnavn();
-    const rydd = () => {
-      document.title = forrige;
-      window.removeEventListener("afterprint", rydd);
-    };
-    window.addEventListener("afterprint", rydd);
-    window.print();
-    rydd();
-  }
-
-  /**
-   * Strømmer dokumentet inn mens det skrives.
-   *
-   * Teksten legges på fortløpende, ikke når alt er ferdig. Et dokument tar
-   * titalls sekunder, og en tom boks i et halvt minutt ser ut som at
-   * ingenting skjer.
-   */
-  async function lagDokument() {
-    avbryt.current?.abort();
+  async function kjor(retting?: string) {
     const styring = new AbortController();
     avbryt.current = styring;
 
-    setDokument("");
+    /*
+     * FLYTT BLIKKET TIL DER DET SKJER.
+     *
+     * Skjemaet er langt, og knappen står nederst. Uten dette trykker man
+     * «Lag dokumentet» og blir stående å se på et tomt felt, mens
+     * fremdriften kjører av gårde to skjermhøyder lenger opp.
+     */
+    resultatRef.current?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+      block: "start",
+    });
+
+    setTilstand("jobber");
+    setGjort(0);
     setFeilmelding("");
-    setTilstand("skriver");
-    setKopiert("");
 
     try {
       const svar = await fetch("/api/dokument", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mal: mal.slug, verdier }),
+        body: JSON.stringify({
+          mal: mal.slug,
+          verdier,
+          ...(retting && nyeste ? { forrige: nyeste, rettelse: retting } : {}),
+        }),
         signal: styring.signal,
       });
 
@@ -266,7 +262,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
           .catch(() => "ukjent");
         setFeilmelding(
           kode === "mangler-nokkel"
-            ? "Dokumentgeneratoren er ikke skrudd på ennå. ANTHROPIC_API_KEY mangler i Vercel. Bruk «Kopier instruksen» i mellomtiden."
+            ? "Dokumentgeneratoren er ikke skrudd på ennå. ANTHROPIC_API_KEY mangler i Vercel."
             : kode === "ikke-innlogget"
               ? "Du er logget ut. Last siden på nytt."
               : kode === "for-lang"
@@ -277,18 +273,57 @@ export function Malskjema({ mal }: { mal: Mal }) {
         return;
       }
 
+      /*
+       * NDJSON: én hendelse per linje. Den siste biten kan være en halv
+       * linje, så den bæres med til neste runde i stedet for å kastes.
+       */
       const leser = svar.body.getReader();
       const dekoder = new TextDecoder();
+      let rest = "";
+      let fikk = false;
+
       for (;;) {
         const { done, value } = await leser.read();
         if (done) break;
-        const bit = dekoder.decode(value, { stream: true });
-        setDokument((d) => d + bit);
+        rest += dekoder.decode(value, { stream: true });
+        const linjer = rest.split("\n");
+        rest = linjer.pop() ?? "";
+
+        for (const l of linjer) {
+          if (!l.trim()) continue;
+          let h: { fremdrift?: number; ark?: ArkData; feil?: string };
+          try {
+            h = JSON.parse(l);
+          } catch {
+            continue;
+          }
+          if (typeof h.fremdrift === "number") setGjort(h.fremdrift);
+          if (h.feil) {
+            setFeilmelding(h.feil);
+            setTilstand("feil");
+            return;
+          }
+          if (h.ark) {
+            fikk = true;
+            setUtgaver((u) => {
+              setVist(u.length);
+              return [...u, h.ark as ArkData];
+            });
+            if (retting) setRettelser((r) => [...r, retting]);
+          }
+        }
       }
+
+      if (!fikk) {
+        setFeilmelding("Svaret stoppet før dokumentet var ferdig. Prøv igjen.");
+        setTilstand("feil");
+        return;
+      }
+      setRettelse("");
       setTilstand("ferdig");
     } catch (e) {
       if (e instanceof DOMException && e.name === "AbortError") {
-        setTilstand(dokument ? "ferdig" : "klar");
+        setTilstand(utgaver.length ? "ferdig" : "klar");
         return;
       }
       setFeilmelding("Mistet forbindelsen. Prøv igjen.");
@@ -296,13 +331,19 @@ export function Malskjema({ mal }: { mal: Mal }) {
     }
   }
 
+  const datotekst = new Intl.DateTimeFormat("nb-NO", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(`${idag}T12:00:00Z`));
+
   return (
-    <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-14">
+    <div className="grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-14">
       <form
         className="flex flex-col gap-7"
         onSubmit={(e) => {
           e.preventDefault();
-          void lagDokument();
+          if (tilstand !== "jobber") void kjor();
         }}
       >
         {mal.felt.map((f) => (
@@ -313,16 +354,9 @@ export function Malskjema({ mal }: { mal: Mal }) {
             sett={(v) => sett(f.id, v)}
           />
         ))}
-      </form>
 
-      {/*
-        RESULTATET ER KLISTRET PÅ STORE SKJERMER. Skjemaet er langt, og et
-        dokument man må rulle tilbake til for å se, blir ikke lest mens det
-        skrives. På telefon ligger det under, der det hører hjemme.
-      */}
-      <div className="lg:sticky lg:top-24 lg:self-start">
-        {mangler.length > 0 && tilstand === "klar" && (
-          <p className="mb-4 rounded-interaktiv border border-kant bg-dempet px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-blekk-dempet">
+        {mangler.length > 0 && !utgaver.length && (
+          <p className="rounded-interaktiv border border-kant bg-dempet px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-blekk-dempet">
             <span className="font-medium text-blekk">
               {mangler.length === 1
                 ? "Dokumentet trenger ett felt til:"
@@ -335,172 +369,194 @@ export function Malskjema({ mal }: { mal: Mal }) {
 
         <div className="flex flex-wrap items-center gap-3">
           <button
-            type="button"
-            onClick={() =>
-              tilstand === "skriver"
-                ? avbryt.current?.abort()
-                : void lagDokument()
+            type={tilstand === "jobber" ? "button" : "submit"}
+            onClick={
+              tilstand === "jobber" ? () => avbryt.current?.abort() : undefined
             }
             className="rounded-interaktiv bg-aksent px-4 py-2.5 text-[0.9375rem] font-medium text-[color:var(--text-on-accent)] transition-colors hover:bg-[color:var(--action-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-aksent motion-reduce:transition-none"
           >
-            {tilstand === "skriver"
+            {tilstand === "jobber"
               ? "Avbryt"
-              : dokument
-                ? "Lag på nytt"
+              : utgaver.length
+                ? "Lag helt på nytt"
                 : "Lag dokumentet"}
           </button>
-
-          {dokument && tilstand !== "skriver" && (
-            <>
-              <button
-                type="button"
-                onClick={() => void kopier("dokument")}
-                className="rounded-interaktiv border border-kant px-4 py-2.5 text-[0.9375rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
-              >
-                {kopiert === "dokument" ? "Kopiert ✓" : "Kopier dokumentet"}
-              </button>
-              <button
-                type="button"
-                onClick={skrivUt}
-                className="rounded-interaktiv border border-kant px-4 py-2.5 text-[0.9375rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
-              >
-                Last ned PDF
-              </button>
-            </>
-          )}
         </div>
-
-        {/*
-          NETTLESEREN STEMPLER SIN EGEN URL I MARGEN.
-
-          Chrome og Safari legger inn adresse, dato og sidetall i
-          utskriftsmargen med mindre brukeren slår det av, og det finnes
-          ingen CSS som styrer det — det er en innstilling i dialogen, ikke
-          i dokumentet.
-
-          «localhost:3000/dokument/produksjonsplan» nederst på en
-          produksjonsplan som sendes til Jordbærpikene er ikke en detalj.
-          Derfor står oppskriften her, ved knappen, og ikke i en
-          dokumentasjon ingen leser i det øyeblikket de trenger den.
-        */}
-        {dokument && tilstand !== "skriver" && (
-          <p className="mt-3.5 max-w-[46ch] text-[0.8125rem] leading-relaxed text-pretty text-blekk-svak">
-            I utskriftsvinduet: velg{" "}
-            <span className="text-blekk-dempet">Lagre som PDF</span> som
-            skriver, og skru av{" "}
-            <span className="text-blekk-dempet">topptekst og bunntekst</span>{" "}
-            under flere innstillinger. Ellers stempler nettleseren adressen
-            sin i margen.
-          </p>
-        )}
-
-        {/*
-          `aria-live` på en egen, skjult linje. Knappeteksten endrer seg, men
-          en tekstendring i en knapp er ikke noe en skjermleser nevner av seg
-          selv — og da vet man ikke om trykket gjorde noe.
-        */}
-        <p aria-live="polite" className="sr-only">
-          {tilstand === "skriver"
-            ? "Claude skriver dokumentet."
-            : tilstand === "ferdig"
-              ? "Dokumentet er ferdig."
-              : kopiert
-                ? "Kopiert til utklippstavlen."
-                : ""}
-        </p>
-
-        {feilmelding && (
-          <p className="mt-4 rounded-interaktiv border border-[color:var(--varsel-kant)] bg-[color:var(--varsel-flate)] px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-varsel">
-            {feilmelding}
-          </p>
-        )}
-
-        {(dokument || tilstand === "skriver") && (
-          <div className="mt-5 max-h-[38rem] overflow-y-auto rounded-flate border border-kant bg-kort p-6 sm:p-8">
-            {dokument ? (
-              <Markdown kilde={dokument} />
-            ) : (
-              <p className="text-[0.9375rem] text-blekk-svak">
-                Claude leser gjennom skjemaet …
-              </p>
-            )}
-            {tilstand === "skriver" && dokument && (
-              <span
-                aria-hidden
-                className="mt-1 inline-block h-4 w-[2px] animate-pulse bg-aksent align-middle"
-              />
-            )}
-          </div>
-        )}
-
-        {/*
-          ARKET. Usynlig på skjerm, og det eneste som er synlig på papir.
-          Det ligger her og ikke i en egen rute fordi utskriften skal treffe
-          nøyaktig det dokumentet du ser på — ikke en ny generering.
-        */}
-        {/*
-          ARKET HENGER RETT UNDER <body>, IKKE HER.
-
-          Utskriften plasserer arket øverst på siden med `position:
-          absolute`, og en absolutt posisjon regnes fra nærmeste
-          posisjonerte forelder. Her er det kolonnen som er `sticky` på
-          store skjermer — så arket kom ut innrykket på høyre halvdel av
-          papiret, med seks centimeter tom venstremarg.
-
-          Portalen flytter det ut av kolonnen og gjør body til referansen.
-          `document` finnes ikke under serverrendringen, men `dokument` er
-          alltid tomt der: det fylles først når noen trykker på knappen.
-        */}
-        {dokument &&
-          tilstand !== "skriver" &&
-          createPortal(
-            <Utskrift
-              kilde={dokument}
-              tittel={mal.navn}
-              kunde={kunde || undefined}
-              dato={new Intl.DateTimeFormat("nb-NO", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              }).format(new Date(`${idag}T12:00:00Z`))}
-            />,
-            document.body,
-          )}
 
         {/*
           INSTRUKSEN LIGGER SAMMENFOLDET. Den er ikke det man kom for, men
           den er verdt å kunne se: hva Claude faktisk fikk, inkludert listen
-          over felt som sto tomme. Og den kan tas med inn i en samtale hvis
-          dokumentet trenger en runde til.
+          over felt som sto tomme.
         */}
-        <details className="mt-6 rounded-flate border border-kant bg-dempet">
+        <details className="rounded-flate border border-kant bg-dempet">
           <summary className="cursor-pointer list-none px-4 py-3 text-[0.875rem] font-medium text-blekk-dempet transition-colors hover:text-blekk motion-reduce:transition-none">
             Se instruksen Claude får · {instruks.length.toLocaleString("nb-NO")}{" "}
             tegn
           </summary>
           <div className="border-t border-kant px-4 py-4">
-            <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => void kopier("instruks")}
-                className="rounded-interaktiv border border-kant bg-kort px-3.5 py-2 text-[0.875rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
-              >
-                {kopiert === "instruks" ? "Kopiert ✓" : "Kopier instruksen"}
-              </button>
-              <a
-                href="https://claude.ai/new"
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-interaktiv border border-kant bg-kort px-3.5 py-2 text-[0.875rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
-              >
-                Åpne Claude ↗
-              </a>
-            </div>
+            <button
+              type="button"
+              onClick={() => void kopier()}
+              className="rounded-interaktiv border border-kant bg-kort px-3.5 py-2 text-[0.875rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
+            >
+              {kopiert ? "Kopiert ✓" : "Kopier instruksen"}
+            </button>
             <pre className="mt-4 max-h-[24rem] overflow-auto font-sans text-[0.8125rem] leading-relaxed whitespace-pre-wrap text-blekk-dempet">
               {instruks}
             </pre>
           </div>
         </details>
+      </form>
+
+      <div ref={resultatRef} className="flex flex-col gap-5 scroll-mt-24">
+        {feilmelding && (
+          <p className="rounded-interaktiv border border-[color:var(--varsel-kant)] bg-[color:var(--varsel-flate)] px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-varsel">
+            {feilmelding}
+          </p>
+        )}
+
+        {tilstand === "jobber" && (
+          <Arbeid deler={deler} gjort={gjort} rettelse={utgaver.length > 0} />
+        )}
+
+        {!utgaver.length && tilstand !== "jobber" && (
+          <div className="rounded-flate border border-dashed border-kant px-6 py-14 text-center">
+            <p className="text-[0.9375rem] text-blekk-svak">
+              Fyll ut skjemaet og trykk «Lag dokumentet».
+              <br />
+              Ensideren dukker opp her.
+            </p>
+          </div>
+        )}
+
+        {naavaerende && tilstand !== "jobber" && (
+          <>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                {utgaver.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setVist(i)}
+                    aria-current={i === vist}
+                    className={`h-8 min-w-8 rounded-interaktiv px-2 font-sans text-[0.8125rem] tabular-nums transition-colors motion-reduce:transition-none ${
+                      i === vist
+                        ? "bg-aksent text-[color:var(--text-on-accent)]"
+                        : "border border-kant text-blekk-dempet hover:border-kant-sterk"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <span className="ml-1 text-[0.8125rem] text-blekk-svak">
+                  {utgaver.length === 1
+                    ? "utgave"
+                    : `utgaver · viser ${vist + 1}`}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => arkRef.current?.skrivUt()}
+                className="rounded-interaktiv border border-kant px-4 py-2.5 text-[0.9375rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
+              >
+                Last ned dokumentet
+              </button>
+            </div>
+
+            {/*
+              NETTLESEREN KAN STEMPLE ADRESSEN SIN I MARGEN.
+
+              Arket ligger i en iframe med `@page margin: 0`, så det er
+              ikke plass til det — men står avkryssingen på i dialogen,
+              legger enkelte nettlesere det oppå arket likevel. Ett trykk
+              å slå av, og en linje her er billigere enn en PDF med
+              «localhost:3000» på seg hos kunden.
+            */}
+            <p className="-mt-2 text-[0.8125rem] leading-relaxed text-pretty text-blekk-svak">
+              I vinduet som åpner seg: velg{" "}
+              <span className="text-blekk-dempet">Lagre som PDF</span>, og la{" "}
+              <span className="text-blekk-dempet">topptekst og bunntekst</span>{" "}
+              stå avslått.
+            </p>
+
+            {forMye && (
+              <p className="rounded-interaktiv border border-[color:var(--varsel-kant)] bg-[color:var(--varsel-flate)] px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-varsel">
+                Innholdet er for langt for én side, og det nederste blir
+                klippet. Be om å få det kortet ned i feltet under.
+              </p>
+            )}
+
+            <Arkramme
+              ark={naavaerende}
+              type={mal.navn}
+              dato={datotekst}
+              filnavn={filnavn}
+              handtakRef={arkRef}
+              påOverflyt={setForMye}
+            />
+
+            {/*
+              SAMTALEN LIGGER UNDER ARKET, IKKE I EN SIDEPANEL.
+              Man leser dokumentet, ser noe som er feil, og skriver det rett
+              under det man nettopp leste. Å flytte blikket til en annen
+              kolonne for å si «kort ned tidsplanen» er ett steg for mye.
+            */}
+            <div className="rounded-flate border border-kant bg-kort p-5">
+              <label
+                htmlFor="rettelse"
+                className="block font-sans text-[0.8125rem] font-medium text-blekk"
+              >
+                Noe som skal endres?
+              </label>
+              <span className="mt-1 block text-[0.8125rem] leading-snug text-blekk-svak">
+                Skriv det som til en kollega. «Slå sammen de to siste radene»,
+                «kort ned tidsplanen», «bytt ut Fredrik med Vivian».
+              </span>
+              <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+                <textarea
+                  id="rettelse"
+                  rows={2}
+                  value={rettelse}
+                  onChange={(e) => setRettelse(e.target.value)}
+                  onKeyDown={(e) => {
+                    /* Enter sender. Skift+enter gir ny linje. */
+                    if (e.key === "Enter" && !e.shiftKey && rettelse.trim()) {
+                      e.preventDefault();
+                      void kjor(rettelse.trim());
+                    }
+                  }}
+                  placeholder="Kort ned tidsplanen til fem rader."
+                  className={`${INPUT} mt-0 flex-1 resize-y leading-relaxed`}
+                />
+                <button
+                  type="button"
+                  disabled={!rettelse.trim()}
+                  onClick={() => void kjor(rettelse.trim())}
+                  className="h-fit rounded-interaktiv bg-aksent px-4 py-2.5 text-[0.9375rem] font-medium text-[color:var(--text-on-accent)] transition-colors hover:bg-[color:var(--action-primary-hover)] disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none"
+                >
+                  Send
+                </button>
+              </div>
+
+              {rettelser.length > 0 && (
+                <ol className="mt-4 flex flex-col gap-1.5 border-t border-kant pt-4">
+                  {rettelser.map((r, i) => (
+                    <li
+                      key={i}
+                      className="flex gap-2.5 text-[0.8125rem] leading-relaxed text-blekk-svak"
+                    >
+                      <span className="tabular-nums text-aksent-tekst">
+                        {i + 2}
+                      </span>
+                      <span>{r}</span>
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

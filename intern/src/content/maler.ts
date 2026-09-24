@@ -1,3 +1,4 @@
+import { TAK, delforklaring, type Ark } from "./arktype.ts";
 import type { Mal } from "./maltype.ts";
 
 /**
@@ -769,6 +770,28 @@ function norskDato(iso: string): string {
   }).format(d);
 }
 
+/**
+ * ── HVORFOR DENNE TEKSTEN ER SÅ FULL AV TALL ──────────────────────────────
+ *
+ * «Hold det kort» betyr ingenting for en modell som nettopp har lest en
+ * detaljert brief. Den første utgaven ba om markdown og sa «én side»; den
+ * leverte fire sider med utmerket innhold. Takhøyder i tall er det eneste
+ * som virker, og de er de samme tallene som valideringen bruker.
+ */
+function ensiderregelen(): string {
+  return [
+    "DETTE ER EN ENSIDER",
+    `Alt skal få plass på én A4-side. Det som ikke får plass, blir klippet bort — da mister dokumentet den siste seksjonen sin, og ingen oppdager det før kunden gjør det.`,
+    `- Maks ${TAK.rader} rader i en tabell, og maks ${TAK.kolonner} kolonner.`,
+    `- Maks ${TAK.celle} tegn i en tabellcelle.`,
+    `- Maks ${TAK.punkter} punkter i en liste, og maks ${TAK.punkt} tegn i hvert.`,
+    `- Undertittelen: maks ${TAK.undertittel} tegn.`,
+    "Må du velge, velg bort det leseren kan spørre om, og behold det hen må vite før hen står der.",
+    "Slå sammen heller enn å kutte: to like rader blir én rad med begge navnene.",
+    "Men BRUK plassen. En halvtom side er like feil som en som flyter over. Har du stoff til takhøyden, fyll den.",
+  ].join("\n");
+}
+
 export function byggInstruks(
   mal: Mal,
   verdier: Readonly<Record<string, string>>,
@@ -787,7 +810,11 @@ export function byggInstruks(
     "",
     `OPPGAVEN\n${mal.oppdrag}`,
     "",
-    `SLIK SKAL DOKUMENTET BYGGES\n${mal.struktur.map((s, i) => `${i + 1}. ${s}`).join("\n")}`,
+    `HVA DOKUMENTET SKAL DEKKE\n${mal.struktur.map((s, i) => `${i + 1}. ${s}`).join("\n")}`,
+    "",
+    `DELENE DU SKAL FYLLE UT\n${delforklaring(mal)}`,
+    "",
+    ensiderregelen(),
     "",
     `INFORMASJONEN\n${utfylt.length ? utfylt.join("\n") : "- (ingenting utfylt)"}`,
   ];
@@ -833,4 +860,41 @@ export function byggInstruks(
   );
 
   return deler.join("\n");
+}
+
+/**
+ * Instruksen for en rettelse.
+ *
+ * ── HVORFOR HELE DOKUMENTET SENDES INN IGJEN, OG IKKE EN SAMTALE ──────────
+ *
+ * Alternativet var å holde på meldingshistorikken — instruks, svar,
+ * rettelse, svar — og sende hele tråden hver gang. Den vokser, den koster
+ * mer for hver runde, og den gir modellen fem utgaver av samme dokument å
+ * bli forvirret av.
+ *
+ * Her er det alltid to ting: dokumentet som står nå, og det ene som skal
+ * endres. Runde ti koster det samme som runde én, og modellen ser bare den
+ * utgaven som faktisk gjelder.
+ *
+ * Prisen er at «gjør det forrige om igjen» ikke gir mening. Det er en pris
+ * verdt å betale for et dokument som ikke driver av gårde.
+ */
+export function byggRettelse(
+  mal: Mal,
+  verdier: Readonly<Record<string, string>>,
+  forrige: Ark,
+  rettelse: string,
+): string {
+  return [
+    byggInstruks(mal, verdier),
+    "",
+    "── DOKUMENTET SLIK DET STÅR NÅ ──",
+    JSON.stringify(forrige),
+    "",
+    "── ENDRINGEN SOM SKAL GJØRES ──",
+    rettelse,
+    "",
+    "Gjør NØYAKTIG denne endringen, og ikke noe mer. Alt annet i dokumentet skal stå ordrett som det gjør nå — samme formuleringer, samme rekkefølge, samme rader. Lever hele dokumentet på nytt, også de delene du ikke rørte.",
+    "Er endringen umulig uten å finne på noe som ikke står i informasjonen, skriv TBD(...) i stedet for å gjette.",
+  ].join("\n");
 }

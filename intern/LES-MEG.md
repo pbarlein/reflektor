@@ -181,33 +181,61 @@ To ting holder grensen når noen skal legge til en mal senere:
   må den forby dem — en regel som forklarer *hvordan* prisen skrives, er
   nøyaktig feilen over.
 
-### «Last ned PDF» er nettleserens egen utskrift
+### Dokumentet er en ensider, ikke en tekst som flyter
 
-Arket tegnes av `src/components/Utskrift.tsx` og styles av utskriftsblokken
-nederst i `src/app/globals.css`. Det er ikke skjermversjonen i en annen farge
-— det er et eget dokument med eget hode, egen bunnlinje og egne sideskift.
+Flyten er: fyll ut skjemaet → se fremdriften → få ensideren i vinduet →
+rett den ved å skrive til Claude → last ned når den er god.
 
-Tre ting som var feil før de ble riktige, og som er lette å ødelegge igjen:
+**Claude svarer med STRUKTUR, ikke markdown.** Første utgave ba om markdown
+og lot teksten flyte. Innholdet var utmerket, og det ble fire sider. Markdown
+kan ikke si «dette er faktaraden» eller «dette er boksen ved siden av
+tabellen» — den kan bare si overskrift, avsnitt, liste, og da blir alt én
+spalte.
 
-1. **Arket ligger i en portal rett under `<body>`.** Utskriften plasserer det
-   med `position: absolute`, og en absolutt posisjon regnes fra nærmeste
-   posisjonerte forelder. Lå det der det hører hjemme i treet, ville
-   `lg:sticky`-kolonnen blitt referansen, og arket kom ut med seks centimeter
-   tom venstremarg.
-2. **Alt annet skjules med `visibility`, ikke `display`.** Arket ligger dypt
-   i DOM-en; `display: none` på en forelder ville tatt det med seg.
-3. **Punktstørrelsene må settes med `.utskrift-kropp h1` og ikke bare på
-   forelderen.** Markdown-visningen setter størrelser med Tailwind-klasser
-   rett på elementene, og en `font-size` lenger opp taper mot dem. Første
-   forsøk ga 16 px brødtekst på A4.
+Nå kaller Claude et verktøy med et skjema (`src/content/arktype.ts`), og
+oppsettet er vårt (`src/components/Ark.tsx`). Delene er de samme som
+miniatyren på malkortet tegnes av, så kortet du trykker på viser formen du
+faktisk får.
 
-**Nettleseren stempler sin egen URL i margen.** Det finnes ingen CSS som
-styrer det — det er en avkrysningsboks i utskriftsdialogen. Derfor står
-oppskriften ved knappen i grensesnittet, ikke bare her.
+**Takhøydene står i tall, ikke i ord.** `TAK` i arktype.ts brukes tre steder:
+i instruksen til Claude, i valideringen av svaret, og i testene. «Hold det
+kort» gjør ingenting med en modell som nettopp har lest en detaljert brief.
 
-Bunnlinjen med NAP står på siste ark, ikke på hvert. Å gjenta den krever
-`@page`-marginbokser, som ingen nettleser støtter, eller et fast posisjonert
-element som legger seg oppå teksten. Ingen av delene er verdt det.
+### Arket ligger i en iframe, og det er ikke en detalj
+
+Den første PDF-en fra denne funksjonen hadde **Apollo-utvidelsens logo i
+seg**. Utskriften tok den levende siden, og en nettleserutvidelse hadde
+skrevet seg inn i den. Det er ikke noe vi kan style oss ut av — vi vet ikke
+hva folk har installert.
+
+Arket har derfor sitt eget dokument. `src/components/Arkramme.tsx` lager en
+iframe, kopierer sidens stilark inn i den, og portalerer arket dit.
+`print()` kalles på iframen, ikke på siden. Tre ting følger:
+
+1. Utvidelser kan ikke komme med. De injiserer i sidens dokument, ikke i
+   iframens.
+2. Forhåndsvisningen og PDF-en er samme dokument. Skalering er eneste
+   forskjell.
+3. Arket er nøyaktig 210 × 297 mm med `@page margin: 0`, så PDF-en er én
+   side fordi den ikke kan være noe annet.
+
+**Klassen på `<body>` må kopieres inn, ikke bare stilarkene.** `next/font`
+legger `@font-face` i stilarket, men variablene `--font-poppins` og
+`--font-display-serif` settes med en klasse — og i dette prosjektet står den
+på `<body>`, ikke på `<html>`. Uten den kom arket ut i systemfonten mens
+resten av siden sto i merkevarefonten.
+
+### Rettelser er ikke en samtale som vokser
+
+`byggRettelse` sender to ting: dokumentet slik det står, og den ene
+setningen om hva som skal endres. Ikke hele meldingshistorikken. Runde ti
+koster det samme som runde én, og modellen ser bare utgaven som gjelder.
+
+Hver rettelse blir en ny utgave i listen. Ingen overskrives — man ber om en
+endring, ser den, og oppdager at forrige var bedre.
+
+Arket som kommer tilbake fra klienten, valideres med `lesArk` før det får
+gå inn i en instruks igjen. Det er data som har vært utenfor huset.
 
 ---
 
