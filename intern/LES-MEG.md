@@ -201,6 +201,44 @@ faktisk får.
 i instruksen til Claude, i valideringen av svaret, og i testene. «Hold det
 kort» gjør ingenting med en modell som nettopp har lest en detaljert brief.
 
+### Researchfasen: Claude slår opp kunden før dokumentet skrives
+
+Bestilt 24.09.2026. Hvert dokument lages i to kall, ikke ett:
+
+1. **Research.** `src/lib/research.ts` kjører et kall med Anthropics
+   `web_search`-serververktøy og spør: hva driver bedriften med, selger de
+   til forbrukere eller til andre bedrifter, hvordan er de bygget opp, hvem
+   eier dem, hva er ferskt, og hva er fagpraksis for akkurat denne
+   dokumenttypen i akkurat denne bransjen. Svaret er strukturert
+   (`src/content/researchtype.ts`) og valideres som alt annet utenfra.
+2. **Dokumentet.** Researchen legges inn i instruksen som BAKGRUNN — ikke
+   som innhold. Den skal forme valgene, ikke skrives inn i arket. Et
+   dokument som forteller kunden hvem de er, ser ut som en mal med navnet
+   deres limt inn.
+
+**Hvorfor to kall og ikke ett.** Med både nettsøk og dokumentverktøyet i
+samme kall kan modellen hoppe rett til å skrive, og da har vi ingen
+research — bare håpet om en. To kall gir dessuten ærlig fremdrift
+(«undersøker» og «skriver» tar forskjellig tid), og researchen kan
+gjenbrukes: den om Jordbærpikene endrer seg ikke mellom en produksjonsplan
+og en opptaksliste. Klienten sender den tilbake ved rettelser, og den
+valideres på vei inn.
+
+**Researchen vises til produsenten, med kilde på hvert funn.** Det er ikke
+en vennlighet. Et faglig alibi som ikke kan etterprøves, er ikke et alibi —
+og det farligste utfallet er ikke at Claude ikke finner noe, men at den
+finner feil bedrift med samme navn. Derfor står «ikke bekreftet» like
+tydelig som resten, og derfor er den listen påkrevd i instruksen.
+
+**Fremdriften i researchfasen har ingen teller, og skal ikke få en.** Vi
+vet ikke hvor mange søk som trengs. Søkeordene vises i stedet, hentet ut av
+`server_tool_use`-blokkene i strømmen: det er den eneste framdriftslinjen i
+systemet som viser hva som faktisk skjer, med modellens egne ord.
+
+**Feiler researchen, lages dokumentet uansett.** Den er et bedre grunnlag,
+ikke en forutsetning. En produsent som står og venter, er bedre tjent med
+et dokument uten research enn med en feilmelding.
+
 ### Arket ligger i en iframe, og det er ikke en detalj
 
 Den første PDF-en fra denne funksjonen hadde **Apollo-utvidelsens logo i

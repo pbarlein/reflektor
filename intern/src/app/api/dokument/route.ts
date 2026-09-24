@@ -3,6 +3,12 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { arkSkjema, deleneI, lesArk } from "@/content/arktype";
 import { byggInstruks, byggRettelse, malFraSlug } from "@/content/maler";
+import {
+  lesResearch,
+  researchTilTekst,
+  type Research,
+} from "@/content/researchtype";
+import { kjorResearch } from "@/lib/research";
 import { hentBruker } from "@/lib/tilgang";
 
 /**
@@ -30,9 +36,13 @@ import { hentBruker } from "@/lib/tilgang";
  *
  * Ikke teksten. Én NDJSON-linje per hendelse:
  *
- *   {"fremdrift": 3}   — så mange deler er ferdig utfylt
- *   {"ark": {...}}     — det ferdige dokumentet
- *   {"feil": "..."}    — noe gikk galt, på norsk
+ *   {"fase": "research"}   — undersøker kunden
+ *   {"sok": "..."}         — dette søkes det på nå
+ *   {"research": {...}}    — det som ble funnet, med kilder
+ *   {"fase": "skriver"}    — dokumentet skrives
+ *   {"fremdrift": 3}       — så mange deler er ferdig utfylt
+ *   {"ark": {...}}         — det ferdige dokumentet
+ *   {"feil": "..."}        — noe gikk galt, på norsk
  *
  * Fremdriften telles ut av det halvferdige JSON-et som kommer inn. Den er
  * målt, ikke simulert: en falsk framdriftslinje som står stille på 80 %
@@ -87,6 +97,7 @@ export async function POST(foresporsel: NextRequest) {
     forrige,
     rettelse,
     fil,
+    research: tidligereResearch,
   } = (kropp ?? {}) as Record<string, unknown>;
 
   const mal = typeof slug === "string" ? malFraSlug(slug) : undefined;
@@ -132,65 +143,129 @@ export async function POST(foresporsel: NextRequest) {
     vedlegg = f.data;
   }
 
-  const instruks =
-    forrigeArk && tekstRettelse
-      ? byggRettelse(mal, rene, forrigeArk, tekstRettelse, vedlegg !== null)
-      : byggInstruks(mal, rene, vedlegg !== null);
-
-  if (instruks.length > INSTRUKSGRENSE) {
-    return NextResponse.json({ feil: "for-lang" }, { status: 413 });
-  }
-
   const klient = new Anthropic({ apiKey: nokkel });
   const antallDeler = deleneI(mal).length;
 
-  const strom = klient.messages.stream({
-    model: MODELL,
-    max_tokens: MAKS_TOKENS,
-    thinking: { type: "adaptive" },
-    system:
-      "Du fyller ut produksjonsdokumenter på norsk for Reflektor AS. Du svarer alltid ved å kalle verktøyet, aldri med vanlig tekst.",
-    tools: [
-      {
-        name: VERKTOY,
-        description:
-          "Leverer det ferdige dokumentet som struktur. Kalles nøyaktig én gang.",
-        input_schema: arkSkjema(mal) as Anthropic.Tool["input_schema"],
-      },
-    ],
-    tool_choice: { type: "tool", name: VERKTOY },
-    messages: [
-      {
-        role: "user",
-        /*
-         * Dokumentblokken FØR teksten. Rekkefølgen er dokumentert i
-         * API-et: et vedlegg som kommer etter instruksen, leses som et
-         * tillegg til den i stedet for som grunnlaget den viser til.
-         */
-        content: vedlegg
-          ? [
-              {
-                type: "document" as const,
-                source: {
-                  type: "base64" as const,
-                  media_type: "application/pdf" as const,
-                  data: vedlegg,
-                },
-              },
-              { type: "text" as const, text: instruks },
-            ]
-          : instruks,
-      },
-    ],
-  });
+  /*
+   * RESEARCHEN GJENBRUKES NÅR KLIENTEN HAR DEN.
+   *
+   * En rettelse skal ikke slå opp bedriften på nytt. Klienten sender
+   * derfor tilbake researchen fra forrige runde, og den valideres på vei
+   * inn — den har vært utenfor huset, akkurat som arket.
+   */
+  const gjenbrukt = tidligereResearch ? lesResearch(tidligereResearch) : null;
+  const research: Research | null = gjenbrukt
+    ? { ...gjenbrukt, hentet: new Date().toISOString() }
+    : null;
 
   const koder = new TextEncoder();
+  /* Brukeren lukket fanen: begge fasene skal stoppe. */
+  const stopp = new AbortController();
+
   const ut = new ReadableStream<Uint8Array>({
     async start(kontroller) {
       const send = (o: unknown) =>
         kontroller.enqueue(koder.encode(`${JSON.stringify(o)}\n`));
 
       try {
+        /*
+         * ── FASE 1: FINN UT HVEM KUNDEN ER ────────────────────────────────
+         *
+         * Hoppes over når klienten allerede har researchen, og når vi ikke
+         * vet hvem kunden er. Uten et navn er det ingenting å slå opp, og
+         * et søk på ingenting koster penger og gir støy.
+         */
+        let brukt = research;
+        const kunde = (rene.kunde ?? "").trim();
+
+        if (!brukt && kunde) {
+          send({ fase: "research" });
+          brukt = await kjorResearch({
+            klient,
+            mal,
+            kunde,
+            lokasjon: (rene.lokasjon ?? "").trim(),
+            påSøk: (q) => send({ sok: q }),
+            signal: stopp.signal,
+          });
+          /*
+           * En research som feiler skal ikke stoppe dokumentet. Den er et
+           * bedre grunnlag, ikke en forutsetning — og en produsent som
+           * står og venter, er bedre tjent med et dokument uten research
+           * enn med en feilmelding.
+           */
+          if (brukt) send({ research: brukt });
+        }
+
+        // ── FASE 2: SKRIV DOKUMENTET ─────────────────────────────────────
+        const instruks =
+          forrigeArk && tekstRettelse
+            ? byggRettelse(
+                mal,
+                rene,
+                forrigeArk,
+                tekstRettelse,
+                vedlegg !== null,
+                brukt ? researchTilTekst(brukt) : "",
+              )
+            : byggInstruks(
+                mal,
+                rene,
+                vedlegg !== null,
+                brukt ? researchTilTekst(brukt) : "",
+              );
+
+        if (instruks.length > INSTRUKSGRENSE) {
+          send({ feil: "Skjemaet er for langt. Kort ned de lange feltene." });
+          return kontroller.close();
+        }
+
+        send({ fase: "skriver" });
+
+        const strom = klient.messages.stream(
+          {
+            model: MODELL,
+            max_tokens: MAKS_TOKENS,
+            thinking: { type: "adaptive" },
+            system:
+              "Du fyller ut produksjonsdokumenter på norsk for Reflektor AS. Du svarer alltid ved å kalle verktøyet, aldri med vanlig tekst.",
+            tools: [
+              {
+                name: VERKTOY,
+                description:
+                  "Leverer det ferdige dokumentet som struktur. Kalles nøyaktig én gang.",
+                input_schema: arkSkjema(mal) as Anthropic.Tool["input_schema"],
+              },
+            ],
+            tool_choice: { type: "tool", name: VERKTOY },
+            messages: [
+              {
+                role: "user",
+                /*
+                 * Dokumentblokken FØR teksten. Rekkefølgen er dokumentert
+                 * i API-et: et vedlegg som kommer etter instruksen, leses
+                 * som et tillegg til den i stedet for som grunnlaget den
+                 * viser til.
+                 */
+                content: vedlegg
+                  ? [
+                      {
+                        type: "document" as const,
+                        source: {
+                          type: "base64" as const,
+                          media_type: "application/pdf" as const,
+                          data: vedlegg,
+                        },
+                      },
+                      { type: "text" as const, text: instruks },
+                    ]
+                  : instruks,
+              },
+            ],
+          },
+          { signal: stopp.signal },
+        );
+
         let rå = "";
         let sist = -1;
 
@@ -202,8 +277,8 @@ export async function POST(foresporsel: NextRequest) {
             rå += h.delta.partial_json;
             /*
              * Hver ferdig del har skrevet sin egen `"type":`. Å telle dem
-             * er en billig og ærlig måling av hvor langt Claude har kommet,
-             * uten å måtte tolke halvferdig JSON.
+             * er en billig og ærlig måling av hvor langt Claude har
+             * kommet, uten å måtte tolke halvferdig JSON.
              */
             const ferdige = Math.min(
               (rå.match(/"type"\s*:/g) ?? []).length,
@@ -239,6 +314,9 @@ export async function POST(foresporsel: NextRequest) {
         send({ ark });
         kontroller.close();
       } catch (e) {
+        if (e instanceof Error && e.name === "AbortError") {
+          return kontroller.close();
+        }
         /*
          * Feilen kommer i en strøm som allerede er begynt, så den kan ikke
          * bli en 500. Den sendes som en linje klienten kan vise.
@@ -257,7 +335,7 @@ export async function POST(foresporsel: NextRequest) {
       }
     },
     cancel() {
-      strom.abort();
+      stopp.abort();
     },
   });
 

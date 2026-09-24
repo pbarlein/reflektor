@@ -3,8 +3,10 @@
 import { useMemo, useRef, useState } from "react";
 
 import { Arbeid } from "@/components/Arbeid";
+import { Grunnlag } from "@/components/Grunnlag";
 import { Arkramme, type Arkhandtak } from "@/components/Arkramme";
 import { deleneI, type Ark as ArkData } from "@/content/arktype";
+import type { Research } from "@/content/researchtype";
 import { byggInstruks, eksempelverdier } from "@/content/maler";
 import type { Felt, Mal } from "@/content/maltype";
 
@@ -167,6 +169,14 @@ export function Malskjema({ mal }: { mal: Mal }) {
 
   const [tilstand, setTilstand] = useState<Tilstand>("klar");
   const [gjort, setGjort] = useState(0);
+  const [fase, setFase] = useState<"research" | "skriver">("skriver");
+  const [sok, setSok] = useState<string[]>([]);
+  /*
+   * Researchen holdes på tvers av rettelser. Å slå opp bedriften på nytt
+   * for hver lille endring ville kostet penger og tid uten å gi noe: den
+   * endrer seg ikke mellom to utgaver av samme dokument.
+   */
+  const [research, setResearch] = useState<Research | null>(null);
   const [feilmelding, setFeilmelding] = useState("");
   const [rettelse, setRettelse] = useState("");
   const [forMye, setForMye] = useState(false);
@@ -299,6 +309,8 @@ export function Malskjema({ mal }: { mal: Mal }) {
 
     setTilstand("jobber");
     setGjort(0);
+    setFase(research ? "skriver" : "research");
+    setSok([]);
     setFeilmelding("");
 
     try {
@@ -309,6 +321,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
           mal: mal.slug,
           verdier,
           ...(fil ? { fil: { type: "application/pdf", data: fil.data } } : {}),
+          ...(research ? { research } : {}),
           ...(retting && nyeste ? { forrige: nyeste, rettelse: retting } : {}),
         }),
         signal: styring.signal,
@@ -354,12 +367,25 @@ export function Malskjema({ mal }: { mal: Mal }) {
 
         for (const l of linjer) {
           if (!l.trim()) continue;
-          let h: { fremdrift?: number; ark?: ArkData; feil?: string };
+          let h: {
+            fase?: "research" | "skriver";
+            sok?: string;
+            research?: Research;
+            fremdrift?: number;
+            ark?: ArkData;
+            feil?: string;
+          };
           try {
             h = JSON.parse(l);
           } catch {
             continue;
           }
+          if (h.fase) setFase(h.fase);
+          if (h.sok) {
+            const q = h.sok;
+            setSok((s) => [...s, q]);
+          }
+          if (h.research) setResearch(h.research);
           if (typeof h.fremdrift === "number") setGjort(h.fremdrift);
           if (h.feil) {
             setFeilmelding(h.feil);
@@ -594,7 +620,13 @@ export function Malskjema({ mal }: { mal: Mal }) {
         )}
 
         {tilstand === "jobber" && (
-          <Arbeid deler={deler} gjort={gjort} rettelse={utgaver.length > 0} />
+          <Arbeid
+            deler={deler}
+            gjort={gjort}
+            rettelse={utgaver.length > 0}
+            fase={fase}
+            sok={sok}
+          />
         )}
 
         {!utgaver.length && tilstand !== "jobber" && (
@@ -667,6 +699,8 @@ export function Malskjema({ mal }: { mal: Mal }) {
                 </button>
               </div>
             )}
+
+            {research && <Grunnlag research={research} />}
 
             <Arkramme
               ark={naavaerende}

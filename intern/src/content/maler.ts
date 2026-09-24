@@ -893,6 +893,7 @@ export function byggInstruks(
   mal: Mal,
   verdier: Readonly<Record<string, string>>,
   medVedlegg = false,
+  research = "",
 ): string {
   const utfylt = mal.felt
     .map((f) => [f, (verdier[f.id] ?? "").trim()] as const)
@@ -907,6 +908,8 @@ export function byggInstruks(
     "Du skriver et dokument for Reflektor AS, et norsk byrå som leverer foto og video til sosiale medier på månedlig abonnement. Alt skal være på norsk.",
     "",
     `OPPGAVEN\n${mal.oppdrag}`,
+    "",
+    ...(research ? ["", research] : []),
     "",
     `HVA DOKUMENTET SKAL DEKKE\n${mal.struktur.map((s, i) => `${i + 1}. ${s}`).join("\n")}`,
     "",
@@ -1021,9 +1024,10 @@ export function byggRettelse(
   forrige: Ark,
   rettelse: string,
   medVedlegg = false,
+  research = "",
 ): string {
   return [
-    byggInstruks(mal, verdier, medVedlegg),
+    byggInstruks(mal, verdier, medVedlegg, research),
     "",
     "── DOKUMENTET SLIK DET STÅR NÅ ──",
     JSON.stringify(forrige),

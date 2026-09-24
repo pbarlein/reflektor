@@ -1,0 +1,139 @@
+import type Anthropic from "@anthropic-ai/sdk";
+
+import type { Mal } from "@/content/maltype";
+import {
+  RESEARCHVERKTOY,
+  lesResearch,
+  researchInstruks,
+  researchSkjema,
+  type Research,
+} from "@/content/researchtype";
+
+/**
+ * Researchfasen.
+ *
+ * ── HVORFOR DET ER TO KALL OG IKKE ETT ────────────────────────────────────
+ *
+ * Alternativet var å gi modellen både nettsøk og dokumentverktøyet i samme
+ * kall, og be den undersøke først. Det ville vært billigere, og det ville
+ * vært upålitelig: med begge verktøyene tilgjengelig kan den hoppe rett til
+ * å skrive, og da har vi ingen research — bare håpet om en.
+ *
+ * To kall gir tre ting vi trenger. Researchen kan VISES til produsenten før
+ * dokumentet lages, med kilder, slik at den kan overprøves. Fremdriften blir
+ * ærlig: «undersøker» og «skriver» er to forskjellige ting, og de tar
+ * forskjellig tid. Og researchen kan gjenbrukes — den om Jordbærpikene
+ * endrer seg ikke mellom en produksjonsplan og en opptaksliste.
+ *
+ * ── NETTSØK ER ET SERVERVERKTØY ───────────────────────────────────────────
+ *
+ * Søkene kjører hos Anthropic, ikke her. Vi ser dem i strømmen som
+ * `server_tool_use`, og sender søkeordene videre til fremdriftsvisningen —
+ * det er den eneste framdriftslinjen i systemet som viser hva som faktisk
+ * skjer, med modellens egne ord.
+ */
+
+const MODELL = "claude-opus-5";
+const MAKS_TOKENS = 8_000;
+/** Nok til å slå opp bedriften fra flere vinkler, ikke nok til å surfe. */
+const MAKS_SOK = 10;
+/** `pause_turn` betyr at serververktøyet trenger en runde til. */
+const MAKS_FORTSETTELSER = 3;
+
+export async function kjorResearch({
+  klient,
+  mal,
+  kunde,
+  lokasjon,
+  påSøk,
+  signal,
+}: {
+  klient: Anthropic;
+  mal: Mal;
+  kunde: string;
+  lokasjon: string;
+  påSøk: (spørring: string) => void;
+  signal?: AbortSignal;
+}): Promise<Research | null> {
+  const meldinger: Anthropic.MessageParam[] = [
+    { role: "user", content: researchInstruks(mal, kunde, lokasjon) },
+  ];
+
+  for (let runde = 0; runde <= MAKS_FORTSETTELSER; runde++) {
+    const strøm = klient.messages.stream(
+      {
+        model: MODELL,
+        max_tokens: MAKS_TOKENS,
+        thinking: { type: "adaptive" },
+        system:
+          "Du er researcher for et norsk innholdsbyrå. Du svarer aldri av hukommelsen om norske bedrifter — du søker. Du oppgir kilde på alt, og du sier tydelig fra om det du ikke fant.",
+        tools: [
+          { type: "web_search_20260209", name: "web_search", max_uses: MAKS_SOK },
+          {
+            name: RESEARCHVERKTOY,
+            description:
+              "Leverer det du fant ut. Kalles én gang, når du er ferdig med å søke.",
+            input_schema: researchSkjema() as Anthropic.Tool["input_schema"],
+          },
+        ],
+        messages: meldinger,
+      },
+      { signal },
+    );
+
+    /*
+     * Søkeordene ligger i `input` på en `server_tool_use`-blokk, og de
+     * kommer bit for bit. Vi samler dem per blokkindeks og leser dem når
+     * blokken lukkes — det er først da JSON-et er helt.
+     */
+    const under: Record<number, { erSøk: boolean; rå: string }> = {};
+
+    for await (const h of strøm) {
+      if (h.type === "content_block_start") {
+        under[h.index] = {
+          erSøk:
+            h.content_block.type === "server_tool_use" &&
+            h.content_block.name === "web_search",
+          rå: "",
+        };
+      } else if (
+        h.type === "content_block_delta" &&
+        h.delta.type === "input_json_delta"
+      ) {
+        const b = under[h.index];
+        if (b?.erSøk) b.rå += h.delta.partial_json;
+      } else if (h.type === "content_block_stop") {
+        const b = under[h.index];
+        if (b?.erSøk && b.rå) {
+          try {
+            const q = (JSON.parse(b.rå) as { query?: unknown }).query;
+            if (typeof q === "string" && q.trim()) påSøk(q.trim().slice(0, 120));
+          } catch {
+            /* Halvferdig JSON er ikke verdt en feilmelding. */
+          }
+        }
+        delete under[h.index];
+      }
+    }
+
+    const svar = await strøm.finalMessage();
+
+    const bruk = svar.content.find(
+      (b) => b.type === "tool_use" && b.name === RESEARCHVERKTOY,
+    );
+    if (bruk && bruk.type === "tool_use") {
+      const r = lesResearch(bruk.input);
+      return r ? { ...r, hentet: new Date().toISOString() } : null;
+    }
+
+    /*
+     * `pause_turn` er serververktøyet som ber om mer tid. Vi sender svaret
+     * tilbake uendret og lar den fortsette. Alt annet betyr at den ble
+     * ferdig uten å levere, og da er det ingenting å vente på.
+     */
+    if (svar.stop_reason !== "pause_turn") return null;
+    meldinger.push({ role: "assistant", content: svar.content });
+  }
+
+  return null;
+}
