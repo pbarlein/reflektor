@@ -6,6 +6,7 @@ import {
   returadresse,
   vekslInnKode,
 } from "@/lib/google";
+import { husGoogletoken } from "@/lib/hukommelse";
 import { trygtNeste } from "@/lib/retursti";
 import { COOKIE_NAVN, cookieValg, signerSesjon } from "@/lib/sesjon";
 
@@ -43,16 +44,26 @@ export async function GET(foresporsel: NextRequest) {
   }
   if (!kodeVerifiser) return tilFeil("ugyldig-state");
 
-  const idToken = await vekslInnKode({
+  const innveksling = await vekslInnKode({
     oppsett,
     kode,
     retur: returadresse(foresporsel),
     kodeVerifiser,
   });
-  if (!idToken) return tilFeil("innveksling");
+  if (!innveksling) return tilFeil("innveksling");
 
-  const krav = lesIdToken(idToken, oppsett);
+  const krav = lesIdToken(innveksling.idToken, oppsett);
   if (!krav) return tilFeil("ikke-tilgang");
+
+  /*
+   * Refresh-tokenet lagres serverside, ikke i cookien. Se kommentaren i
+   * hukommelse.ts. Feiler lagringen — for eksempel fordi Blob-butikken ikke
+   * finnes — skal innloggingen fortsatt gå igjennom. Da er det Gmail som er
+   * av, ikke intranettet.
+   */
+  if (innveksling.refreshToken) {
+    await husGoogletoken(krav.epost, innveksling.refreshToken);
+  }
 
   const neste = trygtNeste(foresporsel.cookies.get("rf_neste")?.value);
   const svar = NextResponse.redirect(new URL(neste, foresporsel.url));

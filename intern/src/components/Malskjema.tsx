@@ -6,6 +6,7 @@ import { Arbeid } from "@/components/Arbeid";
 import { Grunnlag } from "@/components/Grunnlag";
 import { Arkramme, type Arkhandtak } from "@/components/Arkramme";
 import { deleneI, type Ark as ArkData } from "@/content/arktype";
+import type { Brief } from "@/content/brieftype";
 import type { Research } from "@/content/researchtype";
 import { byggInstruks, eksempelverdier } from "@/content/maler";
 import type { Felt, Mal } from "@/content/maltype";
@@ -169,7 +170,9 @@ export function Malskjema({ mal }: { mal: Mal }) {
 
   const [tilstand, setTilstand] = useState<Tilstand>("klar");
   const [gjort, setGjort] = useState(0);
-  const [fase, setFase] = useState<"research" | "skriver">("skriver");
+  const [fase, setFase] = useState<"research" | "epost" | "skriver">(
+    "skriver",
+  );
   const [sok, setSok] = useState<string[]>([]);
   /*
    * Researchen holdes på tvers av rettelser. Å slå opp bedriften på nytt
@@ -178,6 +181,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
    */
   const [research, setResearch] = useState<Research | null>(null);
   const [fraMinne, setFraMinne] = useState(false);
+  const [brief, setBrief] = useState<Brief | null>(null);
   const [feilmelding, setFeilmelding] = useState("");
   const [rettelse, setRettelse] = useState("");
   const [forMye, setForMye] = useState(false);
@@ -193,6 +197,20 @@ export function Malskjema({ mal }: { mal: Mal }) {
   const [filfeil, setFilfeil] = useState("");
   const [viserFelter, setViserFelter] = useState(!mal.opplasting);
   const [drar, setDrar] = useState(false);
+
+  /*
+   * ── BILDER I EN RETTELSE ──────────────────────────────────────────────
+   *
+   * «Sånn skal tabellen se ut» med et skjermbilde ved siden av er raskere
+   * enn å beskrive det. Tre veier inn, fordi folk gjør tre forskjellige
+   * ting: lime inn med Cmd+V rett etter et skjermbilde, dra en fil fra
+   * skrivebordet, eller velge den.
+   */
+  const [bilder, setBilder] = useState<
+    { navn: string; type: string; data: string; forhandsvis: string }[]
+  >([]);
+  const [bildefeil, setBildefeil] = useState("");
+  const [drarBilde, setDrarBilde] = useState(false);
 
   const avbryt = useRef<AbortController | null>(null);
   const arkRef = useRef<Arkhandtak | null>(null);
@@ -274,6 +292,52 @@ export function Malskjema({ mal }: { mal: Mal }) {
     setFil({ navn: f.name, data });
   }
 
+  const BILDETYPER = ["image/png", "image/jpeg", "image/webp", "image/gif"];
+
+  async function leggTilBilder(filer: readonly File[]) {
+    setBildefeil("");
+    const nye: typeof bilder = [];
+
+    for (const f of filer) {
+      if (!BILDETYPER.includes(f.type)) {
+        setBildefeil("Bare bilder: PNG, JPG, WEBP eller GIF.");
+        continue;
+      }
+      if (f.size > 1_500_000) {
+        setBildefeil(
+          `«${f.name}» er ${(f.size / 1_000_000).toFixed(1)} MB. Taket er 1,5 MB per bilde.`,
+        );
+        continue;
+      }
+      const data = await new Promise<string>((løs, avvis) => {
+        const leser = new FileReader();
+        leser.onload = () => løs(String(leser.result).split(",")[1] ?? "");
+        leser.onerror = () => avvis(leser.error);
+        leser.readAsDataURL(f);
+      }).catch(() => "");
+      if (!data) continue;
+      nye.push({
+        navn: f.name || "skjermbilde",
+        type: f.type,
+        data,
+        /*
+         * Forhåndsvisningen er en data-URL og ikke en objekt-URL. Den
+         * trenger ingen opprydding, og bildene her er små nok til at
+         * forskjellen ikke er målbar.
+         */
+        forhandsvis: `data:${f.type};base64,${data}`,
+      });
+    }
+
+    setBilder((b) => {
+      const alle = [...b, ...nye];
+      if (alle.length > 4) {
+        setBildefeil("Maks fire bilder per rettelse.");
+      }
+      return alle.slice(0, 4);
+    });
+  }
+
   async function kopier() {
     try {
       await navigator.clipboard.writeText(instruks);
@@ -312,6 +376,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
     setGjort(0);
     setFase(research && !friskResearch ? "skriver" : "research");
     setSok([]);
+    setBrief(null);
     setFeilmelding("");
 
     try {
@@ -322,6 +387,11 @@ export function Malskjema({ mal }: { mal: Mal }) {
           mal: mal.slug,
           verdier,
           ...(fil ? { fil: { type: "application/pdf", data: fil.data } } : {}),
+          ...(retting && bilder.length
+            ? {
+                bilder: bilder.map(({ type, data }) => ({ type, data })),
+              }
+            : {}),
           ...(research && !friskResearch ? { research } : {}),
           ...(friskResearch ? { friskResearch: true } : {}),
           ...(retting && nyeste ? { forrige: nyeste, rettelse: retting } : {}),
@@ -341,7 +411,9 @@ export function Malskjema({ mal }: { mal: Mal }) {
               ? "Du er logget ut. Last siden på nytt."
               : kode === "for-lang"
                 ? "Skjemaet er for langt. Kort ned de lange feltene."
-                : kode === "fil-for-stor"
+                : kode === "bilde-for-stort"
+                  ? "Et av bildene er for stort. Taket er 1,5 MB per bilde."
+                  : kode === "fil-for-stor"
                   ? "Filen er for stor. Taket er 2,5 MB."
                   : kode === "ugyldig-fil"
                     ? "Filen ble ikke godtatt. Den må være en PDF."
@@ -370,7 +442,8 @@ export function Malskjema({ mal }: { mal: Mal }) {
         for (const l of linjer) {
           if (!l.trim()) continue;
           let h: {
-            fase?: "research" | "skriver";
+            fase?: "research" | "epost" | "skriver";
+            brief?: Brief;
             sok?: string;
             research?: Research;
             fra?: string;
@@ -388,6 +461,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
             const q = h.sok;
             setSok((s) => [...s, q]);
           }
+          if (h.brief) setBrief(h.brief);
           if (h.research) {
             setResearch(h.research);
             setFraMinne(h.fra === "hukommelse");
@@ -414,7 +488,9 @@ export function Malskjema({ mal }: { mal: Mal }) {
         setTilstand("feil");
         return;
       }
-      setRettelse("");
+        setRettelse("");
+      setBilder([]);
+      setBildefeil("");
       setTilstand("ferdig");
     } catch (e) {
       if (e instanceof DOMException && e.name === "AbortError") {
@@ -706,13 +782,12 @@ export function Malskjema({ mal }: { mal: Mal }) {
               </div>
             )}
 
-            {research && (
-              <Grunnlag
-                research={research}
-                fraMinne={fraMinne}
-                påNyttOppslag={() => void kjor(undefined, true)}
-              />
-            )}
+            <Grunnlag
+              research={research}
+              brief={brief}
+              fraMinne={fraMinne}
+              påNyttOppslag={() => void kjor(undefined, true)}
+            />
 
             <Arkramme
               ark={naavaerende}
@@ -738,8 +813,35 @@ export function Malskjema({ mal }: { mal: Mal }) {
               </label>
               <span className="mt-1 block text-[0.8125rem] leading-snug text-blekk-svak">
                 Skriv det som til en kollega. «Slå sammen de to siste radene»,
-                «kort ned tidsplanen», «bytt ut Fredrik med Vivian».
+                «kort ned tidsplanen», «bytt ut Fredrik med Vivian». Du kan
+                lime inn et skjermbilde med {"\u2318"}V.
               </span>
+
+              {bilder.length > 0 && (
+                <ul className="mt-3 flex flex-wrap gap-2.5">
+                  {bilder.map((b, i) => (
+                    <li key={i} className="relative">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={b.forhandsvis}
+                        alt={b.navn}
+                        className="h-20 w-20 rounded-interaktiv border border-kant object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setBilder((l) => l.filter((_, n) => n !== i))
+                        }
+                        aria-label={`Fjern ${b.navn}`}
+                        className="absolute -top-2 -right-2 grid h-6 w-6 place-items-center rounded-full border border-kant bg-kort text-[0.8125rem] text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
+                      >
+                        ×
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
               <div className="mt-3 flex flex-col gap-3 sm:flex-row">
                 <textarea
                   id="rettelse"
@@ -753,18 +855,64 @@ export function Malskjema({ mal }: { mal: Mal }) {
                       void kjor(rettelse.trim());
                     }
                   }}
+                  /*
+                   * INNLIMING ER HOVEDVEIEN FOR SKJERMBILDER. Etter ⌘⇧4
+                   * ligger bildet på utklippstavlen, og da er ⌘V det
+                   * naturlige neste trykket. En filvelger ville krevd at
+                   * man først lagret det til skrivebordet.
+                   */
+                  onPaste={(e) => {
+                    const filer = Array.from(e.clipboardData.files);
+                    if (filer.length) {
+                      e.preventDefault();
+                      void leggTilBilder(filer);
+                    }
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setDrarBilde(true);
+                  }}
+                  onDragLeave={() => setDrarBilde(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setDrarBilde(false);
+                    void leggTilBilder(Array.from(e.dataTransfer.files));
+                  }}
                   placeholder="Kort ned tidsplanen til fem rader."
-                  className={`${INPUT} mt-0 flex-1 resize-y leading-relaxed`}
+                  className={`${INPUT} mt-0 flex-1 resize-y leading-relaxed ${
+                    drarBilde ? "border-aksent" : ""
+                  }`}
                 />
-                <button
-                  type="button"
-                  disabled={!rettelse.trim()}
-                  onClick={() => void kjor(rettelse.trim())}
-                  className="h-fit rounded-interaktiv bg-aksent px-4 py-2.5 text-[0.9375rem] font-medium text-[color:var(--text-on-accent)] transition-colors hover:bg-[color:var(--action-primary-hover)] disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none"
-                >
-                  Send
-                </button>
+                <div className="flex gap-3 sm:flex-col">
+                  <button
+                    type="button"
+                    disabled={!rettelse.trim()}
+                    onClick={() => void kjor(rettelse.trim())}
+                    className="h-fit flex-1 rounded-interaktiv bg-aksent px-4 py-2.5 text-[0.9375rem] font-medium text-[color:var(--text-on-accent)] transition-colors hover:bg-[color:var(--action-primary-hover)] disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none"
+                  >
+                    Send
+                  </button>
+                  <label className="h-fit cursor-pointer rounded-interaktiv border border-kant px-4 py-2.5 text-center text-[0.9375rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-aksent motion-reduce:transition-none">
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/gif"
+                      multiple
+                      className="sr-only"
+                      onChange={(e) => {
+                        void leggTilBilder(Array.from(e.target.files ?? []));
+                        e.target.value = "";
+                      }}
+                    />
+                    Bilde
+                  </label>
+                </div>
               </div>
+
+              {bildefeil && (
+                <p className="mt-2.5 text-[0.8125rem] leading-relaxed text-varsel">
+                  {bildefeil}
+                </p>
+              )}
 
               {rettelser.length > 0 && (
                 <ol className="mt-4 flex flex-col gap-1.5 border-t border-kant pt-4">

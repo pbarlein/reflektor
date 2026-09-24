@@ -172,3 +172,32 @@ export async function husRettelse(mal: string, tekst: string): Promise<void> {
 export async function hentRettelser(mal: string): Promise<Rettelsesminne | null> {
   return les<Rettelsesminne>(`laerdom/${nokkel(mal)}.json`);
 }
+
+/**
+ * ── GOOGLE-REFRESH-TOKENET LIGGER HER, IKKE I COOKIEN ─────────────────────
+ *
+ * Sesjonscookien er signert, ikke kryptert: innholdet er base64 av JSON, og
+ * hvem som helst som får tak i cookien kan lese det. Et refresh-token gir
+ * varig lesetilgang til en postkasse, og det hører ikke hjemme i noe som kan
+ * leses av.
+ *
+ * Her ligger det i en privat Blob-butikk, på serveren, og cookien bærer bare
+ * e-postadressen. Får noen tak i cookien, får de tilgang til intranettet —
+ * ikke til postkassen i all framtid.
+ *
+ * FØLGEN: uten hukommelse er det ingen Gmail. Det er riktig rekkefølge.
+ */
+export async function husGoogletoken(
+  epost: string,
+  refreshToken: string,
+): Promise<void> {
+  await skriv(`google/${nokkel(epost)}.json`, {
+    refreshToken,
+    gitt: new Date().toISOString(),
+  });
+}
+
+export async function hentGoogletoken(epost: string): Promise<string | null> {
+  const d = await les<{ refreshToken?: string }>(`google/${nokkel(epost)}.json`);
+  return d?.refreshToken ?? null;
+}

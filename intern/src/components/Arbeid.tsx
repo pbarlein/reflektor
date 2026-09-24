@@ -27,6 +27,7 @@ import type { Skissedel } from "@/content/maltype";
 
 const STEG = [
   { id: "research", navn: "Undersøker" },
+  { id: "epost", navn: "Leser e-post" },
   { id: "skriver", navn: "Skriver" },
 ] as const;
 
@@ -46,7 +47,7 @@ export function Arbeid({
   deler: readonly Skissedel[];
   gjort: number;
   rettelse: boolean;
-  fase: "research" | "skriver";
+  fase: "research" | "epost" | "skriver";
   /** Søkene som er gjort, nyeste sist. Modellens egne ord. */
   sok: readonly string[];
 }) {
@@ -61,7 +62,7 @@ export function Arbeid({
     return () => clearInterval(t);
   }, []);
 
-  const aktivt = fase === "research" ? 0 : 1;
+  const aktivt = STEG.findIndex((s) => s.id === fase);
 
   /** Én linje som alltid sier noe sant om akkurat nå. */
   const naa =
@@ -69,17 +70,21 @@ export function Arbeid({
       ? sok.length
         ? `Søker: ${sok[sok.length - 1]}`
         : "Leser gjennom skjemaet"
-      : gjort === 0
-        ? "Legger opp dokumentet"
-        : (ARBEIDSLINJE[deler[Math.min(gjort, deler.length - 1)]] ??
-          "Siste finpuss");
+      : fase === "epost"
+        ? "Ser etter brief og instrukser i e-posten med kunden"
+        : gjort === 0
+          ? "Legger opp dokumentet"
+          : (ARBEIDSLINJE[deler[Math.min(gjort, deler.length - 1)]] ??
+            "Siste finpuss");
 
   const teller =
     fase === "research"
       ? sok.length
         ? `${sok.length} søk`
         : ""
-      : `${gjort} av ${deler.length}`;
+      : fase === "epost"
+        ? ""
+        : `${gjort} av ${deler.length}`;
 
   return (
     <div className="rounded-flate border border-kant bg-kort px-5 py-4">

@@ -102,7 +102,22 @@ export async function autorisasjonsUrl(opts: {
     client_id: opts.oppsett.klientId,
     redirect_uri: opts.retur,
     response_type: "code",
-    scope: "openid email profile",
+    /*
+     * ── GMAIL-TILGANGEN ER LESE-BARE, OG DEN ER BEGRUNNET ─────────────────
+     *
+     * Bestilt 24.09.2026: dokumentene skal kunne bygges på briefen kunden
+     * allerede har sendt på e-post, slik at produsenten slipper å lete den
+     * fram — og slik at ingenting faller ut fordi hen ikke fant den.
+     *
+     * `gmail.readonly` er en «restricted scope» hos Google. Den krever
+     * normalt en ekstern sikkerhetsrevisjon, men ikke når OAuth-appen står
+     * som Internal i et Google Workspace. Det gjør den her. Se LES-MEG.
+     *
+     * Det er den innloggede som leser sin EGEN postkasse med sitt eget
+     * verktøy. Det er noe annet enn at arbeidsgiver leser ansattes e-post,
+     * som er strengt regulert.
+     */
+    scope: "openid email profile https://www.googleapis.com/auth/gmail.readonly",
     state: opts.state,
     code_challenge: await kodeUtfordring(opts.kodeVerifiser),
     code_challenge_method: "S256",
@@ -115,21 +130,51 @@ export async function autorisasjonsUrl(opts: {
      * etter innveksling. Se `lesIdToken`.
      */
     hd: opts.oppsett.tillattDomene,
-    /* Vi trenger ikke refresh-token: sesjonen vår er vår egen cookie, og
-       Google-kontoen sjekkes på nytt ved neste innlogging. */
-    prompt: "select_account",
+    /*
+     * ── HVORFOR VI NÅ TRENGER ET REFRESH-TOKEN ────────────────────────────
+     *
+     * Før holdt det med innloggingen: sesjonen er vår egen cookie, og
+     * Google-kontoen ble sjekket på nytt neste gang.
+     *
+     * Med Gmail må serveren kunne slå opp e-post MENS et dokument lages,
+     * og et tilgangstoken varer en time. `access_type=offline` gir oss et
+     * refresh-token vi kan veksle inn ved behov.
+     *
+     * `consent` er nødvendig fordi Google bare gir refresh-token når
+     * brukeren faktisk får samtykkeskjermen. Uten den får den som allerede
+     * har godkjent appen, ingen — og Gmail-oppslaget ville virket for nye
+     * brukere og stille feilet for gamle.
+     */
+    access_type: "offline",
+    prompt: "select_account consent",
   });
   return `${AUTORISER}?${p.toString()}`;
 }
 
-type Tokensvar = { id_token?: string; error?: string };
+type Tokensvar = {
+  id_token?: string;
+  refresh_token?: string;
+  access_token?: string;
+  expires_in?: number;
+  error?: string;
+};
+
+export type Innveksling = {
+  idToken: string;
+  /**
+   * Finnes bare når Google faktisk viste samtykkeskjermen. Vi ber om det med
+   * `prompt=consent`, men en bruker kan komme gjennom en flyt der det ikke
+   * gis — og da skal Gmail-delen slå seg av, ikke krasje.
+   */
+  refreshToken: string | null;
+};
 
 export async function vekslInnKode(opts: {
   oppsett: Oppsett;
   kode: string;
   retur: string;
   kodeVerifiser: string;
-}): Promise<string | null> {
+}): Promise<Innveksling | null> {
   const svar = await fetch(TOKEN, {
     method: "POST",
     headers: { "content-type": "application/x-www-form-urlencoded" },
@@ -145,7 +190,36 @@ export async function vekslInnKode(opts: {
   });
   if (!svar.ok) return null;
   const data = (await svar.json()) as Tokensvar;
-  return data.id_token ?? null;
+  if (!data.id_token) return null;
+  return { idToken: data.id_token, refreshToken: data.refresh_token ?? null };
+}
+
+/**
+ * Veksler et refresh-token mot et ferskt tilgangstoken.
+ *
+ * Kalles rett før et Gmail-oppslag, ikke lagret. Et tilgangstoken varer en
+ * time, og å holde det i minnet mellom to forespørsler på en serverless
+ * plattform er en optimalisering med null gevinst: hver forespørsel kan
+ * havne i sin egen instans uansett.
+ */
+export async function friskTilgang(
+  oppsett: Oppsett,
+  refreshToken: string,
+): Promise<string | null> {
+  const svar = await fetch(TOKEN, {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_id: oppsett.klientId,
+      client_secret: oppsett.klientHemmelighet,
+      refresh_token: refreshToken,
+      grant_type: "refresh_token",
+    }),
+    cache: "no-store",
+  });
+  if (!svar.ok) return null;
+  const data = (await svar.json()) as Tokensvar;
+  return data.access_token ?? null;
 }
 
 export type IdKrav = {

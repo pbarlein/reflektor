@@ -269,6 +269,58 @@ forrige måned, oppdager ikke at kampanjen er over.
 `nokkel()` vasker det. Uten den vaskingen kan «../» i et kundenavn peke ut
 av mappen.
 
+### Gmail: dokumentet bygges på briefen kunden allerede har sendt
+
+Bestilt 24.09.2026. Mellom researchen og skrivingen søker intranettet i
+**den innloggede brukerens egen postkasse** etter kundens navn, og trekker
+ut det som gjelder dokumentet.
+
+**Rettslig sett er dette den ansatte som leser sin egen e-post med sitt eget
+verktøy** — ikke arbeidsgiver som leser ansattes e-post, som er strengt
+regulert. Tilgangen hviler på samtykket den ansatte gir ved innlogging.
+
+| Del | Fil |
+|---|---|
+| Scope, refresh-token, fornying | `src/lib/google.ts` |
+| Søk og uthenting av brødtekst | `src/lib/gmail.ts` |
+| Uttrekk av det som gjelder | `src/lib/brief.ts`, `src/content/brieftype.ts` |
+
+**Refresh-tokenet ligger i Blob-butikken, ikke i cookien.** Sesjonscookien
+er signert, ikke kryptert — innholdet er base64 av JSON, lesbart for hvem
+som helst som får tak i den. Et refresh-token gir varig lesetilgang til en
+postkasse. Får noen tak i cookien, skal de få tilgang til intranettet, ikke
+til postkassen i all framtid. Følgen: **uten hukommelse er det ingen
+Gmail.** Det er riktig rekkefølge.
+
+**`prompt=consent` er nødvendig, ikke slurv.** Google gir bare refresh-token
+når brukeren faktisk ser samtykkeskjermen. Uten den ville Gmail virket for
+nye brukere og stille feilet for alle som allerede hadde godkjent appen.
+
+**Søket er smalt med vilje:** kundens navn, siste år, utenom søppel og
+papirkurv, åtte tråder. Sitert historikk klippes bort — en tråd på ti svar
+inneholder den første meldingen ti ganger. En bredere henting ville sendt
+mer av postkassen til Anthropic uten å gjøre dokumentet bedre.
+
+**Produsenten ser hvilke e-poster som ble lest**, og hvert funn peker på
+emnet det kom fra. Samme prinsipp som for nettsøket: et grunnlag som ikke
+kan etterprøves, er en påstand med ekstra selvtillit.
+
+**Rangeringen når kildene er uenige**, og den står i instruksen: utfylt felt
+slår e-post, e-post slår nettsøk. Produsenten har sett alle tre og valgt.
+
+### Bilder i en rettelse
+
+Produsenten kan lime inn (⌘V), dra inn eller velge inntil fire bilder
+sammen med en rettelse. De sendes som bildeblokker foran instruksteksten.
+
+Innliming er hovedveien: etter ⌘⇧4 ligger skjermbildet på utklippstavlen,
+og da er ⌘V det naturlige neste trykket. En filvelger alene ville krevd at
+man først lagret det til skrivebordet.
+
+Bilder følger bare med en RETTELSE, ikke en førstegangs generering. Et bilde
+uten en setning om hva det viser, er en gåte — og skjemaet sier det samme
+tydeligere.
+
 ### Arket ligger i en iframe, og det er ikke en detalj
 
 Den første PDF-en fra denne funksjonen hadde **Apollo-utvidelsens logo i

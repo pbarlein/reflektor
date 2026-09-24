@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { arkSkjema, deleneI, lesArk } from "@/content/arktype";
+import { briefTilTekst, type Brief } from "@/content/brieftype";
 import { byggInstruks, byggRettelse, malFraSlug } from "@/content/maler";
 import {
   lesResearch,
@@ -14,6 +15,8 @@ import {
   husKunde,
   husRettelse,
 } from "@/lib/hukommelse";
+import { kjorBrief } from "@/lib/brief";
+import { sokEpost } from "@/lib/gmail";
 import { kjorResearch } from "@/lib/research";
 import { hentBruker } from "@/lib/tilgang";
 
@@ -45,6 +48,8 @@ import { hentBruker } from "@/lib/tilgang";
  *   {"fase": "research"}   — undersøker kunden
  *   {"sok": "..."}         — dette søkes det på nå
  *   {"research": {...}}    — det som ble funnet, med kilder
+ *   {"fase": "epost"}      — leser e-post med kunden
+ *   {"brief": {...}}       — det som sto i e-posten, med hvilke meldinger
  *   {"fase": "skriver"}    — dokumentet skrives
  *   {"fremdrift": 3}       — så mange deler er ferdig utfylt
  *   {"ark": {...}}         — det ferdige dokumentet
@@ -77,6 +82,18 @@ const INSTRUKSGRENSE = 32_000;
  */
 const FILGRENSE = 2_500_000;
 
+/*
+ * ── BILDER I EN RETTELSE ──────────────────────────────────────────────────
+ *
+ * «Sånn skal tabellen se ut» med et skjermbilde ved siden av er raskere, og
+ * presist på en måte ord sjelden er. Taket er lavere enn for PDF-en, og det
+ * er fire av dem: et skjermbilde fra en Mac er 300–800 kB, og fire av dem
+ * pluss instruksen ligger godt innenfor Vercels 4,5 MB.
+ */
+const MAKS_BILDER = 4;
+const BILDEGRENSE = 1_500_000;
+const BILDETYPER = ["image/png", "image/jpeg", "image/webp", "image/gif"];
+
 const VERKTOY = "lever_dokument";
 
 export async function POST(foresporsel: NextRequest) {
@@ -105,6 +122,7 @@ export async function POST(foresporsel: NextRequest) {
     fil,
     research: tidligereResearch,
     friskResearch,
+    bilder,
   } = (kropp ?? {}) as Record<string, unknown>;
 
   const mal = typeof slug === "string" ? malFraSlug(slug) : undefined;
@@ -148,6 +166,25 @@ export async function POST(foresporsel: NextRequest) {
       return NextResponse.json({ feil: "fil-for-stor" }, { status: 413 });
     }
     vedlegg = f.data;
+  }
+
+  /*
+   * Bilder følger bare med en rettelse. Et bilde uten en setning om hva det
+   * viser, er en gåte — og en førstegangs generering har skjemaet til å si
+   * det samme tydeligere.
+   */
+  const rensedeBilder: { type: string; data: string }[] = [];
+  if (Array.isArray(bilder) && tekstRettelse) {
+    for (const b of bilder.slice(0, MAKS_BILDER)) {
+      if (!b || typeof b !== "object") continue;
+      const o = b as Record<string, unknown>;
+      if (typeof o.type !== "string" || !BILDETYPER.includes(o.type)) continue;
+      if (typeof o.data !== "string") continue;
+      if ((o.data.length * 3) / 4 > BILDEGRENSE) {
+        return NextResponse.json({ feil: "bilde-for-stort" }, { status: 413 });
+      }
+      rensedeBilder.push({ type: o.type, data: o.data });
+    }
   }
 
   const klient = new Anthropic({ apiKey: nokkel });
@@ -225,7 +262,31 @@ export async function POST(foresporsel: NextRequest) {
           }
         }
 
-        // ── FASE 2: SKRIV DOKUMENTET ─────────────────────────────────────
+        /*
+         * ── FASE 2: LES E-POSTEN MED KUNDEN ───────────────────────────────
+         *
+         * Kjøres hver gang, også ved rettelser: en brief som kom i går skal
+         * ikke bli borte bak en research fra forrige måned. Har brukeren
+         * ikke gitt Gmail-tilgang, gir `sokEpost` tom liste og steget
+         * hoppes over uten at noe sies om det.
+         */
+        let brief: Brief | null = null;
+        if (kunde) {
+          const poster = await sokEpost(bruker.epost, kunde, stopp.signal);
+          if (poster.length) {
+            send({ fase: "epost" });
+            brief = await kjorBrief({
+              klient,
+              mal,
+              kunde,
+              poster,
+              signal: stopp.signal,
+            });
+            if (brief) send({ brief });
+          }
+        }
+
+        // ── FASE 3: SKRIV DOKUMENTET ─────────────────────────────────────
         const instruks =
           forrigeArk && tekstRettelse
             ? byggRettelse(
@@ -234,13 +295,23 @@ export async function POST(foresporsel: NextRequest) {
                 forrigeArk,
                 tekstRettelse,
                 vedlegg !== null,
-                brukt ? researchTilTekst(brukt) : "",
+                [
+                  brukt ? researchTilTekst(brukt) : "",
+                  brief ? briefTilTekst(brief) : "",
+                ]
+                  .filter(Boolean)
+                  .join("\n\n"),
               )
             : byggInstruks(
                 mal,
                 rene,
                 vedlegg !== null,
-                brukt ? researchTilTekst(brukt) : "",
+                [
+                  brukt ? researchTilTekst(brukt) : "",
+                  brief ? briefTilTekst(brief) : "",
+                ]
+                  .filter(Boolean)
+                  .join("\n\n"),
               );
 
         if (instruks.length > INSTRUKSGRENSE) {
@@ -270,24 +341,38 @@ export async function POST(foresporsel: NextRequest) {
               {
                 role: "user",
                 /*
-                 * Dokumentblokken FØR teksten. Rekkefølgen er dokumentert
+                 * Vedlegg og bilder FØR teksten. Rekkefølgen er dokumentert
                  * i API-et: et vedlegg som kommer etter instruksen, leses
                  * som et tillegg til den i stedet for som grunnlaget den
                  * viser til.
                  */
-                content: vedlegg
-                  ? [
-                      {
-                        type: "document" as const,
-                        source: {
-                          type: "base64" as const,
-                          media_type: "application/pdf" as const,
-                          data: vedlegg,
-                        },
-                      },
-                      { type: "text" as const, text: instruks },
-                    ]
-                  : instruks,
+                content:
+                  vedlegg || rensedeBilder.length
+                    ? [
+                        ...(vedlegg
+                          ? [
+                              {
+                                type: "document" as const,
+                                source: {
+                                  type: "base64" as const,
+                                  media_type: "application/pdf" as const,
+                                  data: vedlegg,
+                                },
+                              },
+                            ]
+                          : []),
+                        ...rensedeBilder.map((b) => ({
+                          type: "image" as const,
+                          source: {
+                            type: "base64" as const,
+                            media_type:
+                              b.type as "image/png" | "image/jpeg" | "image/webp" | "image/gif",
+                            data: b.data,
+                          },
+                        })),
+                        { type: "text" as const, text: instruks },
+                      ]
+                    : instruks,
               },
             ],
           },
