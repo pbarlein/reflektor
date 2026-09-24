@@ -780,15 +780,17 @@ function norskDato(iso: string): string {
  */
 function ensiderregelen(): string {
   return [
-    "DETTE ER EN ENSIDER",
+    "DETTE ER EN ENSIDER, OG DET ER IKKE FORHANDLINGSBART",
+    "En produksjonsplan som krever to sider er ikke en lengre plan — det er en plan med for mange detaljer i. Kunden skal kunne lese den én gang og vite hva som skjer. Alt utover det skaper forvirring, ikke trygghet.",
+    "Ta med det som må være avklart FØR dagen, og det kunden må stille med. Ikke ta med det vi uansett avgjør på stedet, det som står i avtalen, eller det som bare beskriver hvor grundige vi er.",
     `Alt skal få plass på én A4-side. Det som ikke får plass, blir klippet bort — da mister dokumentet den siste seksjonen sin, og ingen oppdager det før kunden gjør det.`,
     `- Maks ${TAK.rader} rader i en tabell, og maks ${TAK.kolonner} kolonner.`,
     `- Maks ${TAK.celle} tegn i en tabellcelle.`,
     `- Maks ${TAK.punkter} punkter i en liste, og maks ${TAK.punkt} tegn i hvert.`,
     `- Undertittelen: maks ${TAK.undertittel} tegn.`,
-    "Må du velge, velg bort det leseren kan spørre om, og behold det hen må vite før hen står der.",
+    "Må du velge, velg bort det leseren kan spørre om, og behold det hen må vite før hen står der. I tvil: ta det bort.",
     "Slå sammen heller enn å kutte: to like rader blir én rad med begge navnene.",
-    "Men BRUK plassen. En halvtom side er like feil som en som flyter over. Har du stoff til takhøyden, fyll den.",
+    "Bruk plassen du har, men ikke fyll den for å fylle den. Én tom tredjedel er bedre enn tre rader ingen trenger.",
   ].join("\n");
 }
 

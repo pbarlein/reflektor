@@ -465,26 +465,29 @@ export function Malskjema({ mal }: { mal: Mal }) {
             </div>
 
             {/*
-              NETTLESEREN KAN STEMPLE ADRESSEN SIN I MARGEN.
-
-              Arket ligger i en iframe med `@page margin: 0`, så det er
-              ikke plass til det — men står avkryssingen på i dialogen,
-              legger enkelte nettlesere det oppå arket likevel. Ett trykk
-              å slå av, og en linje her er billigere enn en PDF med
-              «localhost:3000» på seg hos kunden.
+              OVERFLYT ER EN KNAPP, IKKE EN ADVARSEL.
+              «Dokumentet er for langt» uten en vei ut gjør det til
+              brukerens jobb å formulere seg ut av et problem vi selv har
+              oppdaget presist. Vi vet hva som må skje — da kan vi be om
+              det.
             */}
-            <p className="-mt-2 text-[0.8125rem] leading-relaxed text-pretty text-blekk-svak">
-              I vinduet som åpner seg: velg{" "}
-              <span className="text-blekk-dempet">Lagre som PDF</span>, og la{" "}
-              <span className="text-blekk-dempet">topptekst og bunntekst</span>{" "}
-              stå avslått.
-            </p>
-
             {forMye && (
-              <p className="rounded-interaktiv border border-[color:var(--varsel-kant)] bg-[color:var(--varsel-flate)] px-3.5 py-2.5 text-[0.875rem] leading-relaxed text-varsel">
-                Innholdet er for langt for én side, og det nederste blir
-                klippet. Be om å få det kortet ned i feltet under.
-              </p>
+              <div className="flex flex-col gap-3 rounded-interaktiv border border-[color:var(--varsel-kant)] bg-[color:var(--varsel-flate)] px-3.5 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-[0.875rem] leading-relaxed text-varsel">
+                  Innholdet går ut over arket, og det nederste blir klippet.
+                </p>
+                <button
+                  type="button"
+                  onClick={() =>
+                    void kjor(
+                      "Dokumentet får ikke plass på én side. Kort det ned til det som faktisk må stå der: fjern rader og punkter kunden ikke trenger før dagen, og kort ned de lengste formuleringene. Ikke fjern en hel seksjon.",
+                    )
+                  }
+                  className="h-fit shrink-0 rounded-interaktiv border border-[color:var(--varsel-kant)] bg-kort px-3.5 py-2 text-[0.875rem] font-medium text-varsel transition-colors hover:border-varsel motion-reduce:transition-none"
+                >
+                  Kort ned så det får plass
+                </button>
+              </div>
             )}
 
             <Arkramme

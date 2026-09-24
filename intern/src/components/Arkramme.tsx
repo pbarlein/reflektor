@@ -81,6 +81,31 @@ export function Arkramme({
       @page { size: A4 portrait; margin: 0; }
       html, body { margin: 0; padding: 0; background: #fff; }
       body { overflow: hidden; }
+
+      /*
+       * SIDEN RUNDT SKJULER SEG SELV VED UTSKRIFT — og den regelen fulgte
+       * med stilarkene inn hit.
+       *
+       * globals.css har @media print { body { display: none } } for at
+       * ingen skal kunne Ctrl+P ut skjemaet på papir. Siden vi kopierer
+       * sidens stilark inn i iframen, traff den regelen ARKETS body, og
+       * PDF-en kom ut helt blank. Én side, ingenting på den.
+       *
+       * Denne stilen legges inn ETTER kopiene, så den vinner.
+       */
+      @media print {
+        html, body { display: block !important; overflow: visible !important; }
+      }
+
+      /*
+       * Bakgrunnene er dokumentet, ikke pynt: det mørke hodet og den mørke
+       * boksen bærer strukturen. Uten dette kommer de ut hvite hos alle som
+       * ikke har huket av «Bakgrunnsgrafikk», og det er standard.
+       */
+      *, *::before, *::after {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
     `;
     d.head.appendChild(egen);
 

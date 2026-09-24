@@ -219,11 +219,33 @@ iframe, kopierer sidens stilark inn i den, og portalerer arket dit.
 3. Arket er nøyaktig 210 × 297 mm med `@page margin: 0`, så PDF-en er én
    side fordi den ikke kan være noe annet.
 
+**Sidens stilark gjelder også inne i iframen — også utskriftsreglene.**
+Dette kostet oss en helt blank PDF. `globals.css` hadde
+`@media print { body { display: none } }`, satt der for at ingen skulle
+kunne Ctrl+P ut skjemaet på papir. Regelen fulgte med kopien inn i iframen
+og skjulte arket: én side, ingenting på den. Den tok også layouten fra
+selve iframe-elementet, som er det nettleseren skal skrive ut.
+
+Regelen er fjernet, og `globals.css` har nå en merknad om hvorfor det
+ikke står utskriftsregler der. Arkramme injiserer dessuten en
+`@media print`-overstyring etter kopiene, som en sperre mot at det skjer
+igjen.
+
+**Bakgrunnene må tvinges med.** `print-color-adjust: exact` på alt i arket.
+Uten det kommer det mørke hodet og den mørke boksen ut hvite hos alle som
+ikke har huket av «Bakgrunnsgrafikk» i utskriftsdialogen — og det er
+standard at den er av.
+
 **Klassen på `<body>` må kopieres inn, ikke bare stilarkene.** `next/font`
 legger `@font-face` i stilarket, men variablene `--font-poppins` og
 `--font-display-serif` settes med en klasse — og i dette prosjektet står den
 på `<body>`, ikke på `<html>`. Uten den kom arket ut i systemfonten mens
 resten av siden sto i merkevarefonten.
+
+**Verifisert 24.09.2026:** PDF-en er 1 side, 595 × 842 pt (A4), med
+tittelen og NAP-bunnlinjen i teksten. Beviset lages ved å ta iframens HTML,
+legge den i en side med samme opphav og skrive den ut — se
+`pdfbevis.mjs`-mønsteret i sesjonsloggen hvis det skal gjøres igjen.
 
 ### Rettelser er ikke en samtale som vokser
 

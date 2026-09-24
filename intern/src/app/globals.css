@@ -282,17 +282,20 @@ html {
 }
 
 
+
 /* ─── UTSKRIFT ──────────────────────────────────────────────────────────────
  *
- * Arket skrives IKKE ut herfra. Det ligger i en egen iframe som skriver seg
- * selv ut — se src/components/Arkramme.tsx for hvorfor (kort: en
- * nettleserutvidelse fikk logoen sin med i PDF-en da vi skrev ut siden).
+ * Det står MED VILJE ingen @media print-regler her.
  *
- * Det eneste som står igjen her, er å hindre at NOEN skriver ut siden selv,
- * med Ctrl+P. Da skal de ikke få skjemaet på papir.
+ * Arket skrives ut fra sin egen iframe — se src/components/Arkramme.tsx.
+ * Iframen får sidens stilark kopiert inn, så ALT som står her, gjelder også
+ * der inne.
+ *
+ * Her sto det en gang `@media print { body { display: none } }`, for at
+ * ingen skulle kunne Ctrl+P ut skjemaet på papir. Den fulgte med kopien inn
+ * i iframen og skjulte arket: PDF-en kom ut som én blank side. Den tok også
+ * layouten fra selve iframe-elementet, som er det nettleseren skal skrive ut.
+ *
+ * Skal det noen gang legges inn utskriftsregler her, må de først sjekkes
+ * mot arket i iframen.
  */
-@media print {
-  body {
-    display: none;
-  }
-}
