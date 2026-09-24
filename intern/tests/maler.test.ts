@@ -6,6 +6,7 @@ import {
   MALER,
   byggInstruks,
   byggRettelse,
+  eksempelverdier,
   malFraSlug,
 } from "../src/content/maler.ts";
 import { FASER } from "../src/content/maltype.ts";
@@ -264,5 +265,64 @@ test("språkreglene og avviksregelen står i hver instruks", () => {
     );
     assert.match(rettet, /EN RETTELSE, IKKE EN NY MAL/, m.slug);
     assert.match(rettet, /ikke et salgsdokument/, m.slug);
+  }
+});
+
+/**
+ * «Fyll inn eksempel» skal fylle ALT.
+ *
+ * Et halvfylt eksempel er verre enn ingen knapp: produsenten tror skjemaet
+ * er ferdig, trykker «Lag dokumentet», og får TBD-er hen ikke forsto at hen
+ * selv skulle fylt inn.
+ */
+test("eksempelet fyller hvert eneste felt", () => {
+  for (const m of MALER) {
+    const v = eksempelverdier(m);
+    for (const f of m.felt) {
+      assert.ok(
+        (v[f.id] ?? "").trim().length > 0,
+        `${m.slug}: feltet «${f.etikett}» har ingen eksempelverdi`,
+      );
+    }
+  }
+});
+
+test("eksempelverdier for valgfelt står blant valgene", () => {
+  for (const m of MALER) {
+    const v = eksempelverdier(m);
+    for (const f of m.felt) {
+      if (f.type === "valg") {
+        assert.ok(
+          f.valg?.includes(v[f.id]),
+          `${m.slug}/${f.id}: eksempelet «${v[f.id]}» er ikke et av valgene`,
+        );
+      }
+      if (f.type === "flervalg") {
+        for (const del of v[f.id].split(" · ")) {
+          assert.ok(
+            f.valg?.includes(del),
+            `${m.slug}/${f.id}: «${del}» er ikke et av valgene`,
+          );
+        }
+      }
+    }
+  }
+});
+
+/**
+ * Datoene regnes ut fra dagen i dag. En fast dato i et eksempel er feil
+ * dato fra og med dagen etter.
+ */
+test("datoeksempler er datoer, og de flytter seg med dagen", () => {
+  const idag = new Date().toISOString().slice(0, 10);
+  for (const m of MALER) {
+    const v = eksempelverdier(m);
+    for (const f of m.felt) {
+      if (f.type !== "dato") continue;
+      assert.match(v[f.id], /^\d{4}-\d{2}-\d{2}$/, `${m.slug}/${f.id}`);
+      if ((f.eksempelDager ?? 14) > 0) {
+        assert.ok(v[f.id] > idag, `${m.slug}/${f.id} skulle ligget fram i tid`);
+      }
+    }
   }
 });

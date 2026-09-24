@@ -55,6 +55,26 @@ export type Felt = {
   paakrevd?: boolean;
   valg?: readonly string[];
   standard?: string;
+  /**
+   * Verdien «Fyll inn eksempel» setter.
+   *
+   * ── HVORFOR DEN IKKE ER DEN SAMME SOM `plassholder` ───────────────────
+   *
+   * En plassholder er en antydning som skal forsvinne så snart man skriver.
+   * Et eksempel er et helt svar, som skal vise hvor mye som hører hjemme i
+   * feltet. For de fleste felt er de like nok til at plassholderen brukes
+   * som eksempel, og da står det ikke noe her.
+   *
+   * Den står her når eksempelet må være lengre enn en antydning, eller når
+   * det skal vise noe annet enn standardvalget — for eksempel at et
+   * flervalg kan ha to avkryssinger.
+   */
+  eksempel?: string;
+  /**
+   * Datofelt: eksempelet er så mange dager fram i tid. Negativt er bakover.
+   * En fast dato i et eksempel er feil dato fra og med dagen etter.
+   */
+  eksempelDager?: number;
 };
 
 /**

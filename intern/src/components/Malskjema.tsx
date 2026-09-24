@@ -5,7 +5,7 @@ import { useMemo, useRef, useState } from "react";
 import { Arbeid } from "@/components/Arbeid";
 import { Arkramme, type Arkhandtak } from "@/components/Arkramme";
 import { deleneI, type Ark as ArkData } from "@/content/arktype";
-import { byggInstruks } from "@/content/maler";
+import { byggInstruks, eksempelverdier } from "@/content/maler";
 import type { Felt, Mal } from "@/content/maltype";
 
 /**
@@ -180,6 +180,18 @@ export function Malskjema({ mal }: { mal: Mal }) {
 
   const mangler = mal.felt.filter(
     (f) => f.paakrevd && !(verdier[f.id] ?? "").trim(),
+  );
+
+  /*
+   * «Fyll inn eksempel» vises bare på et urørt skjema.
+   *
+   * Knappen overskriver alt. Står den framme etter at noen har skrevet i
+   * ti felt, er den en felle — ett feilklikk og arbeidet er borte. Er
+   * skjemaet urørt, kan den ikke ødelegge noe, og det er akkurat da man
+   * trenger den.
+   */
+  const urort = mal.felt.every(
+    (f) => (verdier[f.id] ?? "") === (f.standard ?? ""),
   );
 
   const naavaerende = utgaver[vist];
@@ -381,7 +393,26 @@ export function Malskjema({ mal }: { mal: Mal }) {
                 ? "Lag helt på nytt"
                 : "Lag dokumentet"}
           </button>
+
+          {urort && tilstand !== "jobber" && (
+            <button
+              type="button"
+              onClick={() => setVerdier(eksempelverdier(mal))}
+              className="rounded-interaktiv border border-kant px-4 py-2.5 text-[0.9375rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
+            >
+              Fyll inn eksempel
+            </button>
+          )}
         </div>
+
+        {urort && tilstand !== "jobber" && (
+          <p className="-mt-4 text-[0.8125rem] leading-relaxed text-pretty text-blekk-svak">
+            Eksempelet er en ekte, komplett utfylling. Det viser hvor mye som
+            hører hjemme i hvert felt, og lar deg se hva malen gjør før du
+            bruker den på en kunde. Knappen forsvinner så snart du skriver
+            selv.
+          </p>
+        )}
 
         {/*
           INSTRUKSEN LIGGER SAMMENFOLDET. Den er ikke det man kom for, men

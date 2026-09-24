@@ -52,6 +52,7 @@ export const MALER: readonly Mal[] = [
         etikett: "Produksjonsdag",
         type: "dato",
         paakrevd: true,
+        eksempelDager: 14,
       },
       {
         id: "oppmote",
@@ -82,8 +83,7 @@ export const MALER: readonly Mal[] = [
          */
         etikett: "Hvor godt kjenner vi stedet",
         type: "valg",
-        hjelp:
-          "Et sted vi filmer jevnlig trenger ikke en omvisning på papir.",
+        hjelp: "Et sted vi filmer jevnlig trenger ikke en omvisning på papir.",
         valg: [
           "Vi filmer her jevnlig",
           "Vi har filmet her noen ganger",
@@ -136,6 +136,7 @@ export const MALER: readonly Mal[] = [
           "Annonser",
         ],
         standard: "Sosiale medier",
+        eksempel: "Sosiale medier · Menyskjermer og innkastere i lokalet",
       },
       {
         id: "formater",
@@ -152,6 +153,7 @@ export const MALER: readonly Mal[] = [
           "Stills deler kapasitet med video. Sier du ja, blir det færre videoer.",
         valg: ["Nei, bare video", "Ja, stills i tillegg"],
         standard: "Nei, bare video",
+        eksempel: "Ja, stills i tillegg",
       },
       {
         id: "uttrykk",
@@ -190,8 +192,8 @@ export const MALER: readonly Mal[] = [
       },
     ],
     oppdrag:
-      "Ensideren kunden får før produksjonsdagen: hva som skjer, hva vi trenger fra dem, og hva de får. Overskriften er «Reflektor × [Kunde] [Lokasjon]». Undertittelen er én setning med produksjonsdagen, stedet og Når materiellet publiseres."
-      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
+      "Ensideren kunden får før produksjonsdagen: hva som skjer, hva vi trenger fra dem, og hva de får. Overskriften er «Reflektor × [Kunde] [Lokasjon]». Undertittelen er én setning med produksjonsdagen, stedet og Når materiellet publiseres." +
+      "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
       "FAKTA — fire nøkkelopplysninger: Lokasjon, Produksjonsdag (med Når vi er på plass), Kontaktperson på stedet, Fra Reflektor.",
       "TABELLOGBOKS — tabellen er tidsplanen, med kolonnene Oppsett, Hva vi filmer, Hvem. Hver rad er ett oppsett, ikke én video. Bygg radene av Hva som skal i fokus. Boksen ved siden av er «Hva vi trenger fra dere»: én kule per rolle fra Hvem vi trenger fra kunden, med tidsbruk, og til slutt tilgang og samtykke.",
@@ -221,7 +223,13 @@ export const MALER: readonly Mal[] = [
       "de-forste-tre-sekundene",
     ],
     felt: [
-      { id: "kunde", etikett: "Kunde", type: "tekst", paakrevd: true },
+      {
+        id: "kunde",
+        etikett: "Kunde",
+        type: "tekst",
+        paakrevd: true,
+        eksempel: "Jordbærpikene",
+      },
       {
         id: "lokasjon",
         etikett: "Lokasjon",
@@ -229,7 +237,7 @@ export const MALER: readonly Mal[] = [
         plassholder: "Jordbærpikene Storo",
         paakrevd: true,
       },
-      { id: "dato", etikett: "Opptaksdag", type: "dato" },
+      { id: "dato", etikett: "Opptaksdag", type: "dato", eksempelDager: 14 },
       {
         id: "oppsett",
         etikett: "Oppsettene",
@@ -237,6 +245,8 @@ export const MALER: readonly Mal[] = [
         hjelp:
           "Ett per linje, i den rekkefølgen vi rigger dem. «1 Kjøkkenbenk · 2 Disken · 3 Gulvet i lokalet».",
         paakrevd: true,
+        eksempel:
+          "1 Kjøkkenbenken\n2 Disken og drikkestasjonen\n3 Gulvet i lokalet",
       },
       {
         id: "leveranser",
@@ -245,6 +255,8 @@ export const MALER: readonly Mal[] = [
         hjelp:
           "De 8–10 leveransene fra produksjonsplanen. Listen bygges bakover fra dem.",
         paakrevd: true,
+        eksempel:
+          "4 videoer til Instagram, med tale\n2 rene klipp til menyskjermene, uten lyd\n3 stillbilder av burger og kald drikke",
       },
       {
         id: "tale",
@@ -257,6 +269,7 @@ export const MALER: readonly Mal[] = [
           "Både og",
         ],
         standard: "Nei, bare romlyd",
+        eksempel: "Ja, noen filmes mens de snakker",
       },
       {
         id: "spesielt",
@@ -264,11 +277,13 @@ export const MALER: readonly Mal[] = [
         type: "lang",
         hjelp:
           "Et opptak som må tas før lokalet åpner, en detalj kunden har bedt om, noe som bare kan filmes én gang.",
+        eksempel:
+          "Det tomme lokalet må filmes før de åpner klokka 10. Kokken har bare tid før åpning.",
       },
     ],
     oppdrag:
-      "Den interne listen den som filmer har i hånda på dagen. Testen er om en kollega som ikke var med i planleggingen kan filme etter den. Overskriften er kunde og lokasjon. Undertittelen sier opptaksdagen og hvor mange opptak listen har."
-      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
+      "Den interne listen den som filmer har i hånda på dagen. Testen er om en kollega som ikke var med i planleggingen kan filme etter den. Overskriften er kunde og lokasjon. Undertittelen sier opptaksdagen og hvor mange opptak listen har." +
+      "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
       "FAKTA — Lokasjon, Opptaksdag, Er det tale på dagen, og antall opptak listen inneholder.",
       "TABELL — hele listen, med kolonnene Nr, Oppsett, Utsnitt, Kamera, Motiv, Lyd, Sekunder. Radene bygges bakover fra Hva som skal leveres og sorteres etter Oppsettene.",
@@ -295,7 +310,13 @@ export const MALER: readonly Mal[] = [
     skisse: ["topp", "avsnitt", "liste", "signatur"],
     rubrikker: ["filme-folk-som-ikke-vil"],
     felt: [
-      { id: "kunde", etikett: "Kunde", type: "tekst", paakrevd: true },
+      {
+        id: "kunde",
+        etikett: "Kunde",
+        type: "tekst",
+        paakrevd: true,
+        eksempel: "Jordbærpikene",
+      },
       {
         id: "lokasjon",
         etikett: "Sted og dato for opptaket",
@@ -329,6 +350,7 @@ export const MALER: readonly Mal[] = [
         ],
         standard: "Instagram",
         paakrevd: true,
+        eksempel: "Instagram · Facebook · Menyskjermer i lokalet",
       },
       {
         id: "varighet",
@@ -347,11 +369,13 @@ export const MALER: readonly Mal[] = [
         type: "lang",
         hjelp:
           "For eksempel at personen ikke vil vises i ansikt, eller bare i bestemte kanaler.",
+        eksempel:
+          "Én av de ansatte vil ikke vises i ansikt. Hun kan filmes bakfra og på hendene.",
       },
     ],
     oppdrag:
-      "Skjemaet den som filmes leser og signerer før opptaket. Det skal være kort nok til at folk faktisk leser det. Overskriften er «Samtykke til film og bilde». Undertittelen sier hvem som filmer, hvor og når."
-      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
+      "Skjemaet den som filmes leser og signerer før opptaket. Det skal være kort nok til at folk faktisk leser det. Overskriften er «Samtykke til film og bilde». Undertittelen sier hvem som filmer, hvor og når." +
+      "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
       "AVSNITT — hva samtykket gjelder: hvilket opptak (Sted og dato for opptaket), hvem som filmer, hvor det publiseres (Hvor materiellet publiseres) og hvor lenge (Hvor lenge materiellet kan brukes). Er det skrevet noe under «Noe som gjelder spesielt her», står det her.",
       "LISTE — hva personen har rett til: å si nei uten å oppgi grunn, å trekke samtykket tilbake når som helst, og hvem hen kontakter for å gjøre det.",
@@ -377,14 +401,26 @@ export const MALER: readonly Mal[] = [
     skisse: ["topp", "fakta", "tabell", "avsnitt"],
     rubrikker: ["teksting-og-tekstplakater", "stolthet-og-standard"],
     felt: [
-      { id: "kunde", etikett: "Kunde", type: "tekst", paakrevd: true },
-      { id: "dato", etikett: "Opptaksdagen det gjelder", type: "dato" },
+      {
+        id: "kunde",
+        etikett: "Kunde",
+        type: "tekst",
+        paakrevd: true,
+        eksempel: "Jordbærpikene",
+      },
+      {
+        id: "dato",
+        etikett: "Opptaksdagen det gjelder",
+        type: "dato",
+        eksempelDager: -4,
+      },
       {
         id: "hvor",
         etikett: "Hvor filene ligger",
         type: "tekst",
         hjelp: "Mappenavnet kunden får, ikke en beskrivelse av det.",
         paakrevd: true,
+        eksempel: "Jordbaerpikene_Storo_oktober",
       },
       {
         id: "leveranser",
@@ -393,6 +429,8 @@ export const MALER: readonly Mal[] = [
         hjelp:
           "Ett per linje. Filnavn først, så én setning om hva klippet er. «02-burger-grill.mp4 — burgeren fra rå til ferdig, 18 sek».",
         paakrevd: true,
+        eksempel:
+          "01-lokalet-tomt.mp4 — lokalet før åpning, 12 sek\n02-burger-grill.mp4 — burgeren fra rå til ferdig, 18 sek\n03-kald-drikke.mp4 — is og helling i glass, 11 sek\n04-kokken-forteller.mp4 — om burgeren, til kamera, 24 sek",
       },
       {
         id: "formater",
@@ -406,6 +444,7 @@ export const MALER: readonly Mal[] = [
         ],
         standard: "9:16 til Reels og Stories",
         paakrevd: true,
+        eksempel: "9:16 til Reels og Stories · 16:9 til menyskjermer",
       },
       {
         id: "teksting",
@@ -425,11 +464,13 @@ export const MALER: readonly Mal[] = [
         type: "lang",
         hjelp:
           "Et opptak som ikke ble noe av, en leveranse som kommer senere, noe vi venter på fra kunden.",
+        eksempel:
+          "Stillbildene fra disken kommer mandag. Ett klipp fra lunsjrushet ble ubrukelig på grunn av lyd fra kjøledisken.",
       },
     ],
     oppdrag:
-      "Oversikten som følger materiellet når det overleveres. Den skal kunne leses på et halvt minutt og svare på hva kunden fikk, hvor det ligger, og om noe mangler. Overskriften er kunde og opptaksdag."
-      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
+      "Oversikten som følger materiellet når det overleveres. Den skal kunne leses på et halvt minutt og svare på hva kunden fikk, hvor det ligger, og om noe mangler. Overskriften er kunde og opptaksdag." +
+      "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
       "FAKTA — Opptaksdagen det gjelder, Hvor filene ligger, Formater i leveransen, og antall filer.",
       "TABELL — leveransene, med kolonnene Fil, Hva klippet viser, Format, Teksting. Én rad per linje i Hva som leveres.",
@@ -458,17 +499,20 @@ export const MALER: readonly Mal[] = [
         etikett: "Kunde og lokasjon",
         type: "tekst",
         paakrevd: true,
+        eksempel: "Jordbærpikene Storo",
       },
       {
         id: "dato",
         etikett: "Dato for befaringen",
         type: "dato",
         paakrevd: true,
+        eksempelDager: 2,
       },
       {
         id: "produksjonsdag",
         etikett: "Planlagt produksjonsdag",
         type: "dato",
+        eksempelDager: 21,
       },
       {
         id: "lys",
@@ -505,23 +549,29 @@ export const MALER: readonly Mal[] = [
         type: "lang",
         hjelp:
           "Uttak, hvor vi kan legge fra oss utstyr, om vi er i veien for driften.",
+        eksempel:
+          "To uttak ved kjøkkenbenken, ett ved disken. Utstyr kan settes i garderoben bak. Står vi ved disken etter åpning, er vi i veien for køen.",
       },
       {
         id: "folk",
         etikett: "Folk og tilgang",
         type: "lang",
         hjelp: "Hvem er på jobb den dagen, hvem har nøkkel, når åpner de.",
+        eksempel:
+          "Vivian låser opp klokka 07. Kokken er på jobb fra 08. Lokalet åpner for gjester klokka 10.",
       },
       {
         id: "problemer",
         etikett: "Det som kan velte dagen",
         type: "lang",
         hjelp: "Alt du så som kan gå galt. Skriv det stygt heller enn pent.",
+        eksempel:
+          "Kjøledisken bråker og tåler ikke å stå av mer enn 20 minutter. Vinduet mot gata gir hardt motlys etter klokka 13. Kaffemaskinen står i den eneste kontakten ved disken.",
       },
     ],
     oppdrag:
-      "Det interne notatet fra befaringen. Det leses av den som planlegger dagen, og av den som står der hvis det ikke er samme person. Stikkordsmessig og fullstendig, ikke velskrevet. Overskriften er kunde og lokasjon."
-      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
+      "Det interne notatet fra befaringen. Det leses av den som planlegger dagen, og av den som står der hvis det ikke er samme person. Stikkordsmessig og fullstendig, ikke velskrevet. Overskriften er kunde og lokasjon." +
+      "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
       "FAKTA — Kunde og lokasjon, Dato for befaringen, Planlagt produksjonsdag, og antall mulige oppsett.",
       "TOKOLONNER — venstre spalte «Lyd og lys» av feltene Lyd og Lys, i den rekkefølgen. Høyre spalte «Oppsettene» av feltet Mulige oppsett, nummerert, med hva som er i bildet fra hvert.",
@@ -544,14 +594,26 @@ export const MALER: readonly Mal[] = [
     skisse: ["topp", "fakta", "avsnitt", "toKolonner", "liste"],
     rubrikker: ["forberedt-til-kundemote", "proaktiv-kundekontakt"],
     felt: [
-      { id: "kunde", etikett: "Kunde", type: "tekst", paakrevd: true },
+      {
+        id: "kunde",
+        etikett: "Kunde",
+        type: "tekst",
+        paakrevd: true,
+        eksempel: "Jordbærpikene",
+      },
       {
         id: "deltakere",
         etikett: "Hvem var med",
         type: "tekst",
         plassholder: "Christian Heger (markedssjef), Pål og Henrik fra oss",
       },
-      { id: "dato", etikett: "Møtedato", type: "dato", paakrevd: true },
+      {
+        id: "dato",
+        etikett: "Møtedato",
+        type: "dato",
+        paakrevd: true,
+        eksempelDager: 0,
+      },
       {
         id: "bestemt",
         etikett: "Hva som ble bestemt",
@@ -559,6 +621,8 @@ export const MALER: readonly Mal[] = [
         hjelp:
           "Bare det som faktisk ble avgjort. Det som ble diskutert uten konklusjon hører ikke hjemme her.",
         paakrevd: true,
+        eksempel:
+          "November blir burgerkampanje. Vi filmer på Storo, ikke på Majorstuen. Kald drikke skal være synlig i burgerklippene.",
       },
       {
         id: "voresOppgaver",
@@ -566,12 +630,16 @@ export const MALER: readonly Mal[] = [
         type: "lang",
         hjelp: "Én linje per oppgave. Skriv hvem hos oss som eier den.",
         paakrevd: true,
+        eksempel:
+          "Henrik lager produksjonsplanen og sender den senest en uke før opptaksdagen. Pål avtaler tilgang til lokalet med Vivian.",
       },
       {
         id: "deresOppgaver",
         etikett: "Hva kunden skal gjøre",
         type: "lang",
         hjelp: "Vær konkret på hvem og når. Dette er det som pleier å glippe.",
+        eksempel:
+          "Vivian bekrefter innen fredag at kokken kan settes av i to timer før åpning. Christian sender logofilen.",
       },
       {
         id: "leveringsdato",
@@ -580,17 +648,20 @@ export const MALER: readonly Mal[] = [
         hjelp:
           "Én dato, valgt ut fra vår kapasitet. Ikke et tidsrom, og ikke kundens forslag.",
         paakrevd: true,
+        eksempelDager: 21,
       },
       {
         id: "uavklart",
         etikett: "Det som fortsatt er uavklart",
         type: "lang",
         hjelp: "Og hvem som skal avklare det, innen når.",
+        eksempel:
+          "Om bestselgerne fra disken skal med i november eller vente til desember. Vivian svarer innen tirsdag.",
       },
     ],
     oppdrag:
-      "Oppsummeringen kunden får samme dag som møtet. Den skal kunne leses på tjue sekunder og etterlate null tvil om hva som skjer videre. Overskriften er kundens navn og hva møtet handlet om."
-      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
+      "Oppsummeringen kunden får samme dag som møtet. Den skal kunne leses på tjue sekunder og etterlate null tvil om hva som skjer videre. Overskriften er kundens navn og hva møtet handlet om." +
+      "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
       "FAKTA — Møtedato, Hvem var med, og Leveringsdato.",
       "AVSNITT — «Dette ble bestemt», av feltet Hva som ble bestemt. To til fire setninger, ingen innledning om hvor hyggelig møtet var.",
@@ -614,7 +685,13 @@ export const MALER: readonly Mal[] = [
     skisse: ["topp", "fakta", "tabell", "toKolonner"],
     rubrikker: ["hva-tallene-betyr", "rytmen-to-i-uka"],
     felt: [
-      { id: "kunde", etikett: "Kunde", type: "tekst", paakrevd: true },
+      {
+        id: "kunde",
+        etikett: "Kunde",
+        type: "tekst",
+        paakrevd: true,
+        eksempel: "Jordbærpikene",
+      },
       {
         id: "maaned",
         etikett: "Hvilken måned",
@@ -628,6 +705,8 @@ export const MALER: readonly Mal[] = [
         type: "lang",
         hjelp: "Antall poster, og kort hva de handlet om.",
         paakrevd: true,
+        eksempel:
+          "9 poster: 6 videoer og 3 stillbilder. Fem handlet om burger, to om kald drikke, to om folkene i lokalet.",
       },
       {
         id: "tall",
@@ -636,6 +715,8 @@ export const MALER: readonly Mal[] = [
         hjelp:
           "Lim inn det du har fra Instagram. Fullføring, lagringer, delinger og profilbesøk er mer verdt enn visninger.",
         paakrevd: true,
+        eksempel:
+          "Fullføring 41 % på burgerklippene, 22 % på resten. 38 lagringer totalt, 29 av dem på ett klipp. 412 profilbesøk.",
       },
       {
         id: "monster",
@@ -644,6 +725,8 @@ export const MALER: readonly Mal[] = [
         hjelp:
           "Hvilken TYPE innhold gjør det gjentatte ganger bedre enn snittet på kontoen? Én post er ikke et mønster.",
         paakrevd: true,
+        eksempel:
+          "Klipp der maten lages fra bunnen holder folk lengst. De tre beste denne måneden var alle nærbilder av tilberedning, ikke av ferdig rett.",
       },
       {
         id: "neste",
@@ -651,11 +734,13 @@ export const MALER: readonly Mal[] = [
         type: "lang",
         hjelp: "Konkret konsekvens av mønsteret over.",
         paakrevd: true,
+        eksempel:
+          "Vi filmer to tilberedninger til i november, og legger nærbildet først i klippet i stedet for etter anslaget.",
       },
     ],
     oppdrag:
-      "Månedsrapporten kunden får i første uke av måneden. Den svarer på hva vi gjorde, hva vi ser i tallene, og hva vi gjør med det. Overskriften er kunden og måneden."
-      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
+      "Månedsrapporten kunden får i første uke av måneden. Den svarer på hva vi gjorde, hva vi ser i tallene, og hva vi gjør med det. Overskriften er kunden og måneden." +
+      "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
       "FAKTA — Hvilken måned, antall publiseringer fra Hva som ble publisert, og de to tallene fra Tallene som sier mest om respons.",
       "TABELL — tallene, med kolonnene Hva, Denne måneden, Forrige måned. Bare tall som sier noe. Har vi ikke forrige måned, sløyf den kolonnen.",
@@ -679,7 +764,13 @@ export const MALER: readonly Mal[] = [
     skisse: ["topp", "fakta", "tabell", "avsnitt"],
     rubrikker: ["rytmen-to-i-uka"],
     felt: [
-      { id: "kunde", etikett: "Kunde", type: "tekst", paakrevd: true },
+      {
+        id: "kunde",
+        etikett: "Kunde",
+        type: "tekst",
+        paakrevd: true,
+        eksempel: "Jordbærpikene",
+      },
       {
         id: "maaned",
         etikett: "Hvilken måned",
@@ -701,6 +792,8 @@ export const MALER: readonly Mal[] = [
         type: "lang",
         hjelp: "Én linje per video. Skriv hva den viser.",
         paakrevd: true,
+        eksempel:
+          "Burgeren bygges fra bunnbrød til lokk\nKald drikke helles i glass med is\nKokken forteller om burgeren\nLokalet i lunsjrushet\nNærbilde av burgeren som skjæres i to\nStillbilde: burger og drikke på bordet\nRent klipp til menyskjermene: burger på grillen\nRent klipp til menyskjermene: drikke med kondens",
       },
       {
         id: "tidsavhengig",
@@ -708,6 +801,8 @@ export const MALER: readonly Mal[] = [
         type: "lang",
         hjelp:
           "Kampanjer, sesong, åpninger. Dette låses først, resten flyttes rundt det.",
+        eksempel:
+          "Burgerkampanjen starter 3. november og må ligge ute samme morgen.",
       },
       {
         id: "kanaler",
@@ -717,8 +812,8 @@ export const MALER: readonly Mal[] = [
       },
     ],
     oppdrag:
-      "Publiseringsplanen for én måned: hva som går ut hvilken dag, i hvilken kanal. Overskriften er kunden og måneden."
-      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
+      "Publiseringsplanen for én måned: hva som går ut hvilken dag, i hvilken kanal. Overskriften er kunden og måneden." +
+      "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
       "FAKTA — Hvilken måned, Faste publiseringsdager, Kanaler, og antall publiseringer i måneden.",
       "TABELL — planen, med kolonnene Dato, Ukedag, Hva som publiseres, Kanal. Én rad per linje i Videoene som skal ut. Lås Det som må ut på en bestemt dato først, og fordel resten rundt.",
@@ -730,7 +825,6 @@ export const MALER: readonly Mal[] = [
       "Lås det tidsavhengige først. Resten fordeles rundt det, og det er den delen som redder rytmen når noe glipper.",
     ],
   },
-
 ] as const;
 
 export function malFraSlug(slug: string): Mal | undefined {
@@ -928,4 +1022,39 @@ export function byggRettelse(
     "DETTE ER EN RETTELSE, IKKE EN NY MAL. Dokumentet beholder delene sine, rekkefølgen på dem, og standarden malen setter. Ber rettelsen om noe utenfor malen, gjør du det for dette ene dokumentet — men du endrer ikke oppsettet, du fjerner ikke en del, og du bryter ingen av reglene over.",
     "Kan rettelsen ikke gjøres uten å bryte en av reglene, gjør du så mye av den som lar seg gjøre, og skriver i den delen det gjelder hva du ikke kunne gjøre og hvorfor. Ikke gjør det i stillhet.",
   ].join("\n");
+}
+
+/**
+ * Verdiene «Fyll inn eksempel» setter.
+ *
+ * ── HVORFOR KNAPPEN FINNES ────────────────────────────────────────────────
+ *
+ * Et skjema med sytten felt forteller deg hva feltene heter. Det forteller
+ * deg ikke hvor mye som hører hjemme i hvert, og det er der nye produsenter
+ * bommer: «Hvem vi trenger fra kunden» besvares med «kokken» i stedet for
+ * «kokk, ca. 2 timer fra 08:30». Et utfylt eksempel viser mengden på ett
+ * blikk, og det gjør det mulig å se hva malen faktisk gjør før man bruker
+ * den på en ekte kunde.
+ *
+ * ── DATOER REGNES UT, DE STÅR IKKE ────────────────────────────────────────
+ *
+ * En fast dato i et eksempel er feil dato fra og med dagen etter. Hvert
+ * datofelt sier i stedet hvor mange dager fram eksempelet ligger, så en
+ * befaring er om to dager og produksjonsdagen tre uker fram — uansett når
+ * noen trykker.
+ */
+export function eksempelverdier(mal: Mal): Record<string, string> {
+  const ut: Record<string, string> = {};
+  for (const f of mal.felt) {
+    if (f.type === "dato") {
+      const dag = new Date();
+      dag.setUTCHours(12, 0, 0, 0);
+      dag.setUTCDate(dag.getUTCDate() + (f.eksempelDager ?? 14));
+      ut[f.id] = dag.toISOString().slice(0, 10);
+      continue;
+    }
+    const v = f.eksempel ?? f.plassholder ?? f.standard;
+    if (v) ut[f.id] = v;
+  }
+  return ut;
 }
