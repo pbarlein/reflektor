@@ -129,6 +129,9 @@ test("ingen mal nevner pris, honorar eller avtalevilkår", () => {
     /\boppsigelse/i,
     /\bbindingstid/i,
     /\bmva\b/i,
+    /\babonn/i,
+    /prøveperiode/i,
+    /engangsoppdrag/i,
   ];
   for (const m of MALER) {
     /*

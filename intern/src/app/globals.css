@@ -280,3 +280,217 @@ html {
     }
   }
 }
+
+/* ─── UTSKRIFT ──────────────────────────────────────────────────────────────
+ *
+ * «Last ned PDF» er nettleserens egen utskrift. Alt under styrer hvordan
+ * arket ser ut når den kjører. Se src/components/Utskrift.tsx for hvorfor
+ * det er løst slik og ikke med et PDF-bibliotek.
+ *
+ * På skjerm finnes ikke arket i det hele tatt.
+ */
+.utskrift {
+  display: none;
+}
+
+@media print {
+  /*
+   * SKJULER ALT MED `visibility`, IKKE `display`.
+   *
+   * Arket ligger dypt nede i sidens DOM — inni skjemaet, inni en beholder,
+   * inni layouten. `display: none` på foreldrene ville tatt arket med seg.
+   * `visibility` arves, men kan slås på igjen lenger ned i treet, og det er
+   * nøyaktig det vi trenger.
+   */
+  body * {
+    visibility: hidden;
+  }
+
+  .utskrift,
+  .utskrift * {
+    visibility: visible;
+  }
+
+  .utskrift {
+    display: block;
+    position: absolute;
+    inset: 0 0 auto 0;
+    width: 100%;
+    background: #ffffff;
+    color: #1c1310;
+  }
+
+  @page {
+    size: A4 portrait;
+    /* Litt luft i toppen til hodet, mer i bunnen til bunnlinjen. */
+    margin: 16mm 15mm 18mm;
+  }
+
+  /*
+   * Bakgrunner og merkefarger skal med. Uten dette tegner nettleseren
+   * aksentstreken hvit, og hodet blir en tom linje.
+   */
+  .utskrift,
+  .utskrift * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .utskrift-strek {
+    height: 3px;
+    width: 46px;
+    background: #de4826;
+  }
+
+  .utskrift-rad {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 9px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dcd7d1;
+  }
+
+  .utskrift-merke {
+    height: 18px;
+    width: auto;
+  }
+
+  .utskrift-type {
+    font-family: var(--font-sans);
+    font-size: 8.5pt;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #1c1310;
+  }
+
+  /* Kundenavnet står til høyre, som i avtalene. */
+  .utskrift-kunde {
+    margin-left: auto;
+    font-family: var(--font-sans);
+    font-size: 8.5pt;
+    color: #6b625c;
+  }
+
+  /*
+   * ── HVORFOR DISSE SELEKTORENE ER SÅ OMSTENDELIGE ────────────────────────
+   *
+   * Markdown-visningen setter størrelsene med Tailwind-klasser rett på
+   * elementene — `text-[1rem]` på roten, `text-[1.875rem]` på h1. En
+   * `font-size` på en forelder taper mot en klasse på barnet, uansett hvor
+   * mye vi skriver i forelderen.
+   *
+   * `.utskrift-kropp h1` er én klasse pluss ett element. Det slår én klasse
+   * alene, og da treffer punktstørrelsene. Derfor er hvert element nevnt
+   * for seg, og derfor står det ingen `!important` her.
+   */
+  .utskrift-kropp {
+    margin-top: 14px;
+  }
+
+  .utskrift-kropp > div {
+    font-size: 10pt;
+    line-height: 1.45;
+    color: #1c1310;
+  }
+
+  /*
+   * Dokumentets egen tittel er ikke arkets tittel — den står i hodet. Her
+   * er h1 en overskrift på siden, ikke en plakat, og skaleres deretter.
+   */
+  .utskrift-kropp h1 {
+    margin-top: 0;
+    font-size: 15pt;
+    line-height: 1.15;
+  }
+
+  .utskrift-kropp h2 {
+    margin-top: 16px;
+    font-size: 11.5pt;
+    line-height: 1.2;
+  }
+
+  .utskrift-kropp h3 {
+    margin-top: 12px;
+    font-size: 7.5pt;
+  }
+
+  .utskrift-kropp p,
+  .utskrift-kropp ul,
+  .utskrift-kropp ol {
+    margin-top: 7px;
+  }
+
+  .utskrift-kropp li {
+    line-height: 1.4;
+  }
+
+  .utskrift-kropp hr {
+    margin-top: 14px;
+    margin-bottom: 0;
+  }
+
+  /*
+   * TABELLHODET GJENTAS PÅ HVERT ARK. En opptaksliste går over to sider, og
+   * side to uten kolonnenavn er en liste ingen kan filme etter.
+   */
+  .utskrift thead {
+    display: table-header-group;
+  }
+
+  /* En rad som deles på to ark er uleselig. En tabell som deles er grei. */
+  .utskrift tr,
+  .utskrift li {
+    break-inside: avoid;
+  }
+
+  /* En overskrift nederst på arket, med innholdet sitt på neste, er støy. */
+  .utskrift h1,
+  .utskrift h2,
+  .utskrift h3 {
+    break-after: avoid;
+    color: #1c1310;
+  }
+
+  .utskrift-kropp table {
+    margin-top: 8px;
+    font-size: 8.5pt;
+  }
+
+  .utskrift-kropp th {
+    font-size: 6.5pt;
+    padding-bottom: 4px;
+  }
+
+  .utskrift-kropp td {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    line-height: 1.35;
+  }
+
+  /* Tabellen er ferdig brutt av utskriften. Rullefeltet er bare i veien. */
+  .utskrift-kropp .overflow-x-auto {
+    overflow: visible;
+  }
+
+  .utskrift-bunn {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 22px;
+    padding-top: 8px;
+    border-top: 1px solid #dcd7d1;
+    font-family: var(--font-sans);
+    font-size: 7.5pt;
+    color: #8e8781;
+  }
+
+  /*
+   * Lesestripen er fast posisjonert. Uten dette tegnes den som en strek
+   * øverst på hvert eneste ark.
+   */
+  .lesestripe {
+    display: none;
+  }
+}

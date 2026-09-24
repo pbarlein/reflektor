@@ -181,6 +181,36 @@ To ting holder grensen når noen skal legge til en mal senere:
   må den forby dem — en regel som forklarer *hvordan* prisen skrives, er
   nøyaktig feilen over.
 
+### «Last ned PDF» er nettleserens egen utskrift
+
+Arket tegnes av `src/components/Utskrift.tsx` og styles av utskriftsblokken
+nederst i `src/app/globals.css`. Det er ikke skjermversjonen i en annen farge
+— det er et eget dokument med eget hode, egen bunnlinje og egne sideskift.
+
+Tre ting som var feil før de ble riktige, og som er lette å ødelegge igjen:
+
+1. **Arket ligger i en portal rett under `<body>`.** Utskriften plasserer det
+   med `position: absolute`, og en absolutt posisjon regnes fra nærmeste
+   posisjonerte forelder. Lå det der det hører hjemme i treet, ville
+   `lg:sticky`-kolonnen blitt referansen, og arket kom ut med seks centimeter
+   tom venstremarg.
+2. **Alt annet skjules med `visibility`, ikke `display`.** Arket ligger dypt
+   i DOM-en; `display: none` på en forelder ville tatt det med seg.
+3. **Punktstørrelsene må settes med `.utskrift-kropp h1` og ikke bare på
+   forelderen.** Markdown-visningen setter størrelser med Tailwind-klasser
+   rett på elementene, og en `font-size` lenger opp taper mot dem. Første
+   forsøk ga 16 px brødtekst på A4.
+
+**Nettleseren stempler sin egen URL i margen.** Det finnes ingen CSS som
+styrer det — det er en avkrysningsboks i utskriftsdialogen. Derfor står
+oppskriften ved knappen i grensesnittet, ikke bare her.
+
+Bunnlinjen med NAP står på siste ark, ikke på hvert. Å gjenta den krever
+`@page`-marginbokser, som ingen nettleser støtter, eller et fast posisjonert
+element som legger seg oppå teksten. Ingen av delene er verdt det.
+
+---
+
 Samtykkeskjemaet er unntaket som bekrefter regelen: kanal og varighet SKAL stå
 der, fordi det er omfanget av personens eget samtykke og ikke et vilkår
 mellom Reflektor og kunden. Det unntaket står i malens egne regler.

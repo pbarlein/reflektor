@@ -1,8 +1,10 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { Markdown } from "@/components/Markdown";
+import { Utskrift } from "@/components/Utskrift";
 import { byggInstruks } from "@/content/maler";
 import type { Felt, Mal } from "@/content/maltype";
 
@@ -156,6 +158,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
   const [feilmelding, setFeilmelding] = useState("");
   const avbryt = useRef<AbortController | null>(null);
 
+
   const instruks = useMemo(() => byggInstruks(mal, verdier), [mal, verdier]);
 
   const mangler = mal.felt.filter(
@@ -184,16 +187,51 @@ export function Malskjema({ mal }: { mal: Mal }) {
     }
   }
 
-  function lastNed() {
-    const navn = `${mal.slug}-${new Date().toISOString().slice(0, 10)}.md`;
-    const url = URL.createObjectURL(
-      new Blob([dokument], { type: "text/markdown;charset=utf-8" }),
-    );
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = navn;
-    a.click();
-    URL.revokeObjectURL(url);
+  const kunde = (verdier.kunde ?? "").trim();
+  const idag = new Date().toISOString().slice(0, 10);
+
+  /**
+   * Filnavnet PDF-en foreslås med.
+   *
+   * Nettleseren bruker sidens tittel som forslag i «Lagre som PDF». Uten
+   * dette heter filen «Produksjonsplan — Reflektor internt», og den femte
+   * produksjonsplanen i nedlastingsmappen heter «Produksjonsplan (4)».
+   *
+   * Æ, Ø og Å skrives om. Ikke av nød — moderne filsystemer takler dem —
+   * men fordi filen skal videre som e-postvedlegg, og der er det fortsatt
+   * systemer som ikke gjør det.
+   */
+  function filnavn(): string {
+    const reint = (t: string) =>
+      t
+        .toLowerCase()
+        .replaceAll("æ", "ae")
+        .replaceAll("ø", "oe")
+        .replaceAll("å", "aa")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+    return [kunde && reint(kunde), reint(mal.navn), idag]
+      .filter(Boolean)
+      .join("-");
+  }
+
+  /**
+   * Åpner nettleserens utskrift, som også er veien til PDF.
+   *
+   * Tittelen byttes rett før og settes tilbake etterpå. `print()` blokkerer
+   * til dialogen er lukket i de fleste nettlesere, men ikke i alle — derfor
+   * ryddes den også opp på `afterprint`, som fyrer uansett.
+   */
+  function skrivUt() {
+    const forrige = document.title;
+    document.title = filnavn();
+    const rydd = () => {
+      document.title = forrige;
+      window.removeEventListener("afterprint", rydd);
+    };
+    window.addEventListener("afterprint", rydd);
+    window.print();
+    rydd();
   }
 
   /**
@@ -323,14 +361,38 @@ export function Malskjema({ mal }: { mal: Mal }) {
               </button>
               <button
                 type="button"
-                onClick={lastNed}
+                onClick={skrivUt}
                 className="rounded-interaktiv border border-kant px-4 py-2.5 text-[0.9375rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
               >
-                Last ned
+                Last ned PDF
               </button>
             </>
           )}
         </div>
+
+        {/*
+          NETTLESEREN STEMPLER SIN EGEN URL I MARGEN.
+
+          Chrome og Safari legger inn adresse, dato og sidetall i
+          utskriftsmargen med mindre brukeren slår det av, og det finnes
+          ingen CSS som styrer det — det er en innstilling i dialogen, ikke
+          i dokumentet.
+
+          «localhost:3000/dokument/produksjonsplan» nederst på en
+          produksjonsplan som sendes til Jordbærpikene er ikke en detalj.
+          Derfor står oppskriften her, ved knappen, og ikke i en
+          dokumentasjon ingen leser i det øyeblikket de trenger den.
+        */}
+        {dokument && tilstand !== "skriver" && (
+          <p className="mt-3.5 max-w-[46ch] text-[0.8125rem] leading-relaxed text-pretty text-blekk-svak">
+            I utskriftsvinduet: velg{" "}
+            <span className="text-blekk-dempet">Lagre som PDF</span> som
+            skriver, og skru av{" "}
+            <span className="text-blekk-dempet">topptekst og bunntekst</span>{" "}
+            under flere innstillinger. Ellers stempler nettleseren adressen
+            sin i margen.
+          </p>
+        )}
 
         {/*
           `aria-live` på en egen, skjult linje. Knappeteksten endrer seg, men
@@ -370,6 +432,40 @@ export function Malskjema({ mal }: { mal: Mal }) {
             )}
           </div>
         )}
+
+        {/*
+          ARKET. Usynlig på skjerm, og det eneste som er synlig på papir.
+          Det ligger her og ikke i en egen rute fordi utskriften skal treffe
+          nøyaktig det dokumentet du ser på — ikke en ny generering.
+        */}
+        {/*
+          ARKET HENGER RETT UNDER <body>, IKKE HER.
+
+          Utskriften plasserer arket øverst på siden med `position:
+          absolute`, og en absolutt posisjon regnes fra nærmeste
+          posisjonerte forelder. Her er det kolonnen som er `sticky` på
+          store skjermer — så arket kom ut innrykket på høyre halvdel av
+          papiret, med seks centimeter tom venstremarg.
+
+          Portalen flytter det ut av kolonnen og gjør body til referansen.
+          `document` finnes ikke under serverrendringen, men `dokument` er
+          alltid tomt der: det fylles først når noen trykker på knappen.
+        */}
+        {dokument &&
+          tilstand !== "skriver" &&
+          createPortal(
+            <Utskrift
+              kilde={dokument}
+              tittel={mal.navn}
+              kunde={kunde || undefined}
+              dato={new Intl.DateTimeFormat("nb-NO", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              }).format(new Date(`${idag}T12:00:00Z`))}
+            />,
+            document.body,
+          )}
 
         {/*
           INSTRUKSEN LIGGER SAMMENFOLDET. Den er ikke det man kom for, men

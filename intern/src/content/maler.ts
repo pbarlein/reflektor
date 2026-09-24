@@ -69,10 +69,26 @@ export const MALER: readonly Mal[] = [
       },
       {
         id: "kundetype",
-        etikett: "Kundeforhold",
+        /*
+         * Feltet het «Kundeforhold», med «Fast kunde på abonnement» og
+         * «Prøveperiode» som valg. Begge er avtaleforhold, ikke
+         * produksjonsforhold — «prøveperiode» er til og med et punkt i
+         * tjenesteavtalen — og produksjonskunder skal aldri omtales som
+         * SoMe-abonnenter.
+         *
+         * Det produsenten faktisk trenger å vite, er hvor godt vi kjenner
+         * stedet. Det avgjør hvor mye planen må forklare.
+         */
+        etikett: "Hvor godt kjenner vi stedet",
         type: "valg",
-        valg: ["Fast kunde på abonnement", "Prøveperiode", "Engangsoppdrag"],
-        standard: "Fast kunde på abonnement",
+        hjelp:
+          "Et sted vi filmer jevnlig trenger ikke en omvisning på papir.",
+        valg: [
+          "Vi filmer her jevnlig",
+          "Vi har filmet her noen ganger",
+          "Første gang vi filmer her",
+        ],
+        standard: "Vi filmer her jevnlig",
       },
       {
         id: "kontakt",
@@ -804,7 +820,7 @@ export function byggInstruks(
      */
     "Dette er et produksjonsdokument. Forretningsvilkårene mellom Reflektor og kunden — pris, honorar, timesats, betaling, fakturering, oppsigelse, bindingstid, eierskap til materiellet og kundens bruksrett — skal ALDRI stå i det. Heller ikke som eksempel, og heller ikke hvis noen har skrevet det i et felt. Alt slikt er avtalt i tjenesteavtalen.",
     "Må dokumentet likevel vise til slike vilkår for å gi mening, skriv «se tjenesteavtalen» og ikke noe mer.",
-    "Ikke omtal en kunde som abonnent, fast kunde eller engangskunde med mindre det står i informasjonen over.",
+    "Skriv aldri hva slags avtale kunden har med oss — abonnent, fast kunde, prøveperiode, engangsoppdrag. Det er et avtaleforhold, og det hører ikke hjemme i et produksjonsdokument, heller ikke når det går fram av informasjonen over.",
     "Skriv fullstendige setninger. Ingen engelske uttrykk der det finnes norske.",
     "Konkret framfor generelt. «Kokken lager burgere mens vi filmer» er konkret. «Vi dokumenterer produksjonen» er det ikke.",
   ];
