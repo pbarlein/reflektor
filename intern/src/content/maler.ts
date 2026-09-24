@@ -146,7 +146,7 @@ export const MALER: readonly Mal[] = [
       },
       {
         id: "stills",
-        etikett: "Stillbilder i tillegg til video?",
+        etikett: "Stillbilder i tillegg til video",
         type: "valg",
         hjelp:
           "Stills deler kapasitet med video. Sier du ja, blir det færre videoer.",
@@ -174,7 +174,7 @@ export const MALER: readonly Mal[] = [
       },
       {
         id: "logo",
-        etikett: "Logo på materiellet?",
+        etikett: "Logo på materiellet",
         type: "valg",
         valg: ["Uten logo", "Med logo", "Avklares"],
         standard: "Uten logo",
@@ -190,22 +190,20 @@ export const MALER: readonly Mal[] = [
       },
     ],
     oppdrag:
-      "En produksjonsplan på ÉN side som sendes til kunden før produksjonsdagen. Den skal kunne leses på en telefon i en trapp, og den skal gjøre det unødvendig for kunden å stille oppfølgingsspørsmål.",
+      "Ensideren kunden får før produksjonsdagen: hva som skjer, hva vi trenger fra dem, og hva de får. Overskriften er «Reflektor × [Kunde] [Lokasjon]». Undertittelen er én setning med produksjonsdagen, stedet og Når materiellet publiseres."
+      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
-      "Topptekst: «REFLEKTOR × [KUNDE] [LOKASJON]», så overskriften «Produksjonsplan», så én linje som sier hvilken dag, hvor, og når materiellet publiseres.",
-      "Faktarad med fire felt: Sted, Dato, Kontakt på stedet, Fra Reflektor.",
-      "«Tidsplan for dagen» som en tabell med kolonnene Blokk, Hva vi filmer, Hvem. Bruk blokker som «Før åpning», «Kjøkkenet», «Ved åpning», «Formiddag», «Lunsjrush», «Pause», «Etter lunsj», «Ettermiddag» — tilpasset denne kunden. Siste blokk skal alltid være en åpen blokk: «Vi filmer det som dukker opp».",
-      "«Hva vi trenger fra [lokasjon]»: én linje per rolle med tidsbruk, hva personen gjør, og til slutt en kort avsnitt om tilgang, samtykke og eventuelle forbud.",
-      "«Leveranse»: først formatlinjen, så to kolonner — «Til sosiale medier · med lyd og tale» og, hvis skjermer er en bruksflate, «Til menyskjermer og innkastere · uten lyd og tekst». Nummerer leveransene fortløpende gjennom begge kolonnene. Merk hver med VIDEO, STILLS eller ÅPEN.",
-      "Én linje om uttrykk under leveransene.",
-      "«Rytmen videre» som tre korte kort, én per måned — bare hvis det er oppgitt.",
-      "Bunntekst: én linje om rettigheter, og kontaktinfo til den som sender planen.",
+      "FAKTA — fire nøkkelopplysninger: Lokasjon, Produksjonsdag (med Når vi er på plass), Kontaktperson på stedet, Fra Reflektor.",
+      "TABELLOGBOKS — tabellen er tidsplanen, med kolonnene Oppsett, Hva vi filmer, Hvem. Hver rad er ett oppsett, ikke én video. Bygg radene av Hva som skal i fokus. Boksen ved siden av er «Hva vi trenger fra dere»: én kule per rolle fra Hvem vi trenger fra kunden, med tidsbruk, og til slutt tilgang og samtykke.",
+      "TOKOLONNER — leveransen. Venstre spalte er det som har lyd og tale. Høyre spalte er det som skal skytes rent, uten lyd og tekst, og skal bare finnes hvis Hvor materiellet skal brukes inkluderer skjermer i lokalet. Har vi ingen skjermleveranse, er høyre spalte stillbilder eller nærbilder i stedet.",
+      "KORT3 — tre kort: «Formater» (Formater, Stillbilder i tillegg til video, Logo på materiellet), «Uttrykk» (Uttrykk og målgruppe), og «Rytmen videre» (Rytmen videre).",
     ],
     regler: [
       "Antall leveranser skal lande på 8–10 til sammen. Det er produksjonsmålet for en dag, og planen skal ikke love mer enn dagen kan holde.",
-      "Grupper tidsplanen i tre til fem OPPSETT — steder eller lyssituasjoner — ikke i én blokk per video. Flere enn fem oppsett betyr at dagen er for spredt.",
+      "Tidsplanen har tre til fem oppsett — steder eller lyssituasjoner — ikke én rad per video. Flere enn fem betyr at dagen er for spredt. Siste rad er alltid en åpen blokk: «Vi filmer det som dukker opp».",
       "Skal materiellet på skjermer i lokalet, må de klippene skytes rene fra start. Skriv det eksplisitt: det er ikke nok å fjerne lyden etterpå.",
-      "Er det oppgitt noe som IKKE skal med, skal det stå i planen som en tydelig setning — ikke bare utelates.",
+      "Er det oppgitt noe under «Hva som IKKE skal med», skal det stå i boksen som en tydelig setning — ikke bare utelates.",
+      "«Hvor godt kjenner vi stedet» styrer hvor mye planen forklarer, ikke hva den inneholder. Et sted vi filmer jevnlig trenger ingen omvisning; første gang tar boksen med tilgang og fremmøte i klartekst.",
     ],
   },
 
@@ -269,12 +267,12 @@ export const MALER: readonly Mal[] = [
       },
     ],
     oppdrag:
-      "En intern opptaksliste. Testen er om en kollega som ikke var med i planleggingen kan filme dagen med listen i hånda. Den er et arbeidsdokument, ikke et dokument kunden ser.",
+      "Den interne listen den som filmer har i hånda på dagen. Testen er om en kollega som ikke var med i planleggingen kan filme etter den. Overskriften er kunde og lokasjon. Undertittelen sier opptaksdagen og hvor mange opptak listen har."
+      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
-      "Kunde, lokasjon og opptaksdag øverst, på én linje.",
-      "Én tabell med alle opptakene, sortert etter oppsettnummer. Kolonnene er: nr, oppsett, bildeutsnitt, kamera i ro eller bevegelse, hvem eller hva er i bildet, lyd, lengde i sekunder.",
-      "En kort liste nederst over det som må filmes før lokalet åpner, hvis noe må det.",
-      "En siste linje om hva som kan droppes hvis dagen blir kort.",
+      "FAKTA — Lokasjon, Opptaksdag, Er det tale på dagen, og antall opptak listen inneholder.",
+      "TABELL — hele listen, med kolonnene Nr, Oppsett, Utsnitt, Kamera, Motiv, Lyd, Sekunder. Radene bygges bakover fra Hva som skal leveres og sorteres etter Oppsettene.",
+      "LISTE — det som må filmes før lokalet åpner, og det som kan droppes hvis dagen blir kort. Bygg den av Noe som gjelder spesielt.",
     ],
     regler: [
       "Hvert opptak skal ha alle seks feltene: oppsett, bildeutsnitt, kamerabevegelse, motiv, lyd og lengde. Mangler ett, er listen ikke ferdig.",
@@ -352,12 +350,12 @@ export const MALER: readonly Mal[] = [
       },
     ],
     oppdrag:
-      "Et samtykkeskjema på norsk som den som filmes leser og signerer før opptaket. Det skal være kort nok til at folk faktisk leser det — én side, og helst under halvparten av den.",
+      "Skjemaet den som filmes leser og signerer før opptaket. Det skal være kort nok til at folk faktisk leser det. Overskriften er «Samtykke til film og bilde». Undertittelen sier hvem som filmer, hvor og når."
+      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
-      "Overskrift og én linje om hva opptaket er og hvem som gjør det.",
-      "Hva samtykket gjelder: hvilke opptak, hvor de publiseres, og hvor lenge.",
-      "En kort punktliste med det personen har rett til: å si nei uten å oppgi grunn, å trekke samtykket tilbake, og hvem hen kontakter for å gjøre det.",
-      "Signaturfelt: navn med blokkbokstaver, signatur, dato. For mindreårige også foresatt.",
+      "AVSNITT — hva samtykket gjelder: hvilket opptak (Sted og dato for opptaket), hvem som filmer, hvor det publiseres (Hvor materiellet publiseres) og hvor lenge (Hvor lenge materiellet kan brukes). Er det skrevet noe under «Noe som gjelder spesielt her», står det her.",
+      "LISTE — hva personen har rett til: å si nei uten å oppgi grunn, å trekke samtykket tilbake når som helst, og hvem hen kontakter for å gjøre det.",
+      "SIGNATUR — to felter: den som samtykker, og den som tar imot samtykket for Reflektor. Er «Hvem skal signere» satt til mindreårig, er det andre feltet foresatt.",
     ],
     regler: [
       "Datatilsynet skiller mellom portrettbilder, der bestemte personer er hovedmotivet, og situasjonsbilder der ingen er i fokus. Alt vi lager for en kunde er i praksis portrett. Skriv skjemaet deretter.",
@@ -430,12 +428,12 @@ export const MALER: readonly Mal[] = [
       },
     ],
     oppdrag:
-      "En oversikt som følger materiellet når det overleveres. Den skal kunne leses på et halvt minutt og svare på: hva fikk vi, hvor ligger det, og mangler noe.",
+      "Oversikten som følger materiellet når det overleveres. Den skal kunne leses på et halvt minutt og svare på hva kunden fikk, hvor det ligger, og om noe mangler. Overskriften er kunde og opptaksdag."
+      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
-      "Kunde, opptaksdag og hvor filene ligger, øverst.",
-      "Én tabell over leveransene: filnavn, hva klippet er, format, lengde, teksting.",
-      "En kort bolk om hva som er skutt rent uten lyd og tekst, hvis noe er det, og hvorfor de filene ser annerledes ut.",
-      "«Det som ikke er med» til slutt, med hva som skjer med det.",
+      "FAKTA — Opptaksdagen det gjelder, Hvor filene ligger, Formater i leveransen, og antall filer.",
+      "TABELL — leveransene, med kolonnene Fil, Hva klippet viser, Format, Teksting. Én rad per linje i Hva som leveres.",
+      "AVSNITT — først «Det som ikke er med» fra feltet med samme navn, og hva som skjer med det. Er noe skutt rent til skjermer i lokalet, står det i samme avsnitt at de filene mangler lyd og tekst med vilje.",
     ],
     regler: [
       "Filnavnet i tabellen skal være det faktiske filnavnet. En oversikt der navnene ikke stemmer, er verre enn ingen oversikt.",
@@ -452,7 +450,7 @@ export const MALER: readonly Mal[] = [
     kort: "Det du skriver ned på befaringen, så produksjonsdagen ikke møter noe uventet.",
     ansvarlig: "Produsent",
     naar: "Samme dag som befaringen, før du glemmer det",
-    skisse: ["topp", "fakta", "liste", "avsnitt"],
+    skisse: ["topp", "fakta", "toKolonner", "liste"],
     rubrikker: ["lyd-kan-ikke-reddes", "produksjonsdag-som-gir-8-10"],
     felt: [
       {
@@ -522,14 +520,12 @@ export const MALER: readonly Mal[] = [
       },
     ],
     oppdrag:
-      "Et internt befaringsnotat. Det leses av produsenten som planlegger dagen, og av den som står der hvis det ikke er samme person. Det skal være stikkordsmessig og fullstendig, ikke velskrevet.",
+      "Det interne notatet fra befaringen. Det leses av den som planlegger dagen, og av den som står der hvis det ikke er samme person. Stikkordsmessig og fullstendig, ikke velskrevet. Overskriften er kunde og lokasjon."
+      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
-      "Kunde, lokasjon, befaringsdato og planlagt produksjonsdag øverst.",
-      "Lys — med klokkeslett der det er relevant.",
-      "Lyd — hva som bråker, hva som kan slås av, og hvem som kan slå det av.",
-      "Oppsettene, nummerert, med hva som er i bildet fra hvert.",
-      "Strøm, plass og tilgang.",
-      "«Det som kan velte dagen» til slutt, som en liste.",
+      "FAKTA — Kunde og lokasjon, Dato for befaringen, Planlagt produksjonsdag, og antall mulige oppsett.",
+      "TOKOLONNER — venstre spalte «Lyd og lys» av feltene Lyd og Lys, i den rekkefølgen. Høyre spalte «Oppsettene» av feltet Mulige oppsett, nummerert, med hva som er i bildet fra hvert.",
+      "LISTE — «Det som kan velte dagen», bygget av feltene Det som kan velte dagen, Strøm og plass og Folk og tilgang. Dette er notatets viktigste del.",
     ],
     regler: [
       "Lyd først, ikke lys. Dårlig lys kan løftes i etterarbeid; dårlig lyd kan ikke.",
@@ -545,7 +541,7 @@ export const MALER: readonly Mal[] = [
     kort: "Meldingen du sender etter møtet. Hva som ble bestemt, hva vi gjør, og datoen som gjelder.",
     ansvarlig: "Kundeansvarlig",
     naar: "Samme dag som møtet",
-    skisse: ["topp", "avsnitt", "liste", "fakta"],
+    skisse: ["topp", "fakta", "avsnitt", "toKolonner", "liste"],
     rubrikker: ["forberedt-til-kundemote", "proaktiv-kundekontakt"],
     felt: [
       { id: "kunde", etikett: "Kunde", type: "tekst", paakrevd: true },
@@ -593,14 +589,13 @@ export const MALER: readonly Mal[] = [
       },
     ],
     oppdrag:
-      "En kort e-post til kunden etter et møte. Den skal kunne leses på tjue sekunder og etterlate null tvil om hva som skjer videre.",
+      "Oppsummeringen kunden får samme dag som møtet. Den skal kunne leses på tjue sekunder og etterlate null tvil om hva som skjer videre. Overskriften er kundens navn og hva møtet handlet om."
+      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
-      "Én takkelinje. Kort.",
-      "Hva som ble bestemt, som en punktliste.",
-      "Hva vi gjør — med navn på hvem hos oss.",
-      "Hva dere gjør — med navn og frist.",
-      "Leveringsdatoen, som en egen, tydelig linje.",
-      "Eventuelt uavklarte punkter til slutt, med hvem som avklarer.",
+      "FAKTA — Møtedato, Hvem var med, og Leveringsdato.",
+      "AVSNITT — «Dette ble bestemt», av feltet Hva som ble bestemt. To til fire setninger, ingen innledning om hvor hyggelig møtet var.",
+      "TOKOLONNER — venstre spalte «Vi gjør» av Hva vi skal gjøre, med navn på hvem hos oss. Høyre spalte «Dere gjør» av Hva kunden skal gjøre, med navn og frist.",
+      "LISTE — «Fortsatt uavklart», av feltet Det som fortsatt er uavklart, med hvem som avklarer og innen når. Er feltet tomt, skal listen si at ingenting står uavklart.",
     ],
     regler: [
       "Leveringsdatoen skal stå som en OPPLYSNING, ikke som et spørsmål. «Dere har materialet torsdag 9. oktober» — ikke «passer det at vi leverer rundt den 9.?».",
@@ -616,7 +611,7 @@ export const MALER: readonly Mal[] = [
     kort: "Hva vi ser i tallene, hva vi tror det betyr, og hva vi gjør med det neste måned.",
     ansvarlig: "Kundeansvarlig",
     naar: "Første uke i måneden, for måneden som gikk",
-    skisse: ["topp", "fakta", "tabell", "avsnitt"],
+    skisse: ["topp", "fakta", "tabell", "toKolonner"],
     rubrikker: ["hva-tallene-betyr", "rytmen-to-i-uka"],
     felt: [
       { id: "kunde", etikett: "Kunde", type: "tekst", paakrevd: true },
@@ -659,12 +654,12 @@ export const MALER: readonly Mal[] = [
       },
     ],
     oppdrag:
-      "En kort månedsrapport til kunden. Tre ting: hva vi ser, hva vi tror det betyr, og hva vi gjør med det. Ikke en tallrapport.",
+      "Månedsrapporten kunden får i første uke av måneden. Den svarer på hva vi gjorde, hva vi ser i tallene, og hva vi gjør med det. Overskriften er kunden og måneden."
+      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
-      "Én linje om hva som ble publisert i måneden.",
-      "Tallene, som en liten tabell. Bare de tallene som sier noe.",
-      "«Dette ser vi» — mønsteret, i to til tre setninger.",
-      "«Dette gjør vi neste måned» — konkret.",
+      "FAKTA — Hvilken måned, antall publiseringer fra Hva som ble publisert, og de to tallene fra Tallene som sier mest om respons.",
+      "TABELL — tallene, med kolonnene Hva, Denne måneden, Forrige måned. Bare tall som sier noe. Har vi ikke forrige måned, sløyf den kolonnen.",
+      "TOKOLONNER — venstre spalte «Dette ser vi» av Mønsteret du ser. Høyre spalte «Dette gjør vi neste måned» av Hva vi gjør neste måned.",
     ],
     regler: [
       "Visninger alene skal ikke stå som en prestasjon. Står det et visningstall, skal forholdet mellom visninger og respons stå ved siden av.",
@@ -681,7 +676,7 @@ export const MALER: readonly Mal[] = [
     kort: "Måneden fordelt på faste dager, med det tidsavhengige låst først.",
     ansvarlig: "Kundeansvarlig",
     naar: "Når materialet fra produksjonsdagen er redigert",
-    skisse: ["topp", "fakta", "tabell"],
+    skisse: ["topp", "fakta", "tabell", "avsnitt"],
     rubrikker: ["rytmen-to-i-uka"],
     felt: [
       { id: "kunde", etikett: "Kunde", type: "tekst", paakrevd: true },
@@ -722,11 +717,12 @@ export const MALER: readonly Mal[] = [
       },
     ],
     oppdrag:
-      "En publiseringsplan for én måned, som en enkel tabell. Den brukes internt og kan sendes til kunden uten omskriving.",
+      "Publiseringsplanen for én måned: hva som går ut hvilken dag, i hvilken kanal. Overskriften er kunden og måneden."
+      + "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
-      "Kunde, måned og hvilke faste ukedager som gjelder.",
-      "Tabell med kolonnene Dato, Ukedag, Hva som publiseres, Kanal.",
-      "En kort linje til slutt om hvor mye forsprang køen har.",
+      "FAKTA — Hvilken måned, Faste publiseringsdager, Kanaler, og antall publiseringer i måneden.",
+      "TABELL — planen, med kolonnene Dato, Ukedag, Hva som publiseres, Kanal. Én rad per linje i Videoene som skal ut. Lås Det som må ut på en bestemt dato først, og fordel resten rundt.",
+      "AVSNITT — hvor mye forsprang køen har, og hva som flyttes først hvis noe glipper.",
     ],
     regler: [
       "To poster i uken. 2 × 52 = 104 i året, altså 8,7 i måneden — det er derfor produksjonsmålet er 8–10.",
@@ -850,8 +846,27 @@ export function byggInstruks(
     "Dette er et produksjonsdokument. Forretningsvilkårene mellom Reflektor og kunden — pris, honorar, timesats, betaling, fakturering, oppsigelse, bindingstid, eierskap til materiellet og kundens bruksrett — skal ALDRI stå i det. Heller ikke som eksempel, og heller ikke hvis noen har skrevet det i et felt. Alt slikt er avtalt i tjenesteavtalen.",
     "Må dokumentet likevel vise til slike vilkår for å gi mening, skriv «se tjenesteavtalen» og ikke noe mer.",
     "Skriv aldri hva slags avtale kunden har med oss — abonnent, fast kunde, prøveperiode, engangsoppdrag. Det er et avtaleforhold, og det hører ikke hjemme i et produksjonsdokument, heller ikke når det går fram av informasjonen over.",
-    "Skriv fullstendige setninger. Ingen engelske uttrykk der det finnes norske.",
+    /*
+     * ── SPRÅKET ER ET TROVERDIGHETSSPØRSMÅL ───────────────────────────────
+     *
+     * Dette er dokumenter om praktisk gjennomføring. De leses av en kokk
+     * som skal vite når hen må være på jobb, og av en markedssjef som skal
+     * vite hva hen får. Byråspråk og AI-formuleringer gjør ikke slike
+     * dokumenter mer overbevisende — de gjør at leseren begynner å lure på
+     * om avsenderen faktisk har gjort dette før.
+     *
+     * Listen under er ikke smak. Hvert punkt er et mønster som har dukket
+     * opp i ekte utdata og som gjorde dokumentet dårligere.
+     */
+    "Dette er et arbeidsdokument om praktisk gjennomføring, ikke et salgsdokument. Ingen setning skal overbevise leseren om at Reflektor er dyktige. Den skal fortelle hva som skjer, når, og hvem som gjør det.",
+    "Skriv fullstendige setninger med subjekt og verb. Ikke stikkord med tankestrek der en setning hører hjemme.",
+    "Ingen engelske uttrykk der det finnes norske. Ikke «shoot», «deliverables», «setup» eller «assets».",
+    "Forbudte ord og vendinger: sømløs, skreddersydd, helhetlig, i tett dialog, løfte frem, ta det til neste nivå, fange essensen, autentisk historiefortelling, kvalitetssikre, levere på, i tråd med, det handler om, vi er opptatt av.",
+    "Ikke skriv trippelkonstruksjoner av typen «ikke bare X, men også Y og Z». Ikke innled med «I en verden der» eller «Når det kommer til».",
+    "Ingen adjektiver på vårt eget arbeid. Ikke «grundig planlagt», ikke «profesjonell gjennomføring». Det er leseren som avgjør det, ut fra om planen holder.",
     "Konkret framfor generelt. «Kokken lager burgere mens vi filmer» er konkret. «Vi dokumenterer produksjonen» er det ikke.",
+    "Tall framfor mengdeord. «Ca. 2 timer», ikke «en god stund». «Fire oppsett», ikke «flere oppsett».",
+    "Ett faktum per setning i tabellceller. Cellen er ikke et avsnitt.",
   ];
 
   deler.push(
@@ -898,5 +913,19 @@ export function byggRettelse(
     "",
     "Gjør NØYAKTIG denne endringen, og ikke noe mer. Alt annet i dokumentet skal stå ordrett som det gjør nå — samme formuleringer, samme rekkefølge, samme rader. Lever hele dokumentet på nytt, også de delene du ikke rørte.",
     "Er endringen umulig uten å finne på noe som ikke står i informasjonen, skriv TBD(...) i stedet for å gjette.",
+    /*
+     * ── ET AVVIK ER ET AVVIK, IKKE EN NY RUTINE ───────────────────────────
+     *
+     * En produsent som ber om noe utenfor malen, har som regel en god grunn
+     * akkurat denne gangen. Faren er at rettelsen drar dokumentet ut av
+     * formen: én ekstra seksjon her, en annen rekkefølge der, og etter ti
+     * kunder finnes det ti forskjellige produksjonsplaner.
+     *
+     * Malen er ikke bare et oppsett. Den er beslutninger som er tatt én
+     * gang — 8–10 leveranser, tre til fem oppsett, rene klipp til skjerm.
+     * De skal ikke kunne forhandles bort i en tekstboks.
+     */
+    "DETTE ER EN RETTELSE, IKKE EN NY MAL. Dokumentet beholder delene sine, rekkefølgen på dem, og standarden malen setter. Ber rettelsen om noe utenfor malen, gjør du det for dette ene dokumentet — men du endrer ikke oppsettet, du fjerner ikke en del, og du bryter ingen av reglene over.",
+    "Kan rettelsen ikke gjøres uten å bryte en av reglene, gjør du så mye av den som lar seg gjøre, og skriver i den delen det gjelder hva du ikke kunne gjøre og hvorfor. Ikke gjør det i stillhet.",
   ].join("\n");
 }

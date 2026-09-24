@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { MALER, byggInstruks, malFraSlug } from "../src/content/maler.ts";
+import { deleneI } from "../src/content/arktype.ts";
+import {
+  MALER,
+  byggInstruks,
+  byggRettelse,
+  malFraSlug,
+} from "../src/content/maler.ts";
 import { FASER } from "../src/content/maltype.ts";
 import { RUBRIKKER } from "../src/content/rubrikker/index.ts";
 
@@ -175,5 +181,88 @@ test("hver mal hører til en fase i produksjonen", () => {
       MALER.some((m) => m.fase === fase),
       `fasen «${fase}» er tom, og da blir overskriften stående uten kort`,
     );
+  }
+});
+
+/**
+ * ── STRUKTUREN MÅ FØLGE DELENE ────────────────────────────────────────────
+ *
+ * Instruksen gir Claude to kart: hvilke DELER arket har, og hva hver del
+ * skal inneholde. Er de ikke like lange, peker de på hver sin ting.
+ *
+ * Dette skjedde: da dokumentet gikk fra markdown til struktur, ble `skisse`
+ * oppdatert og `struktur` glemt. Modellen fikk det nye oppsettet og den
+ * gamle prosaen samtidig, og skrev dokumenttypen som overskrift i tillegg
+ * til den arket allerede tegner. Ordet sto to ganger på samme side.
+ */
+test("én strukturlinje per del, i samme rekkefølge", () => {
+  for (const m of MALER) {
+    const deler = deleneI(m);
+    assert.equal(
+      m.struktur.length,
+      deler.length,
+      `${m.slug}: ${deler.length} deler, men ${m.struktur.length} strukturlinjer`,
+    );
+    deler.forEach((d, i) => {
+      assert.ok(
+        m.struktur[i].toUpperCase().startsWith(d.toUpperCase()),
+        `${m.slug}: strukturlinje ${i + 1} skulle begynt med ${d.toUpperCase()}`,
+      );
+    });
+  }
+});
+
+/**
+ * ── INGEN FELT UTEN JOBB ──────────────────────────────────────────────────
+ *
+ * Et felt som ingen strukturlinje eller regel nevner, havner i
+ * INFORMASJONEN og blir plassert der Claude finner det for godt. Da er det
+ * ikke et felt, det er en gjetning — og den som fylte det ut, tror likevel
+ * at det ble brukt.
+ */
+test("hvert felt er nevnt i oppdraget, strukturen eller reglene", () => {
+  for (const m of MALER) {
+    const tekst = [m.oppdrag, ...m.struktur, ...(m.regler ?? [])]
+      .join(" ")
+      .toLowerCase();
+    for (const f of m.felt) {
+      assert.ok(
+        tekst.includes(f.etikett.toLowerCase()),
+        `${m.slug}: feltet «${f.etikett}» er ikke nevnt noe sted, og blir dermed plassert på slump`,
+      );
+    }
+  }
+});
+
+/**
+ * Hodet tegnes av arket. Sier ikke oppdraget fra, skriver Claude
+ * dokumenttypen som overskrift i tillegg.
+ */
+test("oppdraget sier fra om at hodet allerede finnes", () => {
+  for (const m of MALER) {
+    assert.match(
+      m.oppdrag,
+      /Ikke gjenta noe av det/,
+      `${m.slug}: oppdraget advarer ikke mot å gjenta hodet`,
+    );
+    assert.match(m.oppdrag, /Overskriften er/, `${m.slug}: hva er overskriften?`);
+  }
+});
+
+test("språkreglene og avviksregelen står i hver instruks", () => {
+  for (const m of MALER) {
+    const ny = byggInstruks(m, {});
+    assert.match(ny, /ikke et salgsdokument/, m.slug);
+    assert.match(ny, /Forbudte ord og vendinger/, m.slug);
+    assert.match(ny, /Skriv fullstendige setninger/, m.slug);
+
+    const rettet = byggRettelse(
+      m,
+      {},
+      { overskrift: "T", undertittel: "U", deler: [{ type: deleneI(m)[0] }] },
+      "Legg til en seksjon.",
+    );
+    assert.match(rettet, /EN RETTELSE, IKKE EN NY MAL/, m.slug);
+    assert.match(rettet, /ikke et salgsdokument/, m.slug);
   }
 });
