@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse, type NextRequest } from "next/server";
 
-import { arkSkjema, deleneI, lesArk } from "@/content/arktype";
+import { arkSkjema, deleneI, lesArk, lesSvar } from "@/content/arktype";
 import { briefTilTekst, type Brief } from "@/content/brieftype";
 import { byggInstruks, byggRettelse, malFraSlug } from "@/content/maler";
 import {
@@ -69,6 +69,12 @@ const MODELL = "claude-opus-5";
 const MAKS_TOKENS = 12_000;
 const FELTGRENSE = 4_000;
 const RETTELSEGRENSE = 1_500;
+/*
+ * Så mange tidligere rettelser følger med som stående instrukser. Ti runder
+ * er allerede et dokument som burde vært startet på nytt, og taket holder
+ * instruksen innenfor INSTRUKSGRENSE uansett hvor lenge noen holder på.
+ */
+const MAKS_TIDLIGERE = 10;
 const INSTRUKSGRENSE = 32_000;
 
 /*
@@ -98,6 +104,22 @@ const BILDETYPER = ["image/png", "image/jpeg", "image/webp", "image/gif"];
 
 const VERKTOY = "lever_dokument";
 
+/**
+ * Tom saldo hos Anthropic.
+ *
+ * Kommer som 400 invalid_request_error, altså i samme kategori som «du
+ * sendte noe ugyldig» — og SDK-en har ingen egen feilklasse for den. Uten
+ * dette oppslaget ser en tom konto ut som en programfeil, og produsenten
+ * prøver igjen til hen gir opp.
+ */
+function erTomSaldo(e: unknown): boolean {
+  return (
+    e instanceof Anthropic.APIError &&
+    e.status === 400 &&
+    /credit balance is too low/i.test(String(e.message))
+  );
+}
+
 export async function POST(foresporsel: NextRequest) {
   const bruker = await hentBruker();
   if (!bruker) {
@@ -125,6 +147,7 @@ export async function POST(foresporsel: NextRequest) {
     research: tidligereResearch,
     friskResearch,
     bilder,
+    rettelser: forrigeRettelser,
   } = (kropp ?? {}) as Record<string, unknown>;
 
   const mal = typeof slug === "string" ? malFraSlug(slug) : undefined;
@@ -152,6 +175,20 @@ export async function POST(foresporsel: NextRequest) {
     typeof rettelse === "string"
       ? rettelse.trim().slice(0, RETTELSEGRENSE)
       : "";
+
+  /*
+   * De tidligere rettelsene, fra klienten og derfor uten tillit. Samme
+   * behandling som den nye: samme lengdetak per rettelse, og et tak på
+   * antallet, slik at en klient ikke kan blåse opp instruksen med hundre
+   * runder som aldri fant sted.
+   */
+  const tidligereRettelser = Array.isArray(forrigeRettelser)
+    ? forrigeRettelser
+        .filter((r): r is string => typeof r === "string")
+        .map((r) => r.trim().slice(0, RETTELSEGRENSE))
+        .filter(Boolean)
+        .slice(-MAKS_TIDLIGERE)
+    : [];
 
   /*
    * VEDLEGGET SLIPPES BARE INN DER MALEN BER OM DET.
@@ -366,6 +403,7 @@ export async function POST(foresporsel: NextRequest) {
                 tekstRettelse,
                 vedlegg !== null,
                 grunnlaget(),
+                tidligereRettelser,
               )
             : byggInstruks(mal, rene, vedlegg !== null, grunnlaget());
 
@@ -482,6 +520,13 @@ export async function POST(foresporsel: NextRequest) {
           return kontroller.close();
         }
 
+        /*
+         * Svaret går som sin egen hendelse, og FØR arket. Klienten setter
+         * arket sist fordi det er det som utløser rullingen ned til
+         * resultatet — da står beskjeden allerede der når produsenten
+         * kommer fram.
+         */
+        send({ svar: lesSvar(bruk?.input) });
         send({ ark });
         kontroller.close();
 
@@ -505,9 +550,20 @@ export async function POST(foresporsel: NextRequest) {
               ? "API-nøkkelen ble ikke godtatt. Sjekk ANTHROPIC_API_KEY i Vercel."
               : e instanceof Anthropic.RateLimitError
                 ? "For mange forespørsler akkurat nå. Vent et minutt og prøv igjen."
-                : e instanceof Anthropic.APIError
-                  ? `Feil fra API-et (${e.status}). Prøv igjen.`
-                  : "Noe gikk galt underveis. Prøv igjen.",
+                : /*
+                   * ── «PRØV IGJEN» ER FEIL SVAR PÅ TOM SALDO ──────────────
+                   *
+                   * 25.09.2026 fikk en produsent «Feil fra API-et (400).
+                   * Prøv igjen.» seks ganger på rad. Det var tom saldo hos
+                   * Anthropic, og ingen mengde forsøk kunne løst det.
+                   * Meldingen sendte hen i en løkke i stedet for til
+                   * riktig sted.
+                   */
+                  erTomSaldo(e)
+                  ? "Kontoen hos Anthropic er tom for kreditt. Fyll på under Plans & Billing — det hjelper ikke å prøve igjen."
+                  : e instanceof Anthropic.APIError
+                    ? `Feil fra API-et (${e.status}). Prøv igjen.`
+                    : "Noe gikk galt underveis. Prøv igjen.",
         });
         kontroller.close();
       }

@@ -3,9 +3,10 @@
 import { useMemo, useRef, useState } from "react";
 
 import { Arbeid } from "@/components/Arbeid";
+import { Beskjed } from "@/components/Beskjed";
 import { Grunnlag } from "@/components/Grunnlag";
 import { Arkramme, type Arkhandtak } from "@/components/Arkramme";
-import { deleneI, type Ark as ArkData } from "@/content/arktype";
+import { deleneI, type Ark as ArkData, type Svar } from "@/content/arktype";
 import type { Brief } from "@/content/brieftype";
 import type { Research } from "@/content/researchtype";
 import type { Publisering } from "@/lib/supermetrics";
@@ -167,6 +168,12 @@ export function Malskjema({ mal }: { mal: Mal }) {
    */
   const [utgaver, setUtgaver] = useState<ArkData[]>([]);
   const [rettelser, setRettelser] = useState<string[]>([]);
+  /*
+   * Svaret hører til utgaven det kom med, ikke til skjemaet. Bytter
+   * produsenten til utgave 3, skal beskjeden fra utgave 3 stå der — ikke
+   * den fra den siste. Derfor en liste, indeksert som `utgaver`.
+   */
+  const [svar, setSvar] = useState<(Svar | null)[]>([]);
   const [vist, setVist] = useState(0);
 
   const [tilstand, setTilstand] = useState<Tilstand>("klar");
@@ -403,7 +410,9 @@ export function Malskjema({ mal }: { mal: Mal }) {
             : {}),
           ...(research && !friskResearch ? { research } : {}),
           ...(friskResearch ? { friskResearch: true } : {}),
-          ...(retting && nyeste ? { forrige: nyeste, rettelse: retting } : {}),
+          ...(retting && nyeste
+            ? { forrige: nyeste, rettelse: retting, rettelser }
+            : {}),
         }),
         signal: styring.signal,
       });
@@ -440,6 +449,8 @@ export function Malskjema({ mal }: { mal: Mal }) {
       const dekoder = new TextDecoder();
       let rest = "";
       let fikk = false;
+      /* Svaret kommer rett før arket, og lagres sammen med det. */
+      let ferskSvar: Svar | null = null;
 
       for (;;) {
         const { done, value } = await leser.read();
@@ -452,6 +463,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
           if (!l.trim()) continue;
           let h: {
             fase?: "research" | "epost" | "skriver";
+            svar?: Svar;
             brief?: Brief;
             publisering?: Publisering;
             sok?: string;
@@ -471,6 +483,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
             const q = h.sok;
             setSok((s) => [...s, q]);
           }
+          if (h.svar) ferskSvar = h.svar;
           if (h.brief) setBrief(h.brief);
           if (h.publisering) setPublisering(h.publisering);
           if (h.research) {
@@ -485,10 +498,13 @@ export function Malskjema({ mal }: { mal: Mal }) {
           }
           if (h.ark) {
             fikk = true;
+            const medSvar = ferskSvar;
             setUtgaver((u) => {
               setVist(u.length);
               return [...u, h.ark as ArkData];
             });
+            /* Samme indeks som utgaven den hører til. */
+            setSvar((v) => [...v, medSvar]);
             if (retting) setRettelser((r) => [...r, retting]);
           }
         }
@@ -820,7 +836,21 @@ export function Malskjema({ mal }: { mal: Mal }) {
                   type="button"
                   onClick={() =>
                     void kjor(
-                      "Dokumentet får ikke plass på én side. Kort det ned til det som faktisk må stå der: fjern rader og punkter kunden ikke trenger før dagen, og kort ned de lengste formuleringene. Ikke fjern en hel seksjon.",
+                      /*
+                       * ── ORDLYDEN HER GJORDE SKADE ─────────────────────
+                       *
+                       * Den sa «fjern rader og punkter kunden ikke trenger
+                       * før dagen». Modellen fjernet da en seksjon om
+                       * voiceover som produsenten uttrykkelig hadde bedt om
+                       * to runder tidligere — helt etter instruksen, og helt
+                       * feil. Knappen visste ingenting om hva som var
+                       * bestilt, så den ba om et kutt uten å si hva som var
+                       * fredet.
+                       *
+                       * Nå ber den om det motsatte først: behold det som er
+                       * bestilt, korte det heller ned.
+                       */
+                      "Dokumentet får ikke plass på én side. Kort det ned uten å fjerne noe jeg har bedt om — det skal heller formuleres kortere eller slås sammen. Ta plassen fra det ingen har bedt om: rader og punkter kunden ikke trenger før dagen, og de lengste formuleringene. Ikke fjern en hel seksjon. Si i beskjeden hva du kortet ned og hva du eventuelt måtte ta bort.",
                     )
                   }
                   className="h-fit shrink-0 rounded-interaktiv border border-[color:var(--varsel-kant)] bg-kort px-3.5 py-2 text-[0.875rem] font-medium text-varsel transition-colors hover:border-varsel motion-reduce:transition-none"
@@ -849,6 +879,14 @@ export function Malskjema({ mal }: { mal: Mal }) {
               handtakRef={arkRef}
               påOverflyt={setForMye}
             />
+
+            {/*
+              Beskjeden hører til utgaven som vises, ikke til den siste.
+              Blar produsenten tilbake til utgave 3, skal begrunnelsen for
+              utgave 3 følge med — ellers leser hen en forklaring på et
+              dokument som ikke står foran hen.
+            */}
+            <Beskjed svar={svar[vist] ?? null} />
 
             {/*
               SAMTALEN LIGGER UNDER ARKET, IKKE I EN SIDEPANEL.

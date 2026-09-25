@@ -402,3 +402,77 @@ test("grunnlagsfelt står verken under INFORMASJONEN eller IKKE OPPGITT", () => 
     }
   }
 });
+
+/**
+ * ── DET PRODUSENTEN HAR BEDT OM, SKAL IKKE KUNNE FORSVINNE ────────────────
+ *
+ * 25.09.2026: en produsent ba om voiceover per opptak i runde tre, trykket
+ * «Kort ned så det får plass» i runde fem, og måtte spørre «nå er voice over
+ * borte?» i runde seks.
+ *
+ * Runde fem så bare dokumentet og ordene «kort ned». Ingenting fortalte
+ * modellen at voiceover-seksjonen var bestilt og ikke påfunnet, og da er den
+ * det billigste å kutte: den er lang, og den står ikke i strukturen.
+ */
+test("tidligere rettelser følger med som stående instrukser", () => {
+  const mal = MALER[0];
+  const ark = {
+    overskrift: "Tittel",
+    undertittel: "Under",
+    deler: [],
+  };
+  const tidligere = [
+    "Det skal være profesjonell voiceover. Lag manus til voiceover.",
+    "Gjør betraktelig kortere.",
+  ];
+
+  const ut = byggRettelse(
+    mal,
+    {},
+    ark,
+    "Kort ned så det får plass.",
+    false,
+    "",
+    tidligere,
+  );
+
+  for (const t of tidligere) {
+    assert.ok(ut.includes(t), `den stående instruksen «${t}» følger ikke med`);
+  }
+  assert.match(
+    ut,
+    /KAN DU IKKE FJERNE FOR Å SPARE PLASS/,
+    "listen står der uten regelen som gjør den bindende",
+  );
+});
+
+/**
+ * Uten tidligere rettelser skal blokka ikke stå der i det hele tatt. En tom
+ * overskrift med ingenting under er støy i en instruks som allerede er lang.
+ */
+test("stående-instrukser-blokka utelates når det ikke finnes noen", () => {
+  const ut = byggRettelse(
+    MALER[0],
+    {},
+    { overskrift: "T", undertittel: "U", deler: [] },
+    "Bytt navn.",
+    false,
+    "",
+    ["", "   "],
+  );
+  assert.ok(!ut.includes("STÅENDE INSTRUKSER"));
+});
+
+/**
+ * Kuttet i seg selv var forsvarlig — ensideren krever at noe vikes. At det
+ * skjedde i stillhet, var det ikke.
+ */
+test("hver instruks krever at et kutt blir sagt fra om", () => {
+  for (const m of MALER) {
+    assert.match(
+      byggInstruks(m, {}),
+      /TOK DU NOE BORT FOR Å FÅ PLASS, SKAL DET STÅ I BESKJEDEN/,
+      `${m.slug}: ingenting krever at kutt blir nevnt`,
+    );
+  }
+});

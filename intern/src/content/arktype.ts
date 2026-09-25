@@ -53,6 +53,42 @@ export type Del = {
   felter?: Signatar[];
 };
 
+/**
+ * Det Claude sier til produsenten, ved siden av dokumentet.
+ *
+ * ── HVORFOR DEN MÅTTE FINNES ──────────────────────────────────────────────
+ *
+ * Bestilt 25.09.2026, etter at en produsent ba om voiceover per opptak, og
+ * så at det forsvant to runder senere: «her tar den bort tekst for å passe
+ * på en side, men den tar bort det jeg vil ha. tydeligvis behov for en
+ * liten seksjon der du kan svare produsenten for å eliminere
+ * misforståelser og svare hvorfor ting er som de er, eller be produsenten
+ * avklare ting direkte.»
+ *
+ * Det var to feil i samme hendelse. Den ene var at noe ble fjernet som ikke
+ * skulle fjernes. Den andre er den alvorlige: det skjedde i stillhet.
+ * Dokumentet er en ensider, og noe MÅ av og til vike — men en produsent som
+ * ikke får vite hva som gikk, oppdager det når kunden gjør det.
+ *
+ * Ensideren har ikke plass til en begrunnelse, og skal ikke ha det: kunden
+ * skal ikke lese om våre avveininger. Derfor ligger svaret utenfor arket.
+ * Det vises i vinduet, det lastes ikke ned, og det følger ikke med
+ * dokumentet videre.
+ */
+export type Svar = {
+  /**
+   * Hva Claude vil si. Hva som ble tatt bort for å få plass og hvorfor,
+   * hvorfor et valg ble tatt, hva som ble forstått annerledes enn ventet.
+   * Tom streng når det ikke er noe å si — og det er et gyldig svar.
+   */
+  beskjed: string;
+  /**
+   * Det produsenten må avgjøre. Ting Claude ikke kan svare på uten å gjette,
+   * og som er for viktige til å gjettes.
+   */
+  avklaringer: string[];
+};
+
 export type Ark = {
   /** Står i det mørke feltet øverst. Kort — det er en tittel, ikke en ingress. */
   overskrift: string;
@@ -85,6 +121,10 @@ export const TAK = {
   kortTekst: 165,
   spalter: 2,
   felter: 2,
+  /** Svaret til produsenten. Se `Svar`. */
+  beskjed: 700,
+  avklaringer: 4,
+  avklaring: 220,
 } as const;
 
 /**
@@ -138,6 +178,22 @@ export function arkSkjema(mal: Mal): Record<string, unknown> {
       overskrift: {
         type: "string",
         description: `Tittelen øverst. Maks ${TAK.overskrift} tegn.`,
+      },
+      /*
+       * Svaret ligger i samme verktøykall som dokumentet, og ikke i et eget.
+       * Grunnen er at det bare er verdt noe hvis det beskriver DETTE
+       * dokumentet: hva som faktisk ble kuttet, hva som faktisk ble valgt.
+       * Et kall til bak gir en beskrivelse av noe modellen husker, ikke av
+       * noe den nettopp gjorde.
+       */
+      beskjed: {
+        type: "string",
+        description: `Til produsenten, ikke til kunden. Står ved siden av dokumentet og lastes ikke ned. Skriv her hva du tok bort for å få plass og hvorfor, hvorfor du valgte som du gjorde der det ikke er åpenbart, og hva du forsto annerledes enn produsenten kanskje mente. Tom streng hvis du ikke har noe å si — ikke skriv noe for å ha skrevet noe. Maks ${TAK.beskjed} tegn.`,
+      },
+      avklaringer: {
+        type: "array",
+        items: { type: "string" },
+        description: `Det produsenten må avgjøre, som du ikke kan avgjøre uten å gjette. Ett spørsmål per punkt, stilt så det kan besvares med én setning. Tom liste hvis ingenting er uavklart. Maks ${TAK.avklaringer} punkter.`,
       },
       undertittel: {
         type: "string",
@@ -234,6 +290,34 @@ export function delforklaring(mal: Mal): string {
  * det data som har vært utenfor huset. Én funksjon som gjør det trygt begge
  * veier er bedre enn to som nesten gjør det.
  */
+/**
+ * Leser svaret til produsenten ut av samme verktøykall som dokumentet.
+ *
+ * Egen funksjon, og ikke en del av `lesArk`, fordi de to har ulik skjebne:
+ * arket sendes tilbake til serveren ved neste rettelse og må valideres på
+ * vei inn igjen, mens svaret bare vises én gang og aldri kommer tilbake.
+ */
+export function lesSvar(rått: unknown): Svar {
+  const tom = { beskjed: "", avklaringer: [] };
+  if (!rått || typeof rått !== "object") return tom;
+  const o = rått as Record<string, unknown>;
+
+  return {
+    beskjed:
+      typeof o.beskjed === "string"
+        ? o.beskjed.trim().slice(0, TAK.beskjed)
+        : "",
+    avklaringer: Array.isArray(o.avklaringer)
+      ? o.avklaringer
+          .slice(0, TAK.avklaringer)
+          .map((a) =>
+            typeof a === "string" ? a.trim().slice(0, TAK.avklaring) : "",
+          )
+          .filter(Boolean)
+      : [],
+  };
+}
+
 export function lesArk(rått: unknown, mal: Mal): Ark | null {
   if (!rått || typeof rått !== "object") return null;
   const o = rått as Record<string, unknown>;

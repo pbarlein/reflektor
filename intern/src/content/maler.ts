@@ -935,6 +935,16 @@ function ensiderregelen(): string {
     `- Maks ${TAK.punkter} punkter i en liste, og maks ${TAK.punkt} tegn i hvert.`,
     `- Undertittelen: maks ${TAK.undertittel} tegn.`,
     "Må du velge, velg bort det leseren kan spørre om, og behold det hen må vite før hen står der. I tvil: ta det bort.",
+    /*
+     * ── DET SOM KUTTES, SKAL SIES HØYT ────────────────────────────────────
+     *
+     * Ensiderregelen har alltid virket. Problemet var at den virket i
+     * stillhet: en produsent ba om voiceover per opptak, plassregelen spiste
+     * den to runder senere, og hen oppdaget det ved å lese dokumentet på
+     * nytt. Kuttet i seg selv var forsvarlig. At det ikke sto noe sted, var
+     * det ikke.
+     */
+    "TOK DU NOE BORT FOR Å FÅ PLASS, SKAL DET STÅ I BESKJEDEN til produsenten — hva, og hvorfor akkurat det. Beskjeden er ikke en del av dokumentet og koster ingen plass på arket. Et kutt ingen får vite om, oppdages av kunden.",
     "Slå sammen heller enn å kutte: to like rader blir én rad med begge navnene.",
     "Bruk plassen du har, men ikke fyll den for å fylle den. Én tom tredjedel er bedre enn tre rader ingen trenger.",
   ].join("\n");
@@ -1084,13 +1094,45 @@ export function byggRettelse(
   rettelse: string,
   medVedlegg = false,
   research = "",
+  /**
+   * Alle rettelsene produsenten har gitt før denne, eldste først.
+   *
+   * ── HVORFOR DE MÅ FØLGE MED ───────────────────────────────────────────
+   *
+   * 25.09.2026 ba en produsent om voiceover per opptak i runde tre. I runde
+   * fem trykket hen «Kort ned så det får plass». I runde seks var
+   * voiceoveren borte, og hen måtte spørre «nå er voice over borte?».
+   *
+   * Årsaken var ikke at modellen var uenig. Den var at runde fem bare så
+   * dokumentet og ordene «kort ned» — ingenting fortalte den at
+   * voiceover-seksjonen var noe produsenten uttrykkelig hadde bedt om, og
+   * ikke noe malen hadde funnet på. Da er den det billigste å kutte: den
+   * er lang, og den står ikke i strukturen.
+   *
+   * Med hele listen til stede er en tidligere rettelse en stående
+   * instruks, ikke et spor i et dokument som kan viskes ut av den neste.
+   */
+  tidligere: readonly string[] = [],
 ): string {
+  const staaende = tidligere.filter((t) => t.trim());
   return [
     byggInstruks(mal, verdier, medVedlegg, research),
     "",
     "── DOKUMENTET SLIK DET STÅR NÅ ──",
     JSON.stringify(forrige),
     "",
+    staaende.length
+      ? [
+          "── STÅENDE INSTRUKSER FRA PRODUSENTEN ──",
+          "Dette har produsenten bedt om tidligere i arbeidet med dette dokumentet. Alt sammen gjelder fortsatt.",
+          ...staaende.map((t, i) => `${i + 1}. ${t}`),
+          "",
+          "DISSE KAN DU IKKE FJERNE FOR Å SPARE PLASS. Du kan formulere dem kortere, slå dem sammen, eller flytte dem — men det produsenten har bedt om, skal fortsatt være der. Trenger du plass, tar du det fra det ingen har bedt om.",
+          "Kolliderer en ny rettelse med en stående instruks, gjelder den nye. Si i beskjeden at den erstattet den gamle, så produsenten vet det.",
+          "Får du det umulig til å få plass til alt, tar du bort det minst viktige og SIER i beskjeden nøyaktig hva du tok bort og hvorfor. Aldri i stillhet.",
+          "",
+        ].join("\n")
+      : "",
     "── ENDRINGEN SOM SKAL GJØRES ──",
     rettelse,
     "",
@@ -1109,8 +1151,10 @@ export function byggRettelse(
      * De skal ikke kunne forhandles bort i en tekstboks.
      */
     "DETTE ER EN RETTELSE, IKKE EN NY MAL. Dokumentet beholder delene sine, rekkefølgen på dem, og standarden malen setter. Ber rettelsen om noe utenfor malen, gjør du det for dette ene dokumentet — men du endrer ikke oppsettet, du fjerner ikke en del, og du bryter ingen av reglene over.",
-    "Kan rettelsen ikke gjøres uten å bryte en av reglene, gjør du så mye av den som lar seg gjøre, og skriver i den delen det gjelder hva du ikke kunne gjøre og hvorfor. Ikke gjør det i stillhet.",
-  ].join("\n");
+    "Kan rettelsen ikke gjøres uten å bryte en av reglene, gjør du så mye av den som lar seg gjøre, og sier i beskjeden til produsenten hva du ikke kunne gjøre og hvorfor. Ikke gjør det i stillhet.",
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 /**

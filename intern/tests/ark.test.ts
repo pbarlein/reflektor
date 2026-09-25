@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { TAK, arkSkjema, deleneI, lesArk } from "../src/content/arktype.ts";
+import { TAK, arkSkjema, deleneI, lesArk, lesSvar } from "../src/content/arktype.ts";
 import { MALER, byggRettelse, malFraSlug } from "../src/content/maler.ts";
 
 /**
@@ -149,4 +149,56 @@ test("instruksen sier hvilke deler malen har, og hvor mye som får plass", () =>
       `${m.slug}: takhøyden for rader står ikke i instruksen`,
     );
   }
+});
+
+/**
+ * ── SVARET TIL PRODUSENTEN ────────────────────────────────────────────────
+ *
+ * Det kommer i samme verktøykall som dokumentet, fra en modell, og går rett
+ * på skjermen. Samme behandling som alt annet som kommer den veien: kappes,
+ * og tåler hva som helst.
+ */
+test("svaret leses og kappes, og tåler søppel", () => {
+  const langt = "a".repeat(5000);
+  const s = lesSvar({
+    beskjed: `  ${langt}  `,
+    avklaringer: [" Hvem stiller fra kunden? ", "", 42, null, "b", "c", "d", "e"],
+  });
+
+  assert.equal(s.beskjed.length, TAK.beskjed);
+  assert.ok(s.avklaringer.length <= TAK.avklaringer);
+  assert.equal(s.avklaringer[0], "Hvem stiller fra kunden?");
+  assert.ok(
+    s.avklaringer.every((a) => a.length > 0),
+    "tomme punkter skal ikke bli til tomme kulepunkter på skjermen",
+  );
+});
+
+test("et manglende eller ugyldig svar er tomt, ikke en feil", () => {
+  for (const rått of [null, undefined, 42, "nei", [], {}, { beskjed: 7 }]) {
+    const s = lesSvar(rått);
+    assert.equal(s.beskjed, "");
+    assert.deepEqual(s.avklaringer, []);
+  }
+});
+
+/**
+ * Svaret er til produsenten og skal aldri havne på arket. Sniker det seg inn
+ * i `Ark`, blir Reflektors egne avveininger stående i dokumentet kunden får.
+ */
+test("svaret blir ikke en del av arket", () => {
+  const mal = MALER[0];
+  const ark = lesArk(
+    {
+      overskrift: "Tittel",
+      undertittel: "Under",
+      deler: deleneI(mal).map((type) => ({ type, tittel: "T", tekst: "T" })),
+      beskjed: "Jeg tok bort voiceover-seksjonen for å få plass.",
+      avklaringer: ["Hvem stiller fra kunden?"],
+    },
+    mal,
+  );
+  assert.ok(ark);
+  assert.ok(!JSON.stringify(ark).includes("voiceover"));
+  assert.ok(!JSON.stringify(ark).includes("Hvem stiller"));
 });

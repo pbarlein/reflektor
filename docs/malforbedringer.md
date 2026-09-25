@@ -97,3 +97,37 @@ Claude-koblingen (produktkode CNCT), ikke API-produktet, og modulen er
 mørk uten `SUPERMETRICS_API_KEY`. Kontrakten er lest i dokumentasjonen og
 kjørt mot en lokal etterligning — ikke mot en ekte nøkkel. Kommentaren øverst
 i `intern/src/lib/supermetrics.ts` sier hva som gjenstår.
+
+## 25.09.2026 — kutt i stillhet, og et svar tilbake til produsenten
+
+**Hendelsen:** en produsent ba om profesjonell voiceover med manus per
+opptak i runde tre. I runde fem trykket hen «Kort ned så det får plass». I
+runde seks måtte hen spørre «nå er voice over borte?».
+
+**To feil, og den andre er den alvorlige:**
+
+1. Runde fem så bare dokumentet og ordene «kort ned». Ingenting fortalte
+   modellen at voiceover-seksjonen var bestilt og ikke påfunnet, så den var
+   det billigste å kutte: lang, og ikke nevnt i strukturen. Knappens egen
+   ordlyd — «fjern rader og punkter kunden ikke trenger før dagen» — pekte
+   rett på den.
+2. Det skjedde i stillhet. Ensideren KREVER at noe vikes; et kutt ingen får
+   vite om, oppdages av kunden.
+
+**Hva som ble gjort:**
+
+- Alle tidligere rettelser følger med som STÅENDE INSTRUKSER i hver ny
+  runde. De kan formuleres kortere eller slås sammen, men ikke fjernes for
+  å spare plass. Tak på ti.
+- Nytt felt i verktøyet: `beskjed` og `avklaringer` — et svar til
+  produsenten ved siden av dokumentet. Det vises i vinduet, lastes ikke
+  ned, og koster ingen plass på arket. Der skal det stå hva som ble kuttet
+  og hvorfor, hvorfor et valg ble tatt, og hva produsenten må avgjøre.
+- «Kort ned»-knappen ber nå om det motsatte først: behold det som er
+  bestilt, korte det heller ned.
+- Tre tester holder det på plass, blant annet at svaret aldri havner i
+  `Ark` — Reflektors avveininger skal ikke stå i dokumentet kunden får.
+
+**Regelen dette er et tilfelle av:** en modell som må velge bort noe, velger
+bort det ingenting forsvarer. Skal noe overleve en innstramming, må det stå
+skrevet at det er bestilt.
