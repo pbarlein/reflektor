@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import { Container } from "@/components/Container";
-import { Malminiatyr } from "@/components/Malminiatyr";
+import { Malvelger, type Malrad } from "@/components/Malvelger";
 import { MALER } from "@/content/maler";
 import { FASER } from "@/content/maltype";
 import { krevBruker } from "@/lib/tilgang";
@@ -12,18 +11,26 @@ export const metadata: Metadata = { title: "Lag dokument" };
 /**
  * Oversikten over maler.
  *
- * KORTENE VISER FORMEN PÅ DOKUMENTET. Et navn alene svarer ikke på «er det
- * denne jeg skal ha?» — en miniatyr av arket gjør det på et halvt sekund,
- * særlig for den som har sendt dokumentet før og husker hvordan det så ut.
+ * ── DETTE ER ET VERKTØY, IKKE EN UTSTILLING ───────────────────────────────
  *
- * Hvert kort sier også hvem som vanligvis lager det og når. Det er den
- * informasjonen som avgjør om malen angår deg i det hele tatt.
+ * Siden var et rutenett med miniatyrer av arkene. Den ble revet 27.09.2026:
+ * «jeg synes thumbnailene er stygge og tar mye plass på skjermen».
  *
- * ── GRUPPERT ETTER FASE, IKKE LISTET FLATT ────────────────────────────────
+ * Kritikken traff noe mer enn utseendet. Miniatyrene tegnes av `skisse`, og
+ * sju av åtte maler begynner med de samme delene. Åtte kort viste dermed i
+ * praksis det samme bildet åtte ganger, mens de tok 180 piksler hver og
+ * dyttet siden opp i 2 529 piksler — to og en halv skjerm for åtte valg.
+ * Det største elementet på hvert kort bar minst informasjon.
  *
- * Åtte kort på rad er åtte valg. Tre bolker med to til tre kort i hver er
- * ett valg og så ett til, og du vet allerede hvilken bolk du er i: du står
- * enten foran opptaket, på det, eller etter det.
+ * En produsent kommer ikke hit for å bli inspirert. Hen vet hva hen skal
+ * lage, og skal dit. Derfor er alt synlig på én skjerm nå, og derfor kan
+ * hele valget tas fra tastaturet. Se `Malvelger` for hvorfor det er formen.
+ *
+ * ── GRUPPERINGEN BLE BEHOLDT ──────────────────────────────────────────────
+ *
+ * Åtte rader på rad er åtte valg. Tre bolker er ett valg og så ett til, og
+ * du vet allerede hvilken bolk du er i: du står enten foran opptaket, på
+ * det, eller etter det.
  *
  * Grupperingen er også grensen. Passer et dokument ikke inn i «før, på
  * eller etter opptak», er det ikke et produksjonsdokument, og da skal det
@@ -32,66 +39,52 @@ export const metadata: Metadata = { title: "Lag dokument" };
 export default async function Dokumenter() {
   await krevBruker();
 
+  /*
+   * Bare det raden viser sendes over til klienten. `MALER` bærer også
+   * felter, struktur, regler og eksempler — flere titalls kilobyte som
+   * ingen på denne siden skal bruke til noe.
+   */
+  const rader: Malrad[] = MALER.map((m) => ({
+    slug: m.slug,
+    navn: m.navn,
+    kort: m.kort,
+    ansvarlig: m.ansvarlig,
+    naar: m.naar,
+    fase: m.fase,
+  }));
+
   return (
     <Container>
       <div className="pt-8 pb-16 sm:pt-12">
-        <p className="font-sans text-xs font-medium tracking-[0.12em] text-aksent-tekst uppercase">
-          Lag dokument
-        </p>
-        <h1 className="mt-3 max-w-[22ch] text-[clamp(1.875rem,4.4vw,3rem)] tracking-[-0.02em]">
-          Velg malen, fyll ut skjemaet, få dokumentet
-        </h1>
-        <p className="mt-4 max-w-[62ch] text-[1.0625rem] leading-relaxed text-pretty text-blekk-dempet">
-          Skjemaet samler det dokumentet faktisk trenger, og setter det sammen
-          med Reflektors standard til én instruks du gir til Claude. Forskjellen
-          på et brukbart og et ubrukelig dokument er sjelden formuleringene —
-          det er at noen glemte publiseringsmåneden.
-        </p>
+        {/*
+          TOPPEN ER KORTET NED.
+          Den gamle hadde en overskrift på tre linjer og fire linjer brødtekst
+          over foldet. Det er en tekst man leser én gang og ruller forbi hver
+          gang etterpå — og på et verktøy man åpner ukentlig, er det den
+          dårligste bruken av den mest verdifulle plassen på siden.
+        */}
+        {/*
+          Listen har sin egen bredde.
+          Containeren er 1180 piksler — riktig for en artikkel, altfor bredt
+          for en rad med et navn og en rolle. Uten dette taket blir det en
+          håndsbredd tomrom midt i hver rad.
+        */}
+        <div className="max-w-[58rem]">
+          <Malvelger maler={rader} faser={FASER}>
+            <p className="font-sans text-xs font-medium tracking-[0.12em] text-aksent-tekst uppercase">
+              Lag dokument
+            </p>
+            <h1 className="mt-2.5 text-[clamp(1.75rem,3.4vw,2.5rem)] tracking-[-0.02em]">
+              Velg mal
+            </h1>
+            <p className="mt-2 max-w-[54ch] text-[1.0625rem] leading-relaxed text-pretty text-blekk-dempet">
+              Skjemaet samler det dokumentet faktisk trenger, så ingen glemmer
+              publiseringsmåneden.
+            </p>
+          </Malvelger>
+        </div>
 
-        {FASER.map((fase) => {
-          const iFasen = MALER.filter((m) => m.fase === fase);
-          if (!iFasen.length) return null;
-          return (
-            <section key={fase} className="mt-12 sm:mt-14">
-              <h2 className="border-b border-kant-regel pb-3 font-sans text-xs font-medium tracking-[0.12em] text-blekk-dempet uppercase">
-                {fase}
-              </h2>
-              <ul className="mt-7 grid gap-x-6 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
-                {iFasen.map((m) => (
-                  <li key={m.slug}>
-                    <Link
-                      href={`/dokument/${m.slug}`}
-                      className="group block rounded-flate focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-aksent"
-                    >
-                      {/*
-                        Miniatyren beskjæres i toppen av arket. Et helt A4 i
-                        et kort blir frimerkestort; den øverste tredjedelen
-                        er der formen faktisk leses.
-                      */}
-                      <div className="aspect-[4/3] overflow-hidden rounded-flate border border-kant bg-white transition-[border-color,transform] group-hover:-translate-y-0.5 group-hover:border-kant-sterk motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">
-                        <div className="h-[178%] w-full">
-                          <Malminiatyr skisse={m.skisse} />
-                        </div>
-                      </div>
-
-                      <h3 className="mt-4 text-[1.25rem] tracking-[-0.015em] transition-colors group-hover:text-aksent-tekst motion-reduce:transition-none">
-                        {m.navn}
-                      </h3>
-                      <p className="mt-1.5 text-[0.9375rem] leading-relaxed text-pretty text-blekk-dempet">
-                        {m.kort}
-                      </p>
-                      <p className="mt-2.5 text-[0.8125rem] text-blekk-svak">
-                        {m.ansvarlig} · {m.naar}
-                      </p>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          );
-        })}
-
-        <p className="mt-14 max-w-[62ch] border-t border-kant-regel pt-5 text-[0.9375rem] leading-relaxed text-pretty text-blekk-svak">
+        <p className="mt-12 max-w-[62ch] border-t border-kant-regel pt-5 text-[0.9375rem] leading-relaxed text-pretty text-blekk-svak">
           Malene dekker produksjonen, og bare den. Kundeavtaler, tilbud,
           oppdragsbekreftelser og honorar lages ikke her — de eies og signeres
           av daglig leder, og vilkårene står i tjenesteavtalen. Trenger du noe
