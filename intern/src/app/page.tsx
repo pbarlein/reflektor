@@ -2,6 +2,7 @@ import { Container } from "@/components/Container";
 import { Fremdrift } from "@/components/Fremdrift";
 import { Maalet } from "@/components/Maalet";
 import { Rad } from "@/components/Rad";
+import { Snarveier } from "@/components/Snarveier";
 import { Sok } from "@/components/Sok";
 import { BOLKER, type Bolk } from "@/content/kategorier";
 import {
@@ -67,8 +68,17 @@ export default async function Forside() {
       */}
       <Maalet navn={fornavn(bruker)} />
 
+      {/*
+        RUTENE STÅR FØR FRAMDRIFTEN OG SØKET.
+
+        Ingen logger inn her for å lese — de logger inn for å lage en
+        produksjonsplan før de drar på lokasjon. Fagtekstene er verdifulle og
+        står fortsatt under; de er bare ikke det man kom for. Se `Snarveier`.
+      */}
+      <Snarveier />
+
       <Container>
-        <div className="pt-10 pb-12 sm:pt-12">
+        <div className="pt-12 pb-12 sm:pt-14">
           {/*
             FRAMDRIFTEN STÅR FØR SØKET. Søket er for den som vet hva hen
             leter etter. Den som ikke vet, trenger én dør — ikke et felt
