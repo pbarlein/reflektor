@@ -116,6 +116,22 @@ export type Tjenesteside = {
   /** Fra-pris som tekst, eller null når den ikke er oppgitt. */
   pris: string | null;
   /**
+   * Én film i 16:9, vist stort rett under svaret.
+   *
+   * LAGT TIL 27.09.2026. /reklamefilm hadde ingen reklamefilm å se på — bare
+   * stående klipp i et rutenett. Pål delte den ekte 15-sekunderen for Peppes
+   * i Dropbox, og en side som selger reklamefilm bør vise en reklamefilm.
+   *
+   * Plasseringen er høyt oppe med vilje: 44 % av sitatene språkmodeller
+   * henter kommer fra første tredel av en side, og for et menneske er det å
+   * faktisk se filmen det sterkeste beviset siden har.
+   *
+   * Formatet er 16:9 fordi filmen er det. Å presse den inn i det stående
+   * rutenettet ville kastet 70 % av bildet.
+   */
+  hovedfilm?: { sti: string; alt: string; bildetekst: string };
+
+  /**
    * «Fra arbeidet»: fire medier valgt etter hva siden handler om.
    *
    * FIRE, IKKE TO. Raden fylte tidligere bare venstre halvdel av skjermen
@@ -211,6 +227,12 @@ export const reklamefilm: Tjenesteside = {
     },
   ],
   pris: null,
+  hovedfilm: {
+    sti: "/reels/peppes-reklamefilm",
+    alt: "Stillbilde fra reklamefilm for Peppes Pizza",
+    bildetekst:
+      "Reklamefilm for Peppes Pizza. 15 sekunder, produsert av Reflektor.",
+  },
   /*
    * REKLAMEFILM. Her lå antonsport og goretex — to klipp fra sportsbutikk,
    * rett under en setning som sier at Anton Sport IKKE er reklamefilmkunde.

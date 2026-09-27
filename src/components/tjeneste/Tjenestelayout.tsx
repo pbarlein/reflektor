@@ -109,6 +109,33 @@ export function Tjenestelayout({
         </section>
       )}
 
+      {/* ── Hovedfilmen, i sitt eget format ───────────────────────── */}
+      {side.hovedfilm && (
+        <section className="pb-20">
+          <Container>
+            {/*
+              16:9 OG IKKE 9:16. Filmen er skutt i bredformat, og det
+              stående rutenettet lenger nede ville beskåret bort 70 % av
+              bildet. En reklamefilm vist som en mobilreel er ikke lenger
+              en reklamefilm.
+
+              Plakaten er 640x360 og altså mykere enn rammen. Dropbox sin
+              forhåndsvisning gir ikke større, og containeren har ingen
+              ffmpeg til å hente en ramme i full oppløsning. Den vises bare
+              til filmen begynner å spille, så prisen er et halvt sekund.
+            */}
+            <figure>
+              <div className="relative aspect-video overflow-hidden rounded-medie bg-flate-dempet">
+                <Klipp sti={side.hovedfilm.sti} />
+              </div>
+              <figcaption className="mt-3 text-sm text-blekk-dempet">
+                {side.hovedfilm.bildetekst}
+              </figcaption>
+            </figure>
+          </Container>
+        </section>
+      )}
+
       {/* ── Avgrensning: hva siden IKKE dekker ────────────────────── */}
       {side.avgrensning && (
         <section className="pb-20">
