@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Rubrikkort } from "@/components/Rubrikkort";
 import type { Rubrikk } from "@/content/rubrikktype";
@@ -23,6 +23,18 @@ import { sokeTekst, treffer } from "@/lib/sok";
  * INGEN INDEKS, INGEN BIBLIOTEK. Det er under femti rubrikker. En
  * `includes` over femti strenger er raskere enn å laste et søkebibliotek,
  * og den kan ikke bli utdatert i forhold til innholdet.
+ *
+ * ── «/» OG ESC, SAMME SOM I MALVELGEREN (28.09.2026) ──────────────────────
+ *
+ * Intranettet hadde to søkefelt som oppførte seg ulikt: i malvelgeren
+ * fokuserte «/» feltet og Esc tømte det, her gjorde ingen av delene noe.
+ * To felt i samme verktøy som svarer ulikt på samme tast, er verre enn to
+ * felt uten snarveier — det lærer folk at snarveien ikke kan stoles på.
+ *
+ * Feltet AUTOFOKUSERER IKKE, av samme grunn som der: på telefon spretter
+ * tastaturet opp før man har sett siden, mellomrom slutter å rulle, og en
+ * skjermleser begynner midt på siden i stedet for på toppen. Dette er en
+ * startside — den skal møte deg med innhold, ikke med en markør.
  */
 /**
  * Ord som finnes i brødteksten, men ikke i noen rubrikktittel. Det er
@@ -38,6 +50,28 @@ export function Sok({
   tilstander: Record<string, Lesetilstand>;
 }) {
   const [sok, settSok] = useState("");
+  const feltet = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    function påTast(e: KeyboardEvent) {
+      if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
+      const i = document.activeElement;
+      /* Skriver du allerede et sted, er «/» en skråstrek. */
+      if (
+        i instanceof HTMLInputElement ||
+        i instanceof HTMLTextAreaElement ||
+        i instanceof HTMLSelectElement ||
+        (i instanceof HTMLElement && i.isContentEditable)
+      ) {
+        return;
+      }
+      e.preventDefault();
+      feltet.current?.focus();
+      feltet.current?.select();
+    }
+    window.addEventListener("keydown", påTast);
+    return () => window.removeEventListener("keydown", påTast);
+  }, []);
 
   const indeks = useMemo(() => {
     const m = new Map<string, string>();
@@ -79,13 +113,62 @@ export function Sok({
           <path d="m16 16 4.5 4.5" />
         </svg>
         <input
+          ref={feltet}
           id="sok"
           type="search"
           value={sok}
           onChange={(e) => settSok(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") {
+              settSok("");
+              e.currentTarget.blur();
+            }
+          }}
           placeholder="Søk i alt — også midt i brødteksten"
-          className="w-full rounded-interaktiv border border-kant bg-kort py-4 pr-5 pl-13 text-[1.0625rem] text-blekk shadow-[0_1px_2px_rgba(20,20,20,0.04)] transition-colors placeholder:text-blekk-svak hover:border-kant-sterk focus:border-aksent focus:outline-none motion-reduce:transition-none"
+          /*
+            RINGEN VED FOKUS, IKKE BARE EN KANTFARGE. Før byttet kanten til
+            aksentfargen, og på en beige flate er den forskjellen for liten
+            til å se hvor markøren er. `ring` legger en egen strek utenpå og
+            er den samme markeringen som resten av siden bruker.
+
+            `appearance-none` fjerner nettleserens egen lille kryssknapp i
+            `type="search"`. Den tegnes ulikt i hver nettleser, den er
+            omtrent 10 px stor, og vi har vår egen rett ved siden av.
+          */
+          className="w-full appearance-none rounded-flate border border-kant bg-kort py-4 pr-24 pl-13 text-[1.0625rem] text-blekk shadow-[0_1px_2px_rgba(20,20,20,0.04)] transition-[border-color,box-shadow] placeholder:text-blekk-svak hover:border-kant-sterk focus:border-kant-sterk focus:ring-2 focus:ring-aksent/35 focus:outline-none motion-reduce:transition-none [&::-webkit-search-cancel-button]:hidden"
         />
+
+        {/*
+          TØMMEKNAPPEN ERSTATTER NETTLESERENS EGEN. Den er 32 px, den har
+          et navn for skjermlesere, og den setter fokus tilbake i feltet —
+          det siste er poenget: den som tømmer, skal som regel skrive noe
+          annet, ikke begynne på nytt med musa.
+        */}
+        {soker ? (
+          <button
+            type="button"
+            aria-label="Tøm søket"
+            onClick={() => {
+              settSok("");
+              feltet.current?.focus();
+            }}
+            className="absolute top-1/2 right-3.5 flex size-8 -translate-y-1/2 items-center justify-center rounded-full text-blekk-svak transition-colors hover:bg-dempet hover:text-blekk focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-aksent motion-reduce:transition-none"
+          >
+            <span aria-hidden>✕</span>
+          </button>
+        ) : (
+          /*
+            Tasten står i feltet, ikke i en hjelpetekst under. Et hint man
+            må lete etter, er ikke et hint. Den forsvinner i det feltet tas
+            i bruk, for da har den gjort jobben sin.
+          */
+          <kbd
+            aria-hidden
+            className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 rounded-sm border border-kant px-1.5 py-0.5 font-mono text-[0.6875rem] leading-none text-blekk-svak max-sm:hidden"
+          >
+            /
+          </kbd>
+        )}
       </div>
 
       {/*

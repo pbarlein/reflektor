@@ -8,7 +8,7 @@ import {
   NY_MAKS,
   lesMaske,
   lesetilstander,
-  nesteRubrikk,
+  pensumrekkefolge,
   skrivMaske,
 } from "../src/lib/lesing.ts";
 
@@ -190,24 +190,53 @@ test("en lest rubrikk teller ikke mot NY-grensa", () => {
   assert.equal(t.get(`r${NY_MAKS + 1}`), "ny");
 });
 
-test("neste rubrikk er den fremhevede, ellers høyest prioritet", () => {
+/**
+ * Rekkefølgen i pensumrekka på forsiden. Se `pensumrekkefolge` for hvorfor
+ * reglene er som de er — dette er den ene tingen som avgjør hva seksten
+ * ansatte ser først hver morgen.
+ */
+const slugger = (r: readonly { slug: string }[]) => r.map((x) => x.slug);
+
+test("fremhevet står først, deretter prioritet", () => {
   const a = lag(1, "2026-09-01", { prioritet: 10 });
   const b = lag(2, "2026-09-01", { prioritet: 99 });
   const c = lag(3, "2026-09-01", { prioritet: 50, fremhevet: "Start her." });
 
-  assert.equal(
-    nesteRubrikk([a, b, c], new Set())?.slug,
-    "r3",
-    "fremhevet først",
-  );
-  assert.equal(
-    nesteRubrikk([a, b, c], new Set([3]))?.slug,
-    "r2",
-    "lest fremhevet: høyest prioritet av resten",
-  );
-  assert.equal(
-    nesteRubrikk([a, b, c], new Set([1, 2, 3])),
-    undefined,
-    "alt lest: ingen anbefaling",
-  );
+  assert.deepEqual(slugger(pensumrekkefolge([a, b, c])), ["r3", "r2", "r1"]);
+});
+
+/**
+ * Den viktigste egenskapen, og den som ble oppdaget i nettleseren og ikke i
+ * koden: rekka skal IKKE stokke om seg når noe blir lest. Se
+ * `pensumrekkefolge` for hva som gikk galt da den gjorde det.
+ */
+test("rekkefølgen er den samme uansett hva som er lest", () => {
+  const a = lag(1, "2026-09-01", { prioritet: 10 });
+  const b = lag(2, "2026-09-01", { prioritet: 99 });
+  const c = lag(3, "2026-09-01", { prioritet: 50, fremhevet: "Start her." });
+
+  const foer = slugger(pensumrekkefolge([a, b, c]));
+  /* Leser man den fremhevede, skal den bli stående der den sto. */
+  assert.deepEqual(slugger(pensumrekkefolge([a, b, c])), foer);
+  assert.equal(foer[0], "r3");
+});
+
+test("rekka stokker ikke om seg selv mellom to kall", () => {
+  /*
+   * To rubrikker med samme prioritet må komme i samme orden hver gang.
+   * Ellers bytter kortene plass mellom to lastinger uten at noe er endret,
+   * og den som var halvveis mister stedet sitt.
+   */
+  const x = lag(7, "2026-09-01", { prioritet: 5 });
+  const y = lag(4, "2026-09-01", { prioritet: 5 });
+  assert.deepEqual(slugger(pensumrekkefolge([x, y])), ["r4", "r7"]);
+  assert.deepEqual(slugger(pensumrekkefolge([y, x])), ["r4", "r7"]);
+});
+
+test("rekkefølgen endrer ikke listen den fikk", () => {
+  const a = lag(1, "2026-09-01", { prioritet: 1 });
+  const b = lag(2, "2026-09-01", { prioritet: 2 });
+  const inn = [a, b];
+  pensumrekkefolge(inn);
+  assert.deepEqual(slugger(inn), ["r1", "r2"], "I_DRIFT er delt og global");
 });

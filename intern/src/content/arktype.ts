@@ -168,14 +168,14 @@ export function takFor(mal: Mal): Required<Maltak> {
 /** Hva hver del ER, med ord modellen kan handle på. */
 function forklaringer(t: Required<Maltak>): Record<Skissedel, string> {
   return {
-  topp: "Ikke en egen del — overskriften og undertittelen står i feltene «overskrift» og «undertittel».",
-  fakta: `En rad med ${TAK.poster} korte nøkkelopplysninger. Fyll «poster» med etikett og verdi. Verdien er en opplysning, ikke en setning: «Torsdag 8. oktober», ikke «Vi kommer torsdag 8. oktober».`,
-  tabellOgBoks: `Dagens hovedtabell, med en boks ved siden av. Fyll «tittel», «kolonner» (${t.kolonner} maks, helst 3), «rader» (${t.rader} maks), og «boks» med tittel og inntil ${t.punkter} punkter. Boksen er det leseren skal gjøre eller stille med — ikke en oppsummering av tabellen.`,
-  tabell: `En tabell. Fyll «tittel», «kolonner» (${t.kolonner} maks) og «rader» (${t.rader} maks).`,
-  toKolonner: `To spalter side om side. Fyll «spalter» med nøyaktig ${TAK.spalter} objekter, hver med tittel og inntil ${t.punkter} punkter.`,
-  kort3: `Tre korte kort på rad. Fyll «kort» med nøyaktig ${TAK.kort} objekter, hver med en kort tittel og én til to setninger.`,
-  avsnitt: "Et avsnitt løpende tekst. Fyll «tittel» og «tekst».",
-  liste: `En punktliste. Fyll «tittel» og «punkter» (${t.punkter} maks).`,
+    topp: "Ikke en egen del — overskriften og undertittelen står i feltene «overskrift» og «undertittel».",
+    fakta: `En rad med ${TAK.poster} korte nøkkelopplysninger. Fyll «poster» med etikett og verdi. Verdien er en opplysning, ikke en setning: «Torsdag 8. oktober», ikke «Vi kommer torsdag 8. oktober».`,
+    tabellOgBoks: `Dagens hovedtabell, med en boks ved siden av. Fyll «tittel», «kolonner» (${t.kolonner} maks, helst 3), «rader» (${t.rader} maks), og «boks» med tittel og inntil ${t.punkter} punkter. Boksen er det leseren skal gjøre eller stille med — ikke en oppsummering av tabellen.`,
+    tabell: `En tabell. Fyll «tittel», «kolonner» (${t.kolonner} maks) og «rader» (${t.rader} maks).`,
+    toKolonner: `To spalter side om side. Fyll «spalter» med nøyaktig ${TAK.spalter} objekter, hver med tittel og inntil ${t.punkter} punkter.`,
+    kort3: `Tre korte kort på rad. Fyll «kort» med nøyaktig ${TAK.kort} objekter, hver med en kort tittel og én til to setninger.`,
+    avsnitt: "Et avsnitt løpende tekst. Fyll «tittel» og «tekst».",
+    liste: `En punktliste. Fyll «tittel» og «punkter» (${t.punkter} maks).`,
     signatur: `Signaturfelt. Fyll «felter» med ${TAK.felter} objekter: navn og rolle. Står navnet ikke i informasjonen, skriv TBD(navn).`,
   };
 }

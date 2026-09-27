@@ -1,27 +1,43 @@
 import { Container } from "@/components/Container";
-import { Fremdrift } from "@/components/Fremdrift";
+import { MaaKunne, type Kortdata } from "@/components/MaaKunne";
 import { Maalet } from "@/components/Maalet";
-import { Rad } from "@/components/Rad";
+import { Oversikt } from "@/components/Oversikt";
 import { Snarveier } from "@/components/Snarveier";
 import { Sok } from "@/components/Sok";
-import { BOLKER, type Bolk } from "@/content/kategorier";
+import { finnKategori } from "@/content/kategorier";
 import {
   I_DRIFT,
   antallUgodkjente,
   kategorierMedInnhold,
 } from "@/content/rubrikker";
-import { lesetilstander, nesteRubrikk } from "@/lib/lesing";
+import { lesetid } from "@/lib/lesetid";
+import { lesetilstander, pensumrekkefolge } from "@/lib/lesing";
 import { lestAvBrukeren } from "@/lib/lesing-server";
 import { fornavn, krevBruker } from "@/lib/tilgang";
 
 /**
- * Forsiden: målet, søket, og deretter én rad per kategori.
+ * Forsiden.
  *
- * SERVERKOMPONENT. Bare søket og radene er klientkode; alt innholdet går
+ * SERVERKOMPONENT. Bare søket og rekka er klientkode; alt innholdet går
  * over ledningen som HTML.
  *
  * `krevBruker()` OG IKKE BARE PROXYEN. Next sier selv at proxy-laget er en
  * optimistisk sjekk, ikke en autorisasjonsløsning. Se src/lib/tilgang.ts.
+ *
+ * ── REKKEFØLGEN, OG HVORFOR DEN ER SLIK (omarbeidet 28.09.2026) ───────────
+ *
+ * Dette er startsiden alle ansatte har i nettleseren og ser hver dag. Da er
+ * rekkefølgen ikke smak, den er en rangering av hva folk faktisk kom for:
+ *
+ *   1. MÅLET       hvem vi er. Én skjerm, uendret tekst, ingen handling.
+ *   2. SNARVEIENE  det man kom for å GJØRE. Seks ruter, én linje.
+ *   3. PENSUM      det man må kunne. Framdriften ligger i kortene selv.
+ *   4. SØKET       for den som vet hva hen leter etter.
+ *   5. OVERSIKTEN  hele biblioteket, tett, til oppslag.
+ *
+ * Det gamle oppsettet hadde et framdriftskort og et søk øverst, og deretter
+ * åtte vannrette karuseller med to kort i hver. Se `Oversikt` for hvorfor
+ * de åtte karusellene var feil form for seksten rubrikker.
  */
 export default async function Forside() {
   const bruker = await krevBruker();
@@ -39,120 +55,87 @@ export default async function Forside() {
    *
    * Ikke per kort. Om et kort skal merkes NY avhenger av hvor mange andre
    * som også er nye — se NY_MAKS i src/lib/lesing.ts — og det kan bare
-   * avgjøres når man ser hele samlingen. Radene og søket får et ferdig
-   * oppslag.
+   * avgjøres når man ser hele samlingen.
+   *
+   * Statusen kommer fra to kilder: informasjonskapselen i denne
+   * nettleseren, og butikken som følger personen mellom maskiner. Se
+   * src/lib/lesing-server.ts.
    */
   const lest = await lestAvBrukeren();
   const tilstander = Object.fromEntries(
     lesetilstander(I_DRIFT, lest, new Date()),
   );
-  const neste = nesteRubrikk(I_DRIFT, lest);
 
-  // Bolkene i rekkefølge, med kategoriene sine. Se kategorier.ts for hvorfor
-  // rekkefølgen er håndverk → kunde → oss.
-  const bolker: Bolk[] = ["handverk", "kunde", "oss"];
+  /*
+   * Rekkefølgen er en regel, ikke et oppsett — se `pensumrekkefolge`.
+   *
+   * Bare det kortet viser sendes over til klienten. Rubrikkene bærer også
+   * hele brødteksten, og den skal ikke over ledningen to ganger.
+   */
+  const rekke: Kortdata[] = pensumrekkefolge(I_DRIFT).map((r) => ({
+    slug: r.slug,
+    tittel: r.tittel,
+    kategori: finnKategori(r.kategori).kort,
+    minutter: lesetid(r),
+    medie: r.medie,
+    tilstand: tilstander[r.slug] ?? "ulest",
+  }));
+
+  const antallLest = I_DRIFT.filter((r) => lest.has(r.nr)).length;
+  const ugodkjente = antallUgodkjente();
 
   return (
     <>
-      {/*
-        TOPPDELEN LIGGER UTENFOR CONTAINEREN, fra kant til kant.
-
-        Den har sin egen indre bredde som er identisk med containerens, så
-        teksten står på linje med alt annet — men flaten under teksten
-        stopper ikke i en usynlig marg. Det er det eneste elementet på
-        siden som ikke skal se ut som innhold.
-
-        HILSENEN LIGGER INNE I DEN. Den sto som en ensom linje over et kort
-        og skjøv alt ned uten å si noe. Inne i toppdelen, på linje med
-        etiketten, gjør den samme jobb på null piksler.
-      */}
       <Maalet navn={fornavn(bruker)} />
 
       {/*
-        RUTENE STÅR FØR FRAMDRIFTEN OG SØKET.
+        RUTENE STÅR FØR ALT LESESTOFF.
 
         Ingen logger inn her for å lese — de logger inn for å lage en
-        produksjonsplan før de drar på lokasjon. Fagtekstene er verdifulle og
-        står fortsatt under; de er bare ikke det man kom for. Se `Snarveier`.
+        produksjonsplan før de drar på lokasjon. Se `Snarveier`.
       */}
       <Snarveier />
 
+      <MaaKunne kort={rekke} lest={antallLest} />
+
       <Container>
-        <div className="pt-12 pb-12 sm:pt-14">
+        <div className="pt-12 sm:pt-16">
           {/*
-            FRAMDRIFTEN STÅR FØR SØKET. Søket er for den som vet hva hen
-            leter etter. Den som ikke vet, trenger én dør — ikke et felt
-            hen ikke vet hva skal fylles med.
-          */}
-          <Fremdrift
-            antall={I_DRIFT.length}
-            lest={I_DRIFT.filter((r) => lest.has(r.nr)).length}
-            neste={neste}
-            ugodkjente={antallUgodkjente()}
-          />
+            SØKET STÅR MELLOM PENSUM OG OVERSIKTEN.
 
-          {/*
-            SØKET STÅR FOR SEG, over radene og under målet.
-
-            Det er den eneste kontrollen på siden som går på tvers av alt, og
+            Det er den eneste kontrollen som går på tvers av alt, og
             gjennomgående funn i undersøkelser av intranett er at bruken
-            faller når folk ikke finner fram raskt. Derfor: alltid synlig,
-            alltid samme sted, og det søker i brødteksten og ikke bare i
-            titlene.
+            faller når folk ikke finner fram raskt. Her står det rett over
+            biblioteket det søker i — den som ikke fant det hen lette etter
+            i rekka over, møter feltet før hen begynner å bla.
           */}
-          <div className="mt-8 sm:mt-10">
+          <h2 className="font-sans text-xs font-medium tracking-[0.12em] text-blekk-dempet uppercase">
+            Finn noe bestemt
+          </h2>
+          <div className="mt-3">
             <Sok rubrikker={I_DRIFT} tilstander={tilstander} />
           </div>
         </div>
       </Container>
 
-      {/*
-        RADENE LIGGER UTENFOR CONTAINEREN, og det er ikke en forglemmelse.
-        Hver rad har sin egen sidepolstring, slik at kortene kan blas helt
-        ut til skjermkanten i stedet for å stoppe i en usynlig vegg midt på
-        siden. Overskriftene er fortsatt på linje med resten.
-      */}
-      <div className="flex flex-col gap-14 pb-8 sm:gap-20">
-        {bolker.map((bolk) => {
-          const iBolk = grupper.filter((g) => g.kategori.bolk === bolk);
-          if (iBolk.length === 0) return null;
-          return (
-            <div key={bolk} className="flex flex-col gap-14 sm:gap-20">
-              <Bolkoverskrift bolk={bolk} />
-              {iBolk.map(({ kategori, rubrikker }, i) => (
-                <Rad
-                  key={kategori.id}
-                  kategori={kategori}
-                  rubrikker={rubrikker}
-                  tilstander={tilstander}
-                  prioriter={bolk === "handverk" && i === 0}
-                />
-              ))}
-            </div>
-          );
-        })}
-      </div>
-    </>
-  );
-}
+      <Oversikt grupper={grupper} tilstander={tilstander} />
 
-/**
- * Skillet mellom de tre bolkene.
- *
- * En hårstrek og en etikett, ikke en stor overskrift. Bolkene er en
- * gruppering av ti rader — de skal hjelpe øyet å orientere seg, ikke
- * konkurrere med kategorinavnene som er det man faktisk leter etter.
- */
-function Bolkoverskrift({ bolk }: { bolk: Bolk }) {
-  const b = BOLKER[bolk];
-  return (
-    <div className="mx-auto w-full max-w-[88rem] px-5 sm:px-8">
-      <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 border-t border-kant-regel pt-5">
-        <p className="font-sans text-xs font-medium tracking-[0.08em] text-aksent-tekst uppercase">
-          {b.navn}
+      {ugodkjente > 0 && (
+        /*
+          DEN UBEHAGELIGE LINJA STÅR SIST, OG DEN STÅR HVER DAG.
+
+          Innholdet er ment som obligatorisk lesing, men mye av det er
+          fagutkast som ingen har vedtatt. Å skjule det ville gjort huben
+          til noe den ikke er ennå. Den sto i framdriftskortet før; nå står
+          den under oversikten, som er stedet der man faktisk ser hvilke
+          rubrikker det gjelder.
+        */
+        <p className="mx-auto w-full max-w-[88rem] px-5 pb-12 text-[0.8125rem] text-blekk-svak sm:px-8">
+          {ugodkjente} av {I_DRIFT.length} er fagutkast som ikke er
+          kvalitetssikret ennå. De er merket{" "}
+          <span className="text-varsel">Utkast</span>.
         </p>
-        <p className="text-[0.9375rem] text-blekk-dempet">{b.ingress}</p>
-      </div>
-    </div>
+      )}
+    </>
   );
 }

@@ -4,11 +4,7 @@ import { dirname, join } from "node:path";
 import { BlobNotFoundError, get, list, put } from "@vercel/blob";
 
 import type { Rapport } from "@/content/rapporttype";
-import {
-  type Avkryssing,
-  type Mistet,
-  flyttMedOver,
-} from "@/lib/rapportflytt";
+import { type Avkryssing, type Mistet, flyttMedOver } from "@/lib/rapportflytt";
 
 /**
  * Lagringen for rapportsenteret.

@@ -130,21 +130,49 @@ export function lesetilstander(
 }
 
 /**
- * Hva den ansatte bør åpne nå. Én ting, aldri to.
+ * Rekkefølgen pensum vises i.
  *
- * Rekkefølgen er bevisst:
- *   1. Den fremhevede, hvis den ikke er lest. Noen har bestemt at den
- *      gjelder nå.
- *   2. Ellers den uleste med høyest prioritet. Prioritet er allerede den
- *      redaksjonelle rangeringen radene sorteres etter.
+ * ── DEN ERSTATTET «ÉN ANBEFALING» ─────────────────────────────────────────
+ *
+ * Før pekte forsiden ut ÉN rubrikk å lese nå, og skjulte de femten andre.
+ * Nå vises hele pensum som en rekke, og da er spørsmålet ikke «hvilken én»,
+ * men «hvilken rekkefølge».
+ *
+ * ── ULESTE FØRST VAR FEIL, OG DET BLE SYNLIG FØRST I NETTLESEREN ──────────
+ *
+ * Første utgave sorterte uleste foran leste. Begrunnelsen var god på papiret
+ * — rekka skal vise hva som gjenstår. I praksis gjorde den to skader:
+ *
+ *   1. DE LESTE FORSVANT UT AV SYNET. Med tre leste og tretten uleste lå
+ *      alle de tre bak en rulling, og rekka så ut som om ingenting var
+ *      gjort. Det bestilte var tydelig merking av BÅDE lest og ulest;
+ *      sorteringen gjorde den ene av dem usynlig.
+ *   2. KORTENE FLYTTET PÅ SEG. Dette er en startside folk ser hver dag.
+ *      Leser du én rubrikk, stokker hele rekka om seg neste morgen, og
+ *      kortet som lå som nummer fire ligger et annet sted. Et grensesnitt
+ *      man bruker daglig, belønner at ting ligger der de lå.
+ *
+ * Rekkefølgen er derfor redaksjonell og STABIL. Framdriften leses av at
+ * leste kort er dempet og merket — altså av innholdet, ikke av at det har
+ * flyttet seg.
+ *
+ *   1. FREMHEVET FØRST. Noen har bestemt at den gjelder nå.
+ *   2. DERETTER PRIORITET, den redaksjonelle rangeringen som allerede
+ *      finnes på hver rubrikk.
+ *   3. `nr` som siste ledd, så to like prioriteter ikke bytter plass
+ *      mellom to lastinger.
+ *
+ * `lest` er ikke lenger et argument. Signaturen beholder det ikke «for
+ * sikkerhets skyld» — en parameter som ikke brukes, er en invitasjon til å
+ * ta den i bruk igjen uten å lese dette.
  */
-export function nesteRubrikk(
-  rubrikker: readonly Rubrikk[],
-  lest: Set<number>,
-): Rubrikk | undefined {
-  const uleste = rubrikker.filter((r) => !lest.has(r.nr));
-  return (
-    uleste.find((r) => r.fremhevet) ??
-    [...uleste].sort((a, b) => b.prioritet - a.prioritet)[0]
-  );
+export function pensumrekkefolge(rubrikker: readonly Rubrikk[]): Rubrikk[] {
+  return [...rubrikker].sort((a, b) => {
+    const aFrem = a.fremhevet ? 1 : 0;
+    const bFrem = b.fremhevet ? 1 : 0;
+    if (aFrem !== bFrem) return bFrem - aFrem;
+
+    if (a.prioritet !== b.prioritet) return b.prioritet - a.prioritet;
+    return a.nr - b.nr;
+  });
 }

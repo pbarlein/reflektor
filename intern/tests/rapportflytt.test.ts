@@ -110,7 +110,11 @@ test("endret spørsmål tar ikke med seg det gamle svaret", () => {
     til([], "Skal vi bestille ny annonsevideo til Meta nå?"),
     NAA,
   );
-  assert.equal(r.beslutning, null, "svaret skal ikke henge under nytt spørsmål");
+  assert.equal(
+    r.beslutning,
+    null,
+    "svaret skal ikke henge under nytt spørsmål",
+  );
   assert.equal(
     r.mistet?.beslutning?.sporsmal,
     "Skal vi lage en ny leadsvideo til Meta i oktober?",

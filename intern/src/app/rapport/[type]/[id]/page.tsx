@@ -94,8 +94,8 @@ export default async function Rapportside({ params }: Params) {
               </h2>
               <p className="mt-2 text-[0.9375rem] leading-relaxed text-pretty text-varsel">
                 En ny utgave kom inn{" "}
-                {norskTidspunkt(l.mistetVedOppdatering.tidspunkt)}. Dette
-                fulgte ikke med, fordi teksten det hang på er borte:
+                {norskTidspunkt(l.mistetVedOppdatering.tidspunkt)}. Dette fulgte
+                ikke med, fordi teksten det hang på er borte:
               </p>
               <ul className="mt-2 flex flex-col gap-1.5">
                 {l.mistetVedOppdatering.steg.map((t, i) => (

@@ -26,10 +26,21 @@ const KREVD_MS = 60_000;
  * som ligger i en bakgrunnsfane mens du spiser lunsj, blir ikke lest av
  * seg selv. Det er forskjellen på et framdriftsverktøy og en teller.
  *
- * ── DEN SKRIVER TIL EGEN NETTLESER, INGEN ANNEN STEDS ─────────────────────
+ * ── DEN SKRIVER TO STEDER, OG REKKEFØLGEN ER POENGET ──────────────────────
  *
- * Statusen havner i en informasjonskapsel hos den ansatte. Den sendes ikke
- * til noen, og ingen kan slå opp hvem som har lest hva. Se src/lib/lesing.ts.
+ * Kapselen først, uten å vente på noe: det er den som gjør at forsiden er
+ * riktig i samme øyeblikk du går tilbake til den. Deretter et kall til
+ * serveren, som lagrer det på personen din så det fortsatt gjelder på en
+ * annen maskin. Se src/lib/leselager.ts.
+ *
+ * Feiler kallet, er haken der likevel — lokalt. Det er riktig prioritering:
+ * en framdriftsteller som stopper fordi nettet blunket, er en teller ingen
+ * stoler på. Serveren tar den igjen neste gang noe leses, fordi butikken
+ * bare legger til.
+ *
+ * MERK at statusen med dette forlater maskinen. Den ligger på server,
+ * nøklet på e-postadressen din. Appen viser den bare til deg, men den er
+ * ikke lenger privat på den måten den var. Bakgrunnen står i leselager.ts.
  */
 export function Lesesporing({
   nr,
@@ -95,6 +106,7 @@ export function Lesesporing({
    */
   useEffect(() => {
     if (!oppfylt || alleredeLest) return;
+
     const naa = document.cookie
       .split("; ")
       .find((d) => d.startsWith(`${LEST_KAPSEL}=`))
@@ -102,6 +114,21 @@ export function Lesesporing({
     const sett = lesMaske(naa);
     sett.add(nr);
     document.cookie = `${LEST_KAPSEL}=${skrivMaske(sett)}; path=/; max-age=${LEST_LEVETID}; samesite=lax`;
+
+    /*
+     * `keepalive` fordi dette ofte skjer idet noen forlater siden: minuttet
+     * går ut, hen har allerede rullet til bunns, og neste handling er å
+     * navigere vekk. Uten det avbryter nettleseren kallet.
+     *
+     * Ingen `catch` som gjør noe: haken er alt satt lokalt, og butikken
+     * legger bare til — neste lesning tar igjen det som gikk tapt.
+     */
+    void fetch("/api/lesing", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nr }),
+      keepalive: true,
+    }).catch(() => {});
   }, [oppfylt, alleredeLest, nr]);
 
   const igjen = Math.max(0, KREVD_MS / 1000 - sekunder);

@@ -22,13 +22,7 @@
  */
 
 /** Tegnet på ruta. Se `Snarveier` for hvorfor det er så stort. */
-export type Merke =
-  | "ark"
-  | "lyn"
-  | "kalender"
-  | "folk"
-  | "konvolutt"
-  | "film";
+export type Merke = "ark" | "lyn" | "kalender" | "folk" | "konvolutt" | "film";
 
 export type Snarvei = {
   /** Det som står stort på ruta. Brukerens egne ord. */

@@ -17,3 +17,6 @@ next-env.d.ts
 
 # Lokal rapportlagring i utvikling. Se src/lib/rapportlager.ts.
 .rapportlager/
+
+# Lokal lesestatus, kun i utvikling. Se src/lib/leselager.ts.
+.leselager/
