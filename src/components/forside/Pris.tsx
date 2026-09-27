@@ -214,11 +214,31 @@ export function Pris() {
           */}
           <div className="mt-10 border-t border-[color:var(--kant-pa-dyp)] pt-8 sm:mt-12 sm:pt-10">
             <Merkelapp variant="dyp">Dette inngår</Merkelapp>
-            <ul className="mt-5 grid gap-x-12 sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-3">
+            {/*
+              GLASSFLATER I STEDET FOR HÅRSTREKER, 27.09.2026. Pål: «oppfattes
+              litt tungt å lese … kan vi ramme inn punktene i en glass-look
+              som anmeldelsene».
+
+              Han har rett i observasjonen. Seks like tunge linjer skilt av
+              hårstreker på en mørk flate gir ingen holdepunkter — øyet finner
+              ikke starten på neste punkt, og hele blokken leses som én masse.
+
+              MEN LISTEN BESTÅR. Dette var kort én gang, og de ble gjort om
+              til liste med vilje: kortene målte 1 264 px på desktop og 1 690
+              på mobil, og «et kort per punkt sier dette er seks ting, en
+              liste sier én leveranse med seks deler». Det argumentet står
+              fortsatt.
+
+              Derfor glass på RADENE, ikke kort. Hvert punkt blir en egen
+              flate å feste blikket på, men de ligger fortsatt tett i to
+              spalter og leses som én leveranse. Samme oppskrift som
+              anmeldelseskortene, så flatene hører hjemme i samme språk.
+            */}
+            <ul className="mt-5 grid gap-3 sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-3 sm:gap-x-5">
               {tilbud.inngar.map((punkt, i) => (
                 <li
                   key={punkt}
-                  className="flex gap-4 border-b border-[color:var(--kant-pa-dyp)]/60 py-3.5 last:border-b-0 sm:[&:nth-child(3)]:border-b-0"
+                  className="flex gap-4 px-5 py-4 rounded-flate border border-[rgba(245,240,232,0.14)] bg-[rgba(245,240,232,0.10)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)]"
                 >
                   {/*
                     Løpenummer og ikke hake. En hake sier «SaaS-prisplan» —
@@ -254,7 +274,13 @@ export function Pris() {
               beholder full bredde; det er bare teksten som brekker
               tidligere.
             */}
-            <p className="mt-5 max-w-3xl rounded-flate border border-dashed border-[color:var(--kant-pa-dyp)]/70 px-4 py-3.5 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet">
+            {/*
+              Samme glass som punktene, men med svakere fyll. Her sto en
+              STIPLET ramme, og stiplet leser som «midlertidig» eller
+              «plassholder» — den motsatte beskjeden av det merknaden gir.
+              Et dusere glass sier «hører til, men er ikke et av de seks».
+            */}
+            <p className="mt-5 max-w-3xl px-5 py-4 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet rounded-flate border border-[rgba(245,240,232,0.10)] bg-[rgba(245,240,232,0.05)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.03)]">
               {tilbud.stillbilder}
             </p>
 

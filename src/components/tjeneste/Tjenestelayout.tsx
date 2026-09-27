@@ -6,7 +6,11 @@ import { Eyebrow, Merkelapp } from "@/components/Eyebrow";
 import { Klipp } from "@/components/Klipp";
 import { Knappelenke } from "@/components/Knapp";
 import { Logorad } from "@/components/Logorad";
-import { BrodsmuleSchema, FaqSchema, TjenesteSchema } from "@/components/Schema";
+import {
+  BrodsmuleSchema,
+  FaqSchema,
+  TjenesteSchema,
+} from "@/components/Schema";
 import { eiker, type Tjenesteside } from "@/content/tjenester";
 
 import { Tekst } from "./Tekst";
@@ -38,9 +42,7 @@ export function Tjenestelayout({
 }) {
   return (
     <>
-      <BrodsmuleSchema
-        ledd={[{ navn: "Hjem", sti: "/" }, { navn: side.h1 }]}
-      />
+      <BrodsmuleSchema ledd={[{ navn: "Hjem", sti: "/" }, { navn: side.h1 }]} />
       {/*
         `fraPris` på alle fem. Fra 22.09.2026 har prosjektsidene en
         verifisert fra-pris fra Pål, og den markeres opp som minstepris —
@@ -53,7 +55,9 @@ export function Tjenestelayout({
         tjenestetype={side.tjenestetype}
         fraPris
       />
-      <FaqSchema qa={side.faq.map((f) => ({ sporsmal: f.sporsmal, svar: f.svar }))} />
+      <FaqSchema
+        qa={side.faq.map((f) => ({ sporsmal: f.sporsmal, svar: f.svar }))}
+      />
 
       {/* ── Svaret, før alt annet ─────────────────────────────────── */}
       <section className="pt-16 pb-14 sm:pt-24 sm:pb-20">
@@ -106,44 +110,46 @@ export function Tjenestelayout({
       )}
 
       {/* ── Avgrensning: hva siden IKKE dekker ────────────────────── */}
-      {side.avgrensning.lenker.length > 0 && (
+      {side.avgrensning && (
         <section className="pb-20">
           <Container>
             {/*
-              ANTI-KANNIBALISERING SOM SYNLIG DESIGN.
+              ANTI-KANNIBALISERING, MEN IKKE SOM EN BOKS.
 
-              Blokken gjør to jobber på én gang. Leseren som havnet feil
-              blir sendt riktig sted med én gang, i stedet for å lese en
-              hel side om noe annet. Og språkmodellen får et eksplisitt
-              avgrensningssignal den kan sitere — «X er ikke Y, fordi Z» er
+              Jobben er den samme som før: leseren som havnet feil blir
+              sendt riktig sted, og språkmodellen får et eksplisitt
+              avgrensningssignal den kan sitere. «X er ikke Y, fordi Z» er
               nøyaktig formen en svarmotor leter etter når to begreper
-              ligner på hverandre.
+              ligner på hverandre. De fleste byråer skriver det motsatte —
+              at de kan alt — og ender med fem sider som sier det samme.
 
-              De fleste byråer skriver det motsatte: at de kan alt. Det gir
-              fem sider som sier det samme, og en søkemotor som ikke vet
-              hvilken av dem den skal vise.
+              INNPAKNINGEN ER FJERNET 27.09.2026. Her sto en innrammet boks
+              med overskriften «Er dette riktig side?» og lenkene som en
+              knapperad under. Pål: «ser litt rare ut … kan de endres til
+              noe mindre ai-avslørende?» Han har rett. Ingen skriver en
+              beslutningstre-overskrift til leseren sin, og en etikett over
+              to setninger får dem til å se ut som systemtekst.
+
+              Nå er det én stille linje med lenkene vevd inn i setningen.
+              Det leser som en fagperson som presiserer, og ankerteksten blir
+              bedre på kjøpet: «video til egne flater» står i en setning som
+              forklarer NÅR det gjelder, i stedet for alene på en knapp.
             */}
-            <div className="rounded-flate border border-kant px-6 py-8 sm:px-10 sm:py-9">
-              <Merkelapp som="h2">Er dette riktig side?</Merkelapp>
-              <p className="mt-4 max-w-2xl leading-relaxed text-pretty text-blekk-dempet">
-                <Tekst>{side.avgrensning.tekst}</Tekst>
-              </p>
-              <ul className="mt-6 flex flex-wrap gap-x-8 gap-y-3">
-                {side.avgrensning.lenker.map((l) => (
-                  <li key={l.sti}>
-                    <Link
-                      href={l.sti}
-                      className="inline-flex min-h-6 items-center gap-2 underline decoration-transparent underline-offset-4 transition-colors hover:decoration-aksent motion-reduce:transition-none"
-                    >
-                      {l.tekst}
-                      <span aria-hidden className="text-aksent">
-                        →
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <p className="max-w-2xl border-t border-kant pt-6 text-sm leading-relaxed text-pretty text-blekk-dempet">
+              {side.avgrensning.map((del, i) =>
+                typeof del === "string" ? (
+                  <Tekst key={i}>{del}</Tekst>
+                ) : (
+                  <Link
+                    key={i}
+                    href={del.sti}
+                    className="text-blekk underline decoration-aksent/40 underline-offset-4 transition-colors hover:decoration-aksent motion-reduce:transition-none"
+                  >
+                    {del.tekst}
+                  </Link>
+                ),
+              )}
+            </p>
           </Container>
         </section>
       )}
@@ -157,14 +163,12 @@ export function Tjenestelayout({
               Skilt på hvor innholdet skal vises — ikke på hvordan det ser ut
             </h3>
             {/*
-              Navets avgrensning rendres HER og ikke i blokken over, fordi
-              den ikke har noe å avgrense MOT. Den forklarer i stedet hvorfor
-              det finnes fire sider og ikke én, og det hører hjemme rett over
-              de fire.
+              INGEN AVGRENSNINGSTEKST HER LENGER, fjernet 27.09.2026. Navet
+              hadde en egen variant som forklarte hvorfor det finnes fire
+              sider og ikke én. Kortene under viser nøyaktig det samme, med
+              lenker — setningen var en innledning til noe leseren allerede
+              ser.
             */}
-            <p className="mt-4 max-w-2xl leading-relaxed text-pretty text-blekk-dempet">
-              <Tekst>{side.avgrensning.tekst}</Tekst>
-            </p>
             <ul className="mt-10 grid gap-px overflow-hidden rounded-flate bg-kant sm:grid-cols-2">
               {eiker.map((e) => (
                 <li key={e.sti} className="bg-flate">
@@ -233,7 +237,10 @@ export function Tjenestelayout({
                     <ul className="mt-6 grid gap-3">
                       {s.punkter.map((p) => (
                         <li key={p} className="flex gap-3 text-pretty">
-                          <span aria-hidden className="mt-2.5 size-1 shrink-0 rounded-full bg-aksent" />
+                          <span
+                            aria-hidden
+                            className="mt-2.5 size-1 shrink-0 rounded-full bg-aksent"
+                          />
                           <span className="leading-relaxed">{p}</span>
                         </li>
                       ))}
@@ -358,8 +365,8 @@ export function Tjenestelayout({
               Fortell oss hva dere skal lage
             </h2>
             <p className="mt-4 max-w-xl leading-relaxed text-pretty text-pa-dyp-dempet">
-              Skriv kort om prosjektet, så får dere et forslag tilbake innen
-              tre virkedager. Uforpliktende.
+              Skriv kort om prosjektet, så får dere et forslag tilbake innen tre
+              virkedager. Uforpliktende.
             </p>
             <Knappelenke href="/#kontakt" className="mt-8">
               Få et forslag

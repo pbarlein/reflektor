@@ -44,6 +44,9 @@ export type Seksjon = {
   sitat?: { tekst: string; navn: string; rolle: string };
 };
 
+/** En bit av avgrensningen: ren tekst, eller en lenke. */
+export type Avgrensningsdel = string | { sti: string; tekst: string };
+
 export type Tjenesteside = {
   sti: string;
   /**
@@ -68,10 +71,25 @@ export type Tjenesteside = {
   tjenestetype: string;
   /** Merkelapp over H1. */
   merkelapp: string;
-  avgrensning: {
-    tekst: string;
-    lenker: { sti: string; tekst: string }[];
-  };
+  /**
+   * Avgrensningen: hva siden IKKE dekker, med lenke dit det hører hjemme.
+   *
+   * SKREVET OM 27.09.2026. Dette var en innrammet boks med overskriften «Er
+   * dette riktig side?» og lenkene som en knapperad under. Pål: «ser litt
+   * rare ut … kan de endres til noe mindre ai-avslørende?» Han har rett —
+   * ingen skriver en beslutningstre-overskrift til leseren sin. Selve
+   * avgrensningen gjør fortsatt to reelle jobber (leseren havner riktig, og
+   * språkmodellen får et signal den kan sitere), så innholdet består. Det er
+   * innpakningen som forsvant.
+   *
+   * Lenkene er derfor vevd INN i setningen i stedet for å ligge under den.
+   * En streng er tekst, et objekt er en lenke. Det gir også bedre
+   * ankertekst: «video til egne flater» står nå i en setning som forklarer
+   * når det gjelder, ikke alene på en knapp.
+   *
+   * `null` for sider som ikke trenger den.
+   */
+  avgrensning: Avgrensningsdel[] | null;
   seksjoner: Seksjon[];
   faq: { sporsmal: string; svar: string }[];
   /** Fra-pris som tekst, eller null når den ikke er oppgitt. */
@@ -102,17 +120,16 @@ export const reklamefilm: Tjenesteside = {
   merkelapp: "Produksjon",
   tjenestetype: "Produksjon av reklamefilm for betalte flater",
   svar: "En reklamefilm er laget for å vises mot betaling — på TV, som nettannonse eller i sosiale medier. Reflektor står for produksjonen: idé, manus, opptak, klipp, lyd og fargekorrigering. Vi produserer filmen. Vi kjøper ikke sendetid eller annonseplass.",
-  avgrensning: {
-    tekst:
-      "Skal filmen ligge på deres egne flater — nettsiden, en tjenesteside eller en skjerm i butikk — er det videoproduksjon, ikke reklamefilm. Skal den brukes til rekruttering, er det employer branding. Forskjellen er ikke hvordan filmen ser ut, men hvor den vises.",
-    lenker: [
-      { sti: "/videoproduksjon-i-oslo", tekst: "video til egne flater" },
-      {
-        sti: "/employer-branding-video-oslo",
-        tekst: "film for rekruttering",
-      },
-    ],
-  },
+  avgrensning: [
+    "Forskjellen er ikke hvordan filmen ser ut, men hvor den vises. Skal den ligge på nettsiden deres eller en skjerm i butikken, er det ",
+    { sti: "/videoproduksjon-i-oslo", tekst: "video til egne flater" },
+    ". Skal den brukes til å rekruttere, er det ",
+    {
+      sti: "/employer-branding-video-oslo",
+      tekst: "film for rekruttering",
+    },
+    ".",
+  ],
   seksjoner: [
     {
       sporsmal: "Kjøper dere sendetid på TV?",
@@ -183,17 +200,16 @@ export const videoproduksjon: Tjenesteside = {
   merkelapp: "Produksjon",
   tjenestetype: "Videoproduksjon for bedriftens egne flater",
   svar: "Videoproduksjon er film til flater dere selv eier: forsiden av nettsiden, en tjenesteside som trenger forklaring, skjermer i butikk eller resepsjon, og egne kanaler. Reflektor står for idé, opptak, klipp, teksting og fargekorrigering. Filmen koster ingenting å vise, fordi flaten er deres.",
-  avgrensning: {
-    tekst:
-      "Skal dere betale for å få filmen vist — på TV eller som annonse — er det reklamefilm. Skal den brukes til å rekruttere, er det employer branding, og den har en egen side fordi den snakker til et annet publikum enn kundene deres.",
-    lenker: [
-      { sti: "/reklamefilm", tekst: "reklamefilm for betalte flater" },
-      {
-        sti: "/employer-branding-video-oslo",
-        tekst: "film for rekruttering",
-      },
-    ],
-  },
+  avgrensning: [
+    "Skal dere betale for å få filmen vist, på TV eller som annonse, er det ",
+    { sti: "/reklamefilm", tekst: "reklamefilm" },
+    ". Skal den snakke til framtidige ansatte i stedet for til kunder, er det ",
+    {
+      sti: "/employer-branding-video-oslo",
+      tekst: "film for rekruttering",
+    },
+    " — et annet publikum, og derfor en annen film.",
+  ],
   seksjoner: [
     {
       sporsmal: "Hva slags video lager dere til egne flater?",
@@ -268,17 +284,16 @@ export const employerBranding: Tjenesteside = {
   merkelapp: "Produksjon",
   tjenestetype: "Produksjon av film for arbeidsgivermerkevare og rekruttering",
   svar: "Employer branding-video er film som skal få folk til å søke jobb hos dere. Den vises i stillingsannonser, på karrieresiden og i rekrutteringskanaler — ikke til kundene deres, men til dem dere vil ansette. Reflektor filmer hos dere, med de ansatte dere faktisk har.",
-  avgrensning: {
-    tekst:
-      "Denne siden handler om filmen. Vil dere vite hva employer branding er som fagfelt, og hvorfor det virker, har vi skrevet om det i bloggen. Skal filmen selge til kunder i stedet for å rekruttere, er det videoproduksjon eller reklamefilm.",
-    lenker: [
-      {
-        sti: "/blogg/hva-er-employer-branding",
-        tekst: "hva employer branding er",
-      },
-      { sti: "/videoproduksjon-i-oslo", tekst: "video til egne flater" },
-    ],
-  },
+  avgrensning: [
+    "Her handler det om filmen. Vil dere heller lese om ",
+    {
+      sti: "/blogg/hva-er-employer-branding",
+      tekst: "hva employer branding er som fagfelt",
+    },
+    ", står det i bloggen. Skal filmen selge til kunder i stedet for å rekruttere, er det ",
+    { sti: "/videoproduksjon-i-oslo", tekst: "video til egne flater" },
+    ".",
+  ],
   seksjoner: [
     {
       sporsmal: "Hvorfor film, og ikke bare en god stillingsannonse?",
@@ -344,14 +359,13 @@ export const event: Tjenesteside = {
   merkelapp: "Produksjon",
   tjenestetype: "Foto- og videodekning av arrangementer",
   svar: "Eventdekning er foto og film fra noe som skjer én gang: en konferanse, en lansering, en messe eller et firmaarrangement. Jobben er å komme hjem med materiale dere kan bruke i ettertid — ikke bare bilder fra dagen, men innhold til kanalene og til neste gang dere skal invitere.",
-  avgrensning: {
-    tekst:
-      "Dette er dekning av noe som skjer. Skal dere lage film om selskapet eller et produkt, planlagt fra bunnen, er det videoproduksjon. Skal den vises som betalt annonse, er det reklamefilm.",
-    lenker: [
-      { sti: "/videoproduksjon-i-oslo", tekst: "planlagt videoproduksjon" },
-      { sti: "/reklamefilm", tekst: "reklamefilm" },
-    ],
-  },
+  avgrensning: [
+    "Dette er dekning av noe som faktisk skjer. Skal filmen planlegges fra bunnen i stedet, er det ",
+    { sti: "/videoproduksjon-i-oslo", tekst: "planlagt videoproduksjon" },
+    " — og skal den vises som betalt annonse, ",
+    { sti: "/reklamefilm", tekst: "reklamefilm" },
+    ".",
+  ],
   seksjoner: [
     {
       sporsmal: "Hva får dere igjen for å dokumentere et arrangement?",
@@ -423,11 +437,13 @@ export const innholdsproduksjon: Tjenesteside = {
   merkelapp: "Oversikt",
   tjenestetype: "Produksjon av foto og video for bedrifter",
   svar: "Innholdsproduksjon er arbeidet med å lage foto og video en bedrift kan bruke: til annonser, til nettsiden, til rekruttering og til sosiale medier. Reflektor gjør det på to måter — som enkeltprosjekter, eller som løpende produksjon til fast månedspris. Hvilken av dem som passer, avhenger av om behovet er en kampanje eller en kalender.",
-  avgrensning: {
-    tekst:
-      "Denne siden er oversikten. Hver tjeneste har sin egen side med pris, leveranse og eksempler, fordi en reklamefilm og en rekrutteringsvideo er to forskjellige kjøp med to forskjellige budsjetter.",
-    lenker: [],
-  },
+  /*
+   * FJERNET 27.09.2026. Her sto «Denne siden er oversikten. Hver tjeneste
+   * har sin egen side …». Rett under står eikene — fire kort som viser
+   * nøyaktig det samme, med lenker. Setningen var en innledning til noe
+   * leseren allerede ser.
+   */
+  avgrensning: null,
   seksjoner: [
     {
       sporsmal: "Prosjekt eller abonnement — hva trenger dere?",
