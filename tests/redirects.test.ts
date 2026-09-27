@@ -34,6 +34,28 @@ const LIVE_ANNONSESIDER = [
   "/kontaktoss",
 ];
 
+/**
+ * `/takk` er hellig, og nå vet vi presis hvorfor.
+ *
+ * Lest ut av den publiserte GTM-containeren 27.09.2026: både GA4-hendelsen
+ * `generate_lead` og Ads-konverteringen (11026823614) fyrer på én betingelse,
+ * og den er ikke en hendelse fra koden vår. Den er:
+ *
+ *   sidesti === "/takk"  OG  referrer ~ /^https?:\/\/(www\.)?reflektor\.no\/(?!takk)/i
+ *
+ * `takk_page_view`, som TakkHendelse.tsx sender, har INGEN utløser som lytter
+ * på den i containeren. Den er et ufarlig, men for tiden virkningsløst krok-
+ * punkt. Det som faktisk bærer de 107+ konverteringene er stien og
+ * referreren.
+ *
+ * Derfor er dette den farligste redirecten som kan legges inn: en 301 fra
+ * /takk ville flyttet stien, og konverteringen ville stilnet uten at noe
+ * annet på siden så galt ut. Verifisert i nettleser at referreren overlever
+ * skjemaets POST → 303: /kontaktoss → /api/skjema → /takk beholder
+ * /kontaktoss som referrer.
+ */
+const HELLIG = "/takk";
+
 function ruter(): Set<string> {
   const rot = path.join(import.meta.dirname, "..", "src", "app");
   const funnet = new Set<string>();
@@ -117,6 +139,27 @@ test("ingen kilde er oppført to ganger", async () => {
     );
     sett.set(r.source, r.destination);
   }
+});
+
+test("/takk er aldri kilde i en redirect", async () => {
+  for (const r of await kart()) {
+    assert.notEqual(
+      r.source,
+      HELLIG,
+      `${HELLIG} er kilde i en redirect til ${r.destination}. Det slår ut ` +
+        `både GA4-hendelsen og Ads-konverteringen: begge fyrer på at stien ` +
+        `ER /takk. 107+ historiske konverteringer henger på den. Se ` +
+        `AGENTS.md, «Fire ting», punkt 2.`,
+    );
+  }
+});
+
+test("/takk finnes som rute", async () => {
+  assert.ok(
+    ruter().has(HELLIG),
+    `${HELLIG} finnes ikke som rute. Uten den er det ingen sidevisning å ` +
+      `måle, og Reflektor mister sin eneste KPI.`,
+  );
 });
 
 test("hver redirect er en eksplisitt 301", async () => {

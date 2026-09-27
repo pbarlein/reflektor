@@ -1,4 +1,11 @@
-# GTM-N4KGSS93: samtykke for de fem ikke-Google-taggene
+# GTM-N4KGSS93: samtykke for de tre ikke-Google-taggene
+
+**RETTET 27.09.2026.** Denne fila sa «fem tagger» og listet Meta-piksel og
+Microsoft Ads blant dem. Det var feil. Jeg har nå lest den **publiserte**
+containeren (`googletagmanager.com/gtm.js?id=GTM-N4KGSS93`) og kildekoden til
+dagens reflektor.no, og fasiten står under «Hva som faktisk kjører». Kort
+fortalt: det er **tre** tagger å sikre, Microsoft Ads finnes ikke noe sted, og
+Meta-pikselen lastes av Squarespace — ikke av GTM.
 
 Skrevet 21.09.2026. Denne oppskriften utføres **av Pål**, i
 tagmanager.google.com. Claude Code har ingen GTM-tilgang — sesjonen kjører
@@ -17,19 +24,67 @@ Den nye siden laster ikke containeren før den besøkende har svart
 fyre før samtykke uansett.
 
 **Dagens Squarespace-side laster containeren umiddelbart.** Det er der de
-fem taggene kjører på folk som ikke har tatt stilling til noe, akkurat nå.
+tre taggene kjører på folk som ikke har tatt stilling til noe, akkurat nå.
 
-## De fem taggene
+## Hva som faktisk kjører
 
-Consent Mode styrer kun Googles egne tagger. Disse leser den ikke:
+Målt 27.09.2026, uten å sende én måling: containeren lest som publisert
+JavaScript, dagens side lest som rå HTML uten å kjøre den.
 
-| Tagg | Hva den gjør | Kategori |
+**Containeren har 13 tagger.** Googles fem leser Consent Mode selv:
+
+| Tagg | Identifikator | Utløser |
 |---|---|---|
-| Meta-piksel | annonsemåling og remarketing | markedsføring |
-| Microsoft Ads | annonsemåling | markedsføring |
-| Apollo.io (`aplo-evnt.com`) | identifiserer bedriften bak besøket | markedsføring |
-| HubSpot | satte fire cookies før noe samtykke forelå | markedsføring |
-| Microsoft Clarity | tar opp sesjonen — museflytting og klikk | analyse |
+| Google-tag (GA4) | `G-1QJ6BRWGJ8` | `gtm.init` |
+| GA4-hendelse `generate_lead` | `G-1QJ6BRWGJ8` | /takk + referrer, se under |
+| Google Ads-konvertering | `11026823614` | /takk + referrer |
+| Conversion Linker | — | alle sidevisninger |
+| Samtykkemal (`__cvt_K8GSG`) | ×2: `default` og `update` | se «ACCEPT» under |
+
+**Disse tre leser den ikke, og er jobben som skal gjøres:**
+
+| Tagg | Identifikator | Hva den gjør | Kategori |
+|---|---|---|---|
+| Apollo | appId `67f7a7f9f3af070015ab21b2` | identifiserer bedriften bak besøket | markedsføring |
+| Microsoft Clarity | prosjekt `rkgf0frfdt` | **tar opp sesjonen** — museflytting og klikk | analyse |
+| HubSpot | portal `148641188` (js-eu1, EU) | setter cookies, CRM-sporing | markedsføring |
+
+Alle tre fyrer i dag på **regel 3: `event == "gtm.js"`** — altså hver
+sidevisning, uten noen samtykkebetingelse i det hele tatt.
+
+### To ting denne fila tok feil om
+
+**Microsoft Ads finnes ikke.** Ingen UET-tagg i containeren, ingen `uetq` og
+ingen `bat.bing.com` i sidens kildekode. Det som førte meg feil er at
+samtykkemalen har `platform_microsoft: true` — den er *konfigurert* til også å
+sende Microsoft-signaler, men ingen tagg tar imot dem. Ingenting å sikre.
+
+**Meta-pikselen lastes ikke av GTM.** Den er injisert direkte i Squarespace:
+`fbq('init', '572759520853896')` står i sidens kildekode, og
+`connect.facebook.net` lastes derfra. Den kan altså ikke sikres i GTM, og —
+viktigere — **den forsvinner av seg selv ved cutover.** Den nye siden har den
+ikke. Samme gjelder Elfsight-widgeten
+(`bafcc99b-ca46-41b5-adc6-e4435772183d`, `elfsightcdn.com/platform.js`).
+
+Det er en beslutning, ikke en detalj: bygger du remarketing-målgrupper på den
+pikselen, slutter de å fylles den dagen vi bytter. Skal den videre, må den
+inn i GTM (og da med samtykkekontroll, som de tre andre). Se
+`docs/cutover.md`.
+
+### «ACCEPT»-utløseren gjelder bare dagens side
+
+Samtykkemalens `update`-tagg (alt satt til `granted`) fyrer på
+**regel 2: klikk på et element hvis tekst inneholder `ACCEPT`** — uten
+`ignore_case`, altså store bokstaver. Det er Squarespace sitt cookiebanner.
+
+Den nye sidens knapp heter «Godta alle» og vil aldri treffe. **Det er likevel
+ikke et problem**, og jeg sjekket det før jeg slo alarm: `meldFra()` i
+`Samtykke.tsx` kaller `gtag("consent","update", …)` selv, og
+`standardSkript()` setter `default` i `<head>` før containeren laster. Googles
+tagger får altså riktig tilstand fra vår egen kode, uten å gå via GTM.
+
+Utløseren er dermed *arvegods* etter byttet — den gjør ingen skade, men den
+gjør heller ingenting. Rydd den bort når dagens side er ute av bruk, ikke før.
 
 ## Metoden: innebygd samtykkekontroll, ikke en egen utløser
 
@@ -59,7 +114,7 @@ Det gjør at en egendefinert utløser på hendelsen *også* ville virket. Den
 innebygde kontrollen er likevel å foretrekke: den gjelder taggen uansett
 hvilken utløser som ber den fyre, så det er umulig å glemme å fjerne «All
 Pages». Velger du utløsermetoden i stedet, **må** «All Pages» fjernes fra
-hver av de fem — GTM fyrer en tagg hvis hvilken som helst av utløserne
+hver av de tre — GTM fyrer en tagg hvis hvilken som helst av utløserne
 treffer.
 
 Et avslag sender også hendelsen, med `denied`. Det er med vilje: uten den
@@ -67,7 +122,7 @@ ville en utløser ikke se forskjell på «sa nei» og «har ikke svart ennå».
 
 ## Framgangsmåte
 
-For hver av de fem taggene:
+For hver av de **tre** taggene (Apollo, Clarity, HubSpot):
 
 1. Åpne taggen → **Advanced Settings** → **Consent Settings**
 2. Velg **«Require additional consent for tag to fire»**
@@ -84,11 +139,11 @@ For hver av de fem taggene:
 
 I **Preview / Tag Assistant**, mot dagens reflektor.no:
 
-1. Åpne siden uten å svare på banneret → alle fem skal stå under **«Tags
+1. Åpne siden uten å svare på banneret → alle tre skal stå under **«Tags
    Not Fired»**, med begrunnelsen «Consent Not Granted»
-2. Klikk **«Bare nødvendige»** → fortsatt ingen av de fem
-3. Klikk **«Godta alle»** → alle fem fyrer
-4. Last siden på nytt uten å røre banneret → alle fem fyrer igjen.
+2. Klikk **«Bare nødvendige»** → fortsatt ingen av de tre
+3. Klikk **«Godta alle»** → alle tre fyrer
+4. Last siden på nytt uten å røre banneret → alle tre fyrer igjen.
    **Dette steget er hele poenget.** På dagens Squarespace-side finnes
    ikke gjentakelsen fra den nye siden, så her er tilstandskontrollen det
    eneste som holder. Feiler steget, er samtykket hengt på en hendelse
@@ -100,9 +155,15 @@ ikke det, er noe rørt som ikke skulle røres — publiser ikke.
 ## Det som gjenstår etterpå
 
 Samtykket er fortsatt ikke **informert**: personvernerklæringen nevner
-Google og Meta, men ikke Apollo, HubSpot, Clarity eller Microsoft Ads. Et
-samtykke kan ikke være informert om det man informerer om ikke er det som
-kjører. Se A42 punkt 2 og sjekklista i vedlegg A.
+Google og Meta, men ikke Apollo, Clarity eller HubSpot. Et samtykke kan ikke
+være informert om det man informerer om ikke er det som kjører.
 
-Den teksten må skrives av Pål — copy-protokollen gjelder, og dette er
-juridisk tekst.
+Et **forslag** til punkt 8 ligger i `docs/personvern-punkt-8-forslag.md`, med
+verifiserte navn og identifikatorer. Det er et forslag, ikke en endring:
+`src/content/personvern.ts` sier i sin egen filheader at erklæringen er
+ordrett migrert og ikke skal omskrives av Claude Code, fordi den er juridisk
+bindende. Teksten settes inn først når Pål har godkjent den.
+
+**Rekkefølgen er bindende:** forslaget sier at de tre kun lastes med
+samtykke. Det er sant først etter at GTM-endringen over er publisert. Settes
+teksten inn før det, står det en påstand i erklæringen som ikke stemmer.

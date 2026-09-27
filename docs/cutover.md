@@ -1,5 +1,15 @@
 # Cutover — handlinger som først skal skje når DNS peker hit
 
+> **OPPDATERT 27.09.2026: Google Ads er slått av.** Pål har pauset kontoen
+> foreløpig. Det endrer forutsetningen for punkt 1 under — det er ingen betalt
+> trafikk å sende i grøfta akkurat nå — men **ikke** rekkefølgen: 301-en
+> legges fortsatt inn først ved cutover, ikke nå. Grunnen er ikke Ads alene.
+> `/sosiale-medier-byra` er en live side på den nye siden også, og en redirect
+> derfra ville slått ut siden i forhåndsvisningen. En test i
+> `tests/redirects.test.ts` stopper det nå automatisk.
+>
+> Slås Ads på igjen før cutover, gjelder punkt 1 i sin opprinnelige form.
+
 Ingenting i denne filen er utført. Alt her er bestilt, begrunnet og skal
 gjøres **på cutover-dagen**, ikke før.
 
@@ -81,3 +91,43 @@ GTM-N4KGSS93. Send ett testskjema etter cutover og bekreft i sanntidsrapporten
 at hendelsen fyres — ikke bare at siden vises.
 
 Dette er den eneste KPI-en. Alt annet på siden kan repareres i ettertid.
+
+---
+
+## 5. Meta-pikselen forsvinner — en beslutning, ikke en detalj
+
+Funnet 27.09.2026 ved å lese kildekoden til dagens side.
+
+Meta-pikselen `572759520853896` kjører på reflektor.no i dag, men den er
+**injisert direkte i Squarespace** — ikke lastet gjennom GTM-containeren.
+Derfor følger den ikke med til den nye siden, og den slutter å samle data den
+dagen DNS flyttes.
+
+Det samme gjelder Elfsight-widgeten (`bafcc99b-ca46-41b5-adc6-e4435772183d`,
+`elfsightcdn.com/platform.js`).
+
+**Hva det betyr:** bygger Reflektor remarketing-målgrupper på den pikselen,
+slutter de å fylles ved cutover. Eksisterende målgrupper tømmes gradvis etter
+Metas egne vinduer. Det er ingen feil i den nye siden — pikselen har rett og
+slett aldri vært en del av den.
+
+**Valget er:**
+
+- **La den gå.** Ingen handling. Riktig hvis Meta-annonsering ikke er planlagt.
+- **Ta den med.** Legg pikselen inn som en tagg i GTM-containeren, med
+  samtykkekontroll på `ad_storage` som de tre i `docs/gtm-samtykke.md`. Da
+  følger den med av seg selv, siden den nye siden laster samme container.
+
+Gjøres den inn i GTM, bør det skje **før** cutover, slik at den er testet i
+containeren mens dagens side fortsatt kan verifisere at den fyrer.
+
+## 6. «ACCEPT»-utløseren kan ryddes — etterpå
+
+Samtykkemalens `update`-tagg i containeren fyrer på klikk på et element hvis
+tekst inneholder `ACCEPT` (store bokstaver, uten `ignore_case`). Det er
+Squarespace sitt banner.
+
+Den nye sidens knapp heter «Godta alle» og treffer aldri. Det er ufarlig —
+`Samtykke.tsx` kaller `gtag("consent","update", …)` selv — men utløseren er
+arvegods etter byttet. Rydd den når dagens side er ute av bruk, **ikke før**:
+så lenge Squarespace svarer, er den det som gir samtykke der.

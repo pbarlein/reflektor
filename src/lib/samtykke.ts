@@ -125,10 +125,26 @@ export function tilSignaler(s: Samtykke): Samtykkesignaler {
  *   3: gtm.js
  *
  * Ingen `samtykke_oppdatert`. Googles egne tagger klarer seg — de leser
- * consent-TILSTANDEN. Men de fem taggene i containeren som ikke leser
- * Consent Mode i det hele tatt (Meta, Apollo, HubSpot, Clarity, Microsoft
- * Ads) kan bare styres inne i GTM, og henges de på hendelsen, ville de
- * fyrt den ene gangen brukeren klikket og aldri mer for den personen.
+ * consent-TILSTANDEN. Men taggene i containeren som ikke leser Consent Mode
+ * i det hele tatt kan bare styres inne i GTM, og henges de på hendelsen,
+ * ville de fyrt den ene gangen brukeren klikket og aldri mer for den
+ * personen.
+ *
+ * RETTET 27.09.2026: her sto «de fem taggene (Meta, Apollo, HubSpot,
+ * Clarity, Microsoft Ads)». Det er **tre**. Lest fra den publiserte
+ * containeren og fra kildekoden til dagens side:
+ *
+ *   Apollo    appId 67f7a7f9f3af070015ab21b2
+ *   Clarity   prosjekt rkgf0frfdt
+ *   HubSpot   portal 148641188 (EU-hosting)
+ *
+ * Microsoft Ads finnes ikke noe sted — ingen UET-tagg, ingen `uetq`, ingen
+ * bat.bing.com. Det som førte meg feil er at samtykkemalen i containeren har
+ * `platform_microsoft: true`: den er konfigurert til å sende
+ * Microsoft-signaler, men ingen tagg tar imot dem.
+ *
+ * Meta-pikselen (572759520853896) er injisert av Squarespace, ikke av GTM, og
+ * forsvinner derfor av seg selv ved cutover. Se docs/gtm-samtykke.md.
  *
  * Gjentakelsen hører hjemme HER og ikke i en React-effekt: på besøk to
  * setter dette skriptet `data-samtykke="svart"` i <head>, så `Sporing`

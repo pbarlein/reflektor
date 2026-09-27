@@ -2299,3 +2299,112 @@ En siste ting verifiseringen avdekket om metode: den første kjøringen meldte
 «OK» på adresser jeg nettopp hadde fjernet, fordi en gammel serverprosess
 fortsatt svarte. Testen var riktig skrevet og svaret var feil. Når noe som
 skal være borte melder seg friskt, er det prosessen man tester, ikke koden.
+
+## A64 — GTM-containeren lest som den faktisk er. 27.09.2026
+
+Pål ba meg gå inn i Chrome og gjøre GTM-endringene selv. **Det kan jeg ikke**,
+og det er verifisert på nytt, ikke husket: det finnes ingen GTM-verktøy i
+sesjonen, `tagmanager.google.com` sender meg til Googles innlogging, og
+`tagmanager.googleapis.com` svarer 401. Sesjonen kjører i en container i skyen
+uten Google-profil — Påls Chrome står på Påls maskin. Ingen annen Claude-sesjon
+er tilgjengelig å sende jobben til.
+
+**Det jeg kunne, var å lese.** Den *publiserte* containeren ligger åpent på
+`googletagmanager.com/gtm.js?id=GTM-N4KGSS93`, og dagens side kan hentes som
+rå HTML. Begge uten å sende én måling. Det ga fasit i stedet for antagelser, og
+fasiten motsa mine egne notater på to punkter.
+
+### Containeren har 13 tagger, ikke fem å sikre
+
+| Hva | Identifikator | Utløses av |
+|---|---|---|
+| Google-tag (GA4) | `G-1QJ6BRWGJ8` | `gtm.init` |
+| GA4 `generate_lead` | `G-1QJ6BRWGJ8` | sti `/takk` + referrer |
+| Ads-konvertering | `11026823614` | sti `/takk` + referrer |
+| Conversion Linker | — | hver sidevisning |
+| Samtykkemal `default` | alt `denied` | `gtm.init_consent` |
+| Samtykkemal `update` | alt `granted` | klikk på tekst som inneholder `ACCEPT` |
+| **Apollo** | appId `67f7a7f9f3af070015ab21b2` | **hver sidevisning, uten samtykke** |
+| **Clarity** | prosjekt `rkgf0frfdt` | **hver sidevisning, uten samtykke** |
+| **HubSpot** | portal `148641188` (EU) | **hver sidevisning, uten samtykke** |
+
+### To feil i mine egne notater
+
+**Microsoft Ads finnes ikke.** `docs/gtm-samtykke.md` og kommentaren i
+`src/lib/samtykke.ts` listet den blant «de fem». Ingen UET-tagg i containeren,
+ingen `uetq`, ingen `bat.bing.com` i sidens kildekode. Det som førte meg feil
+er at samtykkemalen har `platform_microsoft: true` — den er *konfigurert* til
+å sende Microsoft-signaler, men ingen tagg tar imot dem. Et flagg ble lest som
+et verktøy.
+
+**Meta-pikselen lastes ikke av GTM.** `fbq('init', '572759520853896')` står
+direkte i Squarespace-kildekoden, sammen med Elfsight-widgeten. Konsekvensen
+er ikke akademisk: **de forsvinner av seg selv ved cutover**, fordi den nye
+siden ikke har dem. Det er en beslutning for Pål, ført inn som punkt 5 i
+`docs/cutover.md`.
+
+Jobben i GTM er altså **tre** tagger, ikke fem.
+
+### En alarm jeg slo av igjen før jeg sendte den
+
+Samtykkemalens `update`-tagg fyrer på klikk på tekst som inneholder `ACCEPT` —
+store bokstaver, `_cn` uten `ignore_case`. Den nye sidens knapp heter «Godta
+alle». Første konklusjon: samtykket flipper aldri til `granted` etter cutover,
+GA4 og Ads kjører permanent i nektet modus, KPI-en degraderes.
+
+Så sjekket jeg koden i stedet for å sende meldingen. `meldFra()` i
+`Samtykke.tsx` kaller `gtag("consent","update", …)` selv, og
+`standardSkript()` setter `default` i `<head>` før containeren laster. Googles
+tagger får riktig tilstand fra vår egen kode, helt uten GTM-utløseren.
+**Alarmen var feil.** Utløseren er arvegods — ufarlig, men virkningsløs på den
+nye siden.
+
+Verdt å merke at dette er tredje gang i dag at et stort funn krympet til
+ingenting når jeg sjekket det ett hakk videre. Mønsteret er det samme hver
+gang: jeg leser én kilde, ser noe alarmerende, og konklusjonen er ferdig før
+den andre kilden er åpnet.
+
+### Det som faktisk bærer KPI-en er stien og referreren
+
+Både GA4-hendelsen og Ads-konverteringen fyrer på **én** betingelse:
+
+```
+sti === "/takk"  OG  referrer ~ /^https?:\/\/(www\.)?reflektor\.no\/(?!takk)/i
+```
+
+`takk_page_view`, som `TakkHendelse.tsx` sender, har **ingen utløser som
+lytter på den** i containeren. AGENTS.md sier at leads måles i GA4 med
+`takk_page_view`. Det er ikke slik containeren er satt opp. Hendelsen er et
+ufarlig, men for tiden virkningsløst krokpunkt.
+
+Det betyr at den farligste enkeltendringen noen kan gjøre er en 301 fra
+`/takk`: stien flyttes, konverteringen stilner, og ingenting annet på siden
+ser galt ut.
+
+**Verifisert i nettleser at referreren overlever skjemaet.** Sporing blokkert,
+ingen e-post sendt (ingen `RESEND_API_KEY` lokalt):
+
+```
+GET   /kontaktoss   referer: (ingen)
+POST  /api/skjema   referer: /kontaktoss
+GET   /takk         referer: /kontaktoss     ← overlever 303-en
+```
+
+Oversatt til produksjon blir referreren `https://www.reflektor.no/kontaktoss`,
+som treffer containerens regex. **Målekjeden overlever cutover.**
+
+To nye vaktposter i `tests/redirects.test.ts` låser det: `/takk` kan aldri bli
+kilde i en redirect, og `/takk` må finnes som rute. Begge mutasjonstestet.
+
+### Levert
+
+- `docs/gtm-samtykke.md` skrevet om: tre tagger med verifiserte
+  identifikatorer, den eksakte utløseren som skal erstattes, og hvorfor
+  rekkefølgen mot personvernerklæringen er bindende
+- `docs/personvern-punkt-8-forslag.md` — et **forslag**, ikke en endring.
+  `personvern.ts` sier i egen header at erklæringen ikke skal omskrives av
+  Claude Code. Tre ting mangler som en jurist må fylle: overføringsgrunnlag
+  utenfor EØS, lagringstid per tjeneste, databehandleravtaler
+- `docs/cutover.md` punkt 5 og 6, og en merknad om at Ads er slått av
+- Kommentaren i `src/lib/samtykke.ts` rettet
+- 28 tester grønne
