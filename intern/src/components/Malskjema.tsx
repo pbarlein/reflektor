@@ -167,6 +167,21 @@ export function Malskjema({ mal }: { mal: Mal }) {
    * det motsatte og håpe. Utgavene koster ingenting å ta vare på.
    */
   const [utgaver, setUtgaver] = useState<ArkData[]>([]);
+  /**
+   * Feltene produsenten faktisk har tatt stilling til.
+   *
+   * ── HVORFOR DET IKKE HOLDER Å SE PÅ VERDIEN ───────────────────────────
+   *
+   * Serveren kan se at et felt står på standardverdien, men ikke om det er
+   * fordi ingen rørte det, eller fordi produsenten så på det og mente at
+   * standarden var riktig. Forskjellen avgjør om verdien skal kunne
+   * overstyre en opplastet produksjonsplan.
+   *
+   * Uten denne listen antar serveren det trygge: at ingen har tatt
+   * stilling. Da taper forhåndsvalget mot vedlegget, slik det skal.
+   */
+  const [bekreftet, setBekreftet] = useState<string[]>([]);
+
   const [rettelser, setRettelser] = useState<string[]>([]);
   /*
    * Svaret hører til utgaven det kom med, ikke til skjemaet. Bytter
@@ -249,8 +264,14 @@ export function Malskjema({ mal }: { mal: Mal }) {
   const kunde = (verdier.kunde ?? "").trim();
   const idag = new Date().toISOString().slice(0, 10);
 
-  const sett = (id: string, v: string) =>
+  const sett = (id: string, v: string) => {
     setVerdier((f) => ({ ...f, [id]: v }));
+    /*
+     * Å røre feltet er å ta stilling — også når man velger tilbake til
+     * standardverdien. Da har noen faktisk sett på det.
+     */
+    setBekreftet((b) => (b.includes(id) ? b : [...b, id]));
+  };
 
   /** Æ, Ø og Å skrives om: filen skal videre som e-postvedlegg. */
   const filnavn = useMemo(() => {
@@ -402,6 +423,7 @@ export function Malskjema({ mal }: { mal: Mal }) {
         body: JSON.stringify({
           mal: mal.slug,
           verdier,
+          bekreftet,
           ...(fil ? { fil: { type: "application/pdf", data: fil.data } } : {}),
           ...(retting && bilder.length
             ? {
@@ -717,7 +739,12 @@ export function Malskjema({ mal }: { mal: Mal }) {
           {urort && viserFelter && tilstand !== "jobber" && (
             <button
               type="button"
-              onClick={() => setVerdier(eksempelverdier(mal))}
+              onClick={() => {
+                const v = eksempelverdier(mal);
+                setVerdier(v);
+                /* Eksempelet tar stilling til alt det fyller ut. */
+                setBekreftet(Object.keys(v));
+              }}
               className="rounded-interaktiv border border-kant px-4 py-2.5 text-[0.9375rem] font-medium text-blekk-dempet transition-colors hover:border-kant-sterk hover:text-blekk motion-reduce:transition-none"
             >
               Fyll inn eksempel

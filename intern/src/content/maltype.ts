@@ -54,6 +54,28 @@ export type Felt = {
    */
   paakrevd?: boolean;
   valg?: readonly string[];
+  /**
+   * Verdien feltet står på før noen rører det.
+   *
+   * ── EN STANDARD MÅ SI HVORDAN REFLEKTOR JOBBER ────────────────────────
+   *
+   * Den kan si «To personer med alt utstyr» eller «Tirsdag og torsdag».
+   * Det er sant hos oss til noen endrer det.
+   *
+   * Den kan IKKE si noe om kunden, personen eller dagen. «Nei, bare
+   * romlyd» er ikke en standard, det er en gjetning — og en gjetning som
+   * står forhåndsvalgt, blir aldri lest av den som skulle overprøvd den.
+   *
+   * 27.09.2026 lastet en produsent opp en produksjonsplan der noen snakker
+   * på film. Feltet «Er det tale på dagen» sto på «Nei, bare romlyd», som
+   * ingen hadde valgt, og instruksen sa at et utfylt felt gjelder foran
+   * vedlegget. Opptakslisten ble laget uten mikrofon.
+   *
+   * Derfor skiller serveren nå på hva produsenten har VALGT og hva som
+   * bare står der. Se `byggInstruks`. Regelen over gjelder likevel: en
+   * standard som er en påstand om kunden, skal ikke finnes i det hele
+   * tatt, uansett hvor godt serveren håndterer den.
+   */
   standard?: string;
   /**
    * Verdien «Fyll inn eksempel» setter.

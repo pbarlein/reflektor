@@ -119,6 +119,7 @@ export const MALER: readonly Mal[] = [
       },
       {
         id: "kundetype",
+        eksempel: "Vi filmer her jevnlig",
         /*
          * Feltet het «Kundeforhold», med «Fast kunde på abonnement» og
          * «Prøveperiode» som valg. Begge er avtaleforhold, ikke
@@ -137,7 +138,6 @@ export const MALER: readonly Mal[] = [
           "Vi har filmet her noen ganger",
           "Første gang vi filmer her",
         ],
-        standard: "Vi filmer her jevnlig",
       },
       {
         id: "kontakt",
@@ -200,7 +200,6 @@ export const MALER: readonly Mal[] = [
         hjelp:
           "Stills deler kapasitet med video. Sier du ja, blir det færre videoer.",
         valg: ["Nei, bare video", "Ja, stills i tillegg"],
-        standard: "Nei, bare video",
         eksempel: "Ja, stills i tillegg",
       },
       {
@@ -322,7 +321,6 @@ export const MALER: readonly Mal[] = [
           "Ja, noen filmes mens de snakker",
           "Både og",
         ],
-        standard: "Nei, bare romlyd",
         eksempel: "Ja, noen filmes mens de snakker",
       },
       {
@@ -380,6 +378,7 @@ export const MALER: readonly Mal[] = [
       },
       {
         id: "hvem",
+        eksempel: "Ansatt hos kunden",
         etikett: "Hvem skal signere",
         type: "valg",
         hjelp: "Ansatte hos kunden og gjester i lokalet har ulike behov.",
@@ -389,7 +388,6 @@ export const MALER: readonly Mal[] = [
           "Innleid medvirkende",
           "Mindreårig (under 18)",
         ],
-        standard: "Ansatt hos kunden",
       },
       {
         id: "kanaler",
@@ -402,7 +400,6 @@ export const MALER: readonly Mal[] = [
           "Kundens nettside",
           "Betalte annonser",
         ],
-        standard: "Instagram",
         paakrevd: true,
         eksempel: "Instagram · Facebook · Menyskjermer i lokalet",
       },
@@ -497,7 +494,17 @@ export const MALER: readonly Mal[] = [
           "Stillbilder",
         ],
         standard: "9:16 til Reels og Stories",
-        paakrevd: true,
+        /*
+         * IKKE PÅKREVD, SELV OM FORMATET ALLTID MÅ STÅ.
+         *
+         * Feltet var merket påkrevd OG hadde standardverdi. De to kan ikke
+         * gjelde samtidig: et felt som alltid har en verdi, blir aldri
+         * savnet, så «Dokumentet trenger N felt til» nevnte det aldri.
+         * Kravet var en påstand uten virkning.
+         *
+         * Standarden er Reflektors eget leveranseformat og skal bli
+         * stående. Da er det kravet som må vike.
+         */
         eksempel: "9:16 til Reels og Stories · 16:9 til menyskjermer",
       },
       {
@@ -861,9 +868,9 @@ export const MALER: readonly Mal[] = [
       },
       {
         id: "kanaler",
+        eksempel: "Instagram, med krysspublisering til Facebook",
         etikett: "Kanaler",
         type: "tekst",
-        standard: "Instagram, med krysspublisering til Facebook",
       },
       ...GRUNNLAGSFELT,
     ],
@@ -955,6 +962,27 @@ export function byggInstruks(
   verdier: Readonly<Record<string, string>>,
   medVedlegg = false,
   research = "",
+  /**
+   * Feltene produsenten faktisk har tatt stilling til.
+   *
+   * ── HVORFOR ET FORHÅNDSVALG IKKE ER ET SVAR ───────────────────────────
+   *
+   * 27.09.2026 lastet en produsent opp en produksjonsplan der noen snakker
+   * på film. Feltet «Er det tale på dagen» sto på «Nei, bare romlyd» —
+   * ingen hadde valgt det, det var feltets standardverdi — og instruksen
+   * sa at et utfylt felt gjelder foran vedlegget. Opptakslisten ble laget
+   * uten mikrofon, og produsenten måtte oppdage det selv.
+   *
+   * Modellen gjorde nøyaktig som den fikk beskjed om. Beskjeden var feil,
+   * fordi den ikke skilte mellom «produsenten har svart dette» og «feltet
+   * åpnet med dette».
+   *
+   * Et felt regnes som ubekreftet når verdien fortsatt er standardverdien
+   * OG den ikke står her. Utelates listen, regnes alt som står på en
+   * standardverdi som ubekreftet — det er den trygge antakelsen, og den
+   * gjør at en gammel klient ikke kan gjenskape feilen.
+   */
+  bekreftet?: readonly string[],
 ): string {
   /*
    * Grunnlagsfeltene holdes utenfor BEGGE listene. De er ikke innhold som
@@ -964,10 +992,26 @@ export function byggInstruks(
    */
   const innhold = mal.felt.filter((f) => !f.grunnlag);
 
-  const utfylt = innhold
+  const linje = (f: (typeof innhold)[number], v: string) =>
+    `- ${f.etikett}: ${f.type === "dato" ? norskDato(v) : v}`;
+
+  /* Står feltet fortsatt på standardverdien, har ingen tatt stilling. */
+  const ubekreftet = (f: (typeof innhold)[number], v: string) =>
+    f.standard !== undefined &&
+    v === f.standard &&
+    !(bekreftet ?? []).includes(f.id);
+
+  const fylte = innhold
     .map((f) => [f, (verdier[f.id] ?? "").trim()] as const)
-    .filter(([, v]) => v.length > 0)
-    .map(([f, v]) => `- ${f.etikett}: ${f.type === "dato" ? norskDato(v) : v}`);
+    .filter(([, v]) => v.length > 0);
+
+  const utfylt = fylte
+    .filter(([f, v]) => !ubekreftet(f, v))
+    .map(([f, v]) => linje(f, v));
+
+  const forvalg = fylte
+    .filter(([f, v]) => ubekreftet(f, v))
+    .map(([f, v]) => linje(f, v));
 
   const mangler = innhold
     .filter((f) => !(verdier[f.id] ?? "").trim())
@@ -990,6 +1034,27 @@ export function byggInstruks(
   ];
 
   /*
+   * ── FORHÅNDSVALGENE STÅR FOR SEG, OG SVAKERE ──────────────────────────
+   *
+   * De er Reflektors vanlige svar, ikke produsentens. Står de i samme
+   * liste som resten, er de umulige å skille fra noe noen har bestemt —
+   * og da vinner de over et vedlegg som sier det motsatte.
+   */
+  if (forvalg.length) {
+    deler.push(
+      "",
+      [
+        "STANDARDVALG INGEN HAR BEKREFTET",
+        "Disse feltene står på Reflektors vanlige svar. Produsenten har ikke tatt stilling til dem for akkurat denne jobben.",
+        ...forvalg,
+        "",
+        "Bruk dem der ingenting annet sier noe. Sier et vedlegg, en e-post fra kunden eller researchen noe annet, gjelder DET — et forhåndsvalg er ikke et svar, og det skal aldri overstyre noe noen faktisk har skrevet.",
+        "Er ett av dem avgjørende for dokumentet, og du ikke fant noe som bekrefter eller motsier det, spør om det under avklaringer. Da vet produsenten at du la det til grunn.",
+      ].join("\n"),
+    );
+  }
+
+  /*
    * ── VEDLEGGET ER GRUNNLAGET, IKKE ET TILLEGG ──────────────────────────
    *
    * Uten denne bolken leser modellen vedlegget som bakgrunnsstoff og
@@ -1003,6 +1068,7 @@ export function byggInstruks(
         "VEDLEGGET",
         "Det er lagt ved et dokument over. DET er datagrunnlaget ditt — les det først, og bygg dokumentet av innholdet i det.",
         "Feltene under INFORMASJONEN er utfylt av produsenten i tillegg. De gjelder foran vedlegget der de sier noe annet. Er et felt tomt, henter du svaret fra vedlegget.",
+        "Det som står under STANDARDVALG INGEN HAR BEKREFTET, gjelder IKKE foran vedlegget. Sier vedlegget noe annet enn et forhåndsvalg, er det vedlegget som er riktig.",
         "Står noe verken i vedlegget eller i feltene, skriver du TBD(...). Du gjetter ikke, og du henter ikke noe fra andre kilder.",
       ].join("\n"),
     );
@@ -1113,10 +1179,12 @@ export function byggRettelse(
    * instruks, ikke et spor i et dokument som kan viskes ut av den neste.
    */
   tidligere: readonly string[] = [],
+  /** Feltene produsenten har tatt stilling til. Se `byggInstruks`. */
+  bekreftet?: readonly string[],
 ): string {
   const staaende = tidligere.filter((t) => t.trim());
   return [
-    byggInstruks(mal, verdier, medVedlegg, research),
+    byggInstruks(mal, verdier, medVedlegg, research, bekreftet),
     "",
     "── DOKUMENTET SLIK DET STÅR NÅ ──",
     JSON.stringify(forrige),

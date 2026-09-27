@@ -148,6 +148,7 @@ export async function POST(foresporsel: NextRequest) {
     friskResearch,
     bilder,
     rettelser: forrigeRettelser,
+    bekreftet: raaBekreftet,
   } = (kropp ?? {}) as Record<string, unknown>;
 
   const mal = typeof slug === "string" ? malFraSlug(slug) : undefined;
@@ -165,6 +166,18 @@ export async function POST(foresporsel: NextRequest) {
       }
     }
   }
+
+  /*
+   * Feltene produsenten har tatt stilling til. Bare id-er malen kjenner —
+   * listen kan bare LØFTE et felt fra forhåndsvalg til svar, så en klient
+   * som sender søppel får i verste fall samme oppførsel som ingen liste.
+   */
+  const bekreftet = Array.isArray(raaBekreftet)
+    ? raaBekreftet.filter(
+        (b): b is string =>
+          typeof b === "string" && mal.felt.some((f) => f.id === b),
+      )
+    : [];
 
   /*
    * En rettelse krever BEGGE deler. Kommer det en rettelse uten et gyldig
@@ -439,8 +452,15 @@ export async function POST(foresporsel: NextRequest) {
                 vedlegg !== null,
                 grunnlaget(),
                 tidligereRettelser,
+                bekreftet,
               )
-            : byggInstruks(mal, rene, vedlegg !== null, grunnlaget());
+            : byggInstruks(
+                mal,
+                rene,
+                vedlegg !== null,
+                grunnlaget(),
+                bekreftet,
+              );
 
         if (instruks.length > INSTRUKSGRENSE) {
           send({ feil: "Skjemaet er for langt. Kort ned de lange feltene." });

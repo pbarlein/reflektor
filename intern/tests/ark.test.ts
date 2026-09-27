@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { TAK, arkSkjema, deleneI, lesArk, lesSvar } from "../src/content/arktype.ts";
+import {
+  TAK,
+  arkSkjema,
+  deleneI,
+  lesArk,
+  lesSvar,
+} from "../src/content/arktype.ts";
 import { MALER, byggRettelse, malFraSlug } from "../src/content/maler.ts";
 
 /**
@@ -162,7 +168,16 @@ test("svaret leses og kappes, og tåler søppel", () => {
   const langt = "a".repeat(5000);
   const s = lesSvar({
     beskjed: `  ${langt}  `,
-    avklaringer: [" Hvem stiller fra kunden? ", "", 42, null, "b", "c", "d", "e"],
+    avklaringer: [
+      " Hvem stiller fra kunden? ",
+      "",
+      42,
+      null,
+      "b",
+      "c",
+      "d",
+      "e",
+    ],
   });
 
   assert.equal(s.beskjed.length, TAK.beskjed);

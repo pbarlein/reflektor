@@ -164,3 +164,56 @@ fylt når den gjør det.
 planlegges hos plattformen. Et løfte ingen venter på, er et løfte som dør
 med funksjonen. En test vokter nå mønsteret, siden ingen enhetstest kan se
 selve feilen.
+
+## 27.09.2026 — et forhåndsvalg er ikke et svar
+
+**Hendelsen:** en produsent lastet opp en produksjonsplan der noen snakker
+på film. Opptakslisten kom ut uten mikrofon. Claude forklarte selv hvorfor
+i beskjeden: feltet «Er det tale på dagen» var utfylt med «Nei, bare
+romlyd», og et utfylt felt gjelder foran vedlegget.
+
+Ingen hadde valgt «Nei, bare romlyd». Det var feltets standardverdi.
+
+**Feilen var ikke ett felt.** Fjorten felt hadde standardverdi. Åtte av dem
+sa hvordan Reflektor jobber — to personer med alt utstyr, tirsdag og
+torsdag, våre leveranseformater. Seks var påstander om kunden, personen
+eller dagen:
+
+| Mal | Felt | Sto forhåndsvalgt på |
+|---|---|---|
+| produksjonsplan | Hvor godt kjenner vi stedet | Vi filmer her jevnlig |
+| produksjonsplan | Stillbilder i tillegg | Nei, bare video |
+| opptaksliste | Er det tale på dagen | Nei, bare romlyd |
+| samtykke | Hvem skal signere | Ansatt hos kunden |
+| samtykke | Hvor materiellet publiseres | Instagram |
+| publiseringsplan | Kanaler | Instagram + Facebook |
+
+De to på samtykkeerklæringen er de verste: et dokument en person signerer,
+der to av tre felt gjettet om hvem hen er og hvor ansiktet hens havner.
+
+**To lag med fiks:**
+
+1. De seks påstandene er fjernet. Feltene starter tomme, og et tomt felt
+   havner i IKKE OPPGITT — synlig for produsenten i stedet for usynlig i
+   dokumentet.
+2. De åtte som beskriver Reflektor, står igjen, men de veier mindre. Er et
+   felt fortsatt på standardverdien og produsenten ikke har rørt det, står
+   det under STANDARDVALG INGEN HAR BEKREFTET i instruksen, og vedlegget,
+   e-posten og researchen slår det. Er det avgjørende, skal Claude spørre
+   om det under avklaringer.
+
+Klienten sender hvilke felt produsenten har tatt stilling til. Uten den
+listen antar serveren det trygge — at ingen har det.
+
+**Også funnet i samme gjennomgang:** `leveranseoversikt/formater` var både
+påkrevd og forhåndsutfylt. Et felt som alltid har verdi blir aldri savnet,
+så kravet hadde ingen virkning. Kravet er fjernet, standarden beholdt.
+
+**Regelen dette er et tilfelle av:** en standardverdi kan si hvordan
+Reflektor jobber. Den kan aldri si noe om kunden, personen eller dagen. Vår
+egen standard er sann til noen endrer den; en gjetning som står
+forhåndsvalgt, blir aldri lest av den som skulle overprøvd den.
+
+Syv nye tester i `tests/forvalg.test.ts` vokter begge lagene, og listen
+over lovlige standardverdier er uttømmende — en ny må føres opp med
+begrunnelse.
