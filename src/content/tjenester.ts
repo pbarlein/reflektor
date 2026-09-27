@@ -542,10 +542,16 @@ export const event: Tjenesteside = {
       sti: "/arbeid/dag4-vegg.jpg",
       alt: "Opptak med kamera under et arrangement",
     },
+    /*
+     * HENTET FRA DROPBOX 27.09.2026. Siden hadde fire stillbilder og ingen
+     * film i det hele tatt — på en side som selger eventvideo. Dette er
+     * popup-en for Freia: hjul, betjening og gjester, altså dekning av noe
+     * som faktisk skjer. Transkodet fra 176 MB i 4K til 1,6 MB i 720x1280.
+     */
     {
-      type: "foto",
-      sti: "/arbeid/portrett-vegg.jpg",
-      alt: "Portrett utendørs mot blå himmel",
+      type: "video",
+      sti: "/reels/freia-popup",
+      alt: "Vertikalt klipp fra en popup-butikk med lykkehjul og betjening",
     },
   ],
 };
