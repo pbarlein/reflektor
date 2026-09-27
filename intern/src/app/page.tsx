@@ -1,39 +1,33 @@
-import { Container } from "@/components/Container";
-import { MaaKunne, type Kortdata } from "@/components/MaaKunne";
 import { Maalet } from "@/components/Maalet";
 import { Oversikt } from "@/components/Oversikt";
 import { Snarveier } from "@/components/Snarveier";
-import { Sok } from "@/components/Sok";
-import { finnKategori } from "@/content/kategorier";
 import { I_DRIFT, kategorierMedInnhold } from "@/content/rubrikker";
-import { lesetid } from "@/lib/lesetid";
-import { lesetilstander, pensumrekkefolge } from "@/lib/lesing";
+import { lesetilstander } from "@/lib/lesing";
 import { lestAvBrukeren } from "@/lib/lesing-server";
 import { fornavn, krevBruker } from "@/lib/tilgang";
 
 /**
  * Forsiden.
  *
- * SERVERKOMPONENT. Bare søket og rekka er klientkode; alt innholdet går
- * over ledningen som HTML.
+ * SERVERKOMPONENT. Bare søket er klientkode; alt innholdet går over
+ * ledningen som HTML.
  *
  * `krevBruker()` OG IKKE BARE PROXYEN. Next sier selv at proxy-laget er en
  * optimistisk sjekk, ikke en autorisasjonsløsning. Se src/lib/tilgang.ts.
  *
- * ── REKKEFØLGEN, OG HVORFOR DEN ER SLIK (omarbeidet 28.09.2026) ───────────
- *
- * Dette er startsiden alle ansatte har i nettleseren og ser hver dag. Da er
- * rekkefølgen ikke smak, den er en rangering av hva folk faktisk kom for:
+ * ── TRE SEKSJONER, ETTER HVA FOLK FAKTISK KOM FOR ─────────────────────────
  *
  *   1. MÅLET       hvem vi er. Én skjerm, uendret tekst, ingen handling.
  *   2. SNARVEIENE  det man kom for å GJØRE. Seks ruter, én linje.
- *   3. PENSUM      det man må kunne. Framdriften ligger i kortene selv.
- *   4. SØKET       for den som vet hva hen leter etter.
- *   5. OVERSIKTEN  hele biblioteket, tett, til oppslag.
+ *   3. PENSUM      det man må kunne, med søket i toppen av seksjonen.
  *
- * Det gamle oppsettet hadde et framdriftskort og et søk øverst, og deretter
- * åtte vannrette karuseller med to kort i hver. Se `Oversikt` for hvorfor
- * de åtte karusellene var feil form for seksten rubrikker.
+ * Punkt tre var to seksjoner til 28.09.2026: en sidelengs rekke med
+ * overskriften «Dette må du kunne godt», og et rutenett under med
+ * overskriften «Alt innholdet». De viste de samme seksten rubrikkene med
+ * samme lesestatus. Se `Oversikt`.
+ *
+ * Søket lå mellom dem. Nå ligger det i seksjonen det søker i, som en
+ * kontroll over listen — ikke som en egen overskrift med eget felt.
  */
 export default async function Forside() {
   const bruker = await krevBruker();
@@ -62,23 +56,6 @@ export default async function Forside() {
     lesetilstander(I_DRIFT, lest, new Date()),
   );
 
-  /*
-   * Rekkefølgen er en regel, ikke et oppsett — se `pensumrekkefolge`.
-   *
-   * Bare det kortet viser sendes over til klienten. Rubrikkene bærer også
-   * hele brødteksten, og den skal ikke over ledningen to ganger.
-   */
-  const rekke: Kortdata[] = pensumrekkefolge(I_DRIFT).map((r) => ({
-    slug: r.slug,
-    tittel: r.tittel,
-    kategori: finnKategori(r.kategori).kort,
-    minutter: lesetid(r),
-    medie: r.medie,
-    tilstand: tilstander[r.slug] ?? "ulest",
-  }));
-
-  const antallLest = I_DRIFT.filter((r) => lest.has(r.nr)).length;
-
   return (
     <>
       <Maalet navn={fornavn(bruker)} />
@@ -90,28 +67,6 @@ export default async function Forside() {
         produksjonsplan før de drar på lokasjon. Se `Snarveier`.
       */}
       <Snarveier />
-
-      <MaaKunne kort={rekke} lest={antallLest} />
-
-      <Container>
-        <div className="pt-12 sm:pt-16">
-          {/*
-            SØKET STÅR MELLOM PENSUM OG OVERSIKTEN.
-
-            Det er den eneste kontrollen som går på tvers av alt, og
-            gjennomgående funn i undersøkelser av intranett er at bruken
-            faller når folk ikke finner fram raskt. Her står det rett over
-            biblioteket det søker i — den som ikke fant det hen lette etter
-            i rekka over, møter feltet før hen begynner å bla.
-          */}
-          <h2 className="font-sans text-xs font-medium tracking-[0.12em] text-blekk-dempet uppercase">
-            Finn noe bestemt
-          </h2>
-          <div className="mt-3">
-            <Sok rubrikker={I_DRIFT} tilstander={tilstander} />
-          </div>
-        </div>
-      </Container>
 
       <Oversikt grupper={grupper} tilstander={tilstander} />
     </>

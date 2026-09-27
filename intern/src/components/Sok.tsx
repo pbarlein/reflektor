@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 
 import { Rubrikkort } from "@/components/Rubrikkort";
 import type { Rubrikk } from "@/content/rubrikktype";
@@ -45,9 +45,16 @@ const FORSLAG = ["romtone", "hvitbalanse", "mygg", "emneknagg", "oppsigelse"];
 export function Sok({
   rubrikker,
   tilstander,
+  children,
 }: {
   rubrikker: readonly Rubrikk[];
   tilstander: Record<string, Lesetilstand>;
+  /**
+   * Listen man blar i. Serverkode, sendt inn som `children` — se
+   * kommentaren over `{!soker && children}` nederst for hvorfor den bor
+   * her og ikke ved siden av.
+   */
+  children: ReactNode;
 }) {
   const [sok, settSok] = useState("");
   const feltet = useRef<HTMLInputElement>(null);
@@ -90,7 +97,7 @@ export function Sok({
 
   return (
     <div>
-      <div className="relative">
+      <div className="relative max-w-[40rem]">
         <label htmlFor="sok" className="sr-only">
           Søk i alt innhold
         </label>
@@ -184,7 +191,7 @@ export function Sok({
         «romtone» som gir treff, beviser poenget på ett klikk.
       */}
       {!soker && (
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        <div className="mt-3 flex max-w-[40rem] flex-wrap items-center gap-2">
           <span className="text-[0.8125rem] text-blekk-svak">Prøv</span>
           {FORSLAG.map((f) => (
             <button
@@ -246,6 +253,21 @@ export function Sok({
           )}
         </div>
       )}
+
+      {/*
+        BLA-LISTEN LIGGER INNI SØKET, og det er en oppførsel og ikke en
+        forglemmelse.
+
+        Da den lå ved siden av, sto hele biblioteket fortsatt under mens
+        man leste fire treff. Man måtte selv holde orden på hva som var
+        svar og hva som var listen man nettopp forlot. Nå bytter seksjonen
+        tilstand: enten blar du, eller så søker du.
+
+        Den er servergjengitt og sendes inn som `children`. Den går altså
+        ikke over ledningen som klientkode, og den bygges ikke på nytt når
+        man skriver — React beholder den mens den er skjult.
+      */}
+      {!soker && children}
     </div>
   );
 }

@@ -498,4 +498,93 @@ export const KUNDE: readonly Rubrikk[] = [
       },
     ],
   },
+
+  {
+    /*
+     * FLYTTET FRA PLANLEGGINGSFASEN 28.09.2026.
+     *
+     * Den sto under planlegging fordi kundemøtet er der planen blir til.
+     * Men seksjonene i rubrikken er «Fem sjekkpunkter», «Kom med noe» og
+     * «Når du ikke kan tallet» — alle tre handler om møtet, ingen om
+     * opptaksdagen. Kundeforholdet lister dessuten «Møter» i sin egen
+     * beskrivelse, og malen «Oppsummering etter kundemøte» parer denne
+     * med `proaktiv-kundekontakt`, som allerede ligger her.
+     */
+    slug: "forberedt-til-kundemote",
+    nr: 33,
+    tittel: "Godt forberedt til kundemøte",
+    sammendrag:
+      "«Godt forberedt» er det andre ordet i målet vårt. Her er hva det betyr konkret, i minuttene før du går inn.",
+    kategori: "kunde",
+    status: "lansert",
+    medie: {
+      type: "bilde",
+      fil: "arbeid/scene-vegg",
+      alt: "Presentasjon foran storskjerm i en konferansesal",
+    },
+    oppdatert: "2026-09-22",
+    godkjent: false,
+    ansvarlig: "Kundeansvarlig",
+    prioritet: 90,
+    oppsummering: [
+      { tekst: "Fem sjekkpunkter før du går inn", anker: "sjekk" },
+      { tekst: "Kom med noe — ikke bare en agenda", anker: "kom" },
+      { tekst: "Når du blir spurt om et tall du ikke kan", anker: "tall" },
+    ],
+    innhold: [
+      {
+        type: "avsnitt",
+        tekst:
+          "Kunden merker forberedelse på ett sekund, og fraværet av den på mindre. Forskjellen er sjelden hvor lang tid du brukte — det er om du har sett på dem i det hele tatt siden sist.",
+      },
+      { type: "seksjon", id: "sjekk", tittel: "Fem sjekkpunkter" },
+      {
+        type: "sjekkliste",
+        tittel: "Før du går inn",
+        punkter: [
+          "Åpne kundens konto og se de siste postene. Vet du hvilken som gikk best?",
+          "Har de publisert noe selv siden sist, utenom det vi lager?",
+          "Hva ble lovet i forrige møte, og er det gjort?",
+          "Har du ETT konkret forslag med deg?",
+          "Vet du hvem som kommer, og hva de har ansvar for?",
+        ],
+      },
+      { type: "seksjon", id: "kom", tittel: "Kom med noe" },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det fjerde punktet er det som skiller et forberedt møte fra et pent møte. Et møte der vi bare spør hva kunden ønsker seg, flytter jobben vår over på dem — og det er nøyaktig den jobben de betaler for å slippe.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Forslaget trenger ikke være stort. «Dere har en ny rett på menyen fra mandag — vi filmer den først på neste produksjonsdag» er nok. Poenget er retningen: vi kommer med noe, i stedet for å be om noe.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det er ikke bare god tone. Undersøkelser av hvorfor kunder bytter byrå lander gjentatte ganger på manglende proaktiv rådgivning som en av toppårsakene — altså nøyaktig det å møte opp uten å ha noe med seg. Og i et feltforsøk hos en skytjenesteleverandør ble frafallet den første uken halvert blant de kundene som fikk uoppfordret hjelp i gang, sammenlignet med dem som måtte spørre selv. Initiativet var hele forskjellen.",
+      },
+      { type: "seksjon", id: "tall", tittel: "Når du ikke kan tallet" },
+      {
+        type: "avsnitt",
+        tekst:
+          "Si at du sjekker og svarer samme dag. Et anslag som viser seg å være feil, koster mer enn en times venting — og det koster på et sted som er dyrt å reparere, nemlig om kunden kan stole på det du sier.",
+      },
+    ],
+    kilder: [
+      {
+        tittel:
+          "Retana, Forman & Wu (2016): Proactive Customer Education, Customer Retention, and Demand for Technology Support — Evidence from a Field Experiment. Manufacturing & Service Operations Management 18(1), 34–50",
+        url: "https://doi.org/10.1287/msom.2015.0547",
+        sjekket: "2026-09-22",
+      },
+      {
+        tittel:
+          "ALM Corp: Why clients fire marketing agencies — common reasons and warning signs",
+        url: "https://almcorp.com/blog/why-clients-fire-marketing-agencies-retention-scripts/",
+        sjekket: "2026-09-21",
+      },
+    ],
+  },
 ];
