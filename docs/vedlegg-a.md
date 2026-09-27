@@ -2262,20 +2262,30 @@ Det testene **ikke** kan avgjøre er om en kilde faktisk er død på dagens
 side. Det krever et oppslag mot reflektor.no og må gjøres for hånd. Det står
 i kommentaren øverst i testfila.
 
-### Redirectene er 308, ikke 301
+### Redirectene var 308. Nå er de 301
 
 Oppdaget under verifiseringen, fordi en gammel serverprosess holdt porten og
 svarte fra forrige bygg: `permanent: true` i Next gir **308 Permanent
-Redirect**, ikke 301. Det gjelder alle 51 oppføringene.
+Redirect**, ikke 301. Det gjaldt alle 51 oppføringene.
 
 Google og Bing behandler 308 som likeverdig med 301 — lenkeverdien flyttes
-likt — så det er ikke en feil. Men dagens Squarespace svarer 301, og både
+likt — så det var ikke en feil. Men dagens Squarespace svarer 301, og både
 denne fila og `AGENTS.md` sier «301» gjennomgående, blant annet i
-cutover-regelen for `/sosiale-medier-byra`. Leser noen en redirect-rapport og
-ser 308, er det dette.
+cutover-regelen for `/sosiale-medier-byra`. Et byrå som kjører en
+redirect-sjekk skal ikke måtte lure på hvorfor tallet er et annet enn det som
+står skrevet.
 
-Ikke endret. Å bytte til `statusCode: 301` er en endring på hele kartet, og
-nåværende oppførsel er korrekt. Notert i `next.config.ts`; Pål avgjør.
+**Pål bestemte å endre det.** Alle 31 oppføringer bruker nå `statusCode: 301`
+i stedet for `permanent: true`. De to kan ikke kombineres — Next godtar én av
+dem per oppføring.
+
+Verifisert mot produksjonsbygget: alle 51 svarer **301** med riktig
+`location`, og alle lander til slutt på 200.
+
+En femte vaktpost i `tests/redirects.test.ts` holder kartet på 301, slik at en
+ny oppføring skrevet på Next sin vanlige måte ikke sniker inn en 308 igjen.
+Også den er mutasjonstestet: en innsneket `permanent: true` får testen til å
+feile.
 
 ### Verifisert
 

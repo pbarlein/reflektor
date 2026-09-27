@@ -118,3 +118,23 @@ test("ingen kilde er oppført to ganger", async () => {
     sett.set(r.source, r.destination);
   }
 });
+
+test("hver redirect er en eksplisitt 301", async () => {
+  for (const r of await kart()) {
+    assert.equal(
+      "permanent" in r,
+      false,
+      `${r.source} bruker \`permanent\`. Next oversetter det til 308, ikke ` +
+        `301. Google behandler de to likt, men dagens Squarespace svarer 301 ` +
+        `og all dokumentasjonen vår sier 301 — et byrå som kjører en ` +
+        `redirect-sjekk skal ikke måtte lure på avviket. Bruk ` +
+        `\`statusCode: 301\`.`,
+    );
+    assert.equal(
+      (r as { statusCode?: number }).statusCode,
+      301,
+      `${r.source} har statusCode ${(r as { statusCode?: number }).statusCode}. ` +
+        `Kartet skal være 301 hele veien. Bestemt 27.09.2026.`,
+    );
+  }
+});

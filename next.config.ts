@@ -11,40 +11,43 @@ import type { NextConfig } from "next";
  * faktisk er død før du legger inn en redirect for den.
  */
 /*
- * MERK OM STATUSKODE: `permanent: true` gir **308**, ikke 301. Målt mot
- * produksjonsbygget 27.09.2026. Google og Bing behandler 308 som likeverdig
- * med 301 — lenkeverdien flyttes likt — så dette er ikke en feil. Men dagens
- * Squarespace svarer 301, og dokumentasjonen her og i AGENTS.md sier «301»
- * gjennomgående. Leser du en redirect-sjekk og ser 308, er det dette.
+ * STATUSKODE: 301, satt eksplisitt. Bestemt av Pål 27.09.2026.
  *
- * Skal hele kartet over til 301, byttes `permanent: true` med
- * `statusCode: 301`. Ikke gjort — det er en endring på alle oppføringene, og
- * nåværende oppførsel er korrekt. Pål avgjør.
+ * `statusCode: 301` — Next sin vanlige måte — gir **308**, ikke 301. Målt mot
+ * produksjonsbygget. Google og Bing behandler de to som likeverdige, så 308
+ * var ikke en feil. Men dagens Squarespace svarer 301, hele dokumentasjonen
+ * vår sier 301, og et byrå som kjører en redirect-sjekk skal ikke måtte lure
+ * på hvorfor tallet er et annet enn det som står skrevet.
+ *
+ * Derfor `statusCode: 301` på alle oppføringene, ikke `permanent`. De to kan
+ * ikke kombineres — Next godtar én av dem per oppføring. En test i
+ * tests/redirects.test.ts holder kartet på 301, slik at en ny oppføring med
+ * `statusCode: 301` ikke sniker inn en 308 igjen.
  */
 const redirects: NextConfig["redirects"] = async () => [
   // --- Kontakt: /kontakt og /kontakt-oss er 404, /kontaktoss er den ekte ---
-  { source: "/kontakt", destination: "/kontaktoss", permanent: true },
-  { source: "/kontakt-oss", destination: "/kontaktoss", permanent: true },
+  { source: "/kontakt", destination: "/kontaktoss", statusCode: 301 },
+  { source: "/kontakt-oss", destination: "/kontaktoss", statusCode: 301 },
 
   // --- Skrivefeil-URL-er som gir 404 ---
-  { source: "/vrt-arbeid", destination: "/vart-arbeid", permanent: true },
-  { source: "/forside-v2", destination: "/", permanent: true },
+  { source: "/vrt-arbeid", destination: "/vart-arbeid", statusCode: 301 },
+  { source: "/forside-v2", destination: "/", statusCode: 301 },
   /*
    * BEKREFTET duplikat: Ahrefs-crawlen 2026-08-18 viser at / og /hjem
    * serverte identisk innhold – samme title, samme H1, samme 1068 ord.
    * Forsiden finnes derfor kun på / her.
    */
-  { source: "/hjem", destination: "/", permanent: true },
+  { source: "/hjem", destination: "/", statusCode: 301 },
 
   // --- Personsider: /folk og /jon-sverre er 404 ---
-  { source: "/folk", destination: "/om-oss", permanent: true },
-  { source: "/jon-sverre", destination: "/om-oss", permanent: true },
+  { source: "/folk", destination: "/om-oss", statusCode: 301 },
+  { source: "/jon-sverre", destination: "/om-oss", statusCode: 301 },
 
   // --- Døde tjeneste-URL-er til nærmeste levende landingsside ---
   {
     source: "/tjenester/sosiale-medier",
     destination: "/sosiale-medier-byra",
-    permanent: true,
+    statusCode: 301,
   },
   /*
    * BEVISST AVVIK FRA DAGENS SIDE. Squarespace 301-er denne til /vart-arbeid
@@ -56,12 +59,12 @@ const redirects: NextConfig["redirects"] = async () => [
   {
     source: "/tjenester/some-annonsering",
     destination: "/sosiale-medier-byra",
-    permanent: true,
+    statusCode: 301,
   },
   {
     source: "/tjenester/innholdsproduksjon",
     destination: "/innholdsproduksjon",
-    permanent: true,
+    statusCode: 301,
   },
   /*
    * DET DØDE /tjenester/-TREET — MÅLENE HENTET FRA DAGENS SIDE 27.09.2026.
@@ -105,7 +108,7 @@ const redirects: NextConfig["redirects"] = async () => [
   ].map((source) => ({
     source,
     destination: "/innholdsproduksjon",
-    permanent: true,
+    statusCode: 301,
   })),
 
   /* Case- og resultatadresser → vårt arbeid, som i dag. */
@@ -117,7 +120,7 @@ const redirects: NextConfig["redirects"] = async () => [
   ].map((source) => ({
     source,
     destination: "/vart-arbeid",
-    permanent: true,
+    statusCode: 301,
   })),
 
   /* Uten en nærmere etterfølger → forsiden, som i dag. */
@@ -128,13 +131,13 @@ const redirects: NextConfig["redirects"] = async () => [
     "/tjenester/performance-marketing",
     /* Duplikat av tjenesteoversikten. 404 i dag. */
     "/tjenester-1",
-  ].map((source) => ({ source, destination: "/", permanent: true })),
+  ].map((source) => ({ source, destination: "/", statusCode: 301 })),
 
   /* 1 466 visninger, 43 søkeord. Live etterfølger med samme navn. */
   {
     source: "/tjenester/eventfotograf-eventvideo",
     destination: "/eventfotograf-eventvideo",
-    permanent: true,
+    statusCode: 301,
   },
 
   /*
@@ -150,16 +153,13 @@ const redirects: NextConfig["redirects"] = async () => [
    */
 
   /* Squarespace-foto uten /tjenester/-prefiks. 404 i dag. */
-  ...[
-    "/fotograf",
-    "/bedriftsfoto",
-    "/bilderavansatte",
-    "/matfoto",
-  ].map((source) => ({
-    source,
-    destination: "/innholdsproduksjon",
-    permanent: true,
-  })),
+  ...["/fotograf", "/bedriftsfoto", "/bilderavansatte", "/matfoto"].map(
+    (source) => ({
+      source,
+      destination: "/innholdsproduksjon",
+      statusCode: 301,
+    }),
+  ),
 
   /* Case- og kategorisider. 404 i dag. */
   ...[
@@ -170,7 +170,7 @@ const redirects: NextConfig["redirects"] = async () => [
   ].map((source) => ({
     source,
     destination: "/vart-arbeid",
-    permanent: true,
+    statusCode: 301,
   })),
 
   /*
@@ -178,7 +178,7 @@ const redirects: NextConfig["redirects"] = async () => [
    * men stod ikke i kartet og ville derfor blitt 404 ved cutover.
    */
   ...["/palbarlein", "/magne-finseth-da-fonseca", "/viktor-noren"].map(
-    (source) => ({ source, destination: "/om-oss", permanent: true }),
+    (source) => ({ source, destination: "/om-oss", statusCode: 301 }),
   ),
 
   /*
@@ -189,14 +189,14 @@ const redirects: NextConfig["redirects"] = async () => [
   {
     source: "/videoproduksjon",
     destination: "/videoproduksjon-i-oslo",
-    permanent: true,
+    statusCode: 301,
   },
 
   // --- Svarte 403, trolig et kodet mellomrom som ble del av slugen ---
   {
     source: "/blogg/hva-gjr-en-innholdsprodusentnbsp",
     destination: "/blogg/hva-gjr-en-innholdsprodusent",
-    permanent: true,
+    statusCode: 301,
   },
 
   /*
@@ -216,7 +216,11 @@ const redirects: NextConfig["redirects"] = async () => [
    * redirect for — «redirects skal kun rette opp faktiske 404-er». Målet
    * er /kontaktoss: samme intensjon, og den er live med 7 693 ord.
    */
-  { source: "/gratis-strategimote", destination: "/kontaktoss", permanent: true },
+  {
+    source: "/gratis-strategimote",
+    destination: "/kontaktoss",
+    statusCode: 301,
+  },
 
   /*
    * BLOGGEN: NI AV SYTTEN SLUGS HAR ALDRI HATT INNHOLD. Lagt inn 21.09.2026.
@@ -245,17 +249,17 @@ const redirects: NextConfig["redirects"] = async () => [
   {
     source: "/blogg/hvordan-markedsfore-bedrift",
     destination: "/blogg/markedsforing-i-sosiale-medier-some",
-    permanent: true,
+    statusCode: 301,
   },
   {
     source: "/blogg/hva-er-digital-markedsforing",
     destination: "/blogg/markedsforing-i-sosiale-medier-some",
-    permanent: true,
+    statusCode: 301,
   },
   {
     source: "/blogg/hva-er-inbound-marketing",
     destination: "/blogg/hva-er-innholdsmarkedsforing",
-    permanent: true,
+    statusCode: 301,
   },
 
   /* Seks døde — 301 til oversikten, som i dag. */
@@ -263,24 +267,24 @@ const redirects: NextConfig["redirects"] = async () => [
     source:
       "/blogg/hvilke-virkemidler-er-mest-effektive-i-reklame-og-hvordan-brukes-de",
     destination: "/blogg",
-    permanent: true,
+    statusCode: 301,
   },
   {
     source: "/blogg/hva-er-holdningskampanje",
     destination: "/blogg",
-    permanent: true,
+    statusCode: 301,
   },
-  { source: "/blogg/hva-er-reklame", destination: "/blogg", permanent: true },
-  { source: "/blogg/hva-er-personas", destination: "/blogg", permanent: true },
+  { source: "/blogg/hva-er-reklame", destination: "/blogg", statusCode: 301 },
+  { source: "/blogg/hva-er-personas", destination: "/blogg", statusCode: 301 },
   {
     source: "/blogg/hva-er-visuell-identitet",
     destination: "/blogg",
-    permanent: true,
+    statusCode: 301,
   },
   {
     source: "/blogg/hvordan-ta-portrett-bilder",
     destination: "/blogg",
-    permanent: true,
+    statusCode: 301,
   },
 
   /*
