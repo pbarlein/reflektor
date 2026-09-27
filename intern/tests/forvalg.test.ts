@@ -85,10 +85,10 @@ test("instruksen sier at vedlegget slår et forvalg", () => {
  * beskriver oss eller gjetter om dem.
  */
 const REFLEKTORS_EGEN_STANDARD: Record<string, string> = {
-  "produksjonsplan/fraOss": "vi stiller alltid med to og alt utstyr",
-  "produksjonsplan/bruksflater": "det er dette abonnementet leverer for",
-  "produksjonsplan/formater": "våre leveranseformater",
-  "produksjonsplan/logo": "vår standardbehandling, og den trygge veien",
+  "produksjonsdagen/fraOss": "vi stiller alltid med to og alt utstyr",
+  "produksjonsdagen/bruksflater": "det er dette abonnementet leverer for",
+  "produksjonsdagen/formater": "våre leveranseformater",
+  "produksjonsdagen/logo": "vår standardbehandling, og den trygge veien",
   "samtykke-film-og-bilde/varighet": "vår avtaleterm",
   "leveranseoversikt/formater": "våre leveranseformater",
   "leveranseoversikt/teksting": "vår standard for teksting",

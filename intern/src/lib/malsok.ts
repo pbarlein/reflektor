@@ -12,6 +12,8 @@ export type Sokbar = {
   ansvarlig: string;
   naar: string;
   fase: string;
+  /** Tidligere navn malen fortsatt skal finnes på. Se `Mal.kallenavn`. */
+  kallenavn?: readonly string[];
 };
 
 /**
@@ -33,6 +35,6 @@ export function treffer(m: Sokbar, spørring: string): boolean {
   if (!ord.length) return true;
 
   const høystakk =
-    `${m.navn} ${m.kort} ${m.ansvarlig} ${m.naar} ${m.fase}`.toLowerCase();
+    `${m.navn} ${m.kort} ${m.ansvarlig} ${m.naar} ${m.fase} ${(m.kallenavn ?? []).join(" ")}`.toLowerCase();
   return ord.every((o) => høystakk.includes(o));
 }

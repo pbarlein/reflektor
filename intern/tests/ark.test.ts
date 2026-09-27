@@ -4,11 +4,14 @@ import test from "node:test";
 import {
   TAK,
   arkSkjema,
+  delforklaring,
   deleneI,
   lesArk,
   lesSvar,
+  takFor,
 } from "../src/content/arktype.ts";
 import { MALER, byggRettelse, malFraSlug } from "../src/content/maler.ts";
+import type { Mal } from "../src/content/maltype.ts";
 
 /**
  * `lesArk` er ikke bare en parser.
@@ -18,7 +21,7 @@ import { MALER, byggRettelse, malFraSlug } from "../src/content/maler.ts";
  * gjennom dit. Testene under er derfor på grensen, ikke på lykketreffet.
  */
 
-const plan = malFraSlug("produksjonsplan");
+const plan = malFraSlug("produksjonsdagen");
 assert.ok(plan);
 
 test("delene er malens skisse uten toppen", () => {
@@ -68,22 +71,29 @@ test("en deltype malen ikke har, kastes", () => {
   );
 });
 
-test("for lange verdier kappes, de kastes ikke", () => {
+function stortAark(mal: Mal) {
   const langt = "x".repeat(2_000);
-  const ark = lesArk(
+  return lesArk(
     {
       overskrift: langt,
       undertittel: langt,
       deler: [
         {
           type: "tabell",
-          kolonner: ["a", "b", "c", "d", "e", "f"],
-          rader: Array.from({ length: 30 }, () => [langt, langt]),
+          kolonner: Array.from({ length: 12 }, (_, i) => `k${i}`),
+          rader: Array.from({ length: 30 }, () =>
+            Array.from({ length: 12 }, () => langt),
+          ),
         },
       ],
     },
-    malFraSlug("opptaksliste")!,
+    mal,
   );
+}
+
+test("for lange verdier kappes, de kastes ikke", () => {
+  const mal = malFraSlug("publiseringsplan")!;
+  const ark = stortAark(mal);
   assert.ok(ark);
   assert.equal(ark.overskrift.length, TAK.overskrift);
   assert.equal(ark.undertittel.length, TAK.undertittel);
@@ -91,6 +101,37 @@ test("for lange verdier kappes, de kastes ikke", () => {
   assert.equal(d.kolonner?.length, TAK.kolonner);
   assert.equal(d.rader?.length, TAK.rader);
   assert.equal(d.rader?.[0][0].length, TAK.celle);
+});
+
+/**
+ * Taket er malens, ikke husets.
+ *
+ * Opptakslisten ba om åtte kolonner og ti opptak og fikk fire og sju. Fire
+ * av seks opplysninger per opptak ble kastet uten et ord, i en mal som selv
+ * sier «mangler ett, er listen ikke ferdig». Se `Maltak`.
+ */
+test("en mal med eget tak beholder det den faktisk trenger", () => {
+  const mal = malFraSlug("produksjonsdagen")!;
+  const t = takFor(mal);
+  assert.equal(t.kolonner, 8, "åtte kolonner per opptak");
+  assert.equal(t.rader, 12, "plass til 8–10 opptak");
+
+  const ark = stortAark(mal);
+  assert.ok(ark);
+  const d = ark.deler[0];
+  assert.equal(d.kolonner?.length, 8);
+  assert.equal(d.rader?.length, 12);
+  assert.equal(d.rader?.[0].length, 8, "hele raden overlever, ikke halve");
+});
+
+/** Det modellen får vite, må være det samme som valideringen håndhever. */
+test("instruksen oppgir malens eget tak, ikke standarden", () => {
+  const ut = delforklaring(malFraSlug("produksjonsdagen")!);
+  assert.match(ut, /«kolonner» \(8 maks\)/);
+  assert.match(ut, /«rader» \(12 maks\)/);
+
+  const vanlig = delforklaring(malFraSlug("publiseringsplan")!);
+  assert.match(vanlig, new RegExp(`«kolonner» \\(${TAK.kolonner} maks\\)`));
 });
 
 test("uten overskrift eller deler er det ikke et ark", () => {
@@ -149,9 +190,18 @@ test("instruksen sier hvilke deler malen har, og hvor mye som får plass", () =>
       "Endre noe.",
     );
     assert.match(ut, /DELENE DU SKAL FYLLE UT/, `${m.slug}`);
-    assert.match(ut, /DETTE ER EN ENSIDER/, `${m.slug}`);
+    /*
+     * Produksjonsdagen er ikke en ensider — den bærer både kundens plan og
+     * opptakslisten. Plassregelen gjelder likevel, med en annen overskrift.
+     */
+    assert.match(
+      ut,
+      /DETTE ER EN ENSIDER|HVER DEL SKAL VÆRE KOMPLETT/,
+      `${m.slug}`,
+    );
+    /* Tallet som står i instruksen må være malens eget, ikke husets. */
     assert.ok(
-      ut.includes(`Maks ${TAK.rader} rader`),
+      ut.includes(`Maks ${takFor(m).rader} rader`),
       `${m.slug}: takhøyden for rader står ikke i instruksen`,
     );
   }

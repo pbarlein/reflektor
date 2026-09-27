@@ -51,6 +51,7 @@ export default async function Dokumenter() {
     ansvarlig: m.ansvarlig,
     naar: m.naar,
     fase: m.fase,
+    kallenavn: m.kallenavn,
   }));
 
   return (

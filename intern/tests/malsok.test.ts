@@ -4,12 +4,17 @@ import test from "node:test";
 import { MALER } from "../src/content/maler.ts";
 import { treffer } from "../src/lib/malsok.ts";
 
+/*
+ * Speiler nøyaktig det `/dokument` sender til klienten. Faller et felt ut
+ * her, faller det ut der — og da søker velgeren i noe annet enn testen.
+ */
 const RADER = MALER.map((m) => ({
   navn: m.navn,
   kort: m.kort,
   ansvarlig: m.ansvarlig,
   naar: m.naar,
   fase: m.fase as string,
+  kallenavn: m.kallenavn,
 }));
 
 const funn = (q: string) =>
@@ -22,8 +27,19 @@ test("tomt søk viser alt", () => {
 });
 
 test("navnet treffer, også på en bit av det", () => {
-  assert.deepEqual(funn("rapport"), ["Månedsrapport til kunde"]);
-  assert.ok(funn("produksjonsplan").includes("Produksjonsplan"));
+  assert.deepEqual(funn("befaring"), ["Befaringsnotat"]);
+  assert.ok(funn("produksjonsdagen").includes("Produksjonsdagen"));
+});
+
+/**
+ * Produksjonsplan og Opptaksliste var to maler fram til 28.09.2026. Navnene
+ * sitter i fingrene, og den som skriver dem skal finne arvtakeren — ikke
+ * «ingen maler heter noe som ligner».
+ */
+test("de gamle navnene finner den sammenslåtte malen", () => {
+  for (const gammelt of ["produksjonsplan", "opptaksliste", "shotliste"]) {
+    assert.deepEqual(funn(gammelt), ["Produksjonsdagen"], gammelt);
+  }
 });
 
 /**

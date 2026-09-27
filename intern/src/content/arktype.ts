@@ -1,4 +1,4 @@
-import type { Mal, Skissedel } from "./maltype.ts";
+import type { Mal, Maltak, Skissedel } from "./maltype.ts";
 
 /**
  * Arket — dokumentet som en STRUKTUR, ikke som en tekst.
@@ -146,18 +146,39 @@ export const ARBEIDSLINJE: Record<Skissedel, string> = {
   signatur: "Legger inn signaturfeltene",
 };
 
+/**
+ * Takene som gjelder for DENNE malen.
+ *
+ * Standarden i `TAK` er regnet for en ensider. En mal som bærer noe annet
+ * — en opptaksliste med åtte kolonner per opptak — setter sitt eget. Se
+ * `Maltak` for hva som gikk galt før dette fantes.
+ *
+ * Funksjonen brukes to steder, og MÅ brukes begge: i forklaringen modellen
+ * leser, og i valideringen som tar imot svaret. Står de to fra hverandre,
+ * blir resultatet nøyaktig den stille kuttingen dette skulle fjerne.
+ */
+export function takFor(mal: Mal): Required<Maltak> {
+  return {
+    rader: mal.tak?.rader ?? TAK.rader,
+    kolonner: mal.tak?.kolonner ?? TAK.kolonner,
+    punkter: mal.tak?.punkter ?? TAK.punkter,
+  };
+}
+
 /** Hva hver del ER, med ord modellen kan handle på. */
-const FORKLARING: Record<Skissedel, string> = {
+function forklaringer(t: Required<Maltak>): Record<Skissedel, string> {
+  return {
   topp: "Ikke en egen del — overskriften og undertittelen står i feltene «overskrift» og «undertittel».",
   fakta: `En rad med ${TAK.poster} korte nøkkelopplysninger. Fyll «poster» med etikett og verdi. Verdien er en opplysning, ikke en setning: «Torsdag 8. oktober», ikke «Vi kommer torsdag 8. oktober».`,
-  tabellOgBoks: `Dagens hovedtabell, med en boks ved siden av. Fyll «tittel», «kolonner» (${TAK.kolonner} maks, helst 3), «rader» (${TAK.rader} maks), og «boks» med tittel og inntil ${TAK.punkter} punkter. Boksen er det leseren skal gjøre eller stille med — ikke en oppsummering av tabellen.`,
-  tabell: `En tabell. Fyll «tittel», «kolonner» (${TAK.kolonner} maks) og «rader» (${TAK.rader} maks).`,
-  toKolonner: `To spalter side om side. Fyll «spalter» med nøyaktig ${TAK.spalter} objekter, hver med tittel og inntil ${TAK.punkter} punkter.`,
+  tabellOgBoks: `Dagens hovedtabell, med en boks ved siden av. Fyll «tittel», «kolonner» (${t.kolonner} maks, helst 3), «rader» (${t.rader} maks), og «boks» med tittel og inntil ${t.punkter} punkter. Boksen er det leseren skal gjøre eller stille med — ikke en oppsummering av tabellen.`,
+  tabell: `En tabell. Fyll «tittel», «kolonner» (${t.kolonner} maks) og «rader» (${t.rader} maks).`,
+  toKolonner: `To spalter side om side. Fyll «spalter» med nøyaktig ${TAK.spalter} objekter, hver med tittel og inntil ${t.punkter} punkter.`,
   kort3: `Tre korte kort på rad. Fyll «kort» med nøyaktig ${TAK.kort} objekter, hver med en kort tittel og én til to setninger.`,
   avsnitt: "Et avsnitt løpende tekst. Fyll «tittel» og «tekst».",
-  liste: `En punktliste. Fyll «tittel» og «punkter» (${TAK.punkter} maks).`,
-  signatur: `Signaturfelt. Fyll «felter» med ${TAK.felter} objekter: navn og rolle. Står navnet ikke i informasjonen, skriv TBD(navn).`,
-};
+  liste: `En punktliste. Fyll «tittel» og «punkter» (${t.punkter} maks).`,
+    signatur: `Signaturfelt. Fyll «felter» med ${TAK.felter} objekter: navn og rolle. Står navnet ikke i informasjonen, skriv TBD(navn).`,
+  };
+}
 
 /** Delene malen faktisk har — `topp` er ikke en del, den er hodet. */
 export function deleneI(mal: Mal): Skissedel[] {
@@ -277,8 +298,9 @@ export function arkSkjema(mal: Mal): Record<string, unknown> {
 
 /** Delene beskrevet for instruksen, i malens rekkefølge. */
 export function delforklaring(mal: Mal): string {
+  const f = forklaringer(takFor(mal));
   return deleneI(mal)
-    .map((d, i) => `${i + 1}. ${d} — ${FORKLARING[d]}`)
+    .map((d, i) => `${i + 1}. ${d} — ${f[d]}`)
     .join("\n");
 }
 
@@ -332,6 +354,7 @@ export function lesArk(rått: unknown, mal: Mal): Ark | null {
           .filter((x): x is T => x !== null)
       : undefined;
 
+  const t = takFor(mal);
   const gyldige = new Set<string>(deleneI(mal));
 
   const deler = liste<Del>(o.deler, gyldige.size + 2, (r) => {
@@ -345,7 +368,7 @@ export function lesArk(rått: unknown, mal: Mal): Ark | null {
       return {
         tittel: tekst(b.tittel, TAK.delTittel),
         punkter:
-          liste<string>(b.punkter, TAK.punkter, (p) =>
+          liste<string>(b.punkter, t.punkter, (p) =>
             typeof p === "string" && p.trim()
               ? p.trim().slice(0, TAK.punkt)
               : null,
@@ -365,13 +388,13 @@ export function lesArk(rått: unknown, mal: Mal): Ark | null {
           verdi: tekst(q.verdi, TAK.postVerdi),
         };
       }),
-      kolonner: liste<string>(d.kolonner, TAK.kolonner, (k) =>
+      kolonner: liste<string>(d.kolonner, t.kolonner, (k) =>
         typeof k === "string" ? k.trim().slice(0, 40) : null,
       ),
-      rader: liste<string[]>(d.rader, TAK.rader, (r2) =>
+      rader: liste<string[]>(d.rader, t.rader, (r2) =>
         Array.isArray(r2)
           ? r2
-              .slice(0, TAK.kolonner)
+              .slice(0, t.kolonner)
               .map((c) =>
                 typeof c === "string" ? c.trim().slice(0, TAK.celle) : "",
               )
@@ -387,7 +410,7 @@ export function lesArk(rått: unknown, mal: Mal): Ark | null {
           tekst: tekst(q.tekst, TAK.kortTekst),
         };
       }),
-      punkter: liste<string>(d.punkter, TAK.punkter, (p) =>
+      punkter: liste<string>(d.punkter, t.punkter, (p) =>
         typeof p === "string" && p.trim() ? p.trim().slice(0, TAK.punkt) : null,
       ),
       felter: liste<Signatar>(d.felter, TAK.felter, (f) => {

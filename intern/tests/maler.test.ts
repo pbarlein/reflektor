@@ -103,7 +103,7 @@ test("instruksen bærer husreglene, også når skjemaet er tomt", () => {
 });
 
 test("utfylte verdier havner i instruksen, tomme gjør det ikke", () => {
-  const m = malFraSlug("produksjonsplan");
+  const m = malFraSlug("produksjonsdagen");
   assert.ok(m);
   const ut = byggInstruks(m, { kunde: "Jordbærpikene", lokasjon: "   " });
   assert.match(ut, /- Kunde: Jordbærpikene/);

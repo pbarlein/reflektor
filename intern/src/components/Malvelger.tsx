@@ -53,6 +53,8 @@ export type Malrad = {
   ansvarlig: string;
   naar: string;
   fase: Fase;
+  /** Tidligere navn malen fortsatt skal finnes på i søket. */
+  kallenavn?: readonly string[];
 };
 
 export function Malvelger({

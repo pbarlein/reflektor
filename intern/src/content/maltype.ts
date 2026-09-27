@@ -153,6 +153,32 @@ export const FASER: readonly Fase[] = [
   "Etter opptak",
 ];
 
+/**
+ * Takene en mal trenger utover standarden.
+ *
+ * ── HVORFOR DETTE MÅTTE FINNES ────────────────────────────────────────────
+ *
+ * Takene i `TAK` er regnet for en ensider: fire kolonner, sju rader. De
+ * passer for en tidsplan med tre oppsett. De passer ikke for en opptaksliste.
+ *
+ * Opptakslisten ber om åtte kolonner — avkryssing, nummer, oppsett, utsnitt,
+ * kamera, motiv, lyd, sekunder — og 8–10 opptak. Den fikk fire kolonner og
+ * sju rader, og forskjellen ble kastet uten et ord. Hvert eneste opptak kom
+ * ut uten kamerabevegelse, motiv, lyd og lengde, og tre av ti opptak fantes
+ * ikke. Malen har en regel som sier «mangler ett, er listen ikke ferdig» —
+ * og validatoren fjernet fire av dem selv.
+ *
+ * Bevist 28.09.2026: 8 kolonner inn, 4 ut. 10 rader inn, 7 ut.
+ *
+ * Taket er altså ikke én sannhet. Det er en egenskap ved dokumentet, og
+ * hører hjemme på malen. Det som ikke settes her, arver `TAK`.
+ */
+export type Maltak = {
+  rader?: number;
+  kolonner?: number;
+  punkter?: number;
+};
+
 export type Mal = {
   slug: string;
   navn: string;
@@ -165,6 +191,18 @@ export type Mal = {
   /** Når i løpet man lager det. Konkret tidspunkt, ikke «ved behov». */
   naar: string;
   skisse: readonly Skissedel[];
+  /** Tak som avviker fra standarden. Se `Maltak`. */
+  tak?: Maltak;
+  /**
+   * Navn malen også skal finnes på i søket, men ikke hete.
+   *
+   * «Produksjonsplan» og «Opptaksliste» var to maler fram til 28.09.2026.
+   * Navnene sitter i fingrene hos dem som har brukt dem i månedsvis, og en
+   * produsent som skriver «opptaksliste» og får «ingen maler heter noe som
+   * ligner» konkluderer med at verktøyet har mistet noe — ikke at det har
+   * fått et nytt navn.
+   */
+  kallenavn?: readonly string[];
   /**
    * Malen tar imot et dokument som hovedinngang.
    *

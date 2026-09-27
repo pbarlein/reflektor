@@ -1,4 +1,4 @@
-import { TAK, delforklaring, type Ark } from "./arktype.ts";
+import { TAK, delforklaring, takFor, type Ark } from "./arktype.ts";
 import type { Felt, Mal } from "./maltype.ts";
 
 /**
@@ -70,15 +70,62 @@ const GRUNNLAGSFELT: readonly Felt[] = [
 ];
 
 export const MALER: readonly Mal[] = [
+  /*
+   * ── PRODUKSJONSPLAN + OPPTAKSLISTE BLE ÉN MAL ─────────────────────────
+   *
+   * Bestilt 28.09.2026: «jeg er ikke enig i at vi trenger produksjonsplan
+   * og opptaksliste. så lenge den er såpass konkret, strippet for
+   * unødvendigheter og enkel å forstå, kan disse være ett dokument.»
+   *
+   * De to var allerede det samme arbeidet gjort to ganger. Opptakslisten
+   * hadde et eget opplastingsfelt som het «Last opp produksjonsplanen»,
+   * fordi den ble bygget bakover fra den: oppsettene var planens oppsett,
+   * og «Hva som skal leveres» var planens 8–10 leveranser skrevet av. Å be
+   * produsenten skrive dem inn på nytt var ikke bare tidsbruk — det var en
+   * anledning til at de to dokumentene sa forskjellige ting om samme dag.
+   *
+   * Nå avledes begge fra det samme skjemaet. Oppsettene lages én gang og
+   * brukes i både tidsplanen og opptakslisten, så de kan ikke komme i
+   * utakt. To felt forsvant helt fra skjemaet.
+   *
+   * ── DOKUMENTET HAR TO LESERE, OG DET ER MED VILJE SYNLIG ──────────────
+   *
+   * Første del er kundens: hva som skjer, hva vi trenger fra dem, hva de
+   * får. Andre del er listen den som filmer holder på dagen, og den er
+   * intern — «det som kan droppes hvis dagen blir kort» er ikke noe kunden
+   * skal lese. Delene står i den rekkefølgen, og den interne er merket.
+   *
+   * ── DERFOR ER DEN IKKE LENGER EN ENSIDER ──────────────────────────────
+   *
+   * `tak` hever rader og kolonner. Det er ikke en oppmykning av
+   * plassregelen — det er erkjennelsen av at et opptak har åtte
+   * opplysninger og at en dag har 8–10 opptak. Med standardtaket ble fire
+   * av åtte kolonner og tre av ti opptak kastet i stillhet. Se `Maltak`.
+   */
   {
-    slug: "produksjonsplan",
+    slug: "produksjonsdagen",
     fase: "Før opptak",
-    navn: "Produksjonsplan",
-    kort: "Ensideren kunden får før produksjonsdagen. Tidsplan, hva vi trenger fra dem, og hva som leveres.",
+    navn: "Produksjonsdagen",
+    kort: "Planen kunden får, og listen du filmer etter. Ett skjema, ett dokument.",
     ansvarlig: "Produsent",
     naar: "Etter oppstartsmøtet, senest en uke før produksjonsdagen",
-    skisse: ["topp", "fakta", "tabellOgBoks", "toKolonner", "kort3"],
-    rubrikker: ["produksjonsdag-som-gir-8-10", "bransjen-bestemmer-alt"],
+    skisse: [
+      "topp",
+      "fakta",
+      "tabellOgBoks",
+      "toKolonner",
+      "kort3",
+      "tabell",
+      "liste",
+    ],
+    tak: { rader: 12, kolonner: 8 },
+    kallenavn: ["Produksjonsplan", "Opptaksliste", "Kjøreplan", "Shotliste"],
+    rubrikker: [
+      "produksjonsdag-som-gir-8-10",
+      "bransjen-bestemmer-alt",
+      "lyd-kan-ikke-reddes",
+      "de-forste-tre-sekundene",
+    ],
     felt: [
       {
         id: "kunde",
@@ -228,94 +275,20 @@ export const MALER: readonly Mal[] = [
         valg: ["Uten logo", "Med logo", "Avklares"],
         standard: "Uten logo",
       },
-      {
-        id: "videre",
-        etikett: "Rytmen videre",
-        type: "lang",
-        hjelp:
-          "Hva som skjer de neste månedene. Utelat hvis det ikke er avklart.",
-        plassholder:
-          "Oktober: ingen produksjon, Rosa sløyfe i avdelingene. November: én dag, disk og bestselgere. Desember: én dag, catering og varm drikke.",
-      },
-      ...GRUNNLAGSFELT,
-    ],
-    oppdrag:
-      "Ensideren kunden får før produksjonsdagen: hva som skjer, hva vi trenger fra dem, og hva de får. Overskriften er «Reflektor × [Kunde] [Lokasjon]». Undertittelen er én setning med produksjonsdagen, stedet og Når materiellet publiseres." +
-      "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
-    struktur: [
-      "FAKTA — fire nøkkelopplysninger: Lokasjon, Produksjonsdag (med Når vi er på plass), Kontaktperson på stedet, Fra Reflektor.",
-      "TABELLOGBOKS — tabellen er tidsplanen, med kolonnene Oppsett, Hva vi filmer, Hvem. Hver rad er ett oppsett, ikke én video. Bygg radene av Hva som skal i fokus. Boksen ved siden av er «Hva vi trenger fra dere»: én kule per rolle fra Hvem vi trenger fra kunden, med tidsbruk, og til slutt tilgang og samtykke.",
-      "TOKOLONNER — leveransen. Venstre spalte er det som har lyd og tale. Høyre spalte er det som skal skytes rent, uten lyd og tekst, og skal bare finnes hvis Hvor materiellet skal brukes inkluderer skjermer i lokalet. Har vi ingen skjermleveranse, er høyre spalte stillbilder eller nærbilder i stedet.",
-      "KORT3 — tre kort: «Formater» (Formater, Stillbilder i tillegg til video, Logo på materiellet), «Uttrykk» (Uttrykk og målgruppe), og «Rytmen videre» (Rytmen videre).",
-    ],
-    regler: [
-      "Antall leveranser skal lande på 8–10 til sammen. Det er produksjonsmålet for en dag, og planen skal ikke love mer enn dagen kan holde.",
-      "Tidsplanen har tre til fem oppsett — steder eller lyssituasjoner — ikke én rad per video. Flere enn fem betyr at dagen er for spredt. Siste rad er alltid en åpen blokk: «Vi filmer det som dukker opp».",
-      "Skal materiellet på skjermer i lokalet, må de klippene skytes rene fra start. Skriv det eksplisitt: det er ikke nok å fjerne lyden etterpå.",
-      "Er det oppgitt noe under «Hva som IKKE skal med», skal det stå i boksen som en tydelig setning — ikke bare utelates.",
-      "«Hvor godt kjenner vi stedet» styrer hvor mye planen forklarer, ikke hva den inneholder. Et sted vi filmer jevnlig trenger ingen omvisning; første gang tar boksen med tilgang og fremmøte i klartekst.",
-    ],
-  },
-
-  {
-    slug: "opptaksliste",
-    fase: "På opptak",
-    opplasting: {
-      etikett: "Last opp produksjonsplanen",
-      hjelp:
-        "Opptakslisten bygges bakover fra planen. Har Claude hele planen, slipper du å skrive den av — og ingenting faller ut fordi du ikke rakk å ta det med.",
-    },
-    navn: "Opptaksliste",
-    kort: "Listen den som filmer har i hånda på dagen. Ett opptak per linje, sortert etter oppsett.",
-    ansvarlig: "Produsent",
-    naar: "Kvelden før opptaksdagen",
-    skisse: ["topp", "fakta", "tabell", "liste"],
-    rubrikker: [
-      "produksjonsdag-som-gir-8-10",
-      "lyd-kan-ikke-reddes",
-      "de-forste-tre-sekundene",
-    ],
-    felt: [
-      {
-        id: "kunde",
-        etikett: "Kunde",
-        type: "tekst",
-        paakrevd: true,
-        eksempel: "Jordbærpikene",
-      },
-      {
-        id: "lokasjon",
-        etikett: "Lokasjon",
-        type: "tekst",
-        plassholder: "Jordbærpikene Storo",
-        paakrevd: true,
-      },
-      { id: "dato", etikett: "Opptaksdag", type: "dato", eksempelDager: 14 },
-      {
-        id: "oppsett",
-        etikett: "Oppsettene",
-        type: "lang",
-        hjelp:
-          "Ett per linje, i den rekkefølgen vi rigger dem. «1 Kjøkkenbenk · 2 Disken · 3 Gulvet i lokalet».",
-        paakrevd: true,
-        eksempel:
-          "1 Kjøkkenbenken\n2 Disken og drikkestasjonen\n3 Gulvet i lokalet",
-      },
-      {
-        id: "leveranser",
-        etikett: "Hva som skal leveres",
-        type: "lang",
-        hjelp:
-          "De 8–10 leveransene fra produksjonsplanen. Listen bygges bakover fra dem.",
-        paakrevd: true,
-        eksempel:
-          "4 videoer til Instagram, med tale\n2 rene klipp til menyskjermene, uten lyd\n3 stillbilder av burger og kald drikke",
-      },
+      /*
+       * ── HERFRA GJELDER FELTENE OPPTAKSDAGEN ───────────────────────────
+       *
+       * «Er det tale på dagen» hadde en gang «Nei, bare romlyd» som
+       * forhåndsvalg. En produksjonsplan der noen snakker på film ga da en
+       * opptaksliste uten mikrofon, fordi et utfylt felt gjelder foran
+       * vedlegget. Feltet har ikke og skal ikke ha et standardvalg.
+       */
       {
         id: "tale",
         etikett: "Er det tale på dagen",
         type: "valg",
-        hjelp: "Avgjør om mikrofon og stille lokale må inn i planen.",
+        hjelp:
+          "Avgjør om mikrofon og stille lokale må inn i planen. Lyd kan ikke reddes i etterkant.",
         valg: [
           "Nei, bare romlyd",
           "Ja, noen filmes mens de snakker",
@@ -329,25 +302,44 @@ export const MALER: readonly Mal[] = [
         type: "lang",
         hjelp:
           "Et opptak som må tas før lokalet åpner, en detalj kunden har bedt om, noe som bare kan filmes én gang.",
-        eksempel:
+        plassholder:
           "Det tomme lokalet må filmes før de åpner klokka 10. Kokken har bare tid før åpning.",
       },
+      {
+        id: "videre",
+        etikett: "Rytmen videre",
+        type: "lang",
+        hjelp:
+          "Hva som skjer de neste månedene. Utelat hvis det ikke er avklart.",
+        plassholder:
+          "Oktober: ingen produksjon, Rosa sløyfe i avdelingene. November: én dag, disk og bestselgere. Desember: én dag, catering og varm drikke.",
+      },
+      ...GRUNNLAGSFELT,
     ],
     oppdrag:
-      "Den interne listen den som filmer har i hånda på dagen. Testen er om en kollega som ikke var med i planleggingen kan filme etter den. Overskriften er kunde og lokasjon. Undertittelen sier opptaksdagen og hvor mange opptak listen har." +
+      "Dokumentet for én produksjonsdag, i to deler med hver sin leser. Del én er kundens: hva som skjer, hva vi trenger fra dem, hva de får. Del to er intern: listen den som filmer har i hånda på dagen. Overskriften er «Reflektor × [Kunde] [Lokasjon]». Undertittelen er én setning med produksjonsdagen, stedet og Når materiellet publiseres." +
       "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
     struktur: [
-      "FAKTA — Lokasjon, Opptaksdag, Er det tale på dagen, og antall opptak listen inneholder.",
-      "TABELL — hele listen, med kolonnene Nr, Oppsett, Utsnitt, Kamera, Motiv, Lyd, Sekunder. Radene bygges bakover fra Hva som skal leveres og sorteres etter Oppsettene.",
-      "LISTE — det som må filmes før lokalet åpner, og det som kan droppes hvis dagen blir kort. Bygg den av Noe som gjelder spesielt.",
+      "FAKTA — fire nøkkelopplysninger: Lokasjon, Produksjonsdag (med Når vi er på plass), Kontaktperson på stedet, Fra Reflektor.",
+      "TABELLOGBOKS — tabellen er tidsplanen, med kolonnene Oppsett, Hva vi filmer, Hvem. Hver rad er ett oppsett, ikke én video, og tre til fem rader i alt. Bygg radene av Hva som skal i fokus. Boksen ved siden av er «Hva vi trenger fra dere»: én kule per rolle fra Hvem vi trenger fra kunden, med tidsbruk, og til slutt tilgang og samtykke.",
+      "TOKOLONNER — leveransen. Venstre spalte er det som har lyd og tale. Høyre spalte er det som skal skytes rent, uten lyd og tekst, og skal bare finnes hvis Hvor materiellet skal brukes inkluderer skjermer i lokalet. Har vi ingen skjermleveranse, er høyre spalte stillbilder eller nærbilder i stedet.",
+      "KORT3 — tre kort: «Formater» (Formater, Stillbilder i tillegg til video, Logo på materiellet), «Uttrykk» (Uttrykk og målgruppe), og «Rytmen videre» (Rytmen videre).",
+      "TABELL — opptakslisten, og herfra er dokumentet internt. Tittelen skal si det: «Opptaksliste — intern». Kolonnene er ✓, Nr, Oppsett, Utsnitt, Kamera, Motiv, Lyd, Sek. Radene bygges bakover fra leveransene i TOKOLONNER og sorteres etter de samme oppsettene som står i tidsplanen — ikke nye oppsett.",
+      "LISTE — «Før lokalet åpner, og det som kan vike». Det som må filmes før dørene åpner, og det som kan droppes hvis dagen blir kort. Bygg den av Noe som gjelder spesielt. Denne delen er intern og skal aldri formuleres som et løfte til kunden.",
     ],
     regler: [
-      "Hvert opptak skal ha alle seks feltene: oppsett, bildeutsnitt, kamerabevegelse, motiv, lyd og lengde. Mangler ett, er listen ikke ferdig.",
+      "Antall leveranser skal lande på 8–10 til sammen. Det er produksjonsmålet for en dag, og planen skal ikke love mer enn dagen kan holde.",
+      "Tidsplanen har tre til fem oppsett — steder eller lyssituasjoner — ikke én rad per video. Flere enn fem betyr at dagen er for spredt. Siste rad er alltid en åpen blokk: «Vi filmer det som dukker opp».",
+      "Oppsettene er de samme i tidsplanen og i opptakslisten. Ett sett navn, brukt to steder. Finner du på et nytt oppsett nederst, står de to delene og sier ulike ting om samme dag.",
+      "Hvert opptak i opptakslisten skal ha alle seks opplysningene: oppsett, bildeutsnitt, kamerabevegelse, motiv, lyd og lengde. Mangler ett, er listen ikke ferdig. Kutt heller et helt opptak enn å la alle stå halve.",
+      "«Er det tale på dagen» styrer Lyd-kolonnen i opptakslisten, og den skal også synes i planen: filmes noen mens de snakker, skal mikrofon og et stille lokale stå i boksen «Hva vi trenger fra dere». Lyd kan ikke reddes i etterkant.",
       "Bildeutsnitt skrives med ett av fire ord: totalt, halvnært, nært, detalj. Ikke «fint utsnitt av maten».",
       "Lengde skrives i sekunder. «Kort» og «litt» er ikke lengder.",
-      "Sorter etter oppsett, ikke etter historien. Den som filmer flytter rigg, ikke fortelling.",
-      "Legg til en avkryssingskolonne helt til venstre. Listen skal krysses av underveis, ikke leses ferdig etterpå.",
-      "Skal noe skytes rent til skjermer i lokalet — uten tale og uten tekst — skal de opptakene være merket i selve tabellen. Den som filmer leser linjen, ikke innledningen.",
+      "Første kolonne i opptakslisten er en tom avkryssingsrute. Listen skal krysses av underveis, ikke leses ferdig etterpå.",
+      "Sorter opptakene etter oppsett, ikke etter historien. Den som filmer flytter rigg, ikke fortelling.",
+      "Skal materiellet på skjermer i lokalet, må de klippene skytes rene fra start. Skriv det eksplisitt i planen, og merk de opptakene i selve tabellen. Den som filmer leser linjen, ikke innledningen.",
+      "Er det oppgitt noe under «Hva som IKKE skal med», skal det stå i boksen som en tydelig setning — ikke bare utelates.",
+      "«Hvor godt kjenner vi stedet» styrer hvor mye planen forklarer, ikke hva den inneholder. Et sted vi filmer jevnlig trenger ingen omvisning; første gang tar boksen med tilgang og fremmøte i klartekst.",
       "Ikke skriv klippebeskrivelser eller musikkforslag. Det hører hjemme i redigeringen.",
     ],
   },
@@ -737,86 +729,6 @@ export const MALER: readonly Mal[] = [
   },
 
   {
-    slug: "manedsrapport",
-    fase: "Etter opptak",
-    navn: "Månedsrapport til kunde",
-    kort: "Hva vi ser i tallene, hva vi tror det betyr, og hva vi gjør med det neste måned.",
-    ansvarlig: "Kundeansvarlig",
-    naar: "Første uke i måneden, for måneden som gikk",
-    skisse: ["topp", "fakta", "tabell", "toKolonner"],
-    rubrikker: ["hva-tallene-betyr", "rytmen-to-i-uka"],
-    felt: [
-      {
-        id: "kunde",
-        etikett: "Kunde",
-        type: "tekst",
-        paakrevd: true,
-        eksempel: "Jordbærpikene",
-      },
-      {
-        id: "maaned",
-        etikett: "Hvilken måned",
-        type: "tekst",
-        plassholder: "September 2026",
-        paakrevd: true,
-      },
-      {
-        id: "publisert",
-        etikett: "Hva som ble publisert",
-        type: "lang",
-        hjelp: "Antall poster, og kort hva de handlet om.",
-        paakrevd: true,
-        eksempel:
-          "9 poster: 6 videoer og 3 stillbilder. Fem handlet om burger, to om kald drikke, to om folkene i lokalet.",
-      },
-      {
-        id: "tall",
-        etikett: "Tallene",
-        type: "lang",
-        hjelp:
-          "Lim inn det du har fra Instagram. Fullføring, lagringer, delinger og profilbesøk er mer verdt enn visninger.",
-        paakrevd: true,
-        eksempel:
-          "Fullføring 41 % på burgerklippene, 22 % på resten. 38 lagringer totalt, 29 av dem på ett klipp. 412 profilbesøk.",
-      },
-      {
-        id: "monster",
-        etikett: "Mønsteret du ser",
-        type: "lang",
-        hjelp:
-          "Hvilken TYPE innhold gjør det gjentatte ganger bedre enn snittet på kontoen? Én post er ikke et mønster.",
-        paakrevd: true,
-        eksempel:
-          "Klipp der maten lages fra bunnen holder folk lengst. De tre beste denne måneden var alle nærbilder av tilberedning, ikke av ferdig rett.",
-      },
-      {
-        id: "neste",
-        etikett: "Hva vi gjør neste måned",
-        type: "lang",
-        hjelp: "Konkret konsekvens av mønsteret over.",
-        paakrevd: true,
-        eksempel:
-          "Vi filmer to tilberedninger til i november, og legger nærbildet først i klippet i stedet for etter anslaget.",
-      },
-      ...GRUNNLAGSFELT,
-    ],
-    oppdrag:
-      "Månedsrapporten kunden får i første uke av måneden. Den svarer på hva vi gjorde, hva vi ser i tallene, og hva vi gjør med det. Overskriften er kunden og måneden." +
-      "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
-    struktur: [
-      "FAKTA — Hvilken måned, antall publiseringer fra Hva som ble publisert, og de to tallene fra Tallene som sier mest om respons.",
-      "TABELL — tallene, med kolonnene Hva, Denne måneden, Forrige måned. Bare tall som sier noe. Har vi ikke forrige måned, sløyf den kolonnen.",
-      "TOKOLONNER — venstre spalte «Dette ser vi» av Mønsteret du ser. Høyre spalte «Dette gjør vi neste måned» av Hva vi gjør neste måned.",
-    ],
-    regler: [
-      "Visninger alene skal ikke stå som en prestasjon. Står det et visningstall, skal forholdet mellom visninger og respons stå ved siden av.",
-      "Aldri lov et tall for neste måned. Vi har ingen kontroll over rekkevidde, og et løfte du ikke kan holde er det dyreste du kan si.",
-      "Sammenlign kontoen med seg selv, aldri med en annen konto.",
-      "Er datagrunnlaget under ti poster, skriv det. Én post er ikke et mønster.",
-    ],
-  },
-
-  {
     slug: "publiseringsplan",
     fase: "Etter opptak",
     navn: "Publiseringsplan for en måned",
@@ -890,6 +802,19 @@ export const MALER: readonly Mal[] = [
   },
 ] as const;
 
+/**
+ * Adresser som ikke finnes lenger, og hvor de skal føre.
+ *
+ * Produksjonsplan og opptaksliste ble én mal 28.09.2026. Intranettet har
+ * ingen lenker utenfra, men produsentene har bokmerker — og et bokmerke som
+ * gir «siden finnes ikke» leses som at verktøyet er ødelagt, ikke som at
+ * dokumentet har byttet navn.
+ */
+export const TIDLIGERE_SLUGGER: Readonly<Record<string, string>> = {
+  produksjonsplan: "produksjonsdagen",
+  opptaksliste: "produksjonsdagen",
+};
+
 export function malFraSlug(slug: string): Mal | undefined {
   return MALER.find((m) => m.slug === slug);
 }
@@ -931,15 +856,35 @@ function norskDato(iso: string): string {
  * leverte fire sider med utmerket innhold. Takhøyder i tall er det eneste
  * som virker, og de er de samme tallene som valideringen bruker.
  */
-function ensiderregelen(): string {
+function ensiderregelen(mal: Mal): string {
+  const t = takFor(mal);
+  /*
+   * ── EN MAL KAN BÆRE MER ENN ÉN SIDE ───────────────────────────────────
+   *
+   * Produksjonsdagen har to deler med ulik leser: planen kunden får, og
+   * listen den som filmer holder. Å presse begge ned på én A4 ville gjort
+   * nøyaktig det denne teksten advarer mot — kutte det leseren trenger.
+   *
+   * Sidetallet leses derfor av taket: en mal som tillater flere rader enn
+   * standarden, er ikke en ensider, og skal ikke få beskjed om at den er
+   * det. Resten av reglene gjelder likevel, for de handler om å velge bort
+   * det ingen trenger, ikke om papir.
+   */
+  const ensider = t.rader <= TAK.rader;
   return [
-    "DETTE ER EN ENSIDER, OG DET ER IKKE FORHANDLINGSBART",
-    "En produksjonsplan som krever to sider er ikke en lengre plan — det er en plan med for mange detaljer i. Kunden skal kunne lese den én gang og vite hva som skjer. Alt utover det skaper forvirring, ikke trygghet.",
+    ensider
+      ? "DETTE ER EN ENSIDER, OG DET ER IKKE FORHANDLINGSBART"
+      : "DETTE DOKUMENTET HAR FÅ SIDER, OG HVER DEL SKAL VÆRE KOMPLETT",
+    ensider
+      ? "En produksjonsplan som krever to sider er ikke en lengre plan — det er en plan med for mange detaljer i. Kunden skal kunne lese den én gang og vite hva som skjer. Alt utover det skaper forvirring, ikke trygghet."
+      : "Lengde er ikke problemet her — ufullstendighet er det. En tabellrad som mangler en kolonne, er en rad den som leser ikke kan handle på. Fyll hver rad helt, og kutt heller en hel rad enn å la alle stå halve.",
     "Ta med det som må være avklart FØR dagen, og det kunden må stille med. Ikke ta med det vi uansett avgjør på stedet, det som står i avtalen, eller det som bare beskriver hvor grundige vi er.",
-    `Alt skal få plass på én A4-side. Det som ikke får plass, blir klippet bort — da mister dokumentet den siste seksjonen sin, og ingen oppdager det før kunden gjør det.`,
-    `- Maks ${TAK.rader} rader i en tabell, og maks ${TAK.kolonner} kolonner.`,
+    ensider
+      ? "Alt skal få plass på én A4-side. Det som ikke får plass, blir klippet bort — da mister dokumentet den siste seksjonen sin, og ingen oppdager det før kunden gjør det."
+      : "Overskrider du takene under, blir det som stikker over klippet bort uten varsel. Hold deg innenfor dem.",
+    `- Maks ${t.rader} rader i en tabell, og maks ${t.kolonner} kolonner.`,
     `- Maks ${TAK.celle} tegn i en tabellcelle.`,
-    `- Maks ${TAK.punkter} punkter i en liste, og maks ${TAK.punkt} tegn i hvert.`,
+    `- Maks ${t.punkter} punkter i en liste, og maks ${TAK.punkt} tegn i hvert.`,
     `- Undertittelen: maks ${TAK.undertittel} tegn.`,
     "Må du velge, velg bort det leseren kan spørre om, og behold det hen må vite før hen står der. I tvil: ta det bort.",
     /*
@@ -1028,7 +973,7 @@ export function byggInstruks(
     "",
     `DELENE DU SKAL FYLLE UT\n${delforklaring(mal)}`,
     "",
-    ensiderregelen(),
+    ensiderregelen(mal),
     "",
     `INFORMASJONEN\n${utfylt.length ? utfylt.join("\n") : "- (ingenting utfylt)"}`,
   ];

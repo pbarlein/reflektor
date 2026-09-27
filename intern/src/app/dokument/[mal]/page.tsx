@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 
 import { Container } from "@/components/Container";
 import { Malminiatyr } from "@/components/Malminiatyr";
 import { Malskjema } from "@/components/Malskjema";
-import { MALER, malFraSlug } from "@/content/maler";
+import { MALER, TIDLIGERE_SLUGGER, malFraSlug } from "@/content/maler";
 import { finnRubrikk } from "@/content/rubrikker";
 import { krevBruker } from "@/lib/tilgang";
 
@@ -38,6 +38,14 @@ export default async function Malside({
 }) {
   await krevBruker();
   const { mal: slug } = await params;
+
+  /*
+   * Et bokmerke til en mal som er slått sammen, skal lande på arvtakeren.
+   * Se `TIDLIGERE_SLUGGER`.
+   */
+  const arvtaker = TIDLIGERE_SLUGGER[slug];
+  if (arvtaker) permanentRedirect(`/dokument/${arvtaker}`);
+
   const mal = malFraSlug(slug);
   if (!mal) notFound();
 
