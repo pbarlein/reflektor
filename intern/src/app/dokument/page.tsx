@@ -57,17 +57,18 @@ export default async function Dokumenter() {
     <Container>
       <div className="pt-8 pb-16 sm:pt-12">
         {/*
-          TOPPEN ER KORTET NED.
-          Den gamle hadde en overskrift på tre linjer og fire linjer brødtekst
-          over foldet. Det er en tekst man leser én gang og ruller forbi hver
-          gang etterpå — og på et verktøy man åpner ukentlig, er det den
-          dårligste bruken av den mest verdifulle plassen på siden.
-        */}
-        {/*
-          Listen har sin egen bredde.
-          Containeren er 1180 piksler — riktig for en artikkel, altfor bredt
-          for en rad med et navn og en rolle. Uten dette taket blir det en
-          håndsbredd tomrom midt i hver rad.
+          ── TO GREP OM PLASSEN ────────────────────────────────────────────
+
+          BREDDEN: containeren er 1180 piksler, riktig for en artikkel og
+          altfor bredt for en rad med et navn og en rolle. Uten taket blir
+          det en håndsbredd tomrom midt i hver rad.
+
+          TOPPEN: overskriften sendes INN i velgeren, slik at søkefeltet kan
+          stå på samme linje. Den gamle toppen var en overskrift på tre
+          linjer og fire linjer brødtekst, og kostet 363 piksler før første
+          mal. På en laptopskjerm er det nesten halve høyden brukt på å si
+          hva siden heter — på et verktøy man åpner ukentlig, er det den
+          dårligste bruken av den mest verdifulle plassen som finnes.
         */}
         <div className="max-w-[58rem]">
           <Malvelger maler={rader} faser={FASER}>
