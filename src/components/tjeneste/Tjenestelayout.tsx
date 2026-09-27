@@ -1,4 +1,8 @@
 import Image from "next/image";
+import {
+  Arbeidsrutenett,
+  Hovedfilm,
+} from "@/components/tjeneste/Tjenestemedier";
 import Link from "next/link";
 
 import { Container } from "@/components/Container";
@@ -124,14 +128,10 @@ export function Tjenestelayout({
               ffmpeg til å hente en ramme i full oppløsning. Den vises bare
               til filmen begynner å spille, så prisen er et halvt sekund.
             */}
-            <figure>
-              <div className="relative aspect-video overflow-hidden rounded-medie bg-flate-dempet">
-                <Klipp sti={side.hovedfilm.sti} />
-              </div>
-              <figcaption className="mt-3 text-sm text-blekk-dempet">
-                {side.hovedfilm.bildetekst}
-              </figcaption>
-            </figure>
+            <Hovedfilm
+              sti={side.hovedfilm.sti}
+              bildetekst={side.hovedfilm.bildetekst}
+            />
           </Container>
         </section>
       )}
@@ -324,26 +324,7 @@ export function Tjenestelayout({
               ujevn underkant — samme feil som arbeidsseksjonen på forsiden
               hadde.
             */}
-            <ul className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-              {side.arbeid.map((m) => (
-                <li
-                  key={m.sti}
-                  className="relative aspect-[9/16] overflow-hidden rounded-medie bg-flate-dempet"
-                >
-                  {m.type === "foto" ? (
-                    <Image
-                      src={m.sti}
-                      alt={m.alt}
-                      fill
-                      sizes="(max-width: 1024px) 50vw, 24vw"
-                      className="object-cover"
-                    />
-                  ) : (
-                    <Klipp sti={m.sti} />
-                  )}
-                </li>
-              ))}
-            </ul>
+            <Arbeidsrutenett medier={side.arbeid} />
           </Container>
         </section>
       )}
