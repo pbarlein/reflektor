@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 
 import { Container } from "@/components/Container";
 import { Eyebrow, Merkelapp } from "@/components/Eyebrow";
@@ -20,10 +21,11 @@ import { basisUrl } from "@/lib/miljo";
  * ikke øverst, slik «om oss»-sider pleier, fordi ingen leser en firmahistorie
  * før de vet hva firmaet gjør.
  *
- * FOLKENE STÅR MED NAVN OG ROLLE, ikke med portretter. Reflektor har ingen
- * godkjente portrettbilder i repoet, og et grått plassholderhode er verre
- * enn ingen — det sier «vi rakk ikke dette» om nettopp den siden som skal
- * bygge tillit. Navn og rolle er dessuten det `Person`-markeringen trenger.
+ * FOLKENE STÅR MED PORTRETT, NAVN OG ROLLE. Fram til 27.09.2026 sto de med
+ * navn og rolle alene, fordi det ikke fantes godkjente portretter i repoet —
+ * og et grått plassholderhode er verre enn ingenting på nettopp den siden
+ * som skal bygge tillit. Pål delte fire studioportretter, så nå står de der.
+ * Navn og rolle er fortsatt det `Person`-markeringen leser.
  *
  * INGEN OPPDIKTEDE VERDIER. «Vi brenner for kvalitet» og liknende er den
  * vanligste utfyllingen på en om-oss-side og det svakeste innholdet som
@@ -155,11 +157,27 @@ export default function OmOss() {
                 brekker til to linjer mens de tre andre ikke gjør det — da
                 står fire roller på tre ulike høyder. Nå flukter de.
               */
-              <li key={a.navn} className="flex flex-col bg-flate px-6 py-7">
-                <p className="text-lg font-medium text-balance">{a.navn}</p>
-                <p className="mt-auto pt-1.5 text-[0.9375rem] text-pretty text-blekk-dempet">
-                  {a.rolle}
-                </p>
+              <li key={a.navn} className="flex flex-col bg-flate">
+                {/*
+                  Portrettene er skutt i samme oppsett mot samme mørke
+                  bakgrunn, så de tåler å stå kant i kant uten ramme. 3:4 er
+                  det formatet alle fire er beskåret til.
+                */}
+                <div className="relative aspect-[3/4] overflow-hidden bg-flate-dempet">
+                  <Image
+                    src={`/bilder/team/${a.bilde}.jpg`}
+                    alt={`${a.navn}, ${a.rolle.toLowerCase()} i Reflektor`}
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 24vw"
+                    className="object-cover"
+                  />
+                </div>
+                <div className="flex flex-1 flex-col px-6 py-6">
+                  <p className="text-lg font-medium text-balance">{a.navn}</p>
+                  <p className="mt-auto pt-1.5 text-[0.9375rem] text-pretty text-blekk-dempet">
+                    {a.rolle}
+                  </p>
+                </div>
               </li>
             ))}
           </ul>

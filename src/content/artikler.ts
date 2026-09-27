@@ -1056,8 +1056,8 @@ export const artikler: Artikkel[] = [
   {
     slug: "hva-er-videomarkedsfring",
     bilde: {
-      fil: "dag6-vegg",
-      alt: "Bakverk i en disk",
+      fil: "goretex2-vegg",
+      alt: "Nærbilde av en sko på asfalt",
     },
     tittel: "Hva er videomarkedsføring?",
     beskrivelse:

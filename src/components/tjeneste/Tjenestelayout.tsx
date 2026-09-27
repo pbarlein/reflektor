@@ -277,23 +277,47 @@ export function Tjenestelayout({
       </section>
 
       {/* ── Klipp, der siden har dem ──────────────────────────────── */}
-      {side.klipp && side.klipp.length > 0 && (
+      {side.arbeid && side.arbeid.length > 0 && (
         <section className="pb-20">
           <Container>
             <Merkelapp som="h2">Fra arbeidet</Merkelapp>
-          </Container>
-          <div className="mt-8">
-            <ul className="flex gap-4 overflow-x-auto px-6 pb-2 sm:gap-6 sm:px-10">
-              {side.klipp.map((fil) => (
+            {/*
+              RUTENETT, IKKE RULLEFELT. Her sto en vannrett rad med faste
+              bredder. Med to medier fylte den venstre halvdel av skjermen og
+              lot resten stå tom — det så ut som noe som ikke var ferdig
+              lastet, og det var det Pål meldte fra om.
+
+              Et rullefelt er dessuten feil form når det bare er fire saker:
+              det lover mer enn det finnes, og på desktop kan man ikke se at
+              raden kan dras i. Fire i et rutenett fyller bredden og viser
+              alt med én gang.
+
+              ETT FORMAT FOR ALLE. Stående 9:16, som klippene allerede er.
+              Foto beskjæres med object-cover. Blandede formater ville gitt
+              ujevn underkant — samme feil som arbeidsseksjonen på forsiden
+              hadde.
+            */}
+            <ul className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+              {side.arbeid.map((m) => (
                 <li
-                  key={fil}
-                  className="relative aspect-[9/16] w-[14rem] shrink-0 overflow-hidden rounded-medie bg-flate-dempet sm:w-[17rem]"
+                  key={m.sti}
+                  className="relative aspect-[9/16] overflow-hidden rounded-medie bg-flate-dempet"
                 >
-                  <Klipp sti={`/reels/${fil}`} />
+                  {m.type === "foto" ? (
+                    <Image
+                      src={m.sti}
+                      alt={m.alt}
+                      fill
+                      sizes="(max-width: 1024px) 50vw, 24vw"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <Klipp sti={m.sti} />
+                  )}
                 </li>
               ))}
             </ul>
-          </div>
+          </Container>
         </section>
       )}
 

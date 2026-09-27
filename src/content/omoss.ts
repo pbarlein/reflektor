@@ -22,7 +22,28 @@
  * utover navn og rolle.
  */
 
-export type Ansatt = { navn: string; rolle: string };
+export type Ansatt = {
+  navn: string;
+  rolle: string;
+  /**
+   * Portrett i public/bilder/team/.
+   *
+   * LAGT TIL 27.09.2026. Siden sto med navn og rolle alene, og kommentaren i
+   * page.tsx forklarte hvorfor: det fantes ingen godkjente portretter, og et
+   * grått plassholderhode er verre enn ingenting på nettopp den siden som
+   * skal bygge tillit. Pål delte fire studioportretter fra Dropbox, og da
+   * faller den begrunnelsen bort.
+   *
+   * Filene er skalert til 900x1200 og strippet for metadata. Originalene var
+   * 10–18 MB rett fra kamera og hadde GPS-posisjon i EXIF, som ikke skal
+   * ligge på en nettside.
+   *
+   * To av dem lå allerede i repoet fra 15.09, ubrukte og på 2000x3000 — rundt
+   * 1 MB hver, altså ti ganger disse. Samme opptak, samme personer.
+   * Erstattet, så det finnes ett sett og ikke to.
+   */
+  bilde: string;
+};
 
 export const omoss = {
   metaTittel: "Om oss – SoMe-byrået Reflektor i Oslo",
@@ -73,10 +94,19 @@ export const omoss = {
       {
         navn: "Magne Finseth da Fonseca",
         rolle: "Produsent og kundeansvarlig",
+        bilde: "magne-finseth-da-fonseca",
       },
-      { navn: "Henrik Holthe", rolle: "Produsent og kundeansvarlig" },
-      { navn: "Viktor Norén", rolle: "Produsent og kundeansvarlig" },
-      { navn: "Pål Barlein", rolle: "CEO" },
+      {
+        navn: "Henrik Holthe",
+        rolle: "Produsent og kundeansvarlig",
+        bilde: "henrik-holthe",
+      },
+      {
+        navn: "Viktor Norén",
+        rolle: "Produsent og kundeansvarlig",
+        bilde: "viktor-noren",
+      },
+      { navn: "Pål Barlein", rolle: "CEO", bilde: "pal-barlein" },
     ] satisfies Ansatt[],
   },
 

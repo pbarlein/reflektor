@@ -44,6 +44,27 @@ export type Seksjon = {
   sitat?: { tekst: string; navn: string; rolle: string };
 };
 
+/**
+ * Ett medie i «Fra arbeidet».
+ *
+ * BYTTET FRA `klipp: string[]` 27.09.2026. Feltet tok bare video fra
+ * /reels/, og det ga to problemer Pål fanget på /reklamefilm: bare to av fem
+ * sider hadde noe å vise i det hele tatt, og de to klippene som lå der var
+ * fra sportsbutikk — ikke reklamefilm.
+ *
+ * Arkivet har 36 medier med ferdig alt-tekst, men de fleste er foto. Ved å
+ * ta imot begge kan hver side vise fire relevante saker i stedet for null
+ * eller to tilfeldige.
+ *
+ * `sti` er uten filendelse for video (Klipp legger på .mp4 og .jpg selv) og
+ * MED endelse for foto.
+ */
+export type Arbeidsmedie = {
+  type: "foto" | "video";
+  sti: string;
+  alt: string;
+};
+
 /** En bit av avgrensningen: ren tekst, eller en lenke. */
 export type Avgrensningsdel = string | { sti: string; tekst: string };
 
@@ -94,8 +115,14 @@ export type Tjenesteside = {
   faq: { sporsmal: string; svar: string }[];
   /** Fra-pris som tekst, eller null når den ikke er oppgitt. */
   pris: string | null;
-  /** Reels som skal vises. Filnavn fra src/content/reels.ts. */
-  klipp?: string[];
+  /**
+   * «Fra arbeidet»: fire medier valgt etter hva siden handler om.
+   *
+   * FIRE, IKKE TO. Raden fylte tidligere bare venstre halvdel av skjermen
+   * med to stående klipp, og så ut som noe som manglet. Fire fyller
+   * rutenettet på alle bredder.
+   */
+  arbeid?: Arbeidsmedie[];
 };
 
 const KONTAKT = { sti: "/#kontakt", tekst: "Få et forslag" };
@@ -184,7 +211,37 @@ export const reklamefilm: Tjenesteside = {
     },
   ],
   pris: null,
-  klipp: ["antonsport", "goretex"],
+  /*
+   * REKLAMEFILM. Her lå antonsport og goretex — to klipp fra sportsbutikk,
+   * rett under en setning som sier at Anton Sport IKKE er reklamefilmkunde.
+   * Nå vises materiale med reklamefilmens uttrykk: Egon og Peppes, som Pål
+   * har bekreftet som reklamefilmkunder, og to produktbilder.
+   */
+  arbeid: [
+    {
+      type: "video",
+      sti: "/reels/egon",
+      alt: "Vertikalt klipp fra en Egon-restaurant",
+    },
+    {
+      type: "foto",
+      sti: "/arbeid/peppes1-1600.jpg",
+      alt: "Gjest med pizzastykke foran et neonskilt",
+    },
+    /* Byttet fra zeroh 27.09.2026: det klippet er fra en utendørs aktivering
+       med publikum, og leste som event, ikke reklamefilm. En helleskål er
+       reklamefilmens eget språk. */
+    {
+      type: "video",
+      sti: "/arbeid/kakao",
+      alt: "Vertikalt klipp av kakaodrikk som helles",
+    },
+    {
+      type: "foto",
+      sti: "/arbeid/helios-1600.jpg",
+      alt: "Flaskestilleben på grønt tekstil",
+    },
+  ],
 };
 
 /* ────────────────────────────────────────────────────────────────────
@@ -263,7 +320,27 @@ export const videoproduksjon: Tjenesteside = {
     },
   ],
   pris: null,
-  klipp: ["thewell", "soulcake"],
+  /* VIDEO TIL EGNE FLATER. The Well og Soul Cake sto her fra før og passer.
+     Lagt til elsykkelen og dronebildet: begge er typiske bannervideoer og
+     forsidebilder, altså nettopp egne flater. */
+  arbeid: [
+    {
+      type: "video",
+      sti: "/reels/thewell",
+      alt: "Vertikalt klipp fra behandling med leire på mosaikkflis",
+    },
+    {
+      type: "video",
+      sti: "/reels/soulcake",
+      alt: "Vertikalt klipp fra bakeri",
+    },
+    { type: "video", sti: "/reels/gekko", alt: "Vertikalt klipp av elsykkel" },
+    {
+      type: "foto",
+      sti: "/arbeid/drone-1600.jpg",
+      alt: "Dronebilde av hotellanlegg med utendørsbasseng",
+    },
+  ],
 };
 
 /* ────────────────────────────────────────────────────────────────────
@@ -339,6 +416,31 @@ export const employerBranding: Tjenesteside = {
     },
   ],
   pris: null,
+  /* EMPLOYER BRANDING. Siden handler om folk på jobb, og det er nettopp det
+     arkivet har mest av. Alle fire viser ansatte i arbeid — ikke produkter,
+     ikke lokaler uten mennesker. */
+  arbeid: [
+    {
+      type: "foto",
+      sti: "/arbeid/fabrikk-vegg.jpg",
+      alt: "Ansatte i arbeidstøy i et produksjonslokale",
+    },
+    {
+      type: "video",
+      sti: "/arbeid/kontor",
+      alt: "Vertikalt klipp fra en arbeidsplass",
+    },
+    {
+      type: "foto",
+      sti: "/arbeid/mat1-1600.jpg",
+      alt: "Ansatte i et produksjonslokale",
+    },
+    {
+      type: "foto",
+      sti: "/arbeid/stallen-1600.jpg",
+      alt: "Kokker på et kjøkken med en plakett",
+    },
+  ],
 };
 
 /* ────────────────────────────────────────────────────────────────────
@@ -399,6 +501,31 @@ export const event: Tjenesteside = {
     },
   ],
   pris: null,
+  /* EVENT. Tre bilder fra arrangementer og ett portrett. Portrettet hører
+     hjemme her fordi det er en av de faktiske leveransene fra en
+     arrangementsdag, ikke bare oversiktsbilder fra salen. */
+  arbeid: [
+    {
+      type: "foto",
+      sti: "/arbeid/scene-vegg.jpg",
+      alt: "Foredragsholder foran en skjerm",
+    },
+    {
+      type: "foto",
+      sti: "/arbeid/aktivering-vegg.jpg",
+      alt: "Utendørs aktivering med stand og publikum",
+    },
+    {
+      type: "foto",
+      sti: "/arbeid/dag4-vegg.jpg",
+      alt: "Opptak med kamera under et arrangement",
+    },
+    {
+      type: "foto",
+      sti: "/arbeid/portrett-vegg.jpg",
+      alt: "Portrett utendørs mot blå himmel",
+    },
+  ],
 };
 
 /* ────────────────────────────────────────────────────────────────────
@@ -483,6 +610,30 @@ export const innholdsproduksjon: Tjenesteside = {
     },
   ],
   pris: null,
+  /* NAVET. Her er poenget bredden, ikke én type: en produksjonsdag, mat,
+     drikke og butikk. Fire ulike oppdrag, som er det siden lover. */
+  arbeid: [
+    {
+      type: "video",
+      sti: "/reels/produksjonsdag",
+      alt: "Vertikalt klipp fra en produksjonsdag",
+    },
+    {
+      type: "foto",
+      sti: "/arbeid/dag1-1600.jpg",
+      alt: "Nærbilde av bakverk på brett",
+    },
+    {
+      type: "video",
+      sti: "/arbeid/matcha",
+      alt: "Vertikalt klipp av matcha som vispes",
+    },
+    {
+      type: "foto",
+      sti: "/arbeid/kafe1-1600.jpg",
+      alt: "Vegg av flasker i en butikkhylle",
+    },
+  ],
 };
 
 export const tjenestesider: Tjenesteside[] = [
