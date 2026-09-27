@@ -357,10 +357,19 @@ export const videoproduksjon: Tjenesteside = {
       alt: "Vertikalt klipp fra bakeri",
     },
     { type: "video", sti: "/reels/gekko", alt: "Vertikalt klipp av elsykkel" },
+    /*
+     * FIRE AV FIRE ER FILM, rettet 27.09.2026. Her lå et dronebilde, altså
+     * et stillbilde på siden som selger videoproduksjon. Pål: «du må
+     * åpenbart vise videoer og ikke bilder på videoproduksjonssiden.»
+     *
+     * Treningslokalet er valgt fordi de tre andre er spa, bakeri og
+     * produkt — fire ulike bransjer, og alle fire er typiske oppdrag der
+     * filmen skal ligge på kundens egen nettside.
+     */
     {
-      type: "foto",
-      sti: "/arbeid/drone-1600.jpg",
-      alt: "Dronebilde av hotellanlegg med utendørsbasseng",
+      type: "video",
+      sti: "/arbeid/bekkestua",
+      alt: "Vertikalt klipp fra et treningslokale",
     },
   ],
 };

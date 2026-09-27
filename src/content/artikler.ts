@@ -481,7 +481,10 @@ export const artikler: Artikkel[] = [
   },
   {
     slug: "hva-er-innholdsproduksjon",
-    bilde: { fil: "dag4-vegg", alt: "Opptak med kamera under et arrangement" },
+    bilde: {
+      fil: "popup-arbeid-1800",
+      alt: "To personer bak disken i en popup-butikk",
+    },
     tittel: "Hva er innholdsproduksjon?",
     beskrivelse:
       "Innholdsproduksjon er å lage tekst, bilder og videoer som tiltrekker og engasjerer en målgruppe. Det kan være nøkkelen til suksess for flere bedrifter.",
@@ -746,9 +749,8 @@ export const artikler: Artikkel[] = [
   {
     slug: "hva-er-innholdsmarkedsforing",
     bilde: {
-      fil: "kafe1-1600",
-      alt: "Vegg av flasker i en butikkhylle",
-      fokus: "center 35%",
+      fil: "kafe-hylle-1600",
+      alt: "Rad med flasker i en butikkhylle",
     },
     tittel: "Hva er innholdsmarkedsføring?",
     beskrivelse:
@@ -1055,8 +1057,8 @@ export const artikler: Artikkel[] = [
   {
     slug: "hva-er-videomarkedsfring",
     bilde: {
-      fil: "goretex2-vegg",
-      alt: "Nærbilde av en sko på asfalt",
+      fil: "goretex-sept-1800",
+      alt: "Person i skalljakke i en togdør",
     },
     tittel: "Hva er videomarkedsføring?",
     beskrivelse:
@@ -1320,9 +1322,8 @@ export const artikler: Artikkel[] = [
   {
     slug: "hva-er-employer-branding",
     bilde: {
-      fil: "fabrikk-vegg",
-      alt: "Ansatte i arbeidstøy i et produksjonslokale",
-      fokus: "center 30%",
+      fil: "ansatte-produksjon-1600",
+      alt: "Fire ansatte i arbeidstøy i et produksjonslokale",
     },
     tittel: "Hva er employer branding?",
     beskrivelse:
@@ -1481,9 +1482,8 @@ export const artikler: Artikkel[] = [
   {
     slug: "hva-gjr-en-innholdsprodusent",
     bilde: {
-      fil: "portrett-vegg",
-      alt: "Portrett utendørs mot blå himmel",
-      fokus: "center 25%",
+      fil: "portrett-bat-1800",
+      alt: "Person i oransje skjorte på en brygge ved sjøen",
     },
     tittel: "Hva gjør en innholdsprodusent?",
     beskrivelse:
@@ -1842,7 +1842,10 @@ export const artikler: Artikkel[] = [
   },
   {
     slug: "some-ansvarlig-eller-byra",
-    bilde: { fil: "mat1-1600", alt: "Ansatte i et produksjonslokale" },
+    bilde: {
+      fil: "stallen-team-1800",
+      alt: "Restaurantteam som holder fram en Michelin-plakett",
+    },
     tittel: "SoMe-ansvarlig eller byrå? Regnestykket med tall",
     beskrivelse:
       "Hva koster en ansatt SoMe-ansvarlig egentlig, når arbeidsgiveravgift, feriepenger og pensjon er regnet med? Vi setter tallene fra Altinn og SSB mot et byråbudsjett.",
