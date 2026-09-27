@@ -6,33 +6,43 @@ import type { Lesetilstand } from "@/lib/lesing";
 import { lesetid } from "@/lib/lesetid";
 
 /**
- * Alt innholdet, organisert.
+ * Alt innholdet, organisert — og framdriften lest på tre nivåer.
  *
- * ── HVA SOM VAR GALT MED DET FORRIGE ──────────────────────────────────────
+ * ── HVA SOM VAR GALT MED KARUSELLENE ──────────────────────────────────────
  *
- * Forsiden hadde én vannrett karusell PER KATEGORI. Det hørtes rimelig ut
- * da det ble bygget, men tallene avslører formen: det er åtte kategorier og
- * seksten rubrikker i drift. Altså åtte karuseller med TO kort i hver.
+ * Forsiden hadde én vannrett karusell PER KATEGORI. Tallene avslører formen:
+ * åtte kategorier og seksten rubrikker i drift, altså åtte karuseller med TO
+ * kort i hver. En karusell er en form for når det er mer enn det er plass
+ * til; med to kort er signalet «det finnes mer her» en løgn.
  *
- * En karusell er en form for når det er mer enn det er plass til. Med to
- * kort er det ingenting å bla til, og signalet «det finnes mer her» er en
- * løgn. Samtidig kostet de åtte radene rundt to og en halv skjermhøyde, og
- * de kom under en seksjon som viste de samme kortene igjen.
+ * ── HVORFOR KORT OG IKKE BARE LINJER (28.09.2026) ─────────────────────────
  *
- * ── HVA DEN ER NÅ ─────────────────────────────────────────────────────────
+ * Første indeks var riktig i strukturen og flat å se på: åtte overskrifter
+ * med linjer under, alt på samme flate. Den var lett å lese og ga ingen
+ * følelse av hvor man var.
  *
- * En indeks. Tre bolker, åtte kategorier, seksten linjer — alt sammen på
- * omtrent én skjerm, uten en eneste sidelengs bevegelse.
+ * Nå er hver kategori et kort. Det koster litt høyde og gir én ting
+ * tilbake som linjer ikke kan: en kategori kan bli FERDIG, og et kort kan
+ * vise det. Det er hele gamifiseringen, og den er med vilje så liten.
  *
- * Det er MED VILJE en annen form enn rekka øverst. De to gjør ulike ting:
- * rekka er pensum i lesereferanse, med bilder, for den som skal komme
- * gjennom. Indeksen er oppslag, uten bilder, for den som vet hva hen leter
- * etter og vil dit på ett blikk. Samme seksten rubrikker, to inngangeriker
- * — det er ikke dobbelt opp, det er to ulike spørsmål.
+ * ── FRAMDRIFT PÅ TRE NIVÅER, INGEN AV DEM MED SKRYT ───────────────────────
  *
- * Miniatyrer er utelatt her med hensikt. De ville gjort indeksen like høy
- * som karusellene var, og et bilde hjelper ikke den som allerede vet hva
- * hen leter etter.
+ *   1. HELHETEN — en stolpe delt i én rute per rubrikk, gruppert slik
+ *      kategoriene er gruppert under. Stolpen ER innholdsfortegnelsen i
+ *      miniatyr, ikke en prosent.
+ *   2. FASEN — nummerskiltet på kortet fylles når begge rubrikkene i
+ *      kategorien er lest. Man skanner etter fylte skilt.
+ *   3. RUBRIKKEN — hake eller tom ring på hver linje.
+ *
+ * Det som IKKE er her, er valgt bort like bevisst: ingen poeng, ingen
+ * merker, ingen «bra jobba», ingen konfetti, ingen rekker eller striper.
+ * Dette leses av voksne fagfolk hver dag, og et system som klapper deg på
+ * hodet for å ha lest en tekst om lyd, blir gjennomskuet første gang og
+ * irriterende andre.
+ *
+ * Belønningen er at ruta fylles. Det er den samme belønningen som ligger i
+ * å krysse av på en liste, og den har holdt i hundre år fordi den ikke
+ * later som den er noe annet enn det den er.
  *
  * ── LESESTATUS STÅR FØRST PÅ LINJA ────────────────────────────────────────
  *
@@ -46,6 +56,8 @@ export type Gruppe = {
   rubrikker: readonly Rubrikk[];
 };
 
+const BOLKER_I_ORDEN: Bolk[] = ["handverk", "kunde", "oss"];
+
 export function Oversikt({
   grupper,
   tilstander,
@@ -53,25 +65,34 @@ export function Oversikt({
   grupper: readonly Gruppe[];
   tilstander: Record<string, Lesetilstand>;
 }) {
-  const bolker: Bolk[] = ["handverk", "kunde", "oss"];
+  const erLest = (r: Rubrikk) => tilstander[r.slug] === "lest";
+  const alle = grupper.flatMap((g) => g.rubrikker);
+  const lest = alle.filter(erLest).length;
 
   return (
     <section
       aria-labelledby="oversikt"
       className="mx-auto w-full max-w-[88rem] px-5 pt-14 pb-4 sm:px-8 sm:pt-20"
     >
-      <h2
-        id="oversikt"
-        className="display text-[clamp(1.375rem,2.6vw,1.875rem)] tracking-[-0.02em] text-blekk"
-      >
-        Alt innholdet
-      </h2>
-      <p className="mt-1.5 max-w-[62ch] text-[0.9375rem] leading-relaxed text-pretty text-blekk-dempet">
-        Samme rubrikker som over, sortert etter hvor i arbeidet de hører hjemme.
-      </p>
+      <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+        <div className="min-w-0">
+          <h2
+            id="oversikt"
+            className="display text-[clamp(1.375rem,2.6vw,1.875rem)] tracking-[-0.02em] text-blekk"
+          >
+            Alt innholdet
+          </h2>
+          <p className="mt-1.5 max-w-[56ch] text-[0.9375rem] leading-relaxed text-pretty text-blekk-dempet">
+            Samme rubrikker som over, sortert etter hvor i arbeidet de hører
+            hjemme.
+          </p>
+        </div>
 
-      <div className="mt-8 flex flex-col gap-9 sm:gap-11">
-        {bolker.map((bolk) => {
+        <Stolpen grupper={grupper} erLest={erLest} lest={lest} />
+      </div>
+
+      <div className="mt-9 flex flex-col gap-9 sm:gap-11">
+        {BOLKER_I_ORDEN.map((bolk) => {
           const iBolk = grupper.filter((g) => g.kategori.bolk === bolk);
           if (!iBolk.length) return null;
           const b = BOLKER[bolk];
@@ -80,16 +101,11 @@ export function Oversikt({
             /*
               ── BOLKEN STÅR I MARGEN, IKKE OVER ─────────────────────────
 
-              Første utkast la bolkoverskriften på en linje over et
-              rutenett på tre. Det ser riktig ut for HÅNDVERKET, som har
-              fem kategorier — men KUNDEN har én og OSS har to, og da sto
-              to tredeler av raden tom uten at tomrommet betydde noe.
-
-              Med bolken i venstre marg er den samme plassen brukt til noe:
-              navnet og ingressen står ved siden av det de gjelder, og
-              rutenettet til høyre er like fullt enten bolken har én
-              kategori eller fem. Under lg legger det seg tilbake til
-              overskrift over innhold, der det ikke er marg å ta av.
+              Første utkast la bolkoverskriften på en linje over et rutenett
+              på tre. Det ser riktig ut for HÅNDVERKET, som har fem
+              kategorier — men KUNDEN har én og OSS har to, og da sto to
+              tredeler av raden tom uten at tomrommet betydde noe. I margen
+              er den samme plassen brukt til noe.
             */
             <div
               key={bolk}
@@ -104,37 +120,15 @@ export function Oversikt({
                 </p>
               </div>
 
-              {/*
-                Kategoriene ved siden av hverandre, ikke under. Med to
-                rubrikker i hver blir en kategori tre linjer høy, og tre
-                linjer stablet åtte ganger er en kolonne ingen orker å lese
-                til bunns.
-              */}
-              <ul className="grid gap-x-8 gap-y-7 sm:grid-cols-2">
+              <ul className="grid gap-3 sm:grid-cols-2">
                 {iBolk.map(({ kategori, rubrikker }) => (
                   <li key={kategori.id}>
-                    <h4 className="flex items-baseline gap-2 text-[0.9375rem] font-medium text-blekk">
-                      {kategori.nr && (
-                        <span
-                          aria-hidden
-                          className="font-sans text-[0.6875rem] font-medium text-blekk-svak tabular-nums"
-                        >
-                          {String(kategori.nr).padStart(2, "0")}
-                        </span>
-                      )}
-                      {kategori.navn}
-                    </h4>
-
-                    <ul className="mt-2 flex flex-col">
-                      {rubrikker.map((r) => (
-                        <li key={r.slug}>
-                          <Linje
-                            rubrikk={r}
-                            tilstand={tilstander[r.slug] ?? "ulest"}
-                          />
-                        </li>
-                      ))}
-                    </ul>
+                    <Fasekort
+                      kategori={kategori}
+                      rubrikker={rubrikker}
+                      tilstander={tilstander}
+                      erLest={erLest}
+                    />
                   </li>
                 ))}
               </ul>
@@ -143,6 +137,122 @@ export function Oversikt({
         })}
       </div>
     </section>
+  );
+}
+
+/**
+ * Stolpen: én rute per rubrikk, gruppert som kategoriene under.
+ *
+ * ── HVORFOR IKKE EN PROSENT ───────────────────────────────────────────────
+ *
+ * «38 %» er ett tall om en samling på seksten. Det sier hvor langt du er
+ * kommet og ingenting om hva som gjenstår. Rutene sier begge deler samtidig,
+ * og mellomrommene mellom gruppene gjør at man ser HVOR hullene er — de
+ * står i samme rekkefølge som kortene lenger nede.
+ *
+ * Den er `aria-hidden`. Teksten ved siden av sier «x av y lest», og hvert
+ * kort under sier sitt eget. En skjermleser skal ikke måtte høre seksten
+ * ruter lest opp for å få en opplysning som allerede står i klartekst.
+ */
+function Stolpen({
+  grupper,
+  erLest,
+  lest,
+}: {
+  grupper: readonly Gruppe[];
+  erLest: (r: Rubrikk) => boolean;
+  lest: number;
+}) {
+  const alle = grupper.flatMap((g) => g.rubrikker);
+
+  return (
+    <div className="min-w-0 shrink-0">
+      <p className="text-[0.9375rem] text-blekk-dempet">
+        <span className="font-medium text-blekk tabular-nums">{lest}</span> av{" "}
+        <span className="tabular-nums">{alle.length}</span> lest
+      </p>
+      <div aria-hidden className="mt-2 flex items-center gap-[0.3rem]">
+        {grupper.map((g) => (
+          <div key={g.kategori.id} className="flex gap-[0.1rem]">
+            {g.rubrikker.map((r) => (
+              <span
+                key={r.slug}
+                className={`h-1.5 w-[0.9rem] rounded-[1px] transition-colors duration-500 motion-reduce:transition-none ${
+                  erLest(r) ? "bg-aksent" : "bg-kant-sterk/45"
+                }`}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Ett kort per kategori.
+ *
+ * FERDIG-TILSTANDEN ER HELE BELØNNINGEN. Nummerskiltet fylles, og en hake
+ * kommer i høyre hjørne. Ingenting annet skjer — ingen animasjon som feirer,
+ * ingen tekst som roser. Kortet sier bare hva som er sant.
+ *
+ * Kategorier uten nummer (Kundeforholdet, Standarden, Markedsposisjon) har
+ * ikke fase-nummer i domenet, og får derfor en prikk i skiltets plass. Å
+ * finne på et nummer til dem ville antydet en rekkefølge som ikke finnes.
+ */
+function Fasekort({
+  kategori,
+  rubrikker,
+  tilstander,
+  erLest,
+}: {
+  kategori: Kategori;
+  rubrikker: readonly Rubrikk[];
+  tilstander: Record<string, Lesetilstand>;
+  erLest: (r: Rubrikk) => boolean;
+}) {
+  const antallLest = rubrikker.filter(erLest).length;
+  const ferdig = antallLest === rubrikker.length && rubrikker.length > 0;
+
+  return (
+    <div
+      className={`h-full overflow-hidden rounded-flate border bg-kort transition-colors duration-300 motion-reduce:transition-none ${
+        ferdig ? "border-aksent/35" : "border-kant"
+      }`}
+    >
+      <div className="flex items-center gap-2.5 px-4 pt-3.5 pb-2.5">
+        <span
+          aria-hidden
+          className={`flex size-6 shrink-0 items-center justify-center rounded-full font-sans text-[0.6875rem] font-medium tabular-nums transition-colors duration-300 motion-reduce:transition-none ${
+            ferdig
+              ? "bg-aksent text-white"
+              : "border border-kant text-blekk-svak"
+          }`}
+        >
+          {kategori.nr ? String(kategori.nr).padStart(2, "0") : "·"}
+        </span>
+
+        <h4 className="min-w-0 flex-1 text-[0.9375rem] font-medium text-blekk">
+          {kategori.navn}
+        </h4>
+
+        <span
+          className={`shrink-0 font-sans text-[0.6875rem] tabular-nums ${
+            ferdig ? "text-aksent-tekst" : "text-blekk-svak"
+          }`}
+        >
+          {ferdig ? "Ferdig" : `${antallLest}/${rubrikker.length}`}
+        </span>
+      </div>
+
+      <ul className="flex flex-col">
+        {rubrikker.map((r) => (
+          <li key={r.slug}>
+            <Linje rubrikk={r} tilstand={tilstander[r.slug] ?? "ulest"} />
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -159,7 +269,7 @@ function Linje({
   return (
     <Link
       href={`/rubrikk/${rubrikk.slug}`}
-      className="group flex items-baseline gap-2.5 border-t border-kant py-2 transition-colors hover:bg-dempet focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-aksent"
+      className="group flex items-baseline gap-2.5 border-t border-kant px-4 py-2.5 transition-colors hover:bg-dempet focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-aksent motion-reduce:transition-none"
     >
       {/*
         Haken er en ring når den er tom. En tom plass ville fungert like
@@ -168,10 +278,10 @@ function Linje({
       */}
       <span
         aria-hidden
-        className={`mt-0.5 flex size-[1.125rem] shrink-0 items-center justify-center rounded-full text-[0.625rem] leading-none ${
+        className={`mt-0.5 flex size-[1.125rem] shrink-0 items-center justify-center rounded-full text-[0.625rem] leading-none transition-colors motion-reduce:transition-none ${
           lest
             ? "bg-blekk-dempet text-kort"
-            : "border border-kant text-transparent"
+            : "border border-kant text-transparent group-hover:border-kant-sterk"
         }`}
       >
         ✓
