@@ -67,6 +67,24 @@ async function send(emne: string, linjer: string[]): Promise<boolean> {
       );
       return false;
     }
+    /*
+     * ── EN VELLYKKET SENDING SETTER OGSÅ SPOR ─────────────────────────
+     *
+     * 27.09.2026 kom rapporten fram, men e-posten uteble. Loggen var taus,
+     * og tausheten kunne bety to ting: at sendingen gikk fint og e-posten
+     * forsvant underveis, eller at den aldri ble forsøkt fordi nøkkelen
+     * allerede sto som sendt. To helt ulike feil, samme stillhet.
+     *
+     * Resend gir en id per melding. Med den i loggen kan en uteblitt
+     * e-post slås opp i Resend-dashbordet og avgjøres på et sekund.
+     * Mottakeren skrives òg — det er vår egen adresse, ikke en kundes.
+     */
+    const svart = (await svar.json().catch(() => null)) as {
+      id?: string;
+    } | null;
+    console.log(
+      `[rapport] varsel sendt til ${MOTTAKER} · resend-id ${svart?.id ?? "ukjent"}`,
+    );
     return true;
   } catch (e) {
     console.error("[rapport] klarte ikke sende påminnelse", e);
@@ -88,7 +106,10 @@ function emne(r: Rapport, prefiks = ""): string {
  */
 export async function varsleNyRapport(r: Rapport): Promise<boolean> {
   const nokkel = `${r.type}:${r.id}:ny`;
-  if (await erSendt(nokkel)) return false;
+  if (await erSendt(nokkel)) {
+    console.log(`[rapport] «${nokkel}» er alt sendt — hopper over.`);
+    return false;
+  }
 
   const linjer = [
     r.headline,
@@ -110,7 +131,10 @@ export async function purrBeslutning(
   runde: 24 | 72,
 ): Promise<boolean> {
   const nokkel = `${r.type}:${r.id}:beslutning-${runde}t`;
-  if (await erSendt(nokkel)) return false;
+  if (await erSendt(nokkel)) {
+    console.log(`[rapport] «${nokkel}» er alt sendt — hopper over.`);
+    return false;
+  }
   if (!r.decision) return false;
 
   const ok = await send(emne(r, `Påminnelse · `), [
@@ -135,7 +159,10 @@ export async function purrSteg(
   tittel: string,
 ): Promise<boolean> {
   const nokkel = `${r.type}:${r.id}:steg-${indeks}`;
-  if (await erSendt(nokkel)) return false;
+  if (await erSendt(nokkel)) {
+    console.log(`[rapport] «${nokkel}» er alt sendt — hopper over.`);
+    return false;
+  }
 
   const ok = await send(`${r.test ? "[TEST] " : ""}Frist passert: ${tittel}`, [
     "Et steg fra ukerapporten har passert fristen uten å bli krysset av.",
@@ -154,7 +181,10 @@ export async function varsleManglendeRapport(
   merkelapp: string,
 ): Promise<boolean> {
   const nokkel = `${type}:mangler:${merkelapp}`;
-  if (await erSendt(nokkel)) return false;
+  if (await erSendt(nokkel)) {
+    console.log(`[rapport] «${nokkel}» er alt sendt — hopper over.`);
+    return false;
+  }
 
   const ok = await send("Ukerapporten mangler", [
     `Det har ikke kommet noen rapport av typen «${type}» denne uka.`,
