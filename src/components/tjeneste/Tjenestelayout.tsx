@@ -7,12 +7,12 @@ import Link from "next/link";
 
 import { Container } from "@/components/Container";
 import { Eyebrow, Merkelapp } from "@/components/Eyebrow";
-import { Klipp } from "@/components/Klipp";
 import { Knappelenke } from "@/components/Knapp";
 import { Logorad } from "@/components/Logorad";
 import {
   BrodsmuleSchema,
   FaqSchema,
+  FilmSchema,
   TjenesteSchema,
 } from "@/components/Schema";
 import { eiker, type Tjenesteside } from "@/content/tjenester";
@@ -62,6 +62,25 @@ export function Tjenestelayout({
       <FaqSchema
         qa={side.faq.map((f) => ({ sporsmal: f.sporsmal, svar: f.svar }))}
       />
+      {/*
+        Hovedfilmen som VideoObject. Bare denne — klippene i «Fra arbeidet»
+        er kuraterte utsnitt uten egen tittel, og tjue VideoObject-er med
+        alt-tekst som navn er støy. Begrunnelsen i sin helhet står ved
+        FilmSchema i Schema.tsx.
+
+        Navnet er bildeteksten, ikke alt-teksten: alt-teksten beskriver
+        PLAKATEN («Stillbilde fra …»), og et VideoObject som heter
+        «stillbilde» er feil på den måten ingen oppdager.
+      */}
+      {side.hovedfilm && (
+        <FilmSchema
+          navn={side.hovedfilm.bildetekst}
+          beskrivelse={side.svar}
+          sti={side.hovedfilm.sti}
+          sekunder={side.hovedfilm.sekunder}
+          sidesti={side.sti}
+        />
+      )}
 
       {/* ── Svaret, før alt annet ─────────────────────────────────── */}
       <section className="pt-16 pb-14 sm:pt-24 sm:pb-20">
@@ -123,10 +142,10 @@ export function Tjenestelayout({
               bildet. En reklamefilm vist som en mobilreel er ikke lenger
               en reklamefilm.
 
-              Plakaten er 640x360 og altså mykere enn rammen. Dropbox sin
-              forhåndsvisning gir ikke større, og containeren har ingen
-              ffmpeg til å hente en ramme i full oppløsning. Den vises bare
-              til filmen begynner å spille, så prisen er et halvt sekund.
+              Plakaten er 1280x720, hentet som ramme ut av filmen selv.
+              Kilden er 1920x1080, så rammen er nedskalert og ikke oppskalert
+              — den er mykere enn originalen, men skarpere enn rammen den
+              vises i. Den står bare til filmen begynner å spille.
             */}
             <Hovedfilm
               sti={side.hovedfilm.sti}

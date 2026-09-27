@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { Container } from "@/components/Container";
 import { Eyebrow, Merkelapp } from "@/components/Eyebrow";
-import { BrodsmuleSchema } from "@/components/Schema";
+import { BrodsmuleSchema, OversiktSchema } from "@/components/Schema";
 import { artikler, lesetid, type Artikkel } from "@/content/artikler";
 import { basisUrl } from "@/lib/miljo";
 
@@ -40,9 +40,9 @@ import { basisUrl } from "@/lib/miljo";
  * dessuten den eneste bunn-trakt-teksten i bunken.
  */
 export const metadata: Metadata = {
-  title: "Blogg – sosiale medier, video og innholdsproduksjon",
+  title: "Blogg om sosiale medier og innholdsproduksjon",
   description:
-    "Artikler fra Reflektor om sosiale medier, videomarkedsføring, innholdsproduksjon og employer branding.",
+    "Artikler fra Reflektor om sosiale medier, videomarkedsføring, innholdsproduksjon og employer branding — og hva det koster å sette bort jobben.",
   alternates: { canonical: `${basisUrl()}/blogg` },
 };
 
@@ -72,6 +72,20 @@ export default function Blogg() {
   return (
     <>
       <BrodsmuleSchema ledd={[{ navn: "Hjem", sti: "/" }, { navn: "Blogg" }]} />
+      {/*
+        Bloggen er en liste over artikler, i samme rekkefølge siden viser dem
+        (nyest først). Se OversiktSchema for hvorfor navnet må stå på hvert
+        ledd og ikke bare URL-en.
+      */}
+      <OversiktSchema
+        navn="Blogg"
+        beskrivelse="Artikler fra Reflektor om sosiale medier, videomarkedsføring, innholdsproduksjon og employer branding."
+        sti="/blogg"
+        ledd={sortert.map((a) => ({
+          navn: a.tittel,
+          sti: `/blogg/${a.slug}`,
+        }))}
+      />
 
       <section className="pt-16 pb-14 sm:pt-24 sm:pb-16">
         <Container>

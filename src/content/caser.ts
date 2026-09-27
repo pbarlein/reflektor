@@ -73,7 +73,13 @@ export type Kundecase = {
   arbeid: { tittel: string; steg: Steg[] };
 
   /** Klippet fra samarbeidet, i public/reels/. */
-  klipp: { fil: string; alt: string; attribusjon: string };
+  klipp: {
+    fil: string;
+    alt: string;
+    attribusjon: string;
+    /** Målt med ffmpeg på filen i public/reels/. Til VideoObject. */
+    sekunder: number;
+  };
 
   /**
    * Stillbildene på kortet i oversikten, i public/caser/.
@@ -136,9 +142,9 @@ export const kundecaser: Kundecase[] = [
     tjenester: "Instagram og Facebook",
     siden: "Siden 2022",
 
-    metaTittel: "Soulcake: foto og video for bakeri og kafé – kundecase",
+    metaTittel: "Soulcake: foto og video for kafé – kundecase",
     metaBeskrivelse:
-      "Hvordan Reflektor produserer foto og video for Soulcake på fast månedlig basis siden 2022: over 80 % av innholdet på Instagram, 6,8 millioner visninger på reels og lanseringer med Freia og Ivorie.",
+      "Foto og video for Soulcake på fast månedlig basis siden 2022: over 80 % av innholdet på Instagram og 6,8 millioner visninger på reels.",
 
     h1: "Foto og video for Soulcake",
     ingress:
@@ -205,6 +211,7 @@ export const kundecaser: Kundecase[] = [
       fil: "soulcake",
       alt: "Vertikalt klipp fra Soulcake-bakeriet",
       attribusjon: "Filmet og klippet av Reflektor, publisert av Soulcake",
+      sekunder: 8,
     },
 
     eksempler: {
@@ -277,9 +284,9 @@ export const kundecaser: Kundecase[] = [
     tjenester: "Foto, video og skjermer",
     siden: "Siden 2022",
 
-    metaTittel: "Egon: foto og video for restaurantkjeden – kundecase",
+    metaTittel: "Egon: foto og video for restaurantkjeden",
     metaBeskrivelse:
-      "Hvordan Reflektor produserer foto, reels, kampanjefilm og skjermreklame for Egon på fast månedlig basis siden 2022: nærmere 50 restauranter, seks formater per film og 323 000 reels-visninger.",
+      "Foto, reels, kampanjefilm og skjermreklame for Egon på fast månedlig basis siden 2022: nærmere 50 restauranter og 323 000 reels-visninger.",
 
     h1: "Foto og video for Egon",
     ingress:
@@ -354,6 +361,7 @@ export const kundecaser: Kundecase[] = [
       fil: "egon",
       alt: "Vertikalt klipp fra en Egon-restaurant",
       attribusjon: "Filmet og klippet av Reflektor, publisert av Egon",
+      sekunder: 8,
     },
 
     eksempler: {

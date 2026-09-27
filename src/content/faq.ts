@@ -1,4 +1,4 @@
-import { slotsISeksjon } from "@/components/Slot";
+import { slotsISeksjon } from "@/content/sider/_slot";
 import { front } from "@/content/sider/front";
 
 /**
@@ -241,3 +241,25 @@ export const forsidensSporsmal: FaqPunkt[] = [
   }),
   ...forsidensTillegg.map(hentFaq),
 ];
+
+/**
+ * Forsidens FAQPage-markering: de seks EGNE spørsmålene, ikke alle ti.
+ *
+ * GOOGLE FORBYR DET EKSPLISITT. Retningslinjene for FAQPage sier at samme
+ * spørsmål og svar ikke skal merkes opp på flere sider på samme nettsted.
+ * De fire i `forsidensTillegg` er hentet fra /faq, og /faq sender alle
+ * nitten. Uten dette filteret sto de fire som FAQPage-entiteter på to
+ * URL-er, og da er det tilfeldig hvilken av dem som blir sitert.
+ *
+ * DETTE ER IKKE FEILEN SOM BLE RETTET OVER. Den var at seksjonen VISTE ti
+ * spørsmål mens markeringen bygde sin egen liste på seks — et avvik ingen
+ * hadde bestemt, og ingen kunne se. Her er avviket bestemt, og grunnen står
+ * skrevet: mennesket på forsiden skal fortsatt få alle ti, fordi de fire
+ * besvarer alternativene rett før skjemaet. Det er bare maskinen som får
+ * dem ett sted, og det stedet er /faq.
+ *
+ * `forsidensSporsmal` er fortsatt det seksjonen rendrer. Rør ikke den.
+ */
+export const forsidensSporsmalForMarkup: FaqPunkt[] = forsidensSporsmal.filter(
+  (p) => !forsidensTillegg.some((s) => s === p.sporsmal),
+);

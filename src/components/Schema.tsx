@@ -17,8 +17,6 @@ import { omoss } from "@/content/omoss";
  *
  * Bakgrunnen er målt: «reflektor» (250 søk/mnd) rangerer på plass 5 – via
  * /kontaktoss, ikke forsiden. Forsiden bærer ikke merkevaren i dag.
- *
- * VideoObject implementeres først når thumbnail-filer finnes (vedlegg A 11).
  */
 const ORG_ID = `${basisUrl()}/#organisasjon`;
 
@@ -442,6 +440,131 @@ export function ArtikkelSchema({
     mainEntityOfPage: { "@type": "WebPage", "@id": `${basisUrl()}${sti}` },
     author: { "@id": ORG_ID },
     publisher: { "@id": ORG_ID },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+/**
+ * Én film som VideoObject.
+ *
+ * LAGT TIL 27.09.2026. Sto som «implementeres først når thumbnail-filer
+ * finnes (vedlegg A 11)» i hodet på denne fila. De finnes nå — hvert klipp
+ * i public/ har sitt eget posterbilde, lagt inn da klippene ble hentet fra
+ * Dropbox — så begrunnelsen for å utsette den er borte.
+ *
+ * HVORFOR DEN ER VERDT DET: nettstedet selger video, og en språkmodell som
+ * leser siden uten denne markeringen ser en `<video>`-tagg uten å få vite at
+ * filmen ER produktet. Med den er filmen en entitet med varighet, motiv og
+ * produsent.
+ *
+ * TRE FILMER, IKKE TJUE. Bare filmer som betyr noe hver for seg: reklame-
+ * filmen på /reklamefilm, og klippet i hvert kundecase. Klippene i
+ * «Fra arbeidet»-rutenettene og i reel-veggen er kuraterte utsnitt uten
+ * egen tittel — tjue VideoObject-er med alt-tekst som navn er støy, ikke
+ * signal, og Google behandler det som det.
+ *
+ * INGEN uploadDate. Google krever den for video-rich-results, så
+ * markeringen her får ikke det. Men vi VET ikke når filmene ble publisert —
+ * de nye sidene er ikke live ennå, og produksjonsdatoen er ikke en
+ * publiseringsdato. Samme regel som KundecaseSchema og ArtikkelSchema
+ * følger: en dato vi ikke kan belegge skrives ikke, heller ikke for
+ * maskiner. Resten av feltene leses uansett av språkmodeller, som er der
+ * verdien ligger. Får vi en ekte dato ved cutover, legges den inn da.
+ *
+ * `duration` er målt med ffmpeg på filene i public/, ikke gjettet.
+ */
+export function FilmSchema({
+  navn,
+  beskrivelse,
+  sti,
+  sekunder,
+  sidesti,
+}: {
+  navn: string;
+  beskrivelse: string;
+  /** Uten filendelse, slik Klipp tar den: «/reels/peppes-reklamefilm». */
+  sti: string;
+  sekunder: number;
+  /** Siden filmen står på. Gir språkmodellen veien tilbake til kontekst. */
+  sidesti: string;
+}) {
+  const base = basisUrl();
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: navn,
+    description: beskrivelse,
+    thumbnailUrl: `${base}${sti}.jpg`,
+    contentUrl: `${base}${sti}.mp4`,
+    duration: `PT${sekunder}S`,
+    inLanguage: "nb-NO",
+    isFamilyFriendly: true,
+    creator: { "@id": ORG_ID },
+    productionCompany: { "@id": ORG_ID },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${base}${sidesti}` },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+/**
+ * En oversiktsside som CollectionPage med ItemList.
+ *
+ * LAGT TIL 27.09.2026. /vart-arbeid og /blogg hadde bare BreadcrumbList —
+ * altså visste en maskin hvor sidene lå i hierarkiet, men ikke at de ER
+ * lister, eller hva de lister. En språkmodell som blir spurt «hvilke kunder
+ * har Reflektor jobbet for» måtte hente svaret fra lenketekster.
+ *
+ * `url` OG `name` PÅ HVERT LEDD, ikke bare url. Et ItemList med bare URL-er
+ * tvinger en ny henting per ledd for å finne ut hva de er. Navnet gjør
+ * listen selvforklarende i ett svar.
+ *
+ * REKKEFØLGEN ER DEN SIDEN VISER. `position` er ikke en rangering, den er
+ * leserekkefølgen — og den skal stemme med det et menneske ser, ellers er
+ * markeringen en annen side enn siden.
+ */
+export function OversiktSchema({
+  navn,
+  beskrivelse,
+  sti,
+  ledd,
+}: {
+  navn: string;
+  beskrivelse: string;
+  sti: string;
+  ledd: { navn: string; sti: string }[];
+}) {
+  const base = basisUrl();
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${base}${sti}`,
+    name: navn,
+    description: beskrivelse,
+    inLanguage: "nb-NO",
+    isPartOf: { "@id": ORG_ID },
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: ledd.length,
+      itemListOrder: "https://schema.org/ItemListOrderAscending",
+      itemListElement: ledd.map((l, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: l.navn,
+        url: `${base}${l.sti}`,
+      })),
+    },
   };
 
   return (

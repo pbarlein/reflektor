@@ -17,7 +17,7 @@ import { Logostripe } from "@/components/forside/Logostripe";
 import { Pris } from "@/components/forside/Pris";
 import { SlikFungererDet } from "@/components/forside/SlikFungererDet";
 import { Vegg } from "@/components/forside/Vegg";
-import { forsidensSporsmal } from "@/content/faq";
+import { forsidensSporsmalForMarkup } from "@/content/faq";
 import { front } from "@/content/sider/front";
 import { basisUrl } from "@/lib/miljo";
 
@@ -74,7 +74,13 @@ export default function Forside() {
         sin egen fra bare de seks slotsene, så siden viste ti spørsmål og
         markeringen oppga seks.
       */}
-      <FaqSchema qa={forsidensSporsmal} />
+      {/*
+        SEKS, IKKE TI. De fire siste spørsmålene i seksjonen er hentet fra
+        /faq og er merket opp der. Google forbyr samme spørsmål og svar som
+        FAQPage på to URL-er. Begrunnelsen i sin helhet står ved
+        `forsidensSporsmalForMarkup` i src/content/faq.ts.
+      */}
+      <FaqSchema qa={forsidensSporsmalForMarkup} />
 
       <Hero />
       <Logostripe />

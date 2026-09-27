@@ -53,3 +53,31 @@ export function TBD(opts: Omit<Slot, "verdi"> = {}): Slot {
 export function tekst(verdi: string, opts: Omit<Slot, "verdi"> = {}): Slot {
   return { verdi, ...opts };
 }
+
+/**
+ * OPPSLAG I INNHOLDSLAGET. Flyttet hit fra components/Slot.tsx 27.09.2026.
+ *
+ * De er rene funksjoner over `Side`, uten JSX, og hører derfor i innholds-
+ * laget de leser. Den praktiske grunnen: `content/faq.ts` trenger
+ * `slotsISeksjon`, og så lenge den lå i en .tsx importerte innholdslaget en
+ * React-komponent — noe `node --test` ikke kan laste, fordi node stripper
+ * typer men ikke JSX. Slot.tsx re-eksporterer dem, så alle kallsteder står.
+ */
+export function finnSlot(side: Side, id: string): Slot | undefined {
+  for (const seksjon of side.seksjoner) {
+    const treff = seksjon.slots[id];
+    if (treff) return treff;
+  }
+  return undefined;
+}
+
+export function hentTekst(side: Side, id: string): string | null {
+  return finnSlot(side, id)?.verdi ?? null;
+}
+
+/** Alle slots i en seksjon, i rekkefølge. Til lister og rutenett. */
+export function slotsISeksjon(side: Side, nr: number) {
+  const seksjon = side.seksjoner.find((s) => s.nr === nr);
+  if (!seksjon) return [];
+  return Object.entries(seksjon.slots).map(([id, slot]) => ({ id, ...slot }));
+}

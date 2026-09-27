@@ -129,7 +129,13 @@ export type Tjenesteside = {
    * Formatet er 16:9 fordi filmen er det. Å presse den inn i det stående
    * rutenettet ville kastet 70 % av bildet.
    */
-  hovedfilm?: { sti: string; alt: string; bildetekst: string };
+  hovedfilm?: {
+    sti: string;
+    alt: string;
+    bildetekst: string;
+    /** Målt med ffmpeg på filen i public/, ikke avrundet etter hukommelse. */
+    sekunder: number;
+  };
 
   /**
    * «Fra arbeidet»: fire medier valgt etter hva siden handler om.
@@ -156,9 +162,9 @@ const kr = (n: number) => new Intl.NumberFormat("nb-NO").format(n);
 
 export const reklamefilm: Tjenesteside = {
   sti: "/reklamefilm",
-  tittel: "Reklamefilm | Produksjon for TV, nett og sosiale medier",
+  tittel: "Reklamefilm for TV, nett og sosiale medier",
   beskrivelse:
-    "Reflektor produserer reklamefilm for TV, nettannonser og sosiale medier. Vi lager filmen — vi kjøper ikke sendetid. Produksjon fra Oslo, for bedrifter i hele Norge.",
+    "Reflektor produserer reklamefilm for TV, nettannonser og sosiale medier. Vi lager filmen — vi kjøper ikke sendetid. Oslo, for hele Norge.",
   h1: "Reklamefilm",
   merkelapp: "Produksjon",
   tjenestetype: "Produksjon av reklamefilm for betalte flater",
@@ -232,6 +238,7 @@ export const reklamefilm: Tjenesteside = {
     alt: "Stillbilde fra reklamefilm for Peppes Pizza",
     bildetekst:
       "Reklamefilm for Peppes Pizza. 15 sekunder, produsert av Reflektor.",
+    sekunder: 15,
   },
   /*
    * REKLAMEFILM. Her lå antonsport og goretex — to klipp fra sportsbutikk,
@@ -272,9 +279,9 @@ export const reklamefilm: Tjenesteside = {
 
 export const videoproduksjon: Tjenesteside = {
   sti: "/videoproduksjon-i-oslo",
-  tittel: "Videoproduksjon i Oslo | Film til nettside, skjerm og kanaler",
+  tittel: "Videoproduksjon i Oslo – film til egne flater",
   beskrivelse:
-    "Videoproduksjon for bedrifter: bannervideo til nettsiden, film til tjenestesider, innhold til skjermer og brand video. Reflektor produserer i Oslo, for hele Norge.",
+    "Videoproduksjon for bedrifter: bannervideo, film til tjenestesider, innhold til skjermer og brand video. Produsert i Oslo, for hele Norge.",
   h1: "Videoproduksjon i Oslo",
   merkelapp: "Produksjon",
   tjenestetype: "Videoproduksjon for bedriftens egne flater",
@@ -385,9 +392,9 @@ export const employerBranding: Tjenesteside = {
     fokus: "center 30%",
   },
   sti: "/employer-branding-video-oslo",
-  tittel: "Employer branding-video | Film som gjør folk til søkere",
+  tittel: "Employer branding-video for rekruttering",
   beskrivelse:
-    "Employer branding-video fra Reflektor: film til stillingsannonser, karriereside og rekrutteringskanaler. Produsert hos dere, med deres egne ansatte. Oslo og hele Norge.",
+    "Employer branding-video: film til stillingsannonser, karriereside og rekrutteringskanaler. Produsert hos dere, med deres egne ansatte.",
   h1: "Employer branding-video",
   merkelapp: "Produksjon",
   tjenestetype: "Produksjon av film for arbeidsgivermerkevare og rekruttering",
@@ -485,9 +492,9 @@ export const event: Tjenesteside = {
     fokus: "center 40%",
   },
   sti: "/eventfotograf-eventvideo",
-  tittel: "Eventfotograf og eventvideo | Dekning av arrangementer",
+  tittel: "Eventfotograf og eventvideo for bedrifter",
   beskrivelse:
-    "Eventfotograf og eventvideo fra Reflektor: foto og film fra konferanser, lanseringer, messer og firmaarrangementer. Materiale dere kan bruke i ettertid. Oslo og hele Norge.",
+    "Eventfotograf og eventvideo: foto og film fra konferanser, lanseringer, messer og firmaarrangementer. Materiale dere kan bruke i ettertid.",
   h1: "Eventfotograf og eventvideo",
   merkelapp: "Produksjon",
   tjenestetype: "Foto- og videodekning av arrangementer",
@@ -596,7 +603,7 @@ export const innholdsproduksjon: Tjenesteside = {
   sti: "/innholdsproduksjon",
   tittel: "Innholdsproduksjon | Foto og video for bedrifter",
   beskrivelse:
-    "Innholdsproduksjon fra Reflektor: reklamefilm, video til egne flater, employer branding og eventdekning — eller løpende produksjon til fast månedspris. Oslo, hele Norge.",
+    "Innholdsproduksjon fra Reflektor: reklamefilm, video til egne flater, employer branding og eventdekning — som prosjekt eller fast månedspris.",
   h1: "Innholdsproduksjon",
   merkelapp: "Oversikt",
   tjenestetype: "Produksjon av foto og video for bedrifter",
@@ -616,6 +623,27 @@ export const innholdsproduksjon: Tjenesteside = {
         `Prosjekt: én leveranse, avtalt omfang, fra ${kr(tilbud.fraPrisProsjekt)} kr`,
         `Abonnement: ${site.kontakt.firma} produserer og publiserer løpende, ${kr(tilbud.prisPerManed)} kr/mnd`,
       ],
+    },
+    /*
+     * LAGT TIL 27.09.2026. Bakgrunnen er målt, ikke antatt: «innholdsproduksjon»
+     * har 14 444 visninger i Search Console på plass 11–12, men bare 16 klikk —
+     * og det er Reflektors egen bloggartikkel om ordet som ligger foran denne
+     * siden. Artikkelen er på 2 136 ord og forklarer hva ordet betyr. Denne
+     * siden var på 375 og svarte ikke på det en kjøper spør om.
+     *
+     * INGEN NY COPY. `prisdrivere` er Påls egen ordlyd, lagt inn 22.09.2026 og
+     * fram til nå brukt ingen steder i det hele tatt. Tallene er de to som
+     * allerede står på siden, og «ingen timepriser» står i `tilbud.vilkar`.
+     *
+     * DEN GJENTAR IKKE SEKSJONEN OVER. Der er spørsmålet hvilken av de to
+     * formene dere trenger. Her er det hva prisen henger på — at
+     * prosjektprisen varierer og abonnementsprisen ikke gjør det. Den
+     * forskjellen sto ingensteds, og den er det en kjøper vil vite.
+     */
+    {
+      sporsmal: "Hva avgjør prisen på et prosjekt?",
+      svar: `Et prosjekt starter på ${kr(tilbud.fraPrisProsjekt)} kr, og hvor det lander avgjøres av tre ting. Vi bruker ikke timepriser, så prisen avtales før vi begynner. Abonnementet har ingen slik variasjon: ${kr(tilbud.prisPerManed)} kr/mnd er prisen hver måned, for én produksjonsdag, ${tilbud.videoerPerManed} ferdig redigerte videoer som produksjonsmål og publisering ${tilbud.posterPerUke} ganger i uka.`,
+      punkter: [...tilbud.prisdrivere],
     },
     {
       sporsmal: "Hvem produserer Reflektor for?",

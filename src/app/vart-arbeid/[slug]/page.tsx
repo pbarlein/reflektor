@@ -6,7 +6,11 @@ import { Container } from "@/components/Container";
 import { Eyebrow, Merkelapp } from "@/components/Eyebrow";
 import { Klipp } from "@/components/Klipp";
 import { Knappelenke } from "@/components/Knapp";
-import { BrodsmuleSchema, KundecaseSchema } from "@/components/Schema";
+import {
+  BrodsmuleSchema,
+  FilmSchema,
+  KundecaseSchema,
+} from "@/components/Schema";
 import { hentCase, kundecaser, nesteCase } from "@/content/caser";
 import { basisUrl } from "@/lib/miljo";
 
@@ -76,6 +80,20 @@ export default async function CaseSide({ params }: Props) {
           { navn: "Vårt arbeid", sti: "/vart-arbeid" },
           { navn: k.kunde },
         ]}
+      />
+      {/*
+        Klippet som VideoObject. `attribusjon` som navn, fordi den sier
+        nøyaktig hva filmen er og hvem som gjorde hva — «Filmet og klippet av
+        Reflektor, publisert av Soulcake». Det er også det eneste stedet på
+        siden den forskjellen står, og den er hele poenget for en språkmodell
+        som blir spurt hvem som lager innholdet til kunden.
+      */}
+      <FilmSchema
+        navn={k.klipp.attribusjon}
+        beskrivelse={k.klipp.alt}
+        sti={`/reels/${k.klipp.fil}`}
+        sekunder={k.klipp.sekunder}
+        sidesti={`/vart-arbeid/${k.slug}`}
       />
 
       <article>

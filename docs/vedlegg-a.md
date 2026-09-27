@@ -2654,3 +2654,142 @@ Fire av de omskrevne setningene skrev jeg samme dag, i svaret på forrige
 tilbakemelding. Mønsteret kommer tilbake med hver runde med ny copy, så dette
 er ikke en jobb som blir ferdig én gang. Skannemønstrene står i tabellen over
 for den som skal gjøre runden igjen.
+
+## A68 — SEO- og AEO-gjennomgang av hele nettstedet. 27.09.2026
+
+Pål ba om «en grundig SEO og AEO-analyse av hele hjemmesiden», deretter
+retting. Alle 23 sider i sitemapet ble crawlet med Playwright og målt på
+tittel, beskrivelse, canonical, robots, overskriftshierarki, JSON-LD-typer,
+ordantall, interne lenker og alt-tekst. Tallene fra Search Console er hentet
+gjennom Ahrefs-koblingen, ikke gjettet.
+
+### Det som var i orden
+
+Verdt å skrive ned, fordi det er det man ellers river i vanvare: hver side har
+nøyaktig én H1, ingen hopp i overskriftsnivå, egen canonical, `noindex` overalt
+(sperren står), ingen dupliserte titler eller beskrivelser, og JSON-LD for
+organisasjon, tjeneste, pris, brødsmuler og FAQ. De 44 bildene uten alt-tekst
+per side er logoraden, som er dekorativ og axe-ren.
+
+### Ni funn, og hva som ble gjort
+
+**1. Ni titler over 60 tegn, ti beskrivelser over 158.**
+Malen legger på « | Reflektor» (12 tegn), så en tittel på 55 blir 67 i søk.
+Verstingen var `/videoproduksjon-i-oslo` på 73. Alle kortet ned. Artiklene
+fikk et nytt felt, `metaTittel`, fordi `tittel` også er H1 og de to har ulike
+krav — en H1 kan være lang og forklarende, et `<title>` kuttes.
+
+**2. `/sosiale-medier-byra` lå i sitemapet med prioritet 0,9.**
+Ruten er `status: "live"` i site.ts, og sitemapet leste det som «indekser
+denne». Men siden er en `UnderArbeid`-plassholder som skal 301-es til `/` ved
+cutover. `status` sier at ADRESSEN lever — den er Final URL i Google Ads — ikke
+at det finnes innhold der. Tatt ut, med en `utelatt`-liste og begrunnelsen i
+koden. Siden arvet dessuten forsidens fallback-beskrivelse på 190 tegn; den har
+nå sin egen.
+
+**3. Sju artikler slutter med «Les mer om abonnementet.» — uten lenke.**
+Det største enkeltfunnet. Flere har også «Se våre tjenester for en oversikt
+over alt vi tilbyr» og «Se hvordan du setter i gang og utfører en
+innholdsproduksjon». Lenkene lå i Squarespace-utgaven og forsvant i
+migreringen, fordi migreringen tok brødteksten og ikke markeringen. Teksten
+inviterte til et klikk som ikke fantes, på de eneste sidene med organisk
+trafikk.
+
+Rettet med et nytt felt, `Innlenke`, på avsnittsblokkene: `frase` må stå
+ordrett i avsnittet, og `delOppAvsnitt` kaster hvis den ikke gjør det eller
+står to ganger. Ingen formulering er endret — det er lagt en `<a>` rundt ord
+som allerede var der. Elleve lenker i ni artikler, hver med ankertekst hentet
+fra setningen den står i.
+
+**4. `lesVidere`-broen fantes allerede.** Notert fordi den første lesningen
+av crawl-tallene sa noe annet: artiklene så ut til å ha 1–3 interne lenker,
+og konklusjonen «artiklene er blindveier» var feil. Boksen «Fra Reflektor»
+nederst i hver artikkel har pekt på riktig tjenesteside hele tiden, med
+ankertekst som sier hva siden er. Det som manglet var lenker INNE i teksten,
+ikke lenker i det hele tatt. Måletallet var unike href-er i `main`, og en
+lenke til en side som også står i bunnteksten teller ikke som ny.
+
+**5. «innholdsproduksjon»: 14 444 visninger, plass 11–12, 16 klikk.**
+Og det er Reflektors egen bloggartikkel om ordet som ligger foran
+tjenestesiden. Artikkelen er på 2 136 ord, tjenestesiden var på 375.
+
+To grep, begge uten ny copy. Artikkelen fikk en eksakt-ankertekstlenke til
+tjenestesiden midt i brødteksten. Tjenestesiden fikk en seksjon — «Hva avgjør
+prisen på et prosjekt?» — bygget på `tilbud.prisdrivere`, som er Påls egen
+ordlyd fra 22.09.2026 og fram til nå var brukt **ingen steder**. Siden svarer
+nå på det en kjøper spør om, og ikke bare på hva ordet betyr. 375 → 446 ord.
+
+Resten krever copy fra Pål. Det er sagt til ham.
+
+**6. Fire FAQ-spørsmål var merket opp som FAQPage på to URL-er.**
+De fire i `forsidensTillegg` hentes fra /faq og vises på forsiden — riktig
+redaksjonelt, og begrunnet der. Men Google forbyr eksplisitt samme spørsmål og
+svar som FAQPage på flere sider, og da er det tilfeldig hvilken URL som
+siteres. Forsiden merker nå opp sine seks egne; de fire eies av /faq.
+Mennesket ser fortsatt alle ti.
+
+Avviket mellom det som vises og det som merkes opp er altså bevisst denne
+gangen — i motsetning til feilen som ble rettet 21.09.2026, der ingen hadde
+bestemt det. `tests/faq.test.ts` vokter alle seksten FAQPage-sidene mot nye
+duplikater, og er mutasjonstestet.
+
+**7. Ingen VideoObject, selv om siden selger video.**
+Sto som «implementeres først når thumbnail-filer finnes (A11)». De finnes nå.
+Tre filmer merket opp: reklamefilmen på /reklamefilm og klippet i hvert
+kundecase. Ikke de tjue klippene i rutenettene og reel-veggen — de er
+kuraterte utsnitt uten egen tittel, og tjue VideoObject-er med alt-tekst som
+navn er støy Google behandler som støy.
+
+Ingen `uploadDate`, som Google krever for rich results. Vi vet ikke når
+filmene ble publisert, sidene er ikke live, og produksjonsdato er ikke
+publiseringsdato. Samme regel som `KundecaseSchema` og `ArtikkelSchema`
+følger. `duration` er målt med ffmpeg på filene, ikke gjettet.
+
+**8. Oversiktssidene sa ikke at de er oversikter.**
+/vart-arbeid og /blogg hadde bare BreadcrumbList. De har nå CollectionPage med
+ItemList, med navn på hvert ledd og ikke bare URL — en liste med bare URL-er
+tvinger en ny henting per ledd for å finne ut hva de er. På /vart-arbeid er
+navnene kundenavnene, fordi spørsmålet en språkmodell får er «hvem lager
+innhold for Egon».
+
+**9. /llms.txt lagt til.** Nettstedets kjøpsfakta — 30 000 kr/mnd, fra 40 000
+for prosjekt, tre måneders oppsigelse, ingen bindingstid — lå spredt over fem
+sider. En språkmodell som siterer Reflektor på pris henter det den finner
+først. Fila er generert fra de samme konstantene sidene leser, ikke skrevet,
+så den kan ikke gli fra dem. Den følger indekseringssperren og svarer 404 til
+den åpnes.
+
+### Sitemapets lastmod
+
+Bare artiklene har den, fordi bare de har en ekte dato. Google bruker lastmod
+når den er konsekvent riktig og ignorerer feltet for hele nettstedet når den
+ikke er det. Byggetidspunktet er ikke en endringsdato.
+
+### To ting som ikke ble gjort, og hvorfor
+
+**Artikkel-til-artikkel-lenker.** Standard SEO-råd, og feil her: det holder
+leseren inne i ordbokstoffet i stedet for å flytte ham mot skjemaet. Eneste
+unntak er den ene lenken teksten selv ber om («Se hvordan du setter i gang og
+utfører en innholdsproduksjon»), der løftet er en guide og ikke et kjøp.
+
+**De to slettede artiklene som fortsatt rangerer.**
+`hva-er-holdningskampanje` (5 345 visninger, plass ~3,5) og
+`hvilke-virkemidler-er-mest-effektive-i-reklame-og-hvordan-brukes-de` (3 430,
+plass ~4) er blant nettstedets beste organiske sider, men 301-er til /blogg
+allerede på dagens Squarespace-side, og falt til null klikk i juli–august.
+Teksten finnes ikke i noe arkiv containeren når: Wayback har én snapshot av
+den ene, og web.archive.org er utenfor nettverkspolicyen. Uten teksten er
+alternativet å skrive den, og det er utelukket. Lagt til Pål: har han
+originalen, legges begge tilbake på sine egne URL-er.
+
+### Verdt å merke seg for neste runde
+
+`tilbud.prisdrivere` var definert og ubrukt. Det er `tilbud.ekstraProduksjonsdag`
+(30 000) fortsatt — den ble IKKE tatt i bruk, fordi kommentaren ikke sier om
+beløpet kommer i tillegg til prosjektprisen eller erstatter en dag i den, og en
+side som oppgir feil pris er verre enn en som ikke oppgir noen. Spør Pål.
+
+Seksjonen «Hvem produserer Reflektor for?» står nesten ordrett likt på
+/innholdsproduksjon og /videoproduksjon-i-oslo — samme kundeliste, ulikt sitat.
+Det er godkjent copy, så det er ikke rørt, men to sider med samme avsnitt er en
+svakhet neste redaksjonelle runde bør se på.

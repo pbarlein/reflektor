@@ -20,17 +20,47 @@ const SRC = path.resolve(import.meta.dirname, "..", "src");
  */
 const ENDELSER = ["", ".ts", ".tsx", "/index.ts", "/index.tsx"];
 
+function prov(grunn) {
+  return ENDELSER.map((e) => grunn + e).find(
+    (k) => existsSync(k) && statSync(k).isFile(),
+  );
+}
+
 export async function resolve(spesifikator, kontekst, neste) {
-  if (spesifikator.startsWith("@/")) {
-    const [sti, spørring] = spesifikator.slice(2).split("?");
-    const grunn = path.join(SRC, sti);
-    const treff = ENDELSER.map((e) => grunn + e).find(
-      (k) => existsSync(k) && statSync(k).isFile(),
-    );
+  const [sti, spørring] = spesifikator.split("?");
+
+  /*
+   * RELATIVE IMPORTER TRENGER SAMME BEHANDLING SOM ALIASENE.
+   *
+   * Hooken løste bare `@/…`, og det holdt til aliaset pekte på en fil som
+   * selv importerer relativt: `tjenester.ts` gjør `from "./site"`, og node
+   * krever endelsen. Testen som avdekket det importerte `@/content/tjenester`
+   * — aliaset løste fint, og så falt resolveren på linjen etter.
+   *
+   * TypeScript skriver relative importer uten endelse akkurat som aliasene,
+   * så regelen er den samme: prøv endelsene i TypeScripts rekkefølge.
+   */
+  if (sti.startsWith("./") || sti.startsWith("../")) {
+    if (kontekst.parentURL?.startsWith("file:")) {
+      const grunn = path.resolve(
+        path.dirname(new URL(kontekst.parentURL).pathname),
+        sti,
+      );
+      const treff = prov(grunn);
+      if (treff) {
+        const url = pathToFileURL(treff).href;
+        return neste(spørring ? `${url}?${spørring}` : url, kontekst);
+      }
+    }
+  }
+
+  if (sti.startsWith("@/")) {
+    const treff = prov(path.join(SRC, sti.slice(2)));
     if (treff) {
       const url = pathToFileURL(treff).href;
       return neste(spørring ? `${url}?${spørring}` : url, kontekst);
     }
   }
+
   return neste(spesifikator, kontekst);
 }

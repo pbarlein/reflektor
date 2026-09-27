@@ -164,6 +164,15 @@ for (const mappe of MEDIEMAPPER) {
       .replace(/-(vegg|1600|640)$/, "");
     if (allKilde.includes(`"${stamme}"`)) continue;
     if (allKilde.includes(`/${navn}`)) continue;
+    /*
+     * UTEN FILENDELSE. `Klipp` tar stien uten endelse og legger på .mp4 og
+     * .jpg selv, så et klipp refereres som `"/reels/peppes-reklamefilm"`.
+     * Heuristikken over lette bare etter stammen i egne anførselstegn eller
+     * hele filnavnet, og meldte derfor hvert eneste klipp som foreldreløst.
+     * Seks av de åtte i lista var det ikke. En advarsel som stort sett tar
+     * feil, er en advarsel ingen leser.
+     */
+    if (allKilde.includes(`/${stamme}"`)) continue;
     foreldrelose.push(`${mappe}/${navn}`);
   }
 }

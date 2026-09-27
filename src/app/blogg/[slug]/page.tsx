@@ -11,7 +11,13 @@ import {
   BrodsmuleSchema,
   FaqSchema,
 } from "@/components/Schema";
-import { artikkelSlugs, finnArtikkel, type Blokk } from "@/content/artikler";
+import {
+  artikkelSlugs,
+  delOppAvsnitt,
+  finnArtikkel,
+  type Blokk,
+  type Innlenke,
+} from "@/content/artikler";
 import { basisUrl } from "@/lib/miljo";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -36,6 +42,40 @@ type Props = { params: Promise<{ slug: string }> };
  * 40 % høyere siteringsvekt i ChatGPT, og her koster det ingen ny copy.
  */
 
+/**
+ * Ett avsnitt, med lenker lagt rundt ord som allerede står i teksten.
+ *
+ * Se `Innlenke` i src/content/artikler.ts for hvorfor lenkene ligger i
+ * avsnittene og ikke bare i boksen nederst. Kort: sju av artiklene slutter
+ * med «Les mer om abonnementet.» uten lenke, og en invitasjon uten klikk er
+ * en tapt lead på de eneste sidene som har organisk trafikk.
+ */
+function Avsnitt({
+  blokk,
+  className,
+}: {
+  blokk: { tekst: string; lenker?: Innlenke[] };
+  className?: string;
+}) {
+  return (
+    <p className={className}>
+      {delOppAvsnitt(blokk.tekst, blokk.lenker).map((d, i) =>
+        typeof d === "string" ? (
+          d
+        ) : (
+          <Link
+            key={i}
+            href={d.sti}
+            className="underline decoration-aksent/40 underline-offset-4 transition-colors hover:text-blekk hover:decoration-aksent motion-reduce:transition-none"
+          >
+            {d.frase}
+          </Link>
+        ),
+      )}
+    </p>
+  );
+}
+
 export function generateStaticParams() {
   return artikkelSlugs.map((slug) => ({ slug }));
 }
@@ -45,7 +85,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const a = finnArtikkel(slug);
   if (!a) return {};
   return {
-    title: a.tittel,
+    title: a.metaTittel ?? a.tittel,
     description: a.beskrivelse,
     alternates: { canonical: `${basisUrl()}/blogg/${a.slug}` },
   };
@@ -130,7 +170,9 @@ export default async function BloggInnlegg({ params }: Props) {
     })),
   ];
   const [ingress, ...resten] =
-    a.blokker[0]?.type === "avsnitt" ? [a.blokker[0], ...a.blokker.slice(1)] : [null, ...a.blokker];
+    a.blokker[0]?.type === "avsnitt"
+      ? [a.blokker[0], ...a.blokker.slice(1)]
+      : [null, ...a.blokker];
 
   return (
     <>
@@ -171,9 +213,10 @@ export default async function BloggInnlegg({ params }: Props) {
           </p>
 
           {ingress && ingress.type === "avsnitt" && (
-            <p className="mt-8 max-w-3xl border-l-2 border-aksent pl-6 text-lg leading-relaxed text-pretty sm:pl-8 sm:text-xl">
-              {ingress.tekst}
-            </p>
+            <Avsnitt
+              blokk={ingress}
+              className="mt-8 max-w-3xl border-l-2 border-aksent pl-6 text-lg leading-relaxed text-pretty sm:pl-8 sm:text-xl"
+            />
           )}
 
           {/*
@@ -291,12 +334,11 @@ export default async function BloggInnlegg({ params }: Props) {
                 );
               }
               return (
-                <p
+                <Avsnitt
                   key={i}
+                  blokk={b}
                   className="mt-5 leading-relaxed text-pretty text-blekk-dempet"
-                >
-                  {b.tekst}
-                </p>
+                />
               );
             })}
           </div>
@@ -411,8 +453,8 @@ export default async function BloggInnlegg({ params }: Props) {
               Skal vi lage innholdet for dere?
             </h2>
             <p className="mt-4 max-w-xl leading-relaxed text-pretty text-pa-dyp-dempet">
-              Fortell oss om bedriften, så får dere et forslag tilbake innen
-              tre virkedager. Uforpliktende.
+              Fortell oss om bedriften, så får dere et forslag tilbake innen tre
+              virkedager. Uforpliktende.
             </p>
             <Knappelenke href="/#kontakt" className="mt-8">
               Få et forslag

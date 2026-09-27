@@ -30,8 +30,40 @@
  * faktisk oppdateres.
  */
 
+/**
+ * En lenke INNE i et avsnitt.
+ *
+ * LAGT TIL 27.09.2026. Bakgrunnen er et funn, ikke en idé: sju av de ni
+ * migrerte artiklene slutter med setningen «Les mer om abonnementet.» — uten
+ * lenke. Flere har «Se våre tjenester for en oversikt over alt vi tilbyr» og
+ * «Se hvordan du setter i gang og utfører en innholdsproduksjon». Teksten
+ * inviterer til et klikk som ikke finnes. Lenkene lå i Squarespace-utgaven og
+ * forsvant i migreringen, fordi migreringen tok brødteksten og ikke
+ * markeringen.
+ *
+ * DETTE ER IKKE NY COPY. `frase` må stå ORDRETT i avsnittet, og ingenting
+ * skrives om — det legges bare en lenke rundt ord som allerede er der.
+ * Regelen i hodet på denne fila står: teksten er Reflektors egen, flyttet
+ * uten en eneste endring i formuleringene. En `<a>` rundt eksisterende ord
+ * endrer ingen formulering.
+ *
+ * HVORFOR DET BETYR NOE: artiklene er de eneste sidene på nettstedet med
+ * organisk trafikk, og lenkene til tjenestesidene lå alle i én boks helt
+ * nederst. En lenke i setningen der temaet faktisk nevnes blir både klikket
+ * og vektet tyngre, og ankerteksten blir ordet leseren leste — ikke en
+ * knappetekst. «innholdsproduksjon» rangerer på plass 11–12 med 14 444
+ * visninger, og det er bloggartikkelen som ligger foran tjenestesiden.
+ * Eksakt ankertekst fra artikkelen til siden er det billigste grepet som
+ * finnes mot nettopp det.
+ */
+export type Innlenke = {
+  /** Ordene lenken skal legges rundt. Må stå ordrett og bare én gang. */
+  frase: string;
+  sti: string;
+};
+
 export type Blokk =
-  | { type: "avsnitt"; tekst: string }
+  | { type: "avsnitt"; tekst: string; lenker?: Innlenke[] }
   | { type: "overskrift"; niva: 2 | 3; tekst: string }
   | { type: "liste"; punkter: string[] }
   /**
@@ -70,6 +102,16 @@ export type Artikkel = {
    */
   bilde: Bilde;
   tittel: string;
+  /**
+   * Kortere variant, kun for <title>. Faller tilbake på `tittel`.
+   *
+   * Finnes fordi `tittel` OGSÅ er H1, og de to har ulike krav. En H1 kan
+   * være lang og forklarende; et <title> blir kuttet av Google forbi rundt
+   * 60 tegn, og malen legger på « | Reflektor» (12 tegn) i tillegg. Å korte
+   * ned `tittel` for å berge <title> ville gjort overskriften dårligere
+   * for å berge et felt ingen leser på siden.
+   */
+  metaTittel?: string;
   beskrivelse: string;
   /** ISO-dato fra Squarespace. Ikke pyntet. */
   publisert: string;
@@ -136,8 +178,9 @@ export const artikler: Artikkel[] = [
       alt: "Fotograf med stativ, kamera og utstyrskoffert på vei til oppdrag",
     },
     tittel: "Hva koster et SoMe-byrå i Norge? Priser og prismodeller",
+    metaTittel: "Hva koster et SoMe-byrå i Norge?",
     beskrivelse:
-      "Hva koster det å sette bort sosiale medier? Vi forklarer hva prisen består av, sju spørsmål du bør stille før du signerer, og hva vi selv tar: 30 000 kr/mnd fast pris.",
+      "Hva koster det å sette bort sosiale medier? Hva prisen består av, sju spørsmål du bør stille før du signerer, og hva vi selv tar: 30 000 kr/mnd.",
     publisert: "2026-08-13",
     blokker: [
       {
@@ -212,6 +255,7 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "30 000 kr/mnd. Fast pris. Vi bruker ikke timepriser, og det kommer ikke tillegg for redigering, publisering eller møter.",
+        lenker: [{ frase: "30 000 kr/mnd", sti: "/#pris" }],
       },
       { type: "avsnitt", tekst: "Dette inngår:" },
       {
@@ -405,6 +449,7 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Innhold er nøkkelen til å gjøre det godt på sosiale medier. Dette kan du ikke løpe fra. Derfor kan det lønne seg å jobbe sammen med innholdsprodusenter som vet hva godt innhold er. Og hva anses som godt innhold? Det er tekst, bilder og videoer som engasjerer målgruppen din. Skal du tiltrekke potensielle kunder, må du vekke deres entusiasme og sørge for at produktet eller tjenesten din bidrar til å innfri et av deres behov.",
+        lenker: [{ frase: "innholdsprodusenter", sti: "/innholdsproduksjon" }],
       },
       {
         type: "avsnitt",
@@ -475,6 +520,8 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Reflektor er et SoMe-byrå i Oslo med fast pris. Abonnementet koster 30 000 kr/mnd og dekker strategi, én produksjonsdag i måneden, 8–10 videoer og publisering to ganger i uka på Instagram med krysspublisering til Facebook. Les mer om abonnementet.",
+        // Setningen ba om et klikk som ikke fantes. Nå gjør den det.
+        lenker: [{ frase: "Les mer om abonnementet", sti: "/#pris" }],
       },
     ],
     lesVidere: [{ sti: "/", tekst: "sosiale medier til fast månedspris" }],
@@ -541,6 +588,10 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Bedrifter ser stort potensial i å bruke innholdsproduksjon som et ledd i sin digitale markedsføringsstrategi, der man kan bygge opp merkevaren og bygge tillitvekkende relasjoner til eksisterende og potensielle kunder gjennom innholdet man produserer. Godt innhold gjør det mulig for bedriften å stadfeste sin autoritet på markedet og formidle sin ekspertise innenfor feltet. Et innholdsunivers blir derfor en naturlig arena hvor man kan demonstrere sin faglighet gjennom ekspertuttalelser og erfaringer.",
+        // EKSAKT ANKERTEKST, og det er hele poenget her. «innholdsproduksjon» har
+        // 14 444 visninger på plass 11–12, og denne artikkelen ligger foran
+        // tjenestesiden på ordet. Lenken peker autoriteten dit kjøpet skjer.
+        lenker: [{ frase: "innholdsproduksjon", sti: "/innholdsproduksjon" }],
       },
       {
         type: "avsnitt",
@@ -740,6 +791,8 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Reflektor er et SoMe-byrå i Oslo med fast pris. Abonnementet koster 30 000 kr/mnd og dekker strategi, én produksjonsdag i måneden, 8–10 videoer og publisering to ganger i uka på Instagram med krysspublisering til Facebook. Les mer om abonnementet.",
+        // Setningen ba om et klikk som ikke fantes. Nå gjør den det.
+        lenker: [{ frase: "Les mer om abonnementet", sti: "/#pris" }],
       },
     ],
     lesVidere: [
@@ -1020,12 +1073,27 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Ønsker du flere tips? Se hvordan du setter i gang og utfører en innholdsproduksjon på best mulig vis.",
+        // Løftet er «slik gjør du det», og det er artikkelen — ikke salgssiden.
+        lenker: [
+          {
+            frase:
+              "Se hvordan du setter i gang og utfører en innholdsproduksjon på best mulig vis",
+            sti: "/blogg/hva-er-innholdsproduksjon",
+          },
+        ],
       },
       { type: "overskrift", niva: 2, tekst: "Få hjelp med bilder og video" },
       {
         type: "avsnitt",
         tekst:
           "Hos Reflektor kan du hente uvurderlig hjelp fra dyktige fotografer og videografer som fanger salgsutløsende øyeblikk. Våre fotografer har et øye for detaljer og tar bilder som vekker følelser hos din målgruppe. Våre videografer produserer videoer som fanger hva bilder ikke gjør, nemlig det levende elementet ved din bedrift eller ditt produkt og tjeneste. Vi tilbyr faglig tyngde innen bilde- og videoproduksjon og har en helhetlig tilnærming til innholdsproduksjon som kombinerer kreativitet med strategisk forretningsforståelse. Dermed vil vi hjelpe deg med å legge grunnlaget for en vellykket innholdsmarkedsføring.",
+        lenker: [
+          {
+            frase: "bilde- og videoproduksjon",
+            sti: "/videoproduksjon-i-oslo",
+          },
+          { frase: "innholdsproduksjon", sti: "/innholdsproduksjon" },
+        ],
       },
       {
         type: "overskrift",
@@ -1041,6 +1109,8 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Reflektor er et SoMe-byrå i Oslo med fast pris. Abonnementet koster 30 000 kr/mnd og dekker strategi, én produksjonsdag i måneden, 8–10 videoer og publisering to ganger i uka på Instagram med krysspublisering til Facebook. Les mer om abonnementet.",
+        // Setningen ba om et klikk som ikke fantes. Nå gjør den det.
+        lenker: [{ frase: "Les mer om abonnementet", sti: "/#pris" }],
       },
     ],
     tilleggsfaq: [
@@ -1162,6 +1232,7 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Tradisjonelle reklamefilmer brukes som regel for å promotere et produkt eller en tjeneste på lineær TV, via strømmetjenester og andre onlinetjenester. De er ofte korte og rett på sak, designet for å fange oppmerksomheten raskt og levere en klar melding. For eksempel har mange av oss sett de klassiske reklamene fra store merker, som bruker flere sterke visuelle elementer og fortellerteknikker for å formidle budskapet til seerne.",
+        lenker: [{ frase: "reklamefilmer", sti: "/reklamefilm" }],
       },
       { type: "avsnitt", tekst: "Det kan for eksempel se sånn ut:" },
       { type: "overskrift", niva: 3, tekst: "Opplæringsvideoer og tutorials" },
@@ -1220,6 +1291,9 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "For å utnytte videomarkedsførings store potensial til det fulle, er det viktig at man har en klar strategi og profesjonell produksjon. I Reflektor består vi av et team av dyktige produsenter som mestrer både foto- og videoproduksjon, og kan hjelpe deg med å integrere video sømløst i din markedsføringsstrategi. Her er noen av våre tips for deg som ønsker å begynne med videomarkedsføring.",
+        lenker: [
+          { frase: "foto- og videoproduksjon", sti: "/videoproduksjon-i-oslo" },
+        ],
       },
       { type: "overskrift", niva: 3, tekst: "1. Definer målene dine" },
       {
@@ -1302,6 +1376,8 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Reflektor er et SoMe-byrå i Oslo med fast pris. Abonnementet koster 30 000 kr/mnd og dekker strategi, én produksjonsdag i måneden, 8–10 videoer og publisering to ganger i uka på Instagram med krysspublisering til Facebook. Les mer om abonnementet.",
+        // Setningen ba om et klikk som ikke fantes. Nå gjør den det.
+        lenker: [{ frase: "Les mer om abonnementet", sti: "/#pris" }],
       },
     ],
     tilleggsfaq: [
@@ -1410,6 +1486,12 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Ønsker du hjelp til innholdsproduksjon som kan brukes til employer branding? I Reflektor kan vi hjelpe til med alt fra ansattbilder til videoproduksjon!",
+        lenker: [
+          {
+            frase: "innholdsproduksjon som kan brukes til employer branding",
+            sti: "/employer-branding-video-oslo",
+          },
+        ],
       },
       { type: "overskrift", niva: 3, tekst: "Løft fram bedriftens ansatte" },
       {
@@ -1457,6 +1539,8 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Reflektor er et SoMe-byrå i Oslo med fast pris. Abonnementet koster 30 000 kr/mnd og dekker strategi, én produksjonsdag i måneden, 8–10 videoer og publisering to ganger i uka på Instagram med krysspublisering til Facebook. Les mer om abonnementet.",
+        // Setningen ba om et klikk som ikke fantes. Nå gjør den det.
+        lenker: [{ frase: "Les mer om abonnementet", sti: "/#pris" }],
       },
     ],
     tilleggsfaq: [
@@ -1588,6 +1672,9 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "En innholdsprodusent kan ta seg av hele videoproduksjonen, fra strategisk planlegging til videografi og klipping.",
+        lenker: [
+          { frase: "videoproduksjonen", sti: "/videoproduksjon-i-oslo" },
+        ],
       },
       {
         type: "overskrift",
@@ -1623,6 +1710,8 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Reflektor er et SoMe-byrå i Oslo med fast pris. Abonnementet koster 30 000 kr/mnd og dekker strategi, én produksjonsdag i måneden, 8–10 videoer og publisering to ganger i uka på Instagram med krysspublisering til Facebook. Les mer om abonnementet.",
+        // Setningen ba om et klikk som ikke fantes. Nå gjør den det.
+        lenker: [{ frase: "Les mer om abonnementet", sti: "/#pris" }],
       },
     ],
     lesVidere: [
@@ -1810,6 +1899,12 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "I Reflektor mestrer vi fortellerkunsten gjennom foto og video. Vi kan hjelpe deg med å ikke bare fange publikums oppmerksomhet, men også skape varige forbindelser som styrker merkevaren din. Se våre tjenester for en oversikt over alt vi tilbyr!",
+        lenker: [
+          {
+            frase: "Se våre tjenester for en oversikt over alt vi tilbyr",
+            sti: "/innholdsproduksjon",
+          },
+        ],
       },
       {
         type: "overskrift",
@@ -1825,6 +1920,8 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Reflektor er et SoMe-byrå i Oslo med fast pris. Abonnementet koster 30 000 kr/mnd og dekker strategi, én produksjonsdag i måneden, 8–10 videoer og publisering to ganger i uka på Instagram med krysspublisering til Facebook. Les mer om abonnementet.",
+        // Setningen ba om et klikk som ikke fantes. Nå gjør den det.
+        lenker: [{ frase: "Les mer om abonnementet", sti: "/#pris" }],
       },
     ],
     tilleggsfaq: [
@@ -1848,7 +1945,7 @@ export const artikler: Artikkel[] = [
     },
     tittel: "SoMe-ansvarlig eller byrå? Regnestykket med tall",
     beskrivelse:
-      "Hva koster en ansatt SoMe-ansvarlig egentlig, når arbeidsgiveravgift, feriepenger og pensjon er regnet med? Vi setter tallene fra Altinn og SSB mot et byråbudsjett.",
+      "Hva koster en ansatt SoMe-ansvarlig når arbeidsgiveravgift, feriepenger og pensjon er regnet med? Tallene fra Altinn og SSB mot et byråbudsjett.",
     publisert: "2026-09-21",
     blokker: [
       {
@@ -1919,6 +2016,7 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Det er et vanskeligere spørsmål å besvare, fordi de fleste byråer ikke oppgir pris. Reflektor gjør det: 30 000 kroner i måneden, altså 360 000 i året, for én produksjonsdag i måneden, 8–10 ferdige videoer og publisering to ganger i uken.",
+        lenker: [{ frase: "30 000 kroner i måneden", sti: "/#pris" }],
       },
       {
         type: "avsnitt",
@@ -2001,6 +2099,50 @@ export const artikler: Artikkel[] = [
 
 /** Slugene som faktisk har innhold. Undersett av bloggSlugs i site.ts. */
 export const artikkelSlugs = artikler.map((a) => a.slug);
+
+/**
+ * Deler et avsnitt i tekstbiter og lenker, klart til å rendres.
+ *
+ * KASTER, og det er med vilje. En `frase` som ikke står i avsnittet, eller
+ * som står der to ganger, er en innholdsfeil — og alternativet er en lenke
+ * som stille forsvinner eller havner på feil forekomst. Da er det bedre at
+ * byggen stopper. Samme valg som `hentFaq` i faq.ts gjør.
+ *
+ * Frasene sorteres etter posisjon, ikke etter rekkefølgen de er skrevet i.
+ * Overlappende fraser avvises: to lenker som deler ord kan ikke rendres.
+ */
+export function delOppAvsnitt(
+  tekst: string,
+  lenker: Innlenke[] | undefined,
+): (string | (Innlenke & { start: number }))[] {
+  if (!lenker || lenker.length === 0) return [tekst];
+
+  const funnet = lenker.map((l) => {
+    const forste = tekst.indexOf(l.frase);
+    if (forste === -1) {
+      throw new Error(`Frasen «${l.frase}» står ikke i avsnittet: ${tekst}`);
+    }
+    if (tekst.indexOf(l.frase, forste + 1) !== -1) {
+      throw new Error(`Frasen «${l.frase}» står flere ganger i avsnittet`);
+    }
+    return { ...l, start: forste };
+  });
+
+  funnet.sort((a, b) => a.start - b.start);
+
+  const deler: (string | (Innlenke & { start: number }))[] = [];
+  let i = 0;
+  for (const f of funnet) {
+    if (f.start < i) {
+      throw new Error(`Frasen «${f.frase}» overlapper en annen lenke`);
+    }
+    if (f.start > i) deler.push(tekst.slice(i, f.start));
+    deler.push(f);
+    i = f.start + f.frase.length;
+  }
+  if (i < tekst.length) deler.push(tekst.slice(i));
+  return deler;
+}
 
 export function finnArtikkel(slug: string): Artikkel | undefined {
   return artikler.find((a) => a.slug === slug);

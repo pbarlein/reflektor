@@ -8,7 +8,7 @@ import { Eyebrow, Merkelapp } from "@/components/Eyebrow";
 import { Knappelenke } from "@/components/Knapp";
 import { Logorad } from "@/components/Logorad";
 import { ReelVegg } from "@/components/ReelVegg";
-import { BrodsmuleSchema } from "@/components/Schema";
+import { BrodsmuleSchema, OversiktSchema } from "@/components/Schema";
 import { kundecaser } from "@/content/caser";
 import { eiker } from "@/content/tjenester";
 import { reels } from "@/content/reels";
@@ -53,7 +53,7 @@ import { basisUrl } from "@/lib/miljo";
  */
 
 export const metadata: Metadata = {
-  title: "Vårt arbeid – kundecaser innen foto, video og sosiale medier",
+  title: "Vårt arbeid – foto, video og sosiale medier",
   description:
     "Dokumenterte kundecaser fra Reflektor: Soulcake og Egon, begge med fast produksjonsdag hver måned siden 2022. Se tall, arbeidsmåte og utvalgte klipp.",
   alternates: { canonical: `${basisUrl()}/vart-arbeid` },
@@ -64,6 +64,20 @@ export default function VartArbeid() {
     <>
       <BrodsmuleSchema
         ledd={[{ navn: "Hjem", sti: "/" }, { navn: "Vårt arbeid" }]}
+      />
+      {/*
+        Oversikten er en LISTE, og det sto ingensteds. Se OversiktSchema.
+        Navnene er kundenavnene, ikke sidetitlene — spørsmålet en språkmodell
+        får er «hvem lager innhold for Egon», og da må «Egon» stå i listen.
+      */}
+      <OversiktSchema
+        navn="Vårt arbeid"
+        beskrivelse="Kundecaser fra Reflektor innen foto, video og sosiale medier."
+        sti="/vart-arbeid"
+        ledd={kundecaser.map((c) => ({
+          navn: c.kunde,
+          sti: `/vart-arbeid/${c.slug}`,
+        }))}
       />
 
       {/* ── Overskrift ───────────────────────────────────────────── */}
