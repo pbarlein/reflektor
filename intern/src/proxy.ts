@@ -31,6 +31,25 @@ export async function proxy(foresporsel: NextRequest) {
   }
 
   /*
+   * ── RAPPORTINNTAKET SLIPPES FORBI, OG BARE DET ────────────────────────
+   *
+   * Den planlagte oppgaven som leverer ukerapporten kjører hos Anthropic
+   * mandag morgen og har ingen Google-konto å logge inn med. Det samme
+   * gjelder Vercels egen planlegger, som purrer på ubesvarte beslutninger.
+   *
+   * De to rutene har sin egen nøkkel — se src/app/api/rapport/route.ts.
+   * Dette laget slipper dem bare FRAM til den sjekken; det åpner ingenting.
+   * Uten dette svarer proxyen «ikke-innlogget» før ruta får se nøkkelen i
+   * det hele tatt, og rapporten kommer aldri inn.
+   *
+   * Merk at dette gjelder API-rutene, ikke sidene: /rapport krever
+   * innlogging som alt annet, og nøkkelen gir ingen tilgang dit.
+   */
+  if (pathname === "/api/rapport" || pathname === "/api/rapport/purring") {
+    return NextResponse.next();
+  }
+
+  /*
    * API-RUTER FÅR 401, IKKE EN VIDERESENDING.
    *
    * En `fetch()` følger 307-en videre til /logg-inn og får en HTML-side

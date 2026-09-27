@@ -1,0 +1,172 @@
+import { NextResponse, type NextRequest } from "next/server";
+
+import { lesRapport } from "@/content/rapporttype";
+import { hentIndeks, hentRapport, lagreRapport } from "@/lib/rapportlager";
+import { varsleNyRapport } from "@/lib/rapportvarsel";
+
+/**
+ * Inntaket for rapporter, og uthentingen den planlagte oppgaven trenger.
+ *
+ * ── HVORFOR DENNE ÉNE RUTA HAR EN NØKKEL ──────────────────────────────────
+ *
+ * Alt annet i rapportsenteret er beskyttet av innloggingen, slik det er
+ * bestilt. Men den planlagte oppgaven er ikke innlogget — den kjører hos
+ * Anthropic mandag morgen og har ingen Google-konto. Den trenger én vei
+ * inn, og nøkkelen er bare for den veien.
+ *
+ * Nøkkelen gir IKKE lesetilgang til rapportene på skjermen. Den gir rett
+ * til å levere en rapport, og til å hente stegene og svaret fra forrige
+ * uke — akkurat det oppgaven trenger for å skrive «forrige ukes steg», og
+ * ikke noe mer.
+ *
+ *   POST /api/rapport          — lever en rapport
+ *   GET  /api/rapport?type=…   — hent forrige rapports steg og svar
+ */
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+/** 1 MB. En rapport med tolv uker og et titalls annonser er rundt 15 kB. */
+const MAKS_BYTES = 1_000_000;
+
+function nokkelOk(foresporsel: NextRequest): boolean {
+  const ventet = process.env.RAPPORT_NOKKEL;
+  if (!ventet) return false;
+
+  const gitt =
+    foresporsel.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??
+    foresporsel.headers.get("x-rapport-nokkel") ??
+    "";
+
+  /*
+   * Lengdesjekken først: `timingSafeEqual` kaster på ulik lengde, og en
+   * feil der ville blitt til 500 i stedet for 401.
+   */
+  if (gitt.length !== ventet.length) return false;
+  let ulikt = 0;
+  for (let i = 0; i < gitt.length; i++) {
+    ulikt |= gitt.charCodeAt(i) ^ ventet.charCodeAt(i);
+  }
+  return ulikt === 0;
+}
+
+function avvist(): NextResponse {
+  return NextResponse.json(
+    { feil: "Ugyldig eller manglende nøkkel." },
+    { status: 401 },
+  );
+}
+
+export async function POST(foresporsel: NextRequest) {
+  if (!process.env.RAPPORT_NOKKEL) {
+    return NextResponse.json(
+      { feil: "RAPPORT_NOKKEL er ikke satt i miljøet. Leveringen er stengt." },
+      { status: 503 },
+    );
+  }
+  if (!nokkelOk(foresporsel)) return avvist();
+
+  const lengde = Number(foresporsel.headers.get("content-length") ?? 0);
+  if (lengde > MAKS_BYTES) {
+    return NextResponse.json(
+      { feil: "Payloaden er for stor." },
+      { status: 413 },
+    );
+  }
+
+  let kropp: unknown;
+  try {
+    kropp = await foresporsel.json();
+  } catch {
+    return NextResponse.json({ feil: "Ugyldig JSON." }, { status: 400 });
+  }
+
+  const lesning = lesRapport(kropp);
+  if (!lesning.ok) {
+    /*
+     * Feilene samlet, ikke én om gangen. Den som retter dem leser en logg
+     * en gang i uka — se `lesRapport`.
+     */
+    return NextResponse.json(
+      { feil: "Rapporten mangler påkrevde felt.", detaljer: lesning.feil },
+      { status: 422 },
+    );
+  }
+
+  const { rapport, rå } = lesning;
+  const { lagret, ny } = await lagreRapport(rapport, rå);
+  if (!lagret) {
+    return NextResponse.json(
+      { feil: "Kunne ikke lagre rapporten. Er BLOB_READ_WRITE_TOKEN satt?" },
+      { status: 503 },
+    );
+  }
+
+  /*
+   * PÅMINNELSE BARE PÅ NY ID. En oppdatering av samme uke skal rette
+   * rapporten uten å vekke noen på nytt — bestilt slik, og riktig: den
+   * vanligste grunnen til å levere på nytt er at avsenderen selv fant en
+   * feil.
+   */
+  let varslet = false;
+  if (ny) varslet = await varsleNyRapport(rapport);
+
+  return NextResponse.json({
+    ok: true,
+    id: rapport.id,
+    type: rapport.type,
+    ny,
+    varslet,
+    test: rapport.test,
+    url: `/rapport/${encodeURIComponent(rapport.type)}/${encodeURIComponent(rapport.id)}`,
+  });
+}
+
+/**
+ * Det oppgaven trenger for å skrive neste ukes rapport: hva Pål krysset av,
+ * og hva han svarte. Uten dette må den gjette på «forrige ukes steg».
+ */
+export async function GET(foresporsel: NextRequest) {
+  if (!nokkelOk(foresporsel)) return avvist();
+
+  const type =
+    foresporsel.nextUrl.searchParams.get("type") ?? "betalt-markedsforing";
+  const medTest = foresporsel.nextUrl.searchParams.get("test") === "ja";
+
+  const indeks = (await hentIndeks())
+    .filter((r) => r.type === type && (medTest || !r.test))
+    .sort((a, b) => b.mottatt.localeCompare(a.mottatt));
+
+  const siste = indeks[0];
+  if (!siste) return NextResponse.json({ rapport: null });
+
+  const l = await hentRapport(type, siste.id);
+  if (!l) return NextResponse.json({ rapport: null });
+
+  return NextResponse.json({
+    rapport: {
+      id: l.id,
+      type: l.type,
+      year: l.rapport.year,
+      week: l.rapport.week,
+      period: l.rapport.period,
+      mottatt: l.mottatt,
+      test: l.rapport.test,
+    },
+    /* Stegene med Påls avkryssinger, i samme rekkefølge som i rapporten. */
+    steps: l.rapport.steps.map((s, i) => ({
+      ...s,
+      done: l.gjorteSteg.some((g) => g.indeks === i),
+      done_at: l.gjorteSteg.find((g) => g.indeks === i)?.tidspunkt ?? null,
+    })),
+    decision: l.rapport.decision
+      ? {
+          question: l.rapport.decision.question,
+          answer: l.beslutning?.svar ?? null,
+          comment: l.beslutning?.kommentar ?? null,
+          answered_at: l.beslutning?.tidspunkt ?? null,
+        }
+      : null,
+    notes: l.notater,
+  });
+}

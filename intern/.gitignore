@@ -14,3 +14,6 @@ next-env.d.ts
 # Media kopieres inn fra hovedprosjektets /public av scripts/hent-medier.mts.
 # Se skriptet for hvorfor de ikke sjekkes inn her.
 /public/medier/
+
+# Lokal rapportlagring i utvikling. Se src/lib/rapportlager.ts.
+.rapportlager/

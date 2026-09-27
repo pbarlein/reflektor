@@ -1,0 +1,340 @@
+{
+ "schema": "reflektor.report.v1",
+ "type": "betalt-markedsforing",
+ "id": "betalt-markedsforing-2026-W39",
+ "year": 2026,
+ "week": 39,
+ "period": {
+  "from": "2026-09-21",
+  "to": "2026-09-27",
+  "label": "21.–27. september 2026"
+ },
+ "generated_at": "2026-09-27T12:20:06+00:00",
+ "verdict": {
+  "level": "act",
+  "label": "HANDLING KREVES",
+  "short": "Sommervideoen er slitt – bestill ny"
+ },
+ "subject": "Uke 39 · Handling kreves: Sommervideoen er slitt – bestill ny",
+ "headline": "Fire uker, 24 555 kr og bare 2 leads. Sommervideoen går igjen fra i dag, men den er slitt – vi trenger en ny.",
+ "decision": {
+  "question": "Skal vi bestille ny annonsevideo nå?",
+  "recommendation": "Ja. Film i samme stil som sommervideoen, gjerne med en av kundene fra i sommer.",
+  "cost_nok": 15000,
+  "deadline_label": "fredag 2. oktober",
+  "if_nothing": "Sommervideoen går videre på 450 kr om dagen, og prisen per lead fortsetter trolig å stige."
+ },
+ "kpis": {
+  "cpl_4w": {
+   "weeks": [
+    36,
+    37,
+    38,
+    39
+   ],
+   "spend": 22556,
+   "leads": 2,
+   "cpl": 11278,
+   "complete": true,
+   "prev": {
+    "weeks": [
+     32,
+     33,
+     34,
+     35
+    ],
+    "spend": 34000,
+    "leads": 9,
+    "cpl": 3778,
+    "complete": true
+   },
+   "change_pct": 198.51773425092642,
+   "limit": 2000
+  },
+  "leads_week": {
+   "value": 0,
+   "meta": 0,
+   "google": 0
+  },
+  "customers_90d": {
+   "count": 3,
+   "spend": 98000,
+   "names": [
+    "Happis",
+    "Retail24",
+    "Barnehageressursen"
+   ],
+   "cost_per_customer": 32667
+  },
+  "spend_week": {
+   "value": 3697,
+   "meta": 0,
+   "google": 3697,
+   "change_pct": -17.089033415564028
+  }
+ },
+ "alert": {
+  "active": true,
+  "reasons": [
+   "Pris per lead siste fire uker er 11 278 kr, over grensen på 2 000 kr.",
+   "3 697 kr brukt i uke 39 uten leads."
+  ],
+  "text": "Det er tegn på at folk har sett den for mange ganger."
+ },
+ "quiet": false,
+ "status": [
+  {
+   "channel": "meta",
+   "name": "Meta (Facebook og Instagram)",
+   "on": true,
+   "text": "Startet igjen 27. september etter åtte dagers pause. Bare sommervideoen går, 450 kr om dagen."
+  },
+  {
+   "channel": "google",
+   "name": "Google",
+   "on": false,
+   "text": "Satt på pause 27. september. Ga ett lead på fire uker og kostet 16 169 kr."
+  }
+ ],
+ "weeks": [
+  {
+   "w": 28,
+   "meta_cost": 4100,
+   "meta_leads": 5,
+   "g_cost": 0,
+   "g_leads": 0,
+   "cost": 4100,
+   "leads": 5,
+   "cpl": 820
+  },
+  {
+   "w": 29,
+   "meta_cost": 4300,
+   "meta_leads": 4,
+   "g_cost": 0,
+   "g_leads": 0,
+   "cost": 4300,
+   "leads": 4,
+   "cpl": 1075
+  },
+  {
+   "w": 30,
+   "meta_cost": 4500,
+   "meta_leads": 4,
+   "g_cost": 0,
+   "g_leads": 0,
+   "cost": 4500,
+   "leads": 4,
+   "cpl": 1125
+  },
+  {
+   "w": 31,
+   "meta_cost": 4400,
+   "meta_leads": 3,
+   "g_cost": 1200,
+   "g_leads": 0,
+   "cost": 5600,
+   "leads": 3,
+   "cpl": 1867
+  },
+  {
+   "w": 32,
+   "meta_cost": 4200,
+   "meta_leads": 3,
+   "g_cost": 3900,
+   "g_leads": 1,
+   "cost": 8100,
+   "leads": 4,
+   "cpl": 2025
+  },
+  {
+   "w": 33,
+   "meta_cost": 4600,
+   "meta_leads": 2,
+   "g_cost": 4100,
+   "g_leads": 0,
+   "cost": 8700,
+   "leads": 2,
+   "cpl": 4350
+  },
+  {
+   "w": 34,
+   "meta_cost": 4400,
+   "meta_leads": 2,
+   "g_cost": 4300,
+   "g_leads": 0,
+   "cost": 8700,
+   "leads": 2,
+   "cpl": 4350
+  },
+  {
+   "w": 35,
+   "meta_cost": 4300,
+   "meta_leads": 1,
+   "g_cost": 4200,
+   "g_leads": 0,
+   "cost": 8500,
+   "leads": 1,
+   "cpl": 8500
+  },
+  {
+   "w": 36,
+   "meta_cost": 3900,
+   "meta_leads": 1,
+   "g_cost": 4100,
+   "g_leads": 0,
+   "cost": 8000,
+   "leads": 1,
+   "cpl": 8000
+  },
+  {
+   "w": 37,
+   "meta_cost": 2100,
+   "meta_leads": 0,
+   "g_cost": 4300,
+   "g_leads": 0,
+   "cost": 6400,
+   "leads": 0,
+   "cpl": null
+  },
+  {
+   "w": 38,
+   "meta_cost": 400,
+   "meta_leads": 0,
+   "g_cost": 4059,
+   "g_leads": 1,
+   "cost": 4459,
+   "leads": 1,
+   "cpl": 4459
+  },
+  {
+   "w": 39,
+   "meta_cost": 0,
+   "meta_leads": 0,
+   "g_cost": 3697,
+   "g_leads": 0,
+   "cost": 3697,
+   "leads": 0,
+   "cpl": null
+  }
+ ],
+ "ads": [
+  {
+   "platform": "meta",
+   "campaign": "Leads – SoMe-abonnement",
+   "ad": "Sommervideo",
+   "on": true,
+   "cost_week": 0,
+   "impressions_week": 0,
+   "frequency_week": 0,
+   "leads_week": 0,
+   "monthly": [
+    {
+     "month": "2026-06",
+     "cost": 9400,
+     "leads": 10
+    },
+    {
+     "month": "2026-07",
+     "cost": 12200,
+     "leads": 9
+    },
+    {
+     "month": "2026-08",
+     "cost": 32600,
+     "leads": 15
+    },
+    {
+     "month": "2026-09",
+     "cost": 10400,
+     "leads": 0
+    }
+   ]
+  },
+  {
+   "platform": "meta",
+   "campaign": "Leads – SoMe-abonnement",
+   "ad": "Foto & video på månedlig basis",
+   "on": false,
+   "cost_week": 0,
+   "impressions_week": 0,
+   "frequency_week": 0,
+   "leads_week": 0,
+   "monthly": [
+    {
+     "month": "2026-08",
+     "cost": 3100,
+     "leads": 1
+    },
+    {
+     "month": "2026-09",
+     "cost": 1800,
+     "leads": 0
+    }
+   ]
+  },
+  {
+   "platform": "google",
+   "campaign": "Søk – SoMe-byrå Oslo",
+   "ad": "(søkekampanje)",
+   "on": false,
+   "cost_week": 3697,
+   "impressions_week": 2140,
+   "frequency_week": null,
+   "leads_week": 0,
+   "monthly": [
+    {
+     "month": "2026-08",
+     "cost": 13800,
+     "leads": 1
+    },
+    {
+     "month": "2026-09",
+     "cost": 16169,
+     "leads": 1
+    }
+   ]
+  }
+ ],
+ "hubspot": {
+  "new_contacts": 0,
+  "sources": {},
+  "paid_social_customers_total": 3,
+  "paid_social_customers_new_week": 0
+ },
+ "insights": [
+  "Sommervideoen er den eneste annonsen som har gitt oss kunder: 34 leads fra juni til august.",
+  "Den har blitt dyrere hver måned – fra rundt 940 kr per lead i juni til 2 170 kr i august.",
+  "Google har nesten ikke gitt henvendelser siden august. Pausen sparer rundt 18 000 kr i måneden."
+ ],
+ "steps": [
+  {
+   "title": "Bestill ny video.",
+   "detail": "Samme stil som sommervideoen, med en kunde fra i sommer.",
+   "owner": "Pål",
+   "due": "2026-10-02",
+   "due_label": "fredag 2.10"
+  },
+  {
+   "title": "Stopp sommervideoen hvis den ikke gir lead på de første 3 000 kr.",
+   "detail": "",
+   "owner": "Pål",
+   "due": "2026-10-04",
+   "due_label": "søndag 4.10"
+  }
+ ],
+ "previous_steps": [
+  {
+   "title": "Sett Google på pause.",
+   "status": "done",
+   "evidence": "ingen forbruk siden 27.09"
+  }
+ ],
+ "data_gaps": [],
+ "sources": {
+  "meta_account": "act_1105292240226528",
+  "google_account": "4905503001"
+ },
+ "footer": "TESTDATA · Kilder: Meta Ads (act_1105292240226528), Google Ads (4905503001), HubSpot · hentet 27.09.2026 13:40 · Kun lesetilgang.",
+ "test": true
+}

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Logo } from "@/components/Logo";
 import { erRedaktor } from "@/lib/redaktor";
+import { erRapportleser } from "@/lib/rapporttilgang";
 import { hentBruker } from "@/lib/tilgang";
 
 /**
@@ -28,7 +29,14 @@ export async function Toppfelt() {
           <Logo />
         </Link>
 
-        <div className="flex items-center gap-3 sm:gap-4">
+        {/*
+          FLEX-WRAP, IKKE EN KNAPP SKJULT PÅ MOBIL.
+          Med rapportknappen ble raden 395 px bred på en 390 px skjerm, og
+          hele intranettet fikk vannrett rulling. Å skjule en knapp under sm
+          var det enkleste, men rapportene skal nettopp kunne leses på
+          telefon. Da får raden heller brekke.
+        */}
+        <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-2 sm:gap-x-4">
           {/*
             «LAG DOKUMENT» STÅR I TOPPFELTET, IKKE PÅ FORSIDEN ALENE.
 
@@ -59,6 +67,20 @@ export async function Toppfelt() {
               className="rounded-interaktiv border border-[color:var(--varsel-kant)] bg-[color:var(--varsel-flate)] px-3.5 py-1.5 text-[0.8125rem] font-medium text-varsel transition-colors hover:border-varsel motion-reduce:transition-none"
             >
               Til gjennomgang
+            </Link>
+          )}
+
+          {/*
+            RAPPORTKNAPPEN, PÅ SAMME PREMISS. Se rapporttilgang.ts for hvorfor
+            den har sin egen liste og ikke deler redaktørenes: de to rollene
+            er samme person i dag, men ikke samme sak.
+          */}
+          {erRapportleser(bruker) && (
+            <Link
+              href="/rapport"
+              className="rounded-interaktiv border border-kant-sterk bg-kort px-3.5 py-1.5 text-[0.8125rem] font-medium text-blekk transition-colors hover:bg-dempet motion-reduce:transition-none"
+            >
+              Rapporter
             </Link>
           )}
 
