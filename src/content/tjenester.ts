@@ -121,7 +121,7 @@ export const reklamefilm: Tjenesteside = {
   tjenestetype: "Produksjon av reklamefilm for betalte flater",
   svar: "En reklamefilm er laget for å vises mot betaling — på TV, som nettannonse eller i sosiale medier. Reflektor står for produksjonen: idé, manus, opptak, klipp, lyd og fargekorrigering. Vi produserer filmen. Vi kjøper ikke sendetid eller annonseplass.",
   avgrensning: [
-    "Forskjellen er ikke hvordan filmen ser ut, men hvor den vises. Skal den ligge på nettsiden deres eller en skjerm i butikken, er det ",
+    "Reklamefilm er film dere betaler for å få vist. Skal den i stedet ligge på nettsiden deres eller på en skjerm i butikken, er det ",
     { sti: "/videoproduksjon-i-oslo", tekst: "video til egne flater" },
     ". Skal den brukes til å rekruttere, er det ",
     {
@@ -133,7 +133,7 @@ export const reklamefilm: Tjenesteside = {
   seksjoner: [
     {
       sporsmal: "Kjøper dere sendetid på TV?",
-      svar: "Nei. Reflektor er et produksjonshus, ikke et mediebyrå. Vi lager filmen, og dere eller mediebyrået deres kjøper flaten den skal vises på. Det er verdt å vite før dere ber om pris: et tilbud fra oss dekker produksjonen, ikke visningene. Spør man «hva koster tv-reklame», er svaret egentlig to regninger fra to leverandører.",
+      svar: "Nei. Reflektor er et produksjonshus, ikke et mediebyrå. Vi lager filmen, og dere eller mediebyrået deres kjøper flaten den skal vises på. Det er verdt å vite før dere ber om pris: et tilbud fra oss dekker produksjonen, ikke visningene. Skal filmen på TV, må dere regne med en kostnad til for sendetiden.",
     },
     {
       sporsmal: "Hva koster en reklamefilm?",
@@ -213,7 +213,7 @@ export const videoproduksjon: Tjenesteside = {
   seksjoner: [
     {
       sporsmal: "Hva slags video lager dere til egne flater?",
-      svar: "Film som skal forklare, ikke fange. Den vanligste jobben er en kort bannervideo øverst på forsiden, film som viser hva en tjeneste faktisk innebærer, innhold til skjermer i lokalet, og brand video som forteller hvem selskapet er.",
+      svar: "Film som skal forklare noe, ikke fange oppmerksomhet i en feed. Den vanligste jobben er en kort bannervideo øverst på forsiden, film som viser hva en tjeneste faktisk innebærer, innhold til skjermer i lokalet, og brand video som forteller hvem selskapet er.",
       punkter: [
         "Bannervideo til forside og landingssider",
         "Film til tjenestesider — det som er vanskelig å forklare i tekst",
@@ -297,11 +297,11 @@ export const employerBranding: Tjenesteside = {
   seksjoner: [
     {
       sporsmal: "Hvorfor film, og ikke bare en god stillingsannonse?",
-      svar: "Fordi kandidater velger et sted, ikke en tekst. En stillingsannonse kan beskrive oppgavene, men ikke lokalet, tempoet eller menneskene man skal sitte ved siden av. Det er det som avgjør om noen trykker «søk» — og det er nettopp det som lar seg vise, men ikke skrive.",
+      svar: "En stillingsannonse kan beskrive oppgavene, men ikke lokalet, tempoet eller menneskene man skal jobbe sammen med. For mange kandidater er det akkurat det de lurer mest på, og det er lettere å vise enn å skrive.",
     },
     {
       sporsmal: "Hvem skal være med i filmen?",
-      svar: "De som faktisk jobber der. Ikke skuespillere, og helst ikke bare ledelsen. En kandidat gjenkjenner en iscenesatt arbeidsplass umiddelbart, og da virker filmen mot sin hensikt. Vi filmer folk mens de gjør jobben sin.",
+      svar: "De som faktisk jobber der, og helst ikke bare ledelsen. Vi bruker ikke skuespillere. En arbeidsplass som er satt i scene er lett å gjennomskue, og da mister filmen troverdighet. Vi filmer folk mens de gjør jobben sin.",
       sitat: {
         tekst:
           "Det som virkelig skiller dem ut, er hvor samarbeidsvillige og engasjerte de er. De stiller opp, byr på seg selv, og er rett og slett kjempefine folk man blir glad i.",
@@ -311,7 +311,7 @@ export const employerBranding: Tjenesteside = {
     },
     {
       sporsmal: "Hva koster en employer branding-video?",
-      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nMen én film er ett øyeblikk. Å være en aktuell og attraktiv arbeidsgiver er ikke en kampanje — det er noe folk må se over tid, også når dere ikke lyser ut en stilling. Kontinuitet er nøkkelen, og det er derfor mange ender med et løpende samarbeid i stedet for en enkeltproduksjon.`,
+      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nÉn film dekker én stilling. Skal dere fremstå som en attraktiv arbeidsgiver over tid, må folk se dere også i periodene dere ikke lyser ut noe. Kontinuitet er nøkkelen her, og mange velger derfor et løpende samarbeid framfor en enkeltproduksjon.`,
     },
     {
       sporsmal: "Hvor skal filmen brukes?",
@@ -358,7 +358,7 @@ export const event: Tjenesteside = {
   h1: "Eventfotograf og eventvideo",
   merkelapp: "Produksjon",
   tjenestetype: "Foto- og videodekning av arrangementer",
-  svar: "Eventdekning er foto og film fra noe som skjer én gang: en konferanse, en lansering, en messe eller et firmaarrangement. Jobben er å komme hjem med materiale dere kan bruke i ettertid — ikke bare bilder fra dagen, men innhold til kanalene og til neste gang dere skal invitere.",
+  svar: "Eventdekning er foto og film fra noe som skjer én gang: en konferanse, en lansering, en messe eller et firmaarrangement. Jobben er å komme hjem med materiale dere kan bruke i ettertid: innhold til kanalene, og bilder dere kan invitere med neste gang.",
   avgrensning: [
     "Dette er dekning av noe som faktisk skjer. Skal filmen planlegges fra bunnen i stedet, er det ",
     { sti: "/videoproduksjon-i-oslo", tekst: "planlagt videoproduksjon" },
@@ -447,7 +447,7 @@ export const innholdsproduksjon: Tjenesteside = {
   seksjoner: [
     {
       sporsmal: "Prosjekt eller abonnement — hva trenger dere?",
-      svar: "Et prosjekt løser én oppgave med en start og en slutt: en lansering, en kampanje, en stilling som skal fylles. Et abonnement løser et problem som ikke tar slutt — at kanalene må fylles hver uke, hele året. De fleste som spør om innholdsproduksjon trenger et prosjekt først, og oppdager etter hvert at de også trenger kalenderen.",
+      svar: "Et prosjekt har en start og en slutt: en lansering, en kampanje, en stilling som skal fylles. Et abonnement er for dere som trenger noe nytt å publisere hver uke, året rundt. Mange begynner med ett prosjekt. Viser det seg at dere trenger påfyll hver måned, blir abonnement som regel rimeligere enn å bestille ett prosjekt av gangen.",
       punkter: [
         `Prosjekt: én leveranse, avtalt omfang, fra ${kr(tilbud.fraPrisProsjekt)} kr`,
         `Abonnement: ${site.kontakt.firma} produserer og publiserer løpende, ${kr(tilbud.prisPerManed)} kr/mnd`,

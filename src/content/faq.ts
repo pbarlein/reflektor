@@ -70,7 +70,7 @@ export const faqKategorier: { id: Faqkategori; tittel: string }[] = [
 export const faqSporsmal: FaqPunkt[] = [
   {
     sporsmal: "Hva er et SoMe-byrå?",
-    svar: "Et SoMe-byrå tar ansvar for en bedrifts tilstedeværelse i sosiale medier: research, strategi, produksjon av innhold og publisering. Forskjellen fra et markedsføringsbyrå er at arbeidet er løpende og ikke kampanjebasert — det handler om å være til stede hver uke, ikke å lage én film i året. Abonnementet er Reflektors eneste løpende tjeneste. Hver måned kommer vi til dere med kamera, lys og kjøreplan, produserer film og stillbilder, og publiserer to ganger i uka på Instagram med krysspublisering til Facebook. Vi jobber med sosiale medier for bedrifter i hele Norge og holder til i Oslo. Prisen er fast: 30 000 kroner i måneden.",
+    svar: "Et SoMe-byrå tar ansvar for en bedrifts tilstedeværelse i sosiale medier: research, strategi, produksjon av innhold og publisering. Forskjellen fra et markedsføringsbyrå er at arbeidet er løpende og ikke kampanjebasert. Vi er til stede hver uke i stedet for å lage én film i året. Abonnementet er Reflektors eneste løpende tjeneste. Hver måned kommer vi til dere med kamera, lys og kjøreplan, produserer film og stillbilder, og publiserer to ganger i uka på Instagram med krysspublisering til Facebook. Vi jobber med sosiale medier for bedrifter i hele Norge og holder til i Oslo. Prisen er fast: 30 000 kroner i måneden.",
     kategori: "tjenesten",
   },
   {
@@ -85,13 +85,13 @@ export const faqSporsmal: FaqPunkt[] = [
   },
   {
     sporsmal: "Kan vi bruke innholdet til annet enn sosiale medier?",
-    svar: "Ja. Materialet er produsert med en kvalitet som tåler langt mer enn feeden, og for mange er det den delen som gjør prisen enkel å forsvare. Alt leveres ikke automatisk i alle utsnitt og oppløsninger — men alt kan tilpasses, og vi kan produsere spesielt til et konkret formål. Vet dere at noe skal på skjerm i butikk, i en annonse, på nettsiden eller på trykk, sier dere fra i planleggingen. Da filmer og fotograferer vi for det på produksjonsdagen. Alt er tatt opp med kamera og fargekorrigert i etterarbeid. Ekte produkter, ekte mennesker, ekte lokaler. Vi bruker ikke generert innhold. Det blir billigere for hvert år som går, men det blir ikke mer troverdig. Over et år bygger dere opp et arkiv på rundt hundre filmer som er deres å bruke fritt — og råmaterialet ligger der om dere senere trenger noe i et annet format.",
+    svar: "Ja. Materialet er produsert med en kvalitet som tåler langt mer enn feeden, og for mange er det den delen som gjør prisen enkel å forsvare. Alt leveres ikke automatisk i alle utsnitt og oppløsninger, men alt kan tilpasses, og vi kan produsere spesielt til et konkret formål. Vet dere at noe skal på skjerm i butikk, i en annonse, på nettsiden eller på trykk, sier dere fra i planleggingen. Da filmer og fotograferer vi for det på produksjonsdagen. Alt er tatt opp med kamera og fargekorrigert i etterarbeid. Ekte produkter, ekte mennesker, ekte lokaler. Vi bruker ikke generert innhold. Det blir billigere for hvert år som går, men det blir ikke mer troverdig. Over et år bygger dere opp et arkiv på rundt hundre filmer som er deres å bruke fritt. Råmaterialet ligger lagret også, om dere senere trenger noe i et annet format.",
     kategori: "tjenesten",
   },
   {
     sporsmal:
       "Hvorfor bare Instagram og Facebook — ikke TikTok eller LinkedIn?",
-    svar: "Fordi vi heller gjør to kanaler ordentlig enn fire halvveis. Instagram og Facebook når bredest i Norge og fungerer for de fleste bransjer. Innholdet kan brukes på begge uten omarbeiding, noe som gjør at én produksjonsdag rekker til fire ukers publisering. Skulle vi lagt til TikTok og LinkedIn, ville hver kanal krevd egne formater, egen tone og egen redigering — samme pris, tynnere resultat overalt. Materialet er ikke låst til disse kanalene. Velger dere å bruke det andre steder, er det ingenting i veien for det — og trengs det et annet utsnitt, tilpasser vi det. Er LinkedIn den viktigste kanalen for deres marked, tilpasser vi produksjonen til dette formålet.",
+    svar: "Fordi vi heller gjør to kanaler ordentlig enn fire halvveis. Instagram og Facebook når bredest i Norge og fungerer for de fleste bransjer. Innholdet kan brukes på begge uten omarbeiding, noe som gjør at én produksjonsdag rekker til fire ukers publisering. Skulle vi lagt til TikTok og LinkedIn, ville hver kanal krevd egne formater, egen tone og egen redigering. Det ville kostet det samme og gitt et tynnere resultat i alle fire. Materialet er ikke låst til disse kanalene. Velger dere å bruke det andre steder, er det ingenting i veien for det. Trengs et annet utsnitt, tilpasser vi det. Er LinkedIn den viktigste kanalen for deres marked, tilpasser vi produksjonen til dette formålet.",
     kategori: "tjenesten",
   },
   {
@@ -106,7 +106,7 @@ export const faqSporsmal: FaqPunkt[] = [
   },
   {
     sporsmal: "Er 30 000 kroner i måneden mye eller lite?",
-    svar: "Det avhenger av hva dere sammenligner med. Mot en enkeltproduksjon er det mye: en reklamefilm kan koste det samme én gang. Mot et helt år med innhold er det lite. 360 000 kroner gir rundt hundre ferdige filmer, over hundre publiseringer, løpende strategi — og et arkiv dere eier og kan bygge videre på. Den mest relevante sammenligningen er ofte en ansettelse. En fulltids SoMe-ansvarlig koster vesentlig mer enn dette når arbeidsgiveravgift, pensjon og feriepenger er regnet med — og vedkommende må fortsatt leie inn noen til å filme. Vi konkurrerer om det samme budsjettet som andre markedsføringstjenester. Forskjellen er at dette er den posten der dere vet nøyaktig hva som kommer ut i den andre enden, og hvor materialet kan brukes videre i alle de andre postene.",
+    svar: "Det avhenger av hva dere sammenligner med. Mot en enkeltproduksjon er det mye: en reklamefilm kan koste det samme én gang. Mot et helt år med innhold er det lite. 360 000 kroner gir rundt hundre ferdige filmer, over hundre publiseringer, løpende strategi — og et arkiv dere eier og kan bygge videre på. Den mest relevante sammenligningen er ofte en ansettelse. En fulltids SoMe-ansvarlig koster vesentlig mer enn dette når arbeidsgiveravgift, pensjon og feriepenger er regnet med — og vedkommende må fortsatt leie inn noen til å filme. Vi konkurrerer om det samme budsjettet som andre markedsføringstjenester. Fordelen med denne posten er at dere vet hva dere får igjen: et avtalt antall ferdige filmer i måneden, som dere også kan bruke i annonser, på nettsiden og i presentasjoner.",
     kategori: "pris",
   },
   {
@@ -121,7 +121,7 @@ export const faqSporsmal: FaqPunkt[] = [
   },
   {
     sporsmal: "Hvilke resultater kan vi forvente?",
-    svar: "Vi lover ikke tall, og vi anbefaler skepsis mot byråer som gjør det. Resultatene avhenger av bransje, utgangspunkt, hva dere selger og hvor kjent dere er fra før — ingen kan garantere en prosentvis vekst uten å kjenne alt dette. Målet vårt er å øke engasjementet og bygge merkevare over tid. Det er bevisst ikke formulert som et tall. Setter man et prosentmål på merkevarebygging for en bedrift man ikke har jobbet med ennå, gjetter man — og et byrå som styrer etter et engasjementstall, ender med å lage innhold som jager tallet fremfor å bygge merkevaren. Det vi garanterer er leveransen: 8–10 ferdige filmer i måneden som produksjonsmål, stillbilder, og publisering to ganger i uka gjennom hele året. Det er den delen vi faktisk kontrollerer, og den holder vi. Merkevare bygges over år, ikke måneder. Er dere ute etter målbar effekt på kort sikt, er annonsering et riktigere verktøy enn oss.",
+    svar: "Vi lover ikke tall, og vi anbefaler skepsis mot byråer som gjør det. Resultatene avhenger av bransje, utgangspunkt, hva dere selger og hvor kjent dere er fra før. Ingen kan garantere en prosentvis vekst uten å kjenne alt dette. Målet vårt er å øke engasjementet og bygge merkevare over tid. Det er bevisst ikke formulert som et tall. Setter man et prosentmål på merkevarebygging for en bedrift man ikke har jobbet med ennå, gjetter man. Et byrå som styrer etter et engasjementstall, ender dessuten med å lage innhold som jager tallet i stedet for å bygge merkevaren. Det vi garanterer er leveransen: 8–10 ferdige filmer i måneden som produksjonsmål, stillbilder, og publisering to ganger i uka gjennom hele året. Det er den delen vi faktisk kontrollerer, og den holder vi. Merkevare bygges over år, ikke måneder. Er dere ute etter målbar effekt på kort sikt, er annonsering et riktigere verktøy enn oss.",
     kategori: "resultater",
   },
   {
@@ -131,17 +131,17 @@ export const faqSporsmal: FaqPunkt[] = [
   },
   {
     sporsmal: "Får vi rapportering underveis?",
-    svar: "Dere eier kontoene, så alle tall ligger åpent tilgjengelig for dere hele tiden i Metas egne verktøy: rekkevidde, hvor stor andel som ikke følger dere fra før, og hvilke poster som presterte best. Ingenting ligger bak vår innlogging. Hvert kvartal tar vi en kort gjennomgang sammen — rundt tjue minutter. Vi viser hva vi har sett i tallene, hva som har fungert, hva som ikke har det, og hva vi endrer fremover. Vi legger ikke opp til fast månedsrapportering. Tallene svinger mye fra uke til uke, og en rapport hver måned blir lett støy fremfor innsikt — det som betyr noe for merkevarebygging viser seg over kvartaler. Trenger dere en skriftlig rapport til internt bruk, lager vi den. Si fra hva dere må kunne vise, så tilpasser vi oss det.",
+    svar: "Dere eier kontoene, så alle tall ligger åpent tilgjengelig for dere hele tiden i Metas egne verktøy: rekkevidde, hvor stor andel som ikke følger dere fra før, og hvilke poster som presterte best. Ingenting ligger bak vår innlogging. Hvert kvartal tar vi en kort gjennomgang sammen — rundt tjue minutter. Vi viser hva vi har sett i tallene, hva som har fungert, hva som ikke har det, og hva vi endrer fremover. Vi legger ikke opp til fast månedsrapportering. Tallene svinger mye fra uke til uke, og en rapport hver måned blir lett støy fremfor innsikt. Utviklingen i merkevarebygging er noe man ser over kvartaler. Trenger dere en skriftlig rapport til internt bruk, lager vi den. Si fra hva dere må kunne vise, så tilpasser vi oss det.",
     kategori: "resultater",
   },
   {
     sporsmal: "Hvor mye tid må vi sette av?",
-    svar: "Én produksjonsdag i måneden, pluss litt tid til å godkjenne innhold underveis. Produksjonsdagen planlegger vi sammen i god tid, og dere får kjøreplanen på forhånd, så forberedelsene er små og tydelige: hvem som skal være med, hvor vi filmer, hva som eventuelt må klargjøres. Selve dagen tar vanligvis noen timer, ikke hele arbeidsdagen. Resten gjør vi. Dere skal ikke lage innholdskalender, skrive manus, klippe eller huske å poste. Det eneste som kommer tilbake til dere mellom produksjonsdagene, er innhold til godkjenning — det tar noen minutter i uka. Kommentarer og meldinger håndterer dere selv, men det er sjelden mye arbeid.",
+    svar: "Én produksjonsdag i måneden, pluss litt tid til å godkjenne innhold underveis. Produksjonsdagen planlegger vi sammen i god tid, og dere får kjøreplanen på forhånd, så forberedelsene er små og tydelige: hvem som skal være med, hvor vi filmer, hva som eventuelt må klargjøres. Selve dagen tar vanligvis noen timer, ikke hele arbeidsdagen. Resten gjør vi. Dere skal ikke lage innholdskalender, skrive manus, klippe eller huske å poste. Det eneste som kommer tilbake til dere mellom produksjonsdagene, er innhold til godkjenning. Det tar noen minutter i uka. Kommentarer og meldinger håndterer dere selv, men det er sjelden mye arbeid.",
     kategori: "praktisk",
   },
   {
     sporsmal: "Trenger vi eget kamera eller utstyr?",
-    svar: "Nei. Vi stiller med alt: kamera, objektiver, lys, lyd, stativ og kjøreplan. Dere trenger ikke kjøpe noe, leie noe eller ha noen med filmkompetanse internt. Dere stiller med dere selv, og med det som skal vises — produktene, lokalene, menneskene. Er det noe som må klargjøres eller bestilles før vi kommer, står det i kjøreplanen dere får på forhånd. All produksjon skjer med profesjonelt kamerautstyr og profesjonelle produsenter, og alt fargekorrigeres i etterarbeid. Dette er ikke mobilfilm satt sammen i etterkant — det er samme håndverk som brukes i reklamefilm, tilpasset formatene som fungerer i sosiale medier.",
+    svar: "Nei. Vi stiller med alt: kamera, objektiver, lys, lyd, stativ og kjøreplan. Dere trenger ikke kjøpe noe, leie noe eller ha noen med filmkompetanse internt. Dere stiller med dere selv, og med det som skal vises — produktene, lokalene, menneskene. Er det noe som må klargjøres eller bestilles før vi kommer, står det i kjøreplanen dere får på forhånd. All produksjon skjer med profesjonelt kamerautstyr og profesjonelle produsenter, og alt fargekorrigeres i etterarbeid. Vi bruker samme håndverk som i reklamefilm, tilpasset formatene som fungerer i sosiale medier.",
     kategori: "praktisk",
   },
   {
@@ -157,7 +157,7 @@ export const faqSporsmal: FaqPunkt[] = [
   },
   {
     sporsmal: "Hvem eier innholdet?",
-    svar: "Dere får full bruksrett til alt vi produserer, på ubestemt tid. Det gjelder nettside, annonser, skjermer i butikk, plakater, trykk, salgspresentasjoner og internt bruk — ingen begrensninger på antall visninger, kanaler eller tidsrom. Trenger dere et annet utsnitt, en annen oppløsning eller en versjon tilpasset et bestemt format, ordner vi det. Si fra hva det skal brukes til, så leverer vi deretter — det er ikke en tilleggstjeneste dere må forhandle om. Skulle et konkret oppdrag ha andre vilkår — for eksempel ved innleide skuespillere, lisensiert musikk eller lokasjoner med egne regler — sier vi fra om det på forhånd. Det er unntaket, ikke regelen.",
+    svar: "Dere får full bruksrett til alt vi produserer, på ubestemt tid. Det gjelder nettside, annonser, skjermer i butikk, plakater, trykk, salgspresentasjoner og internt bruk, uten begrensninger på antall visninger, kanaler eller tidsrom. Trenger dere et annet utsnitt, en annen oppløsning eller en versjon tilpasset et bestemt format, ordner vi det. Si fra hva det skal brukes til, så leverer vi deretter. Det er ikke en tilleggstjeneste dere må forhandle om. Skulle et konkret oppdrag ha andre vilkår — for eksempel ved innleide skuespillere, lisensiert musikk eller lokasjoner med egne regler — sier vi fra om det på forhånd. Det er unntaket, ikke regelen.",
     kategori: "pris",
   },
   {

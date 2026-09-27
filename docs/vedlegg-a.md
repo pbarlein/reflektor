@@ -2601,3 +2601,56 @@ Mutasjonstestet.
 - **Tallet «107+»** som AGENTS.md oppgir, finnes ikke igjen i noen rapport.
   GA4 har 558 `takk_page_view` totalt siden 2022, Ads 76 siste tolv måneder.
   Ikke en feil som haster, men tallet i AGENTS.md er ikke sporbart.
+
+## A67 — Redaksjonell luking av AI-setninger. 27.09.2026
+
+Pål pekte på én setning: «De fleste som spør om innholdsproduksjon trenger et
+prosjekt først, og oppdager etter hvert at de også trenger kalenderen.» Og ba
+meg finne de tilsvarende.
+
+### Hva som faktisk avslører maskinen
+
+Ikke ordvalget. Det er **konstruksjonene**, og at de gjentar seg:
+
+| Mønster | Eksempel som ble fjernet |
+|---|---|
+| Avsløringen | «… og oppdager etter hvert at de også trenger kalenderen» |
+| Ikke X, men Y | «Forskjellen er ikke hvordan filmen ser ut, men hvor den vises» |
+| Tankestrek som fasit | «… blir lett støy fremfor innsikt — det som betyr noe …» |
+| Aforismen | «Men én film er ett øyeblikk» |
+| Setningsfragment | «Ikke skuespillere, og helst ikke bare ledelsen.» |
+| Metonymi uten dekning | «… trenger kalenderen» |
+| Byråvås | «on-brand videoer og bilder på løpende bånd» |
+
+Verst var **tankestreken i faq.ts: tolv ganger i én fil**, alltid i samme
+rolle — en setning, tankestrek, og så den egentlige innsikten. Én gang er et
+virkemiddel. Tolv ganger er en tikk, og det er tikken leseren kjenner igjen
+uten å kunne sette ord på den.
+
+### Hva som ble gjort
+
+23 setninger skrevet om: 12 i `faq.ts`, 5 i `tjenester.ts`, 2 i `omoss.ts`,
+1 i `artikler.ts` (en FAQ jeg selv la til, ikke migrert tekst), og
+avgrensningen jeg skrev tidligere samme dag — den var allerede smittet.
+
+### Hva som IKKE ble rørt
+
+Skannet ga 60 % falske positive, og det er poenget med å lese dem i stedet
+for å rette dem:
+
+- **Kundesitatene** i `anmeldelser.ts`. «Rett og slett kjempefine folk» er
+  hvordan Marion faktisk skrev. Å redigere et sitat for å unngå en klisjé er
+  å forfalske det.
+- **De migrerte bloggtekstene.** «Ikke bare X, men også Y» står seks ganger i
+  artikler.ts. Alle seks er Reflektors egen tekst fra Squarespace. Regel 3 i
+  AGENTS.md verner bloggen, og disse er ikke mine å pusse på.
+- **Oppramsinger.** «Idé, manus, opptak, klipp, lyd og fargekorrigering» er en
+  liste over hva som leveres, ikke en retorisk triade.
+- **`jobb:`-feltene i front.ts.** Notater til meg selv, ikke tekst noen leser.
+
+### Verdt å merke
+
+Fire av de omskrevne setningene skrev jeg samme dag, i svaret på forrige
+tilbakemelding. Mønsteret kommer tilbake med hver runde med ny copy, så dette
+er ikke en jobb som blir ferdig én gang. Skannemønstrene står i tabellen over
+for den som skal gjøre runden igjen.

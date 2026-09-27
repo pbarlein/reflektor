@@ -57,8 +57,8 @@ export const omoss = {
   historie: {
     tittel: "Hvorfor vi jobber slik",
     avsnitt: [
-      "Reflektor startet som produksjonsselskap. Gjennom årene har vi levert foto, video og kampanjer for alt fra restauranter til sportskjeder – og lært én ting: det som gir resultater over tid er ikke enkeltproduksjoner, men jevnt, godt innhold som faktisk blir publisert.",
-      "Derfor spisset vi hele selskapet rundt akkurat det. Med profesjonell produksjon har dere tilgang til on-brand videoer og bilder på løpende bånd.",
+      "Reflektor startet som produksjonsselskap. Gjennom årene har vi levert foto, video og kampanjer for alt fra restauranter til sportskjeder. Erfaringen fra de årene er at jevn publisering gir mer igjen over tid enn enkeltproduksjoner, uansett hvor gode de er.",
+      "Derfor la vi om hele selskapet rundt det. I dag produserer vi film og bilder til faste kunder hver måned, i deres eget uttrykk.",
     ],
   },
 

@@ -1045,7 +1045,7 @@ export const artikler: Artikkel[] = [
     tilleggsfaq: [
       {
         sporsmal: "Hvor mye innhold skal til før det virker?",
-        svar: "Mer enn de fleste tror, og jevnere enn de fleste klarer. Abonnementet vårt er bygget rundt to publiseringer i uken, hele året — 104 i året. Tallet er ikke magisk, men jevnheten er poenget: innhold som kommer i rykk og napp leses som at noen glemte det, og da hjelper det ikke hvor godt det enkelte innlegget var.",
+        svar: "Abonnementet vårt er bygget rundt to publiseringer i uken, hele året. Det blir 104 innlegg. Jevnheten betyr mer enn antallet: innhold som kommer i rykk og napp ser ut som noe noen har glemt, og da hjelper det lite hvor bra det enkelte innlegget var.",
         lenker: [{ sti: "/", tekst: "løpende produksjon til fast månedspris" }],
       },
     ],
