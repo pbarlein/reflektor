@@ -4,6 +4,11 @@ import { dirname, join } from "node:path";
 import { BlobNotFoundError, get, list, put } from "@vercel/blob";
 
 import type { Rapport } from "@/content/rapporttype";
+import {
+  type Avkryssing,
+  type Mistet,
+  flyttMedOver,
+} from "@/lib/rapportflytt";
 
 /**
  * Lagringen for rapportsenteret.
@@ -57,6 +62,8 @@ export function harLager(): boolean {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN) || lokaltLager() !== null;
 }
 
+export type { Mistet };
+
 export type Svar = "ja" | "nei" | "senere";
 
 export type Beslutningssvar = {
@@ -66,7 +73,7 @@ export type Beslutningssvar = {
 };
 
 /** Ett steg Pål har krysset av. Indeksen peker inn i `rapport.steps`. */
-export type Stegavkryssing = { indeks: number; tidspunkt: string };
+export type Stegavkryssing = Avkryssing;
 
 export type Notat = { tekst: string; tidspunkt: string };
 
@@ -83,6 +90,13 @@ export type Lagret = {
   beslutning: Beslutningssvar | null;
   gjorteSteg: Stegavkryssing[];
   notater: Notat[];
+  /**
+   * Hva SISTE oppdatering av samme uke ikke kunne ta med seg.
+   *
+   * Valgfritt fordi alt som allerede ligger i butikken er skrevet uten
+   * feltet. `undefined` og `null` betyr det samme her: ingenting gikk tapt.
+   */
+  mistetVedOppdatering?: Mistet | null;
 };
 
 /** Raden arkivet vises fra. Holdes liten så listen kan leses i ett kall. */
@@ -185,6 +199,17 @@ export async function lagreRapport(
   const fra = await hentRapport(rapport.type, rapport.id);
   const naa = new Date().toISOString();
 
+  const flyttet = flyttMedOver(
+    fra && {
+      steg: fra.rapport.steps,
+      sporsmal: fra.rapport.decision?.question ?? null,
+      gjorteSteg: fra.gjorteSteg,
+      beslutning: fra.beslutning,
+    },
+    { steg: rapport.steps, sporsmal: rapport.decision?.question ?? null },
+    naa,
+  );
+
   const neste: Lagret = {
     id: rapport.id,
     type: rapport.type,
@@ -197,10 +222,18 @@ export async function lagreRapport(
           { mottatt: fra.mottatt, payload: fra.payload },
         ].slice(-MAKS_VERSJONER)
       : [],
-    /* Det Pål har gjort overlever en ny utgave av samme uke. */
-    beslutning: fra?.beslutning ?? null,
-    gjorteSteg: fra?.gjorteSteg ?? [],
+    /*
+     * ── DET PÅL HAR GJORT OVERLEVER, MEN BARE DER DET FORTSATT PASSER ───
+     *
+     * Notatene er hans egne ord og hører til uka, ikke til en bestemt
+     * utgave av den. De følger med uansett.
+     *
+     * Avkryssinger og beslutning hører til en TEKST. Se `Mistet`.
+     */
+    beslutning: flyttet.beslutning,
+    gjorteSteg: flyttet.gjorteSteg,
     notater: fra?.notater ?? [],
+    mistetVedOppdatering: flyttet.mistet,
   };
 
   const lagret = await skriv(sti(rapport.type, rapport.id), neste);

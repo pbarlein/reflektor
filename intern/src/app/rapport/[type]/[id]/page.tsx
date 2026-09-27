@@ -78,6 +78,44 @@ export default async function Rapportside({ params }: Params) {
             </p>
           )}
 
+          {/*
+            ── NÅR EN NY UTGAVE TOK MED SEG NOE ──────────────────────────
+
+            Leveres samme uke på nytt, skrives rapporten om fra bunnen av.
+            Avkryssinger flyttes etter tekst og et svar står bare så lenge
+            spørsmålet gjør det — se `flyttMedOver`. Det som ikke kunne
+            flyttes, sies her. Alternativet var at haken ble stående under
+            en annen setning, og det er verre enn å miste den.
+          */}
+          {l.mistetVedOppdatering && (
+            <section className="rounded-flate border border-[color:var(--varsel-kant)] bg-[color:var(--varsel-flate)] px-5 py-4">
+              <h2 className="font-sans text-[0.6875rem] font-semibold tracking-[0.14em] text-varsel uppercase">
+                Rapporten er skrevet om siden du svarte
+              </h2>
+              <p className="mt-2 text-[0.9375rem] leading-relaxed text-pretty text-varsel">
+                En ny utgave kom inn{" "}
+                {norskTidspunkt(l.mistetVedOppdatering.tidspunkt)}. Dette
+                fulgte ikke med, fordi teksten det hang på er borte:
+              </p>
+              <ul className="mt-2 flex flex-col gap-1.5">
+                {l.mistetVedOppdatering.steg.map((t, i) => (
+                  <li
+                    key={i}
+                    className="text-[0.9375rem] leading-relaxed text-pretty text-varsel"
+                  >
+                    Avkrysningen på «{t}»
+                  </li>
+                ))}
+                {l.mistetVedOppdatering.beslutning && (
+                  <li className="text-[0.9375rem] leading-relaxed text-pretty text-varsel">
+                    Svaret «{l.mistetVedOppdatering.beslutning.svar}» på «
+                    {l.mistetVedOppdatering.beslutning.sporsmal}»
+                  </li>
+                )}
+              </ul>
+            </section>
+          )}
+
           {/* ── 1 DOM OG 2 HOVEDSETNING ─────────────────────────────────── */}
           <header>
             <div className="flex flex-wrap items-center gap-3">
