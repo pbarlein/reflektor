@@ -2104,6 +2104,9 @@ Ahrefs, alle backlinks mot `reflektor.no` der mål-URL inneholder «foto»:
 | `/tjenester/matfotograf` | 2 | 0 | begge nofollow |
 | `/tjenester/boligfoto` | 1 | 0 | nofollow |
 
+Kontrollert med en uavhengig spørring: samme URL som eksakt mål, hele
+historikken, ikke filtrert på «foto». Samme svar — én lenke, nofollow.
+
 **To tall ble forvekslet.** Notatet i `next.config.ts` begrunnet
 produktfoto-redirecten med «1 935 visninger, posisjon 15,8 og 22 rangerende
 søkeord». Det er visninger i Search Console — søkesynlighet. Lenkeverdi er
@@ -2111,34 +2114,93 @@ backlinks. Produktfoto har én, den er nofollow, den kommer fra et
 prissammenligningsnettsted med DR 22 og trafikk 1, og den ble sist sett for
 over seks måneder siden.
 
+**Og selve visningstallet var feil.** Pål ba meg dobbeltsjekke før jeg rørte
+`AGENTS.md`. GSC er koblet til Ahrefs-prosjekt 10162201 (A16), så tallet kan
+hentes direkte. Tolv måneder til 18.08.2026:
+
+| | Notatet sa | GSC sier |
+|---|---|---|
+| Visninger | 1 935 | **12 693** |
+| Søkeord | 22 | **37** |
+| Posisjon | 15,8 | 17,2 |
+| Klikk | — | **23** |
+
+Notatet underdrev med 6,5 ganger. Antagelig et kortere vindu enn det ble
+oppgitt som. Det endrer ikke konklusjonen — lenkeverdien er fortsatt null, og
+tjenesten er fortsatt avviklet — men det er et tredje tilfelle av samme feil:
+et tall skrevet ned én gang og aldri sjekket.
+
+Merk hva de 23 klikkene betyr. 12 693 visninger og 23 klikk på et år er
+posisjon 17 på ord vi ikke selger. Synligheten er ekte og verdiløs. At
+Google mister rangeringen på «produktfoto» når adressen peker til
+`/innholdsproduksjon` er riktig utfall, ikke et tap.
+
 Verdt å merke: hver eneste dofollow-lenke i foto-klyngen kommer fra
 `bassoon-blenny-3rs9.squarespace.com` — Reflektors eget Squarespace-preview.
 Det er DR 95 i Ahrefs og ser derfor stort ut i en rapport, men det er oss
 som lenker til oss. Ekstern lenkeverdi i hele foto-klyngen er i praksis
 null.
 
-### Det virkelige hullet: en nettbutikk fra før Squarespace
+### Jeg trodde jeg fant et hull. Det var et annet selskap
 
-Da jeg i stedet spurte «hvilken URL som helst med minst én dofollow-lenke»,
-kom dette fram:
+Da jeg spurte «hvilken URL som helst med minst én dofollow-lenke», kom
+`/butikk-hovedside/` fram med 11 refererende domener og 14 dofollow-lenker,
+høyeste kilde DR 74 — mer dofollow enn noen annen underside. Den stod ikke i
+kartet. Jeg la den inn, sammen med `.php`-restene og `/index.php/513806`, og
+meldte det til Pål som dagens viktigste funn.
 
-| Mål | Ref.domener | Dofollow | Høyeste kilde-DR | I kartet? |
-|---|---|---|---|---|
-| `/` (alle fire varianter) | 625 | 231 | 95 | — |
-| **`/butikk-hovedside/`** | **11** | **14** | **74** | **nei** |
-| `/butikk-hovedside/513806` m.fl. | 2 | 2 | 10 | nei |
-| `/Video-og-lydtenester.php` | 2 | 1 | 46 | nei |
-| `/prosjekter/nettside-sydspissen-hotell/` | 1 | 1 | 1,6 | nei |
+**Pål stoppet det:** «gamle lenker til domenet før vi kjøpte det er
+irrelevant. det er tydeligvis et helt annet selskap i en helt annen
+bransje.»
 
-`/butikk-hovedside/` er den største enkeltposten utenom forsiden — mer
-dofollow-lenkeverdi enn noen annen underside på nettstedet. Den er en rest
-fra siden før Squarespace: `.php`-adresser og `/index.php/513806`.
-Squarespace 301-er dem alle til forsiden i dag, men **ingen av dem stod i
-`next.config.ts`**. Ved cutover ville de blitt 404, og de fjorten
-dofollow-lenkene ville pekt i tomrommet.
+Han har rett, og dataene viser at det er verre enn det: **det er ikke engang
+samme domene.** Ankerteksten på lenkene sier «www.reflector.no»,
+«reflector.no» og «Reflector Produksjoner» — reflector med C.
 
-Til sammen fjorten adresser med lenker manglet i kartet. Alle er nå lagt
-inn og verifisert.
+| Kilde | Ankertekst | Datoer |
+|---|---|---|
+| `hardanger-folkeblad.no` | Reflector Produksjoner | 2017 → død 2018 |
+| `webby.no/norskesteder/?/280/Jondal/` | Reflector Produksjoner | 2016 → død 2019 |
+| `uskedalen.no` | «å klikka her:.» | 2015 → død 2019 |
+| `mic.no`, `listento.no` (musikkbransjen) | www.reflector.no | 2013 → død 2019 |
+| `diskusjon.no` | `http://www.reflector...lydtenester.php` | 2018 → død 2019 |
+
+Hardanger Folkeblad, Uskedalen, Jondal. Filnavnet `Video-og-lydtenester` er
+nynorsk. Det er et lyd- og videoselskap i Hardanger, ikke et byrå i Oslo.
+Ahrefs fører lenkene under `reflektor.no` fordi indeksen blander reflector.no
+og reflektor.no — hver enkelt lenke *handler om* reflector.no.
+
+`/flaminko/` er lenket fra flaminko.no selv (2019, død samme år).
+`/prosjekter/nettside-sydspissen-hotell/` og PNG-fila kommer fra
+logospng.com, en logoskraper, 2020–2021 — en WordPress-side med
+`/prosjekter/`, altså nok et selskap som het noe med Reflektor.
+
+**Alle ni er fjernet igjen.** Ingen lenker til dem, så det er ingenting å
+bevare. Advarselen står i `next.config.ts` med ankertekst og datoer, slik at
+ingen legger dem inn på nytt neste gang rapporten ser stor ut.
+
+**Lærdommen er om meg, ikke om Ahrefs.** Jeg behandlet `url_to` som bevis på
+at adressen var vår. Ankerteksten sto i mitt eget spørringsresultat hele
+tiden — «Reflector Produksjoner», i klartekst — og jeg leste tallet i stedet
+for teksten ved siden av. Et stort tall på en URL man ikke kjenner igjen er
+en grunn til å sjekke, ikke til å handle.
+
+### Tretten adresser manglet likevel
+
+Etter at reflector.no-klyngen er trukket ut, står det igjen tretten av
+Reflektors egne adresser som hadde lenker eller visninger og ikke stod i
+kartet. Alle er døde på dagens side, alle er lagt inn og verifisert:
+
+| Kilder | Mål |
+|---|---|
+| `/fotograf`, `/bedriftsfoto`, `/bilderavansatte`, `/matfoto` | `/innholdsproduksjon` |
+| `/matogdrikke/orkla`, `/matogdrikke/wolt`, `/sport`, `/eiendomsfotograf` | `/vart-arbeid` |
+| `/palbarlein`, `/magne-finseth-da-fonseca`, `/viktor-noren` | `/om-oss` |
+| `/videoproduksjon` | `/videoproduksjon-i-oslo` |
+| `/tjenester-1` | `/` |
+
+De to siste personsidene 301-er til `/om-oss` på Squarespace i dag, men stod
+ikke i kartet — de ville blitt 404 ved cutover.
 
 ### Squarespace hadde et bedre kart enn vårt
 
@@ -2200,9 +2262,30 @@ Det testene **ikke** kan avgjøre er om en kilde faktisk er død på dagens
 side. Det krever et oppslag mot reflektor.no og må gjøres for hånd. Det står
 i kommentaren øverst i testfila.
 
+### Redirectene er 308, ikke 301
+
+Oppdaget under verifiseringen, fordi en gammel serverprosess holdt porten og
+svarte fra forrige bygg: `permanent: true` i Next gir **308 Permanent
+Redirect**, ikke 301. Det gjelder alle 51 oppføringene.
+
+Google og Bing behandler 308 som likeverdig med 301 — lenkeverdien flyttes
+likt — så det er ikke en feil. Men dagens Squarespace svarer 301, og både
+denne fila og `AGENTS.md` sier «301» gjennomgående, blant annet i
+cutover-regelen for `/sosiale-medier-byra`. Leser noen en redirect-rapport og
+ser 308, er det dette.
+
+Ikke endret. Å bytte til `statusCode: 301` er en endring på hele kartet, og
+nåværende oppførsel er korrekt. Notert i `next.config.ts`; Pål avgjør.
+
 ### Verifisert
 
-36 redirects hentet mot produksjonsbygget, hver fulgt til endelig mål: alle
-lander på ventet side med 200. De fire live annonsesidene svarer fortsatt
-200 direkte, uten omdirigering. 25 tester grønne, lint grønn,
-`content:check` grønn, lenkesjekk grønn.
+51 redirects i kartet. De tretten nye hentet mot produksjonsbygget og fulgt
+til endelig mål — alle lander på ventet side med 200. De ni
+reflector.no-adressene svarer nå 404, som de skal. De fire live
+annonsesidene svarer fortsatt 200 direkte, uten omdirigering. 25 tester
+grønne, lint grønn, `content:check` grønn, lenkesjekk grønn.
+
+En siste ting verifiseringen avdekket om metode: den første kjøringen meldte
+«OK» på adresser jeg nettopp hadde fjernet, fordi en gammel serverprosess
+fortsatt svarte. Testen var riktig skrevet og svaret var feil. Når noe som
+skal være borte melder seg friskt, er det prosessen man tester, ikke koden.

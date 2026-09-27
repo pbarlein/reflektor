@@ -104,7 +104,7 @@ Dette er designuavhengig og dyrt å gjenskape. Rør det kun med grunn:
 
 | Hva | Hvorfor |
 |---|---|
-| `next.config.ts` | Redirect-kartet er bygget på faktiske visningstall fra Search Console, ikke på crawl-data. `/tjenester/produktfoto` alene har 1 935 visninger. |
+| `next.config.ts` | Redirect-kartet er bygget på faktiske tall fra Search Console (Ahrefs-prosjekt 10162201), ikke på crawl-data eller hukommelse. Aliaset `/blogg/hvordan-markedsfore-bedrift` er dødt, men har alene 41 279 visninger og 255 søkeord, og 301-es til den kanoniske artikkelen. **Visninger er søkesynlighet, ikke lenkeverdi** — å blande dem har kostet to feilvurderinger, og `url_to` i en Ahrefs-rapport er ikke bevis på at adressen er vår. Se A63. |
 | `src/app/api/skjema/route.ts` | POST med 303 gir ekte sidelasting på `/takk`. En serverhandling ville gitt klientside-navigasjon og drept GTM. Se A28. |
 | `src/components/Sporing.tsx`, `TakkHendelse.tsx` | GTM-N4KGSS93 og GA4-hendelsen. 107+ historiske konverteringer henger på dem. |
 | `src/lib/lead.ts` | Leadlevering på e-post. Verifisert ende-til-ende. |

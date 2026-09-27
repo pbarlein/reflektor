@@ -10,6 +10,17 @@ import type { NextConfig } from "next";
  * som begge er live sider det annonseres mot. Ikke gjenta det. Sjekk at en URL
  * faktisk er død før du legger inn en redirect for den.
  */
+/*
+ * MERK OM STATUSKODE: `permanent: true` gir **308**, ikke 301. Målt mot
+ * produksjonsbygget 27.09.2026. Google og Bing behandler 308 som likeverdig
+ * med 301 — lenkeverdien flyttes likt — så dette er ikke en feil. Men dagens
+ * Squarespace svarer 301, og dokumentasjonen her og i AGENTS.md sier «301»
+ * gjennomgående. Leser du en redirect-sjekk og ser 308, er det dette.
+ *
+ * Skal hele kartet over til 301, byttes `permanent: true` med
+ * `statusCode: 301`. Ikke gjort — det er en endring på alle oppføringene, og
+ * nåværende oppførsel er korrekt. Pål avgjør.
+ */
 const redirects: NextConfig["redirects"] = async () => [
   // --- Kontakt: /kontakt og /kontakt-oss er 404, /kontaktoss er den ekte ---
   { source: "/kontakt", destination: "/kontaktoss", permanent: true },
@@ -130,28 +141,13 @@ const redirects: NextConfig["redirects"] = async () => [
    * ADRESSER MED LENKER SOM IKKE STOD I KARTET. Lagt inn 27.09.2026.
    *
    * Funnet ved å spørre Ahrefs om hver URL som har minst én dofollow-lenke,
-   * i stedet for å gå ut fra /tjenester/-treet. Ingen av dem stod her, alle
-   * er målt døde eller omdirigerte på dagens side, og uten dette ville de
-   * blitt 404 ved cutover.
+   * i stedet for å gå ut fra /tjenester/-treet. Alle er målt døde eller
+   * omdirigerte på dagens side, og uten dette ville de blitt 404 ved cutover.
    *
-   * /butikk-hovedside er den største enkeltposten utenom forsiden: 11
-   * refererende domener og 14 dofollow-lenker, høyeste kilde DR 74. Det er
-   * mer dofollow-lenkeverdi enn noen annen underside har. Den er en rest fra
-   * nettsiden før Squarespace — .php-adresser og /index.php/513806 — og
-   * Squarespace 301-er dem alle til forsiden i dag.
+   * Én klynge ble funnet og forkastet igjen samme dag — se notatet om
+   * reflector.no nederst i fila. Les det før du legger til noe her på
+   * grunnlag av en Ahrefs-rapport.
    */
-
-  /* Gammel nettbutikk og .php-rester → forsiden, som i dag. */
-  ...[
-    "/butikk-hovedside",
-    "/butikk-hovedside/513806",
-    "/butikk-hovedside/index.php/513806",
-    "/butikk-hovedside/Video-og-lydtenester.php",
-    "/index.php/513806",
-    "/513806",
-    "/Video-og-lydtenester.php",
-    "/flaminko",
-  ].map((source) => ({ source, destination: "/", permanent: true })),
 
   /* Squarespace-foto uten /tjenester/-prefiks. 404 i dag. */
   ...[
@@ -171,7 +167,6 @@ const redirects: NextConfig["redirects"] = async () => [
     "/matogdrikke/wolt",
     "/sport",
     "/eiendomsfotograf",
-    "/prosjekter/nettside-sydspissen-hotell",
   ].map((source) => ({
     source,
     destination: "/vart-arbeid",
@@ -296,17 +291,47 @@ const redirects: NextConfig["redirects"] = async () => [
    * /employer-branding-video-oslo, /eventfotograf-eventvideo
    *         – alle live (HTTP 200). Beholdes som de er.
    *
-   * Vurdert 27.09.2026, funnet i samme Ahrefs-gjennomgang som A63:
-   *
-   * /wp-content/uploads/2020/03/logo-reflektor-minimal.png
-   *         – én dofollow-lenke, men det er en bildefil fra
-   *           WordPress-tiden. En 301 fra et bilde til en HTML-side gir
-   *           ingen lenkeverdi, den gir bare et ødelagt bilde hos den som
-   *           lenker.
    * /blogg?format=rss
    *         – fire dofollow, men alle fra vårt eget Squarespace-preview,
    *           og spørrestrengen treffer /blogg som er live. Ingenting å
    *           gjøre. En ekte RSS-feed på ny side er en egen vurdering.
+   * /wp-content/uploads/2020/03/logo-reflektor-minimal.png
+   *         – én dofollow-lenke, men det er en bildefil. En 301 fra et
+   *           bilde til en HTML-side gir ingen lenkeverdi, den gir bare et
+   *           ødelagt bilde hos den som lenker.
+   */
+
+  /*
+   * ADVARSEL: ANDRE SELSKAPER I AHREFS-RAPPORTEN. Målt 27.09.2026.
+   *
+   * IKKE legg inn redirects for disse. Jeg gjorde det, og tok feil:
+   *
+   *   /butikk-hovedside/, /butikk-hovedside/513806, /index.php/513806,
+   *   /513806, /Video-og-lydtenester.php, /flaminko/,
+   *   /prosjekter/nettside-sydspissen-hotell/
+   *
+   * Ahrefs fører dem som URL-er på reflektor.no, og `/butikk-hovedside/`
+   * ser ut som den største enkeltposten utenom forsiden: 11 refererende
+   * domener, 14 dofollow-lenker, høyeste kilde DR 74. Jeg la dem inn på det
+   * grunnlaget, og Pål stoppet det: adressene tilhører ikke Reflektor.
+   *
+   * ANKERTEKSTEN AVSLØRER DET. Lenkene sier «www.reflector.no»,
+   * «reflector.no» og «Reflector Produksjoner» — reflector med C, et annet
+   * domene. Kildene er Hardanger Folkeblad, uskedalen.no,
+   * webby.no/norskesteder/?/280/Jondal/ og mic.no/listento.no
+   * (musikkbransjen). Datoene er 2013–2018, alle døde innen 2019. Filnavnet
+   * «Video-og-lydtenester» er nynorsk. Det er et lyd- og videoselskap i
+   * Jondal, ikke et byrå i Oslo.
+   *
+   * /flaminko/ er lenket fra flaminko.no selv (2019, dødt samme år).
+   * /prosjekter/nettside-sydspissen-hotell/ og PNG-fila over kommer begge
+   * fra logospng.com, en logoskraper, 2020–2021 — en WordPress-side med
+   * /prosjekter/, altså nok et selskap som het noe med Reflektor.
+   *
+   * LÆRDOMMEN: `url_to` i Ahrefs er ikke bevis på at adressen er vår. Les
+   * ankertekst, kildedomene og dato før du tror på en rapport. Et stort tall
+   * på en URL du ikke kjenner igjen er en grunn til å sjekke, ikke til å
+   * handle. Se A63.
    */
 ];
 
