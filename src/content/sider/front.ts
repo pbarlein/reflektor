@@ -58,8 +58,11 @@ export const front: Side = {
          * til publiseringen, og plattformene er adressen den går til.
          *
          * Det stemmer med leveransen: posterPerUke er 2, til Instagram med
-         * krysspublisering til Facebook. 2 x 52 = 104 i året = 8,7 i
-         * måneden, midt i «8–10 videoer». Ordlyden ligger nær
+         * krysspublisering til Facebook. En måned har fire eller fem
+         * publiseringsuker, altså åtte eller ti poster — som er nøyaktig
+         * spennet i «8–10 videoer». (Her sto «8,7 i måneden» til
+         * 28.09.2026. Det er et årsgjennomsnitt kledd som en månedsverdi,
+         * og det skjulte hvor spennet kommer fra.) Ordlyden ligger nær
          * tilbud.inngar[3], som sier det samme på prisseksjonen.
          *
          * ÉN MEKANISK ENDRING FRA PÅLS ORDLYD: «og publisering» er strøket
@@ -137,7 +140,7 @@ export const front: Side = {
     {
       nr: 5,
       navn: "Anmeldelser",
-      jobb: "Navngitt sosialt bevis. Den best støttede formen som finnes.",
+      jobb: "Navngitt sosialt bevis. Den formen forskningen støtter best.",
       slots: {
         "front.reviews.eyebrow": tekst("Det kundene sier", { maksTegn: 30 }),
         "front.reviews.h2": tekst("Google-anmeldelser fra dem som har hatt oss på besøk", { maksTegn: 70 }),

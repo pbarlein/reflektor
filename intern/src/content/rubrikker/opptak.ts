@@ -473,7 +473,7 @@ export const OPPTAK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Det er den mest brukte og minst nyttige regien som finnes. Den gir personen en oppgave hen ikke kan løse, og bekrefter samtidig at hen ikke er naturlig nå. Gi en konkret handling i stedet: «se på meg, ikke i kameraet», «fortell det til meg som om jeg aldri har vært her».",
+          "Det er den vanligste regien, og den virker ikke. Den gir personen en oppgave hen ikke kan løse, og bekrefter samtidig at hen ikke er naturlig nå. Gi en konkret handling i stedet: «se på meg, ikke i kameraet», «fortell det til meg som om jeg aldri har vært her».",
       },
       {
         type: "avsnitt",
@@ -599,7 +599,7 @@ export const OPPTAK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Film hvert dekningsbilde lenger enn du tror du trenger. Et klipp på to sekunder kan ikke forlenges; ett på åtte kan alltid kortes. Dette er den billigste forsikringen som finnes på en produksjonsdag.",
+          "Film hvert dekningsbilde lenger enn du tror du trenger. Et klipp på to sekunder kan ikke forlenges; ett på åtte kan alltid kortes. Det koster noen sekunder på dagen, og redder et klipp du ellers ikke kan bruke.",
       },
       { type: "seksjon", id: "ro", tittel: "Kameraet i ro" },
       {

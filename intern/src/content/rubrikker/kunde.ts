@@ -289,7 +289,7 @@ export const KUNDE: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Dette er dessuten en av grunnene til at Reflektor selger som vi gjør. Vi sier tydelig hva som ikke inngår, fordi «SoMe-byrå» betyr ulike ting hos ulike leverandører. Ærligheten er salgsargumentet — ikke et forbehold vi helst skulle vært foruten.",
+          "Vi sier tydelig hva som ikke inngår, fordi «SoMe-byrå» betyr ulike ting hos ulike leverandører. En kunde som vet hva hen ikke får, blir sjeldnere skuffet tre måneder ut.",
       },
     ],
   },

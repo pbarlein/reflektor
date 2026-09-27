@@ -61,7 +61,7 @@ export const MARKED: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Det begrunner leveransen vår. Instagram med krysspublisering til Facebook treffer bredt i Norge på tvers av alder, med én produksjon. For de aller fleste norske bedrifter med et lokalt nedslagsfelt er det den mest effektive kombinasjonen som finnes — ikke fordi det er enklest for oss, men fordi det er der folk faktisk er.",
+          "Det begrunner leveransen vår. Instagram med krysspublisering til Facebook treffer bredt i Norge på tvers av alder, og det koster én produksjon. For en bedrift med lokalt nedslagsfelt dekker de to kanalene det meste av publikummet. Vi valgte dem ikke fordi de er enklest for oss, men fordi det er der folk er.",
       },
       { type: "seksjon", id: "tiktok", tittel: "Når kunden spør om TikTok" },
       {

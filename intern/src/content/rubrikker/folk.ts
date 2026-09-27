@@ -340,7 +340,7 @@ export const FOLK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Åpne noe du lagde for tre måneder siden og se på det uten å huske hvorfor valgene ble tatt. Det er den billigste kvalitetskontrollen som finnes, og den eneste måten å oppdage vaner du ikke visste du hadde.",
+          "Åpne noe du lagde for tre måneder siden og se på det uten å huske hvorfor valgene ble tatt. Det koster ingenting, og det er den eneste måten å oppdage vaner du ikke visste du hadde.",
       },
       { type: "seksjon", id: "stjel", tittel: "Stjel systematisk" },
       {

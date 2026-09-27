@@ -33,7 +33,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "2 poster i uken × 52 uker = 104 i året, altså 8,7 i måneden. Det er derfor produksjonsmålet er 8–10. Én video er én post, og de to postene går til Instagram med krysspublisering til Facebook — ikke to på hver.",
+          "2 poster i uken. En måned har fire eller fem publiseringsuker, altså åtte eller ti poster — det er derfor produksjonsmålet er 8–10. Én video er én post, og de to postene går til Instagram med krysspublisering til Facebook — ikke to på hver.",
       },
       { type: "seksjon", id: "forsprang", tittel: "Forspranget" },
       {

@@ -76,7 +76,7 @@ export const tilbud = {
     "Én produksjonsdag per måned hos dere, hos oss eller ute på lokasjon",
     "Produksjonsmål: 8–10 videoer ferdig redigert per måned",
     "Publisering til Instagram 2 ganger per uke med krysspublisering til Facebook",
-    "Teksting og fargekorrigering",
+    "Resultatbasert optimalisering av det kreative",
     "Fri bruk av alt innhold – annonser, nettsider, skjermer, presentasjoner",
   ],
 
@@ -86,13 +86,14 @@ export const tilbud = {
    * leveranse» er to ulike løfter.
    */
   stillbilder:
-    "Stillbilder når dere trenger dem. Si fra i planleggingen, så dekkes det på samme produksjonsdag. Kapasiteten deles med video – derfor er 8–10 et produksjonsmål og ikke en garanti.",
+    "Stillbilder når dere trenger dem. Si fra i planleggingen, så dekkes det på samme produksjonsdag. De kan godt være en del av videoene vi allerede filmer – det er et kreativt valg produsenten tar.",
 
   /**
    * Like viktig som hva som inngår. Dagens side er eksplisitt på dette, og
    * begrunner det: «Vi sier dette tydelig fordi SoMe-byrå betyr ulike ting
    * hos ulike leverandører.» Ikke fjern denne seksjonen for å virke mer
-   * imøtekommende – ærligheten er selve salgsargumentet.
+   * imøtekommende – en kunde som vet hva hen ikke får, blir sjeldnere
+   * skuffet tre måneder ut.
    */
   inngarIkke: [
     "Håndtering av kommentarfelt og meldinger",
@@ -119,8 +120,14 @@ export const tilbud = {
  * Instagram og Facebook», som kan leses som to ganger på HVER, altså fire
  * poster. Det er ikke det som leveres: `posterPerUke` er 2, og de går til
  * Instagram med krysspublisering til Facebook. Regnestykket bekrefter det —
- * 2 x 52 = 104 i året, altså 8,7 i måneden, som lander midt i «8-10 videoer
- * per måned». Én video er én post.
+ * en måned har fire eller fem publiseringsuker, altså åtte eller ti poster,
+ * som er nøyaktig spennet i «8-10 videoer per måned». Én video er én post.
+ *
+ * RETTET 28.09.2026. Her sto «2 x 52 = 104 i året, altså 8,7 i måneden».
+ * Regnestykket stemmer, men 8,7 er et årsgjennomsnitt kledd som en
+ * månedsverdi, og ingen publiserer 0,7 video. Verre: det skjulte hvor
+ * spennet 8-10 faktisk kommer fra, som er antall publiseringsuker i
+ * måneden.
  *
  * Formuleringen er ikke funnet på: «med krysspublisering til Facebook» er
  * ordrett den samme som står i `tilbud.inngar`, og er allerede i bruk på

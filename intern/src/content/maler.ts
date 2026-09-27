@@ -799,7 +799,7 @@ export const MALER: readonly Mal[] = [
       "AVSNITT — hvor mye forsprang køen har, og hva som flyttes først hvis noe glipper.",
     ],
     regler: [
-      "To poster i uken. 2 × 52 = 104 i året, altså 8,7 i måneden — det er derfor produksjonsmålet er 8–10.",
+      "To poster i uken. En måned har fire eller fem publiseringsuker, altså åtte eller ti poster — det er derfor produksjonsmålet er 8–10, og derfor varierer antall rader mellom måneder.",
       "Én video er én post. De går til Instagram og krysspubliseres til Facebook — ikke to på hver.",
       "Lås det tidsavhengige først. Resten fordeles rundt det, og det er den delen som redder rytmen når noe glipper.",
     ],

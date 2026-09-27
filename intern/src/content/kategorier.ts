@@ -40,7 +40,7 @@
  * ── FARGE SKILLER IKKE KATEGORIER ─────────────────────────────────────────
  *
  * Nummer og plassering gjør det. Ti hues ville brutt aksentdisiplinen i
- * AGENTS.md og vært det tydeligste malsignalet som finnes i et intranett.
+ * AGENTS.md og vært et tydelig malsignal i et intranett.
  */
 
 export type KategoriId =

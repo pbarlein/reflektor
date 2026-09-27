@@ -115,20 +115,20 @@ export const INTERNT: readonly Rubrikk[] = [
           "Én produksjonsdag per måned hos dere, hos oss eller ute på lokasjon",
           "Produksjonsmål: 8–10 videoer ferdig redigert per måned",
           "Publisering til Instagram 2 ganger per uke med krysspublisering til Facebook",
-          "Teksting og fargekorrigering",
+          "Resultatbasert optimalisering av det kreative",
           "Fri bruk av alt innhold – annonser, nettsider, skjermer, presentasjoner",
         ],
       },
       {
         type: "merknad",
         tekst:
-          "To publiseringer i uken betyr TO, ikke to på hver kanal. De går til Instagram og krysspubliseres til Facebook. 2 × 52 = 104 i året, altså 8,7 i måneden, og det er derfor produksjonsmålet er 8–10.",
+          "To publiseringer i uken betyr TO, ikke to på hver kanal. De går til Instagram og krysspubliseres til Facebook. Noen måneder har fire publiseringsuker og noen har fem — det er derfor produksjonsmålet er 8–10, og ikke ett fast tall.",
       },
       { type: "seksjon", id: "stillbilder", tittel: "Stillbilder" },
       {
         type: "avsnitt",
         tekst:
-          "Stillbilder leveres ved behov, ikke som fast leveranse: si fra i planleggingen, så dekkes det på samme produksjonsdag. Kapasiteten deles med video, og det er derfor 8–10 er et produksjonsmål og ikke en garanti.",
+          "Stillbilder leveres ved behov, ikke som fast leveranse: si fra i planleggingen, så dekkes det på samme produksjonsdag. De kan godt være en del av videoene vi allerede filmer — det er et kreativt valg produsenten tar.",
       },
       { type: "seksjon", id: "ikke", tittel: "Hva som ikke inngår" },
       {
@@ -139,7 +139,7 @@ export const INTERNT: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Vi sier dette tydelig og tidlig, fordi «SoMe-byrå» betyr ulike ting hos ulike leverandører. Ærligheten er salgsargumentet — ikke et forbehold vi helst skulle vært foruten.",
+          "Vi sier dette tydelig og tidlig, fordi «SoMe-byrå» betyr ulike ting hos ulike leverandører. En kunde som vet hva hen ikke får, blir sjeldnere skuffet tre måneder ut.",
       },
     ],
     kilder: [

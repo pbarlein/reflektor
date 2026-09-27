@@ -125,3 +125,47 @@ Fire ting, ingen av dem visuelle:
 
 Alt annet står fritt: layout, farger, typografi, seksjoner, sidelengde,
 bildebruk, navigasjon. Synlighet og design henger nesten ikke sammen.
+
+## Arbeidsmåte: ferdig betyr ferdig
+
+Bestilt 28.09.2026, etter at flere oppgaver kom inn mens én var i arbeid:
+«gjør alle oppgaver du får 100%, og ikke forhast deg fordi to-do-listen blir
+større. jeg har god tid, og kvalitet på det du gjør er avgjørende».
+
+Det er en rangering, og den er entydig: **kvalitet slår tempo, alltid.**
+Praktisk betyr det:
+
+- **En voksende kø er ikke en grunn til å skynde seg.** Kommer det tre nye
+  oppgaver mens du holder på med én, blir den første ikke mindre viktig av
+  det. Gjør den ferdig først.
+- **Ferdig inkluderer kontrollen.** Typesjekk, lint, tester og bygg i begge
+  prosjektene — og for alt som har et utseende: se på det i en ekte
+  nettleser før du sier det er gjort. Flere feil i dette prosjektet er
+  funnet i skjermbildet, ikke i koden.
+- **En endring gjelder alle stedene den finnes.** Samme setning står ofte i
+  både `src/content/site.ts` og en rubrikk under `intern/src/content/`, og
+  noen ganger i en malinstruks i tillegg. Søk opp alle forekomster før du
+  sier deg ferdig; to steder som sier ulike ting er verre enn to steder som
+  begge er utdaterte.
+- **Si hva som IKKE er gjort.** Blir noe stående halvferdig, skal det stå i
+  svaret med rene ord. Et «ferdig» som ikke holder, koster mer enn en
+  ærlig rest.
+
+## Copy: unngå byråvås
+
+Bestilt 28.09.2026. Teksten skal bygge intern troverdighet, og da er
+selgende formuleringer det dyreste som kan stå der. Disse mønstrene er
+luket ut og skal ikke tilbake:
+
+- **Abstrakt substantiv som helt**: «Ærligheten er salgsargumentet — ikke et
+  forbehold vi helst skulle vært foruten.» Skriv konsekvensen i stedet: «En
+  kunde som vet hva hen ikke får, blir sjeldnere skuffet tre måneder ut.»
+- **Superlativ uten dekning**: «den mest effektive kombinasjonen som
+  finnes». Si hva den faktisk gjør, ikke hvor den rangerer.
+- **Samme retoriske figur om igjen**: «den billigste X som finnes» sto fire
+  steder. Gjentakelsen er i seg selv det som avslører maskinskrevet tekst.
+
+Tankestrek-antitesen er IKKE forbudt. «Ring — ikke send melding og vent» er
+konkret instruks, og «spør kundeansvarlig før du filmer — ikke etter» sier
+noe man kan handle på. Det er den tomme varianten som skal bort: den som
+roser oss i stedet for å si hva som skjer.
