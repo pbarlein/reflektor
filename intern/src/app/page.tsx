@@ -5,11 +5,7 @@ import { Oversikt } from "@/components/Oversikt";
 import { Snarveier } from "@/components/Snarveier";
 import { Sok } from "@/components/Sok";
 import { finnKategori } from "@/content/kategorier";
-import {
-  I_DRIFT,
-  antallUgodkjente,
-  kategorierMedInnhold,
-} from "@/content/rubrikker";
+import { I_DRIFT, kategorierMedInnhold } from "@/content/rubrikker";
 import { lesetid } from "@/lib/lesetid";
 import { lesetilstander, pensumrekkefolge } from "@/lib/lesing";
 import { lestAvBrukeren } from "@/lib/lesing-server";
@@ -82,7 +78,6 @@ export default async function Forside() {
   }));
 
   const antallLest = I_DRIFT.filter((r) => lest.has(r.nr)).length;
-  const ugodkjente = antallUgodkjente();
 
   return (
     <>
@@ -119,23 +114,6 @@ export default async function Forside() {
       </Container>
 
       <Oversikt grupper={grupper} tilstander={tilstander} />
-
-      {ugodkjente > 0 && (
-        /*
-          DEN UBEHAGELIGE LINJA STÅR SIST, OG DEN STÅR HVER DAG.
-
-          Innholdet er ment som obligatorisk lesing, men mye av det er
-          fagutkast som ingen har vedtatt. Å skjule det ville gjort huben
-          til noe den ikke er ennå. Den sto i framdriftskortet før; nå står
-          den under oversikten, som er stedet der man faktisk ser hvilke
-          rubrikker det gjelder.
-        */
-        <p className="mx-auto w-full max-w-[88rem] px-5 pb-12 text-[0.8125rem] text-blekk-svak sm:px-8">
-          {ugodkjente} av {I_DRIFT.length} er fagutkast som ikke er
-          kvalitetssikret ennå. De er merket{" "}
-          <span className="text-varsel">Utkast</span>.
-        </p>
-      )}
     </>
   );
 }

@@ -6,49 +6,64 @@ import type { Lesetilstand } from "@/lib/lesing";
 import { lesetid } from "@/lib/lesetid";
 
 /**
- * Alt innholdet, organisert — og framdriften lest på tre nivåer.
+ * Alt innholdet — satt som en innholdsfortegnelse, ikke som et rutenett.
  *
- * ── HVA SOM VAR GALT MED KARUSELLENE ──────────────────────────────────────
+ * ── HVORFOR FORRIGE UTGAVE BLE REVET ──────────────────────────────────────
  *
- * Forsiden hadde én vannrett karusell PER KATEGORI. Tallene avslører formen:
- * åtte kategorier og seksten rubrikker i drift, altså åtte karuseller med TO
- * kort i hver. En karusell er en form for når det er mer enn det er plass
- * til; med to kort er signalet «det finnes mer her» en løgn.
+ * Den var åtte like kort i to kolonner, hvert med et rundt nummerskilt, en
+ * statuspille og avrundede hjørner, over en segmentert framdriftsstolpe.
+ * Tilbakemeldingen var at det hadde «veldig ai-preg», og den var riktig.
  *
- * ── HVORFOR KORT OG IKKE BARE LINJER (28.09.2026) ─────────────────────────
+ * Kritikken er dokumentert og konkret. Gjennomgangene av maskingenerert
+ * grensesnitt peker på de samme grepene hver gang: rutenett av identiske
+ * kort med ikon, overskrift og to linjer tekst; statuspiller; avrundede
+ * bokser på bokser. «Ingen enkelt detalj er stygg. Det er generisk på en
+ * måte som stille sier at ingen har bestemt noe.»
  *
- * Første indeks var riktig i strukturen og flat å se på: åtte overskrifter
- * med linjer under, alt på samme flate. Den var lett å lese og ga ingen
- * følelse av hvor man var.
+ * Det som gjorde forrige utgave gjenkjennelig var ikke at den var stygg,
+ * men at hver eneste avgjørelse var den statistisk vanligste.
  *
- * Nå er hver kategori et kort. Det koster litt høyde og gir én ting
- * tilbake som linjer ikke kan: en kategori kan bli FERDIG, og et kort kan
- * vise det. Det er hele gamifiseringen, og den er med vilje så liten.
+ * ── HVA DEN ER NÅ, OG HVOR FORMEN KOMMER FRA ──────────────────────────────
  *
- * ── FRAMDRIFT PÅ TRE NIVÅER, INGEN AV DEM MED SKRYT ───────────────────────
+ * En innholdsfortegnelse. Formen er lånt fra trykte tidsskrifter, der en
+ * liste over tekster har vært et løst problem i hundre år, og der ingen har
+ * funnet på å sette den i kort.
  *
- *   1. HELHETEN — en stolpe delt i én rute per rubrikk, gruppert slik
- *      kategoriene er gruppert under. Stolpen ER innholdsfortegnelsen i
- *      miniatyr, ikke en prosent.
- *   2. FASEN — nummerskiltet på kortet fylles når begge rubrikkene i
- *      kategorien er lest. Man skanner etter fylte skilt.
- *   3. RUBRIKKEN — hake eller tom ring på hver linje.
+ * Works in Progress setter sin utgaveliste som rene typografiske linjer —
+ * forfatter, emne, ingenting mer. Ingen rammer, ingen ikoner, ingen
+ * merkelapper. Det er den disiplinen som er hentet hit.
  *
- * Det som IKKE er her, er valgt bort like bevisst: ingen poeng, ingen
- * merker, ingen «bra jobba», ingen konfetti, ingen rekker eller striper.
- * Dette leses av voksne fagfolk hver dag, og et system som klapper deg på
- * hodet for å ha lest en tekst om lyd, blir gjennomskuet første gang og
- * irriterende andre.
+ * Fire grep, alle fra trykk:
  *
- * Belønningen er at ruta fylles. Det er den samme belønningen som ligger i
- * å krysse av på en liste, og den har holdt i hundre år fordi den ikke
- * later som den er noe annet enn det den er.
+ *   1. LEDELINJEN. Prikkelinjen fra tittel til sidetall er selve
+ *      innholdsfortegnelsens kjennetegn. Den gjør to ting på én gang: den
+ *      knytter venstre og høyre kant sammen over en tom flate, og den gir
+ *      øyet en skinne å følge. Ingen maskin foreslår den, fordi den nesten
+ *      ikke finnes på nett.
+ *   2. HENGENDE TALL. Fasenummeret står UTENFOR tekstblokken, i margen.
+ *      Da leses navnene som en rett kolonne, og tallene som et register
+ *      ved siden av.
+ *   3. RYGGRADEN. De fem produksjonsfasene er en REKKEFØLGE — det er hele
+ *      poenget med dem — og en rekkefølge tegnes som en linje. Kunden og
+ *      Oss har ingen rekkefølge, og får derfor ingen linje. At de to
+ *      settes ulikt er ikke inkonsekvens; det er forskjellen mellom dem.
+ *   4. FOTNOTEMERKE I STEDET FOR STATUSPILLE. Fjorten av seksten rubrikker
+ *      er utkast. Fjorten røde piller er ikke et varsel, det er et
+ *      bakteppe. En stjerne i margen og én linje nederst sier det samme,
+ *      og det er slik en fotnote har virket siden 1500-tallet.
  *
- * ── LESESTATUS STÅR FØRST PÅ LINJA ────────────────────────────────────────
+ * ── FRAMDRIFTEN LIGGER I TEKSTEN, IKKE I EN STOLPE ────────────────────────
  *
- * Den er det eneste som skiller to ellers like linjer, og øyet leser fra
- * venstre. Sto den til høyre, måtte man lese hele tittelen for å finne ut
- * om man var ferdig med den.
+ * Den segmenterte stolpen er ute. Den var pen og den var en
+ * dashbord-kliché.
+ *
+ * Nå står tallet der framdriften hører hjemme: i margen ved hver bolk, og
+ * i høyre kolonne på hver linje. En ulest rubrikk viser hva den KOSTER —
+ * «7 min». En lest viser «Lest». Samme plass, to tilstander, ingen ekstra
+ * grafikk. Er hele fasen lest, fylles prikken på ryggraden.
+ *
+ * Det er hele gamifiseringen. Ingen poeng, ingen merker, ingen ros. Dette
+ * leses av voksne fagfolk hver dag.
  */
 
 export type Gruppe = {
@@ -68,191 +83,190 @@ export function Oversikt({
   const erLest = (r: Rubrikk) => tilstander[r.slug] === "lest";
   const alle = grupper.flatMap((g) => g.rubrikker);
   const lest = alle.filter(erLest).length;
+  const utkast = alle.filter((r) => !r.godkjent).length;
 
   return (
     <section
       aria-labelledby="oversikt"
-      className="mx-auto w-full max-w-[88rem] px-5 pt-14 pb-4 sm:px-8 sm:pt-20"
+      className="mx-auto w-full max-w-[88rem] px-5 pt-14 pb-6 sm:px-8 sm:pt-20"
     >
-      <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
-        <div className="min-w-0">
-          <h2
-            id="oversikt"
-            className="display text-[clamp(1.375rem,2.6vw,1.875rem)] tracking-[-0.02em] text-blekk"
-          >
-            Alt innholdet
-          </h2>
-          <p className="mt-1.5 max-w-[56ch] text-[0.9375rem] leading-relaxed text-pretty text-blekk-dempet">
-            Samme rubrikker som over, sortert etter hvor i arbeidet de hører
-            hjemme.
-          </p>
-        </div>
-
-        <Stolpen grupper={grupper} erLest={erLest} lest={lest} />
+      <div className="flex flex-wrap items-baseline justify-between gap-x-10 gap-y-2 border-b border-blekk pb-4">
+        <h2
+          id="oversikt"
+          className="display text-[clamp(1.5rem,3vw,2.25rem)] tracking-[-0.025em] text-blekk"
+        >
+          Alt innholdet
+        </h2>
+        <p className="font-sans text-[0.8125rem] tracking-[0.02em] text-blekk-dempet">
+          <span className="tabular-nums">{lest}</span> av{" "}
+          <span className="tabular-nums">{alle.length}</span> lest
+        </p>
       </div>
 
-      <div className="mt-9 flex flex-col gap-9 sm:gap-11">
+      <div className="mt-10 flex flex-col gap-11 sm:gap-14">
         {BOLKER_I_ORDEN.map((bolk) => {
           const iBolk = grupper.filter((g) => g.kategori.bolk === bolk);
           if (!iBolk.length) return null;
           const b = BOLKER[bolk];
+          const iAlt = iBolk.flatMap((g) => g.rubrikker);
+          const lestHer = iAlt.filter(erLest).length;
+
+          /*
+           * Bare produksjonsfasene har en rekkefølge, og bare de får
+           * ryggraden. Se punkt 3 i toppkommentaren.
+           */
+          const sekvens = bolk === "handverk";
 
           return (
-            /*
-              ── BOLKEN STÅR I MARGEN, IKKE OVER ─────────────────────────
-
-              Første utkast la bolkoverskriften på en linje over et rutenett
-              på tre. Det ser riktig ut for HÅNDVERKET, som har fem
-              kategorier — men KUNDEN har én og OSS har to, og da sto to
-              tredeler av raden tom uten at tomrommet betydde noe. I margen
-              er den samme plassen brukt til noe.
-            */
             <div
               key={bolk}
-              className="grid gap-x-10 gap-y-5 border-t border-kant-regel pt-5 lg:grid-cols-[13rem_1fr]"
+              className="grid gap-x-12 gap-y-6 lg:grid-cols-[15rem_minmax(0,46rem)]"
             >
-              <div>
-                <h3 className="font-sans text-xs font-medium tracking-[0.1em] text-aksent-tekst uppercase">
+              <div className="lg:pt-1">
+                <h3 className="display text-[1.25rem] tracking-[-0.015em] text-blekk">
                   {b.navn}
                 </h3>
                 <p className="mt-1.5 text-[0.9375rem] leading-relaxed text-pretty text-blekk-dempet">
                   {b.ingress}
                 </p>
+                <p className="mt-2.5 font-sans text-[0.75rem] tracking-[0.02em] text-blekk-svak">
+                  <span className="tabular-nums">{lestHer}</span> av{" "}
+                  <span className="tabular-nums">{iAlt.length}</span> lest
+                </p>
               </div>
 
-              <ul className="grid gap-3 sm:grid-cols-2">
-                {iBolk.map(({ kategori, rubrikker }) => (
-                  <li key={kategori.id}>
-                    <Fasekort
-                      kategori={kategori}
-                      rubrikker={rubrikker}
-                      tilstander={tilstander}
-                      erLest={erLest}
-                    />
-                  </li>
+              <ol className="flex flex-col">
+                {iBolk.map(({ kategori, rubrikker }, i) => (
+                  <Fase
+                    key={kategori.id}
+                    kategori={kategori}
+                    rubrikker={rubrikker}
+                    tilstander={tilstander}
+                    erLest={erLest}
+                    sekvens={sekvens}
+                    sist={i === iBolk.length - 1}
+                  />
                 ))}
-              </ul>
+              </ol>
             </div>
           );
         })}
       </div>
+
+      {utkast > 0 && (
+        /*
+          FOTNOTEN. Den hører til stjernene i listen over, og den står
+          derfor rett under dem — ikke nederst på siden som en generell
+          advarsel. Det er slik en fotnote virker.
+        */
+        <p className="mt-12 max-w-[46rem] border-t border-kant-regel pt-3 text-[0.8125rem] leading-relaxed text-pretty text-blekk-svak lg:ml-[calc(15rem+3rem)]">
+          <span aria-hidden className="text-blekk-svak">
+            *
+          </span>{" "}
+          {utkast} av {alle.length} er fagutkast som ikke er kvalitetssikret
+          ennå.
+        </p>
+      )}
     </section>
   );
 }
 
-/**
- * Stolpen: én rute per rubrikk, gruppert som kategoriene under.
- *
- * ── HVORFOR IKKE EN PROSENT ───────────────────────────────────────────────
- *
- * «38 %» er ett tall om en samling på seksten. Det sier hvor langt du er
- * kommet og ingenting om hva som gjenstår. Rutene sier begge deler samtidig,
- * og mellomrommene mellom gruppene gjør at man ser HVOR hullene er — de
- * står i samme rekkefølge som kortene lenger nede.
- *
- * Den er `aria-hidden`. Teksten ved siden av sier «x av y lest», og hvert
- * kort under sier sitt eget. En skjermleser skal ikke måtte høre seksten
- * ruter lest opp for å få en opplysning som allerede står i klartekst.
- */
-function Stolpen({
-  grupper,
-  erLest,
-  lest,
-}: {
-  grupper: readonly Gruppe[];
-  erLest: (r: Rubrikk) => boolean;
-  lest: number;
-}) {
-  const alle = grupper.flatMap((g) => g.rubrikker);
-
-  return (
-    <div className="min-w-0 shrink-0">
-      <p className="text-[0.9375rem] text-blekk-dempet">
-        <span className="font-medium text-blekk tabular-nums">{lest}</span> av{" "}
-        <span className="tabular-nums">{alle.length}</span> lest
-      </p>
-      <div aria-hidden className="mt-2 flex items-center gap-[0.3rem]">
-        {grupper.map((g) => (
-          <div key={g.kategori.id} className="flex gap-[0.1rem]">
-            {g.rubrikker.map((r) => (
-              <span
-                key={r.slug}
-                className={`h-1.5 w-[0.9rem] rounded-[1px] transition-colors duration-500 motion-reduce:transition-none ${
-                  erLest(r) ? "bg-aksent" : "bg-kant-sterk/45"
-                }`}
-              />
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/**
- * Ett kort per kategori.
- *
- * FERDIG-TILSTANDEN ER HELE BELØNNINGEN. Nummerskiltet fylles, og en hake
- * kommer i høyre hjørne. Ingenting annet skjer — ingen animasjon som feirer,
- * ingen tekst som roser. Kortet sier bare hva som er sant.
- *
- * Kategorier uten nummer (Kundeforholdet, Standarden, Markedsposisjon) har
- * ikke fase-nummer i domenet, og får derfor en prikk i skiltets plass. Å
- * finne på et nummer til dem ville antydet en rekkefølge som ikke finnes.
- */
-function Fasekort({
+function Fase({
   kategori,
   rubrikker,
   tilstander,
   erLest,
+  sekvens,
+  sist,
 }: {
   kategori: Kategori;
   rubrikker: readonly Rubrikk[];
   tilstander: Record<string, Lesetilstand>;
   erLest: (r: Rubrikk) => boolean;
+  sekvens: boolean;
+  sist: boolean;
 }) {
   const antallLest = rubrikker.filter(erLest).length;
   const ferdig = antallLest === rubrikker.length && rubrikker.length > 0;
 
   return (
-    <div
-      className={`h-full overflow-hidden rounded-flate border bg-kort transition-colors duration-300 motion-reduce:transition-none ${
-        ferdig ? "border-aksent/35" : "border-kant"
-      }`}
-    >
-      <div className="flex items-center gap-2.5 px-4 pt-3.5 pb-2.5">
-        <span
-          aria-hidden
-          className={`flex size-6 shrink-0 items-center justify-center rounded-full font-sans text-[0.6875rem] font-medium tabular-nums transition-colors duration-300 motion-reduce:transition-none ${
-            ferdig
-              ? "bg-aksent text-white"
-              : "border border-kant text-blekk-svak"
-          }`}
-        >
-          {kategori.nr ? String(kategori.nr).padStart(2, "0") : "·"}
-        </span>
+    <li className={`relative ${sekvens ? "pl-9" : ""} ${sist ? "" : "pb-8"}`}>
+      {sekvens && (
+        <>
+          {/*
+            RYGGRADEN. Den går fra prikken og ned til neste fase, og den
+            stopper på den siste — en linje som fortsetter ut i ingenting
+            lover et sjette steg som ikke finnes.
+          */}
+          {!sist && (
+            <span
+              aria-hidden
+              className="absolute top-4 bottom-0 left-[0.3125rem] w-px bg-kant-regel"
+            />
+          )}
+          <span
+            aria-hidden
+            className={`absolute top-[0.34rem] left-0 size-2.5 rounded-full border transition-colors duration-500 motion-reduce:transition-none ${
+              ferdig ? "border-aksent bg-aksent" : "border-kant-sterk bg-side"
+            }`}
+          />
+        </>
+      )}
 
-        <h4 className="min-w-0 flex-1 text-[0.9375rem] font-medium text-blekk">
+      <div className="flex items-baseline gap-2.5">
+        {kategori.nr && (
+          /*
+            HENGENDE TALL. Det står utenfor navnet, ikke i en sirkel foran
+            det. En sirkel gjør tallet til et ikon; i margen er det et
+            register.
+          */
+          <span
+            aria-hidden
+            className={`display shrink-0 text-[0.9375rem] tabular-nums ${
+              ferdig ? "text-aksent-tekst" : "text-blekk-svak"
+            }`}
+          >
+            {String(kategori.nr).padStart(2, "0")}
+          </span>
+        )}
+        <h4 className="display min-w-0 text-[1.0625rem] tracking-[-0.01em] text-blekk">
           {kategori.navn}
         </h4>
-
+        <Ledelinje />
         <span
-          className={`shrink-0 font-sans text-[0.6875rem] tabular-nums ${
+          className={`shrink-0 font-sans text-[0.75rem] tabular-nums ${
             ferdig ? "text-aksent-tekst" : "text-blekk-svak"
           }`}
         >
-          {ferdig ? "Ferdig" : `${antallLest}/${rubrikker.length}`}
+          {antallLest}/{rubrikker.length}
         </span>
       </div>
 
-      <ul className="flex flex-col">
+      <ul className="mt-1">
         {rubrikker.map((r) => (
           <li key={r.slug}>
             <Linje rubrikk={r} tilstand={tilstander[r.slug] ?? "ulest"} />
           </li>
         ))}
       </ul>
-    </div>
+    </li>
+  );
+}
+
+/**
+ * Prikkelinjen mellom tittel og tall.
+ *
+ * `items-end` på raden og en negativ forskyvning her gjør at linjen legger
+ * seg ved grunnlinjen til SISTE linje i en tittel som brytes, ikke ved den
+ * første. Uten det ville en tittel på to linjer fått streken hengende midt
+ * i luften ved siden av den øverste.
+ */
+function Ledelinje() {
+  return (
+    <span
+      aria-hidden
+      className="mx-2 min-w-[1.5rem] flex-1 translate-y-[-0.3em] border-b border-dotted border-kant-sterk/50"
+    />
   );
 }
 
@@ -264,58 +278,65 @@ function Linje({
   tilstand: Lesetilstand;
 }) {
   const lest = tilstand === "lest";
-  const minutter = lesetid(rubrikk);
 
   return (
     <Link
       href={`/rubrikk/${rubrikk.slug}`}
-      className="group flex items-baseline gap-2.5 border-t border-kant px-4 py-2.5 transition-colors hover:bg-dempet focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-aksent motion-reduce:transition-none"
+      className="group flex items-end py-[0.3125rem] transition-colors hover:text-aksent-tekst focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-aksent motion-reduce:transition-none"
     >
-      {/*
-        Haken er en ring når den er tom. En tom plass ville fungert like
-        godt visuelt, men da mister linjene sitt felles venstrestøtte og
-        titlene står i sikksakk.
-      */}
       <span
-        aria-hidden
-        className={`mt-0.5 flex size-[1.125rem] shrink-0 items-center justify-center rounded-full text-[0.625rem] leading-none transition-colors motion-reduce:transition-none ${
+        className={`text-[0.9375rem] leading-snug text-pretty transition-colors motion-reduce:transition-none ${
           lest
-            ? "bg-blekk-dempet text-kort"
-            : "border border-kant text-transparent group-hover:border-kant-sterk"
+            ? "text-blekk-svak group-hover:text-aksent-tekst"
+            : "text-blekk group-hover:text-aksent-tekst"
         }`}
       >
-        ✓
-      </span>
-
-      <span className="min-w-0 flex-1">
-        <span
-          className={`text-[0.9375rem] leading-snug text-pretty transition-colors group-hover:text-aksent-tekst motion-reduce:transition-none ${
-            lest ? "text-blekk-dempet" : "text-blekk"
-          }`}
-        >
-          {rubrikk.tittel}
-        </span>
+        {rubrikk.tittel}
+        {!rubrikk.godkjent && (
+          <>
+            {/*
+              FOTNOTEMERKET. Se punkt 4 i toppkommentaren: fjorten røde
+              piller er et bakteppe, én stjerne er et merke.
+            */}
+            {/*
+              Samme farge som teksten, slik fotnotemerker settes i trykk.
+              Fjorten røde stjerner på seksten linjer er ikke et varsel,
+              det er et utslett — og et merke som står overalt, merker
+              ingenting. Advarselen ligger i fotnoten under listen.
+            */}
+            <span aria-hidden className="ml-0.5 align-super text-blekk-svak">
+              *
+            </span>
+            <span className="sr-only"> (fagutkast, ikke kvalitetssikret)</span>
+          </>
+        )}
         {tilstand === "ny" && (
           <span className="ml-2 align-middle font-sans text-[0.625rem] font-medium tracking-[0.08em] text-aksent-tekst uppercase">
             Ny
           </span>
         )}
-        {!rubrikk.godkjent && (
-          /*
-            Utkastmerket følger rubrikken overalt ellers på siden, og det
-            skal følge den her også. En indeks som skjuler at halvparten
-            ikke er kvalitetssikret, er en indeks som lyver ved utelatelse.
-          */
-          <span className="ml-2 align-middle font-sans text-[0.625rem] font-medium tracking-[0.08em] text-varsel uppercase">
-            Utkast
-          </span>
-        )}
       </span>
 
-      <span className="shrink-0 font-sans text-[0.6875rem] text-blekk-svak tabular-nums">
-        {minutter} min
+      <Ledelinje />
+
+      {/*
+        ÉN PLASS, TO TILSTANDER. Ulest viser hva den koster deg. Lest viser
+        at den er gjort. Ingen hake i tillegg, ingen dempet bakgrunn — den
+        ene opplysningen som endrer seg, bytter ut den andre.
+      */}
+      {/*
+        BEGGE TILSTANDENE ER DEMPET, OG DET ER MED VILJE.
+
+        «Lest» sto først i aksentfargen. Da ble de ferdige radene det mest
+        synlige i listen — stikk i strid med hva listen er til for. Det som
+        skal trekke øyet er de mørke titlene, altså det som gjenstår.
+
+        Framdriften ligger i prikken på ryggraden og i brøken. Der koster
+        den ingenting.
+      */}
+      <span className="shrink-0 font-sans text-[0.75rem] text-blekk-svak tabular-nums">
+        {lest ? "Lest" : `${lesetid(rubrikk)} min`}
       </span>
-      <span className="sr-only">{lest ? "Lest" : "Ikke lest"}</span>
     </Link>
   );
 }

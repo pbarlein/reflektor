@@ -4,7 +4,7 @@
  * ÅTTE KATEGORIER I TRE BOLKER, og rekkefølgen er lesningens rekkefølge,
  * ikke en alfabetisk liste.
  *
- *   1. HÅNDVERKET   de fem fasene en produksjon faktisk går gjennom
+ *   1. PRODUKSJON   de fem fasene en produksjon faktisk går gjennom
  *   2. KUNDEN       det som avgjør om kunden blir
  *   3. OSS          standarden vår, og hva vi selger
  *
@@ -141,7 +141,14 @@ export const KATEGORIER: readonly Kategori[] = [
 
 export const BOLKER: Record<Bolk, { navn: string; ingress: string }> = {
   handverk: {
-    navn: "Håndverket",
+    /*
+     * Het «Håndverket» til 28.09.2026. Byttet til «Produksjon» fordi det er
+     * ordet huset faktisk bruker: produksjonsdag, produksjonsplan,
+     * produksjonsmål. «Håndverket» var en beskrivelse utenfra av det de
+     * samme fem fasene heter innenfra. Nøkkelen `handverk` står, fordi den
+     * er en identifikator og ikke en etikett.
+     */
+    navn: "Produksjon",
     ingress:
       "De fem fasene en produksjon går gjennom, i den rekkefølgen de skjer.",
   },
