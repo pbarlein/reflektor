@@ -19,6 +19,33 @@ export function tillatIndeksering(): boolean {
 }
 
 /**
+ * Om GTM-containeren skal lastes i det hele tatt.
+ *
+ * LAGT TIL 27.09.2026 ETTER MÅLING. GTM sin egen dekningsrapport viser at
+ * containeren allerede fyrer på `reflektor-ny.vercel.app` — inkludert `/takk`
+ * — og på minst tre Vercel-forhåndsvisninger. Sidevisningene derfra havner i
+ * den ekte GA4-eiendommen og blandes med trafikken til den levende siden.
+ *
+ * Konverteringen er ikke rammet: både Ads-taggen og GA4-nøkkelhendelsen
+ * krever at referreren inneholder reflektor.no, og det gjør den ikke fra en
+ * vercel.app-adresse. Men `page_view`, `session_start` og `first_visit` telles,
+ * og de er grunnlaget for alt annet i rapportene.
+ *
+ * Sporing følger derfor samme bryter som indeksering: begge skal snus i samme
+ * øyeblikk, når DNS peker hit. Det er hele poenget med å ha én bryter.
+ *
+ * `NEXT_PUBLIC_TILLAT_SPORING=true` finnes for det ene tilfellet der man
+ * bevisst vil teste containeren mot en forhåndsvisning. Den skal skrus av
+ * igjen etterpå — hver sidevisning den slipper gjennom er støy i tallene som
+ * måler Reflektors eneste KPI.
+ */
+export function tillatSporing(): boolean {
+  return (
+    tillatIndeksering() || process.env.NEXT_PUBLIC_TILLAT_SPORING === "true"
+  );
+}
+
+/**
  * Kanonisk URL for gjeldende miljø.
  *
  * Peker på det ekte domenet kun når indeksering er slått på. Ellers brukes

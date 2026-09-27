@@ -10,7 +10,7 @@
     "dev:mobil": "next dev --hostname 0.0.0.0",
     "content:check": "node --experimental-strip-types scripts/content-check.ts",
     "lenkesjekk": "node --experimental-strip-types scripts/lenkesjekk.ts",
-    "test": "node --experimental-strip-types --test \"tests/*.test.ts\""
+    "test": "node --experimental-strip-types --import ./tests/alias.mjs --test \"tests/*.test.ts\""
   },
   "dependencies": {
     "next": "16.3.2",

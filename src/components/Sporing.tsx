@@ -1,6 +1,7 @@
 "use client";
 
 import Script from "next/script";
+import { tillatSporing } from "@/lib/miljo";
 import { useSyncExternalStore } from "react";
 
 import { standardSkript } from "@/lib/samtykke";
@@ -101,6 +102,9 @@ export function Sporing() {
     () => false,
   );
 
+  // Ingen container utenfor produksjon. Se tillatSporing() i miljo.ts —
+  // forhåndsvisningene har målt forurenset GA4-eiendommen.
+  if (!tillatSporing()) return null;
   if (!svart) return null;
 
   return (

@@ -133,6 +133,62 @@ const redirects: NextConfig["redirects"] = async () => [
     "/tjenester-1",
   ].map((source) => ({ source, destination: "/", statusCode: 301 })),
 
+  /*
+   * JOKERREGELEN FOR RESTEN AV /tjenester/. Lagt inn 27.09.2026.
+   *
+   * Squarespace sin egen omdirigeringstabell — lest av i GTM-oppdraget, ikke
+   * gjettet — har linja `/tjenester/[name] -> /vart-arbeid`. Den forklarer noe
+   * jeg hadde misforstått: de fire adressene jeg målte til /vart-arbeid
+   * (markedsforing, konverteringsoptimalisering, boligfoto, eiendomsfotograf)
+   * har ingen egen linje i tabellen. De traff denne jokeren.
+   *
+   * Det var altså aldri fire vurderinger, men én sekkeregel. Det bekrefter
+   * samtidig avviket for /tjenester/some-annonsering lenger opp: den traff
+   * jokeren også, så å sende den til /sosiale-medier-byra overstyrer ingen
+   * beslutning.
+   *
+   * Jokeren må stå ETTER alle de spesifikke oppføringene — Next bruker første
+   * treff. Den er trygg her fordi den nye siden ikke har noen /tjenester/-rute
+   * å skygge for.
+   */
+  { source: "/tjenester/:rest+", destination: "/vart-arbeid", statusCode: 301 },
+
+  /*
+   * TRE ADRESSER JEG IKKE HADDE. Fra samme tabell, 27.09.2026.
+   *
+   * Ingen av dem hadde jeg funnet ved å prøve meg fram utenfra — man finner
+   * ikke en adresse man ikke vet finnes. Det er nettopp derfor tabellen var
+   * det viktigste punktet i oppdraget.
+   */
+  {
+    source: "/some-byra",
+    destination: "/sosiale-medier-byra",
+    statusCode: 301,
+  },
+  {
+    source: "/video-og-innhold",
+    destination: "/innholdsproduksjon",
+    statusCode: 301,
+  },
+  {
+    source: "/innholdsproduksjon-arkiv-2026",
+    destination: "/innholdsproduksjon",
+    statusCode: 301,
+  },
+
+  /*
+   * IKKE KOPIERT: `/blogg/[name] -> /blogg`.
+   *
+   * Squarespace har også en joker for bloggen. Den er trygg der, fordi
+   * Squarespace matcher sine egne sider først og jokeren bare fanger resten.
+   *
+   * I Next kjører redirects FØR ruting. En `/blogg/:slug` → `/blogg` ville
+   * derfor slått ut hver eneste ekte artikkel — hele bloggen, som er det ene
+   * vi beholder for lenkeverdiens skyld (~481 refererende domener). De seks
+   * døde slugene står oppført hver for seg lenger nede, og det er den riktige
+   * formen her.
+   */
+
   /* 1 466 visninger, 43 søkeord. Live etterfølger med samme navn. */
   {
     source: "/tjenester/eventfotograf-eventvideo",

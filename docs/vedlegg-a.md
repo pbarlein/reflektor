@@ -2373,9 +2373,16 @@ sti === "/takk"  OG  referrer ~ /^https?:\/\/(www\.)?reflektor\.no\/(?!takk)/i
 ```
 
 `takk_page_view`, som `TakkHendelse.tsx` sender, har **ingen utløser som
-lytter på den** i containeren. AGENTS.md sier at leads måles i GA4 med
-`takk_page_view`. Det er ikke slik containeren er satt opp. Hendelsen er et
-ufarlig, men for tiden virkningsløst krokpunkt.
+lytter på den** i containeren. Hendelsen er et ufarlig, men virkningsløst
+krokpunkt.
+
+> **RETTET 27.09.2026, se A66.** Her sto det videre at «AGENTS.md sier at leads
+> måles i GA4 med `takk_page_view` — det er ikke slik containeren er satt opp».
+> Det var halvveis feil, og feilen var min. Nøkkelhendelsen `takk_page_view`
+> finnes og er ekte: den lages **inne i GA4**, som en opprettet hendelse
+> avledet av `page_view`. AGENTS.md hadde altså rett. Det jeg fant var bare at
+> den ikke kommer fra vår dataLayer-push — og det er en viktig forskjell, men
+> ikke den jeg skrev.
 
 Det betyr at den farligste enkeltendringen noen kan gjøre er en 301 fra
 `/takk`: stien flyttes, konverteringen stilner, og ingenting annet på siden
@@ -2473,3 +2480,124 @@ omdirigeringstabell. Jeg har rekonstruert den ved å prøve én adresse av gange
 utenfra, og kan umulig ha funnet alle. Det nest viktigste er punkt 7: hva som
 faktisk har registrert de 107+ konverteringene i GA4, siden containeren aldri
 sender `takk_page_view`.
+
+## A66 — Fase 1-rapporten. Fire funn som endret kode. 27.09.2026
+
+Pål kjørte oppdraget i `docs/oppdrag-nettleser.md` i en sesjon med Chrome.
+Rapporten er grundig, den er ordrett der jeg ba om det, og den sier eksplisitt
+«har ikke tilgang» der noe manglet — som er nøyaktig det jeg ba om og det som
+gjør den brukbar. Den løste én gåte, avdekket én pågående feil, og ga meg tre
+adresser jeg umulig kunne funnet selv.
+
+### 1. `takk_page_view`-gåten er løst — og jeg tok feil i A64
+
+Nøkkelhendelsen lages **inne i GA4**, som en opprettet hendelse avledet av
+`page_view`:
+
+```
+event_name     contains  page_view
+page_location  contains  takk
+page_referrer  contains  reflektor.no
+```
+
+I A64 skrev jeg at AGENTS.md tok feil om at leads måles på `takk_page_view`.
+**AGENTS.md hadde rett.** Det jeg faktisk hadde funnet var at hendelsen ikke
+kommer fra vår dataLayer-push — en viktig forskjell, men ikke den jeg skrev.
+A64 er rettet.
+
+**Konsekvens for cutover:** betingelsen holder på den nye siden. `/takk`
+inneholder «takk», og referreren er reflektor.no etter byttet — allerede
+verifisert gjennom skjemaets POST → 303.
+
+**Konsekvens for koden:** pushen i `TakkHendelse.tsx` ser ut som en mangel, og
+fristelsen til å koble den opp er stor. Gjør man det, sender GTM en
+`takk_page_view` inn i GA4 samtidig som GA4 lager sin egen med samme navn fra
+samme sidevisning — dobbelttelling av den ene KPI-en. Det er nøyaktig feilen
+containerens versjon 36 ryddet opp i for Meta-taggen. Advarselen står nå i
+komponenten.
+
+### 2. GTM fyrer på forhåndsvisningene. Rettet
+
+Containerens egen dekningsrapport viser at den er aktiv på
+`reflektor-ny.vercel.app` — inkludert `/takk` — og på tre Vercel-previews.
+Sidevisningene derfra går inn i den ekte GA4-eiendommen.
+
+Konverteringene er ikke rammet: både Ads-taggen og GA4-nøkkelhendelsen krever
+referrer fra reflektor.no, og en vercel.app-adresse gir ikke det. Men
+`page_view`, `session_start` og `first_visit` telles, og de er grunnlaget for
+alt annet i rapportene.
+
+`tillatSporing()` i `miljo.ts` styrer nå om containeren lastes, og følger
+indekseringsbryteren. Én bryter snus ved cutover, ikke to.
+`NEXT_PUBLIC_TILLAT_SPORING=true` finnes for bevisst testing.
+
+**Verifisert i nettleser, begge veier.** Uten bryter: banner vist, «Godta
+alle» klikket, `data-samtykke=svart`, dataLayer har samtykkekallene — og
+**null** kall til googletagmanager eller google-analytics. Med bryter: to kall
+til `gtm.js`, og `gtm.js` i dataLayer. En sperre som ikke kan åpnes igjen er
+en feil, ikke en sikring.
+
+### 3. Tre adresser jeg ikke kunne ha funnet
+
+Fra Squarespace sin egen omdirigeringstabell:
+
+| Kilde | Mål |
+|---|---|
+| `/some-byra` | `/sosiale-medier-byra` |
+| `/video-og-innhold` | `/innholdsproduksjon` |
+| `/innholdsproduksjon-arkiv-2026` | `/innholdsproduksjon` |
+
+Man finner ikke en adresse man ikke vet finnes. Det var hele begrunnelsen for
+at tabellen sto som viktigste punkt i oppdraget, og den holdt.
+
+**Og en jokerregel:** `/tjenester/[name] -> /vart-arbeid`. Den forklarer noe
+jeg hadde misforstått. De fire adressene jeg målte til `/vart-arbeid`
+(markedsforing, konverteringsoptimalisering, boligfoto, eiendomsfotograf) har
+ingen egen linje i tabellen — de traff jokeren. Det var aldri fire
+vurderinger, men én sekkeregel.
+
+Det bekrefter samtidig avviket for `/tjenester/some-annonsering`: den traff
+jokeren også, så å sende den til `/sosiale-medier-byra` overstyrer ingen
+beslutning. Jokeren er lagt inn, etter de spesifikke oppføringene.
+
+**Bloggjokeren er IKKE kopiert.** Squarespace har også `/blogg/[name] ->
+/blogg`. Den er trygg der, fordi Squarespace matcher sine egne sider først. I
+Next kjører redirects **før** ruting, så `/blogg/:slug → /blogg` ville slått ut
+hver eneste ekte artikkel — hele bloggen, som er det ene vi beholder for
+lenkeverdiens skyld. Verifisert at artiklene fortsatt svarer 200 etter at
+`/tjenester/`-jokeren ble lagt inn.
+
+### 4. Testene kunne ikke importere halve kodebasen
+
+`miljo.ts` importerer `@/content/site`. Ren node forstår ikke path-aliaset, så
+`node --test` kunne bare importere moduler som tilfeldigvis ikke brukte det.
+Det utelukket blant annet indekseringssperren og sporingsbryteren — de to
+stedene der en feil er mest usynlig.
+
+`tests/alias-hooks.mjs` løser nå `@/…` til `src/…` og prøver filendelsene i
+samme rekkefølge som TypeScript. Fire nye tester dekker bryterne, inkludert at
+en slurvete verdi i Vercel-panelet (`1`, `TRUE`, `ja`) **feiler lukket**.
+Mutasjonstestet.
+
+### Verdt å merke fra rapporten, uten kodeendring
+
+- **En andre Ads-ID i Google-taggen: `AW-16843609035`.** Ikke identifisert.
+  Kontoen vi kjenner er `AW-11026823614`. Bør avklares før cutover.
+- **«Takkeside - Gads Conversion» har status «Needs attention»** og forbedrede
+  konverteringer melder «Setup issues detected». Det gjelder dagens side og er
+  uavhengig av byttet, men det er KPI-en.
+- **GA4 lagrer hendelsesdata i 2 måneder.** Det er standardverdien; 14 måneder
+  er gratis og maksimalt. Kort oppbevaring begrenser utforskningsrapportene,
+  ikke nøkkelhendelsene.
+- **Pål har ikke tilgang til domeneeiendommen** `sc-domain:reflektor.no` i
+  Search Console, bare URL-prefiks-eiendommen. Verifiseringen hviler på både en
+  HTML-fil og DNS. **HTML-fila dør ved cutover**, DNS holder — men tilgangen
+  til domeneeiendommen bør ordnes før byttet, ikke etter.
+- **Meta-taggen i GTM er pausert** siden versjon 36. Pikselen lastes fra
+  Squarespace → Marketing, ikke fra kodeinjeksjon. Forsvinner ved cutover, som
+  beskrevet i `docs/cutover.md` punkt 5.
+- **Squarespace-headeren kaller `gtag('config', 'GTM-N4KGSS93')`** — en config
+  med en GTM-ID. Det er meningsløst og skal ikke kopieres. Det er det ikke.
+- **Tallet «107+»** som AGENTS.md oppgir, finnes ikke igjen i noen rapport.
+  GA4 har 558 `takk_page_view` totalt siden 2022, Ads 76 siste tolv måneder.
+  Ikke en feil som haster, men tallet i AGENTS.md er ikke sporbart.
