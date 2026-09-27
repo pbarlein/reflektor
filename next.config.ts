@@ -35,6 +35,13 @@ const redirects: NextConfig["redirects"] = async () => [
     destination: "/sosiale-medier-byra",
     permanent: true,
   },
+  /*
+   * BEVISST AVVIK FRA DAGENS SIDE. Squarespace 301-er denne til /vart-arbeid
+   * (målt 27.09.2026). Det ser ut som en sekkedestinasjon, ikke en vurdering:
+   * adressen handler om SoMe-annonsering, og /sosiale-medier-byra svarer
+   * presis på det. Regel 1 i AGENTS.md verner live adresser, ikke døde, så
+   * her veier relevans tyngre enn å speile.
+   */
   {
     source: "/tjenester/some-annonsering",
     destination: "/sosiale-medier-byra",
@@ -46,50 +53,149 @@ const redirects: NextConfig["redirects"] = async () => [
     permanent: true,
   },
   /*
-   * TIL FORSIDEN, BESTEMT AV PÅL 19.09.2026: «produktfoto-siden er slettet.
-   * vi driver ikke med produktfoto.»
+   * DET DØDE /tjenester/-TREET — MÅLENE HENTET FRA DAGENS SIDE 27.09.2026.
    *
-   * URL-en hadde 1 935 visninger, posisjon 15,8 og 22 rangerende søkeord,
-   * og pekte derfor til /produktfoto. Den siden finnes ikke og skal ikke
-   * lages — tjenesten er avviklet. En 301 til en side som ikke finnes er
-   * verre enn ingen redirect: den lover en etterfølger og leverer 404.
+   * Hele treet pekte til forsiden her, med kommentaren «vurder å peke dem
+   * mer presist når snapshotene viser hva sidene handlet om». Snapshotene
+   * var aldri riktig kilde. Squarespace har sitt eget redirect-kart, og det
+   * er mer presist enn vårt var: foto- og videoadressene går til
+   * /innholdsproduksjon, casene til /vart-arbeid. Hver enkelt URL er hentet
+   * uten å følge redirects, og målet under er det Squarespace faktisk svarer.
    *
-   * Forsiden er riktig mål her, etter samme regel som resten av det døde
-   * /tjenester/-treet lenger ned: berg lenkeverdien, ikke lat som om
-   * tjenesten finnes. Tallene står igjen for historikken, ikke som et
-   * argument for å gjenopplive siden.
+   * DETTE ER POENGET: målene er ikke en smakssak. Google har allerede
+   * konsolidert disse adressene inn i /innholdsproduksjon og /vart-arbeid.
+   * Sendte vi dem til forsiden ved cutover, ville vi kastet den
+   * konsolideringen og bedt Google lære alt på nytt — mot en mindre
+   * relevant side. Samme prinsipp som bloggmålene lenger ned: dagens side
+   * er kartet.
+   *
+   * Ett bevisst avvik, /tjenester/some-annonsering, er merket lenger opp.
    */
-  { source: "/tjenester/produktfoto", destination: "/", permanent: true },
-  /* 1 466 visninger, 43 søkeord. Samme resonnement. */
+
+  /* Foto og video → innholdsproduksjon, som i dag. */
+  ...[
+    "/tjenester/foto-og-video",
+    "/tjenester/fotograf",
+    "/tjenester/videograf",
+    "/tjenester/videoproduksjon",
+    "/tjenester/matfotograf",
+    "/tjenester/bedriftsfoto",
+    "/tjenester/bilderavansatte",
+    /*
+     * PRODUKTFOTO: TJENESTEN ER AVVIKLET (Pål, 19.09.2026). Adressen står
+     * her kun for lenkeverdien, ikke som et argument for å gjenopplive
+     * siden — og lenkeverdien er målt til nær null: én backlink, nofollow,
+     * fra DR 22 med trafikk 1, sist sett 15.03.2025. De 1 935 «visningene»
+     * i notatet over var visninger i Search Console, ikke lenker. To helt
+     * ulike ting. Redirecten koster ingenting og tas med, men her er det
+     * ingenting å redde.
+     */
+    "/tjenester/produktfoto",
+  ].map((source) => ({
+    source,
+    destination: "/innholdsproduksjon",
+    permanent: true,
+  })),
+
+  /* Case- og resultatadresser → vårt arbeid, som i dag. */
+  ...[
+    "/tjenester/markedsforing",
+    "/tjenester/konverteringsoptimalisering",
+    "/tjenester/boligfoto",
+    "/tjenester/eiendomsfotograf",
+  ].map((source) => ({
+    source,
+    destination: "/vart-arbeid",
+    permanent: true,
+  })),
+
+  /* Uten en nærmere etterfølger → forsiden, som i dag. */
+  ...[
+    "/tjenester",
+    "/tjenester/seo",
+    "/tjenester/betalt-sok",
+    "/tjenester/performance-marketing",
+    /* Duplikat av tjenesteoversikten. 404 i dag. */
+    "/tjenester-1",
+  ].map((source) => ({ source, destination: "/", permanent: true })),
+
+  /* 1 466 visninger, 43 søkeord. Live etterfølger med samme navn. */
   {
     source: "/tjenester/eventfotograf-eventvideo",
     destination: "/eventfotograf-eventvideo",
     permanent: true,
   },
-  /* 87 visninger, posisjon 8,7. Oversikten finnes ikke lenger – til forsiden. */
-  { source: "/tjenester", destination: "/", permanent: true },
 
   /*
-   * Resten av /tjenester/-treet er 404 uten en åpenbar etterfølger. De sendes
-   * til forsiden for å berge lenkeverdi. Vurder å peke dem mer presist når
-   * snapshotene viser hva sidene faktisk handlet om.
+   * ADRESSER MED LENKER SOM IKKE STOD I KARTET. Lagt inn 27.09.2026.
+   *
+   * Funnet ved å spørre Ahrefs om hver URL som har minst én dofollow-lenke,
+   * i stedet for å gå ut fra /tjenester/-treet. Ingen av dem stod her, alle
+   * er målt døde eller omdirigerte på dagens side, og uten dette ville de
+   * blitt 404 ved cutover.
+   *
+   * /butikk-hovedside er den største enkeltposten utenom forsiden: 11
+   * refererende domener og 14 dofollow-lenker, høyeste kilde DR 74. Det er
+   * mer dofollow-lenkeverdi enn noen annen underside har. Den er en rest fra
+   * nettsiden før Squarespace — .php-adresser og /index.php/513806 — og
+   * Squarespace 301-er dem alle til forsiden i dag.
    */
+
+  /* Gammel nettbutikk og .php-rester → forsiden, som i dag. */
   ...[
-    "/tjenester/seo",
-    "/tjenester/betalt-sok",
-    "/tjenester/markedsforing",
-    "/tjenester/performance-marketing",
-    "/tjenester/konverteringsoptimalisering",
-    "/tjenester/foto-og-video",
-    "/tjenester/videograf",
-    "/tjenester/videoproduksjon",
-    "/tjenester/fotograf",
-    "/tjenester/matfotograf",
-    "/tjenester/boligfoto",
-    "/tjenester/bedriftsfoto",
-    "/tjenester/eiendomsfotograf",
-    "/tjenester/bilderavansatte",
+    "/butikk-hovedside",
+    "/butikk-hovedside/513806",
+    "/butikk-hovedside/index.php/513806",
+    "/butikk-hovedside/Video-og-lydtenester.php",
+    "/index.php/513806",
+    "/513806",
+    "/Video-og-lydtenester.php",
+    "/flaminko",
   ].map((source) => ({ source, destination: "/", permanent: true })),
+
+  /* Squarespace-foto uten /tjenester/-prefiks. 404 i dag. */
+  ...[
+    "/fotograf",
+    "/bedriftsfoto",
+    "/bilderavansatte",
+    "/matfoto",
+  ].map((source) => ({
+    source,
+    destination: "/innholdsproduksjon",
+    permanent: true,
+  })),
+
+  /* Case- og kategorisider. 404 i dag. */
+  ...[
+    "/matogdrikke/orkla",
+    "/matogdrikke/wolt",
+    "/sport",
+    "/eiendomsfotograf",
+    "/prosjekter/nettside-sydspissen-hotell",
+  ].map((source) => ({
+    source,
+    destination: "/vart-arbeid",
+    permanent: true,
+  })),
+
+  /*
+   * Personsider. /palbarlein er 404; de to andre 301-er til /om-oss i dag,
+   * men stod ikke i kartet og ville derfor blitt 404 ved cutover.
+   */
+  ...["/palbarlein", "/magne-finseth-da-fonseca", "/viktor-noren"].map(
+    (source) => ({ source, destination: "/om-oss", permanent: true }),
+  ),
+
+  /*
+   * /videoproduksjon er 404 i dag — ingen etablert destinasjon å speile.
+   * Da velger vi den mest relevante nye siden, ikke forsiden:
+   * /videoproduksjon-i-oslo eier disse ordene i sidearkitekturen.
+   */
+  {
+    source: "/videoproduksjon",
+    destination: "/videoproduksjon-i-oslo",
+    permanent: true,
+  },
 
   // --- Svarte 403, trolig et kodet mellomrom som ble del av slugen ---
   {
@@ -189,6 +295,18 @@ const redirects: NextConfig["redirects"] = async () => [
    * /privacypolicy, /videoproduksjon-i-oslo,
    * /employer-branding-video-oslo, /eventfotograf-eventvideo
    *         – alle live (HTTP 200). Beholdes som de er.
+   *
+   * Vurdert 27.09.2026, funnet i samme Ahrefs-gjennomgang som A63:
+   *
+   * /wp-content/uploads/2020/03/logo-reflektor-minimal.png
+   *         – én dofollow-lenke, men det er en bildefil fra
+   *           WordPress-tiden. En 301 fra et bilde til en HTML-side gir
+   *           ingen lenkeverdi, den gir bare et ødelagt bilde hos den som
+   *           lenker.
+   * /blogg?format=rss
+   *         – fire dofollow, men alle fra vårt eget Squarespace-preview,
+   *           og spørrestrengen treffer /blogg som er live. Ingenting å
+   *           gjøre. En ekte RSS-feed på ny side er en egen vurdering.
    */
 ];
 

@@ -2084,3 +2084,125 @@ grønn. **Hver tekst på nettstedet er nå komplett.**
 Det som gjenstår før lansering er ikke tekst: GTM-triggerne i containeren,
 Apollo/Clarity i personvernerklæringen, og 301-en for
 `/sosiale-medier-byra` på cutover.
+
+## A63 — Lenkeverdien lå ikke der kartet lette. Målt 27.09.2026
+
+Pål spurte hvordan vi kunne redde lenkeverdien til `/tjenester/produktfoto`,
+siden han hadde slettet siden. Svaret på spørsmålet er «det er nesten
+ingenting å redde», men målingen som viste det avdekket et reelt hull et
+helt annet sted.
+
+### Produktfoto hadde aldri lenkeverdi
+
+Ahrefs, alle backlinks mot `reflektor.no` der mål-URL inneholder «foto»:
+
+| Mål | Ref.domener | Dofollow | Merknad |
+|---|---|---|---|
+| `/tjenester/produktfoto` | 1 | **0** | nofollow, DR 22, trafikk 1, sist sett 15.03.2025 |
+| `/tjenester/bedriftsfoto` | 3 | 1 | eneste dofollow er vårt eget Squarespace-preview |
+| `/tjenester/fotograf` | 2 | 3 | alle tre fra vårt eget preview |
+| `/tjenester/matfotograf` | 2 | 0 | begge nofollow |
+| `/tjenester/boligfoto` | 1 | 0 | nofollow |
+
+**To tall ble forvekslet.** Notatet i `next.config.ts` begrunnet
+produktfoto-redirecten med «1 935 visninger, posisjon 15,8 og 22 rangerende
+søkeord». Det er visninger i Search Console — søkesynlighet. Lenkeverdi er
+backlinks. Produktfoto har én, den er nofollow, den kommer fra et
+prissammenligningsnettsted med DR 22 og trafikk 1, og den ble sist sett for
+over seks måneder siden.
+
+Verdt å merke: hver eneste dofollow-lenke i foto-klyngen kommer fra
+`bassoon-blenny-3rs9.squarespace.com` — Reflektors eget Squarespace-preview.
+Det er DR 95 i Ahrefs og ser derfor stort ut i en rapport, men det er oss
+som lenker til oss. Ekstern lenkeverdi i hele foto-klyngen er i praksis
+null.
+
+### Det virkelige hullet: en nettbutikk fra før Squarespace
+
+Da jeg i stedet spurte «hvilken URL som helst med minst én dofollow-lenke»,
+kom dette fram:
+
+| Mål | Ref.domener | Dofollow | Høyeste kilde-DR | I kartet? |
+|---|---|---|---|---|
+| `/` (alle fire varianter) | 625 | 231 | 95 | — |
+| **`/butikk-hovedside/`** | **11** | **14** | **74** | **nei** |
+| `/butikk-hovedside/513806` m.fl. | 2 | 2 | 10 | nei |
+| `/Video-og-lydtenester.php` | 2 | 1 | 46 | nei |
+| `/prosjekter/nettside-sydspissen-hotell/` | 1 | 1 | 1,6 | nei |
+
+`/butikk-hovedside/` er den største enkeltposten utenom forsiden — mer
+dofollow-lenkeverdi enn noen annen underside på nettstedet. Den er en rest
+fra siden før Squarespace: `.php`-adresser og `/index.php/513806`.
+Squarespace 301-er dem alle til forsiden i dag, men **ingen av dem stod i
+`next.config.ts`**. Ved cutover ville de blitt 404, og de fjorten
+dofollow-lenkene ville pekt i tomrommet.
+
+Til sammen fjorten adresser med lenker manglet i kartet. Alle er nå lagt
+inn og verifisert.
+
+### Squarespace hadde et bedre kart enn vårt
+
+Dette er det viktigste funnet. Vårt kart sendte hele det døde
+`/tjenester/`-treet til forsiden, med kommentaren «vurder å peke dem mer
+presist når snapshotene viser hva sidene handlet om». Snapshotene var aldri
+riktig kilde — dagens side svarer selv. Hentet 27.09.2026, uten å følge
+videre:
+
+| Kilde | Squarespace i dag | Vårt kart før |
+|---|---|---|
+| `/tjenester/produktfoto` | `/innholdsproduksjon` | `/` |
+| `/tjenester/fotograf`, `/videograf`, `/videoproduksjon`, `/matfotograf`, `/bedriftsfoto`, `/bilderavansatte`, `/foto-og-video` | `/innholdsproduksjon` | `/` |
+| `/tjenester/markedsforing`, `/konverteringsoptimalisering`, `/boligfoto`, `/eiendomsfotograf` | `/vart-arbeid` | `/` |
+| `/tjenester/seo`, `/betalt-sok`, `/performance-marketing` | `/` | `/` |
+
+**Google har allerede konsolidert disse adressene** inn i
+`/innholdsproduksjon` og `/vart-arbeid`. Å sende dem til forsiden ved
+cutover ville kastet den konsolideringen og bedt Google lære alt på nytt —
+mot en mindre relevant side. Kartet speiler nå dagens side, samme prinsipp
+som bloggmålene.
+
+Produktfoto er altså ikke lenger et unntak som må forklares: den følger
+foto-klyngen til `/innholdsproduksjon`, akkurat som Squarespace gjør. Ingen
+side lover en produktfoto-tjeneste som ikke finnes.
+
+**Ett bevisst avvik.** `/tjenester/some-annonsering` 301-es til
+`/vart-arbeid` på Squarespace. Det ser ut som en sekkedestinasjon, ikke en
+vurdering — adressen handler om SoMe-annonsering, og `/sosiale-medier-byra`
+svarer presis på det. Regel 1 verner live adresser, ikke døde, så her veier
+relevans tyngre enn å speile. Avviket er kommentert i `next.config.ts`.
+
+### Redirect-kartet hadde ingen tester
+
+Dette er prosjektets mest gjentatte feil — AGENTS.md advarer mot den to
+ganger, og fila selv dokumenterer tre tilfeller med samme form: A40
+(redirect til en side som ikke fantes), A54 (ni bloggslugs uten innhold) og
+`/gratis-strategimote` (oppført som live lenge etter at den var slettet).
+«Et kart som var riktig da det ble tegnet.»
+
+Feilen er usynlig i bygget. Next godtar en 301 til hva som helst, og
+hverken lint, `content:check` eller lenkesjekken så på dette kartet. Det
+første som merker den er betalt trafikk som lander på en 404.
+
+`tests/redirects.test.ts` dekker nå fire ting uten å måtte være på nett:
+
+1. ingen live annonseside er kilde i en redirect (regel 1)
+2. hvert mål finnes faktisk som rute
+3. ingen kjeder og ingen selvreferanser — en kjede taper lenkeverdi
+4. ingen kilde er oppført to ganger — Next bruker den første, så den andre
+   er død kode som ser virksom ut
+
+**Testene er mutasjonstestet.** Hver av de fire ble verifisert ved å innføre
+nettopp feilen den skal fange — `/reklamefilm` som kilde, mål `/produktfoto`,
+kjeden `/hjem → /kontakt → /kontaktoss`, `/hjem` oppført to ganger — og alle
+fire feilet som de skulle. En vaktpost som ikke kan feile er verdiløs.
+
+Det testene **ikke** kan avgjøre er om en kilde faktisk er død på dagens
+side. Det krever et oppslag mot reflektor.no og må gjøres for hånd. Det står
+i kommentaren øverst i testfila.
+
+### Verifisert
+
+36 redirects hentet mot produksjonsbygget, hver fulgt til endelig mål: alle
+lander på ventet side med 200. De fire live annonsesidene svarer fortsatt
+200 direkte, uten omdirigering. 25 tester grønne, lint grønn,
+`content:check` grønn, lenkesjekk grønn.
