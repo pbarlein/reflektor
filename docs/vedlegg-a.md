@@ -2408,3 +2408,68 @@ kilde i en redirect, og `/takk` må finnes som rute. Begge mutasjonstestet.
 - `docs/cutover.md` punkt 5 og 6, og en merknad om at Ads er slått av
 - Kommentaren i `src/lib/samtykke.ts` rettet
 - 28 tester grønne
+
+## A65 — DNS lest utenfra. To cutover-risikoer lukket. 27.09.2026
+
+Pål ba om en prompt til en chat med nettlesertilgang. Før jeg skrev den,
+sjekket jeg hva jeg kunne hente selv — og det var mer enn ventet. `dig` finnes
+ikke i containeren, men DNS over HTTPS gjør samme jobb.
+
+| Post | Verdi | TTL |
+|---|---|---|
+| NS | `ns01.one.com`, `ns02.one.com` | 14400 |
+| A | `198.185.159.144/145`, `198.49.23.144/145` (Squarespace) | 3600 |
+| www | CNAME `ext-cust.squarespace.com` | 3600 |
+| MX | Google Workspace, fem poster | 3600 |
+| TXT | `v=spf1 include:_spf.google.com ~all` | 3600 |
+| TXT | `google-site-verification=2pMbMPOPnQDsDXTxmJd4lvf4zihwQf_JC757eWmiyMs` | 3600 |
+
+### 1. E-posten er trygg, og vi vet nå hvorfor
+
+DNS ligger hos **one.com**, ikke hos Squarespace. Det betyr at byttet er en
+endring av A- og CNAME-poster i one.com-panelet — Squarespace røres ikke, og
+**nameserverne skal ikke flyttes**.
+
+Det er avgjørende. Google Workspace hentes via MX-postene i samme sone. Flyttes
+nameserverne, følger ikke MX-postene med med mindre de settes opp på nytt hos
+den nye leverandøren — og da forsvinner e-posten. Det er den klassiske
+katastrofen ved plattformbytte. Med A- og CNAME-endring alene er e-post
+uberørt.
+
+### 2. Search Console-verifiseringen overlever
+
+`google-site-verification` ligger som en **TXT-post i DNS**, ikke som en fil
+Squarespace serverer. Den blir stående gjennom byttet. Hadde den vært
+filbasert, ville verifiseringen falt i det Squarespace ble slått av, og
+historikken i Search Console blitt utilgjengelig midt i den perioden vi trenger
+den mest.
+
+Det kan finnes flere verifiseringsmetoder i tillegg — det står i oppdraget som
+punkt 17.
+
+### 3. TTL er 3600, og det er en handling i forkant
+
+En time betyr at byttet tar opptil en time å slå gjennom, og like lang tid å
+rulle tilbake. Senkes TTL til 300 minst et døgn før, tar det minutter begge
+veier. Det er den eneste DNS-endringen som er trygg å gjøre i forkant, og den
+gjøres av Pål hos one.com.
+
+### 4. `reflektor.no` er ikke lagt til i Vercel ennå
+
+Prosjektet `reflektor-ny` har bare `reflektor-ny.vercel.app`. Å legge til
+domenet endrer ikke DNS og påvirker ikke dagens side — Vercel viser bare hvilke
+poster som skal settes, og forbereder sertifikat. Jeg har tilgang, men det er en
+endring på produksjonsoppsettet, så jeg gjør det ikke uten beskjed.
+
+### Oppdraget
+
+`docs/oppdrag-nettleser.md` er en ferdig prompt til en sesjon med Chrome. Den
+er delt i en ren leseefase og én enkelt endring som venter på Pål, og den
+starter med det som allerede er målt — slik at den andre sesjonen ikke utleder
+ting på nytt eller motsier det.
+
+Det viktigste enkeltspørsmålet i oppdraget er punkt 20, Squarespace sin egen
+omdirigeringstabell. Jeg har rekonstruert den ved å prøve én adresse av gangen
+utenfra, og kan umulig ha funnet alle. Det nest viktigste er punkt 7: hva som
+faktisk har registrert de 107+ konverteringene i GA4, siden containeren aldri
+sender `takk_page_view`.
