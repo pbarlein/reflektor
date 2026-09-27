@@ -49,6 +49,17 @@ bygget i 2026 har ennå ingen tall. Fravær av data er ikke bevis på fravær av
 verdi. Bruk Ahrefs til å finne URL-er med lenker som må redirigeres – ikke til
 å avgjøre hva siden skal handle om.
 
+## Slik skal svar skrives (bestilt av Pål 27.09.2026)
+
+Pål er ikke teknisk og bruker for lang tid på å lese. **Kort, konkret, og kun
+det som betyr noe.**
+
+- Svar på det han spurte om. Ikke rapporter alt som ble gjort underveis.
+- Én anbefaling, ikke en gjennomgang av alternativene.
+- Ingen kodeord, filnavn eller tabeller med mindre han ber om det.
+- Trenger han en avgjørelse: still spørsmålet på én linje.
+- Det lange hører hjemme i `docs/` og i commit-meldingen, ikke i chatten.
+
 ## Praktisk
 
 - Alt tekstinnhold bor i `src/content/site.ts`, ikke i komponentene. Felt merket
