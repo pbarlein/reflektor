@@ -101,13 +101,13 @@ function Merket({ merke }: { merke: Merke }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       /*
-        STØRRELSEN ER BUNDET NEDOVER, IKKE BARE OPPOVER. På 390 px er ruta
-        170 px bred og like høy. Med 72 px merke og en tittel på to linjer
-        — «Skriv on-boardingsmail» — gikk innholdet ut under kanten.
-        `shrink-0` ville låst merket og dyttet tittelen ut; i stedet er
-        merket lite på telefon og stort fra sm, der plassen finnes.
+        MERKET FØLGER RUTEN, OG RUTEN ER BLITT LITEN. Med seks på én linje er
+        ruta rundt 220 px, ikke 340. Et merke på 96 px ville da tatt nesten
+        halve høyden og presset tittelen ut under kanten — det skjedde
+        allerede på telefon med 72 px. 40 til 48 px er nok: merket skal gjøre
+        ruta gjenkjennelig på en halv omgang med øynene, ikke være motivet.
       */
-      className="size-11 text-blekk/10 transition-colors duration-300 group-hover:text-aksent/45 group-focus-visible:text-aksent/45 motion-reduce:transition-none sm:size-[6rem]"
+      className="size-10 text-blekk/10 transition-colors duration-300 group-hover:text-aksent/50 group-focus-visible:text-aksent/50 motion-reduce:transition-none sm:size-12"
     >
       {STREKER[merke]}
     </svg>
@@ -125,14 +125,21 @@ export function Snarveier() {
       </h2>
 
       {/*
-        BREDDEN ER BUNDET, OG DET ER KVADRATETS SKYLD. Rutenettet arver 88
-        rem fra resten av siden; delt på tre gir det 460 px ruter, og en
-        kvadratisk rute på 460 px er ikke en knapp lenger — det er et
-        plakatfelt med tre ord i. 68 rem gir ruter rundt 340 px, som er stort
-        nok til å treffe uten å tenke og lite nok til at alle seks er synlige
-        samtidig.
+        ── ALLE SEKS PÅ ÉN LINJE ─────────────────────────────────────────
+        Bestilt 28.09.2026. Det er ikke bare tettere: seks ruter på én linje
+        leses i ett blikk, mens 3×2 tvinger øyet ned og tilbake, og da blir
+        de tre nederste «resten». Alle seks er likeverdige, og én linje er
+        den eneste formen som viser det.
+
+        Ruta blir rundt 220 px på 1440. Det er over dobbelt så stort som
+        anbefalt minste treffområde, og under grensen der en kvadratisk
+        flate begynner å kreve et motiv for ikke å se tom ut.
+
+        Trinnene under er ikke pynt: 2 på telefon, 3 på liten skjerm, 6 fra
+        stor. På mellomstore vinduer ville seks 1:1-ruter blitt 120 px, og
+        da får ikke «Skriv on-boardingsmail» plass på to linjer engang.
       */}
-      <ul className="mt-3.5 grid max-w-[68rem] grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-3">
+      <ul className="mt-3.5 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-6">
         {SNARVEIER.map((s) => (
           <li key={s.href}>
             <Link
@@ -173,12 +180,12 @@ export function Snarveier() {
                 mange linjer tittelen tar — to linjer på «Skriv
                 on-boardingsmail», én på «Dine kunder».
               */}
-              <span className="relative flex min-h-0 flex-1 items-center justify-center py-1 sm:py-2">
+              <span className="relative flex min-h-0 flex-1 items-center justify-center py-1">
                 <Merket merke={s.merke} />
               </span>
 
               <span className="relative">
-                <span className="display block text-[clamp(1rem,2.4vw,1.5rem)] leading-[1.14] tracking-[-0.02em] text-balance text-blekk transition-colors group-hover:text-aksent-tekst group-focus-visible:text-aksent-tekst motion-reduce:transition-none">
+                <span className="display block text-[clamp(0.9375rem,1.5vw,1.0625rem)] leading-[1.18] tracking-[-0.02em] text-balance text-blekk transition-colors group-hover:text-aksent-tekst group-focus-visible:text-aksent-tekst motion-reduce:transition-none">
                   {s.tittel}
                 </span>
                 {s.naar && (
