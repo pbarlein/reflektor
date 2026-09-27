@@ -103,7 +103,15 @@ export const tilbud = {
     "Én produksjonsdag per måned hos dere, hos oss eller ute på lokasjon",
     "Produksjonsmål: 8–10 videoer ferdig redigert per måned",
     "Publisering til Instagram 2 ganger per uke med krysspublisering til Facebook",
-    "Teksting og fargekorrigering",
+    /*
+     * BYTTET UT 27.09.2026, BESTILT AV PÅL. Her sto «Teksting og
+     * fargekorrigering». Det er fortsatt del av leveransen — punkt 3 sier
+     * «ferdig redigert», og FAQ-svaret om teksting i tjenester.ts sier det
+     * eksplisitt — men det er håndverk, ikke et salgsargument. De fem andre
+     * punktene svarer på «hva får vi», og dette svarte på «hvordan ser det
+     * ut når det er gjort».
+     */
+    "Resultatbasert optimalisering: vi ser hva som engasjerer, og justerer produksjonsplanene etter det",
     "Fri bruk av alt innhold – annonser, nettsider, skjermer, presentasjoner",
   ],
 
