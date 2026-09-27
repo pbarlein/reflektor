@@ -80,7 +80,20 @@ export const tilbud = {
     "Antall produksjonsdager",
     "Hvor mye etterarbeid filmen krever",
   ],
-  /** Ekstra produksjonsdag for reklamefilm, produktfoto o.l. */
+  /**
+   * Pris for én produksjonsdag UTOVER den som inngår i abonnementet.
+   *
+   * PRESISERT 27.09.2026. Kommentaren sa bare «Ekstra produksjonsdag for
+   * reklamefilm, produktfoto o.l.», og det var uklart om beløpet kom i
+   * tillegg til månedsprisen eller erstattet dagen som allerede inngår.
+   * Derfor sto tallet ubrukt: en side som oppgir feil pris er verre enn en
+   * som ikke oppgir noen.
+   *
+   * Påls svar, ordrett: «30K er prisen på tjenesten vår, planlegging,
+   * produksjon og publisering. Skal du ha en ekstra produksjonsdag må du
+   * betale 30k til.» Det er altså i tillegg. Tallet står nå i FAQ-svaret om
+   * å levere mer enn 8–10 videoer i måneden, som er der spørsmålet stilles.
+   */
   ekstraProduksjonsdag: 30000,
 
   /**

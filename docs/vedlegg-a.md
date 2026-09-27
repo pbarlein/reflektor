@@ -2784,10 +2784,21 @@ originalen, legges begge tilbake på sine egne URL-er.
 
 ### Verdt å merke seg for neste runde
 
-`tilbud.prisdrivere` var definert og ubrukt. Det er `tilbud.ekstraProduksjonsdag`
-(30 000) fortsatt — den ble IKKE tatt i bruk, fordi kommentaren ikke sier om
-beløpet kommer i tillegg til prosjektprisen eller erstatter en dag i den, og en
-side som oppgir feil pris er verre enn en som ikke oppgir noen. Spør Pål.
+`tilbud.prisdrivere` var definert og ubrukt. Det samme var
+`tilbud.ekstraProduksjonsdag` (30 000), fordi kommentaren ikke sa om beløpet
+kom i tillegg eller erstattet dagen som allerede inngår — og en side som
+oppgir feil pris er verre enn en som ikke oppgir noen.
+
+**Avklart samme dag.** Påls ordlyd: «30K er prisen på tjenesten vår,
+planlegging, produksjon og publisering. Skal du ha en ekstra produksjonsdag må
+du betale 30k til.» Altså i tillegg. Tallet står nå i FAQ-svaret «Kan dere
+levere mer enn 8–10 videoer i måneden?», som sa «til samme pris per dag» uten
+å oppgi prisen, og var det eneste stedet på nettstedet som berørte spørsmålet.
+Det er den eneste endringen som er gjort i en migrert FAQ-tekst.
+
+Lærdommen for neste runde er ikke tallet, men at det lå der: to konstanter med
+verifiserte priser, begge ubrukte, begge fordi kommentaren rundt dem var
+uklar. Sjekk `tilbud` mot det sidene faktisk viser før neste innholdsrunde.
 
 Seksjonen «Hvem produserer Reflektor for?» står nesten ordrett likt på
 /innholdsproduksjon og /videoproduksjon-i-oslo — samme kundeliste, ulikt sitat.

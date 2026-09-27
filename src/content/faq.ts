@@ -160,9 +160,21 @@ export const faqSporsmal: FaqPunkt[] = [
     svar: "Dere får full bruksrett til alt vi produserer, på ubestemt tid. Det gjelder nettside, annonser, skjermer i butikk, plakater, trykk, salgspresentasjoner og internt bruk, uten begrensninger på antall visninger, kanaler eller tidsrom. Trenger dere et annet utsnitt, en annen oppløsning eller en versjon tilpasset et bestemt format, ordner vi det. Si fra hva det skal brukes til, så leverer vi deretter. Det er ikke en tilleggstjeneste dere må forhandle om. Skulle et konkret oppdrag ha andre vilkår — for eksempel ved innleide skuespillere, lisensiert musikk eller lokasjoner med egne regler — sier vi fra om det på forhånd. Det er unntaket, ikke regelen.",
     kategori: "pris",
   },
+  /*
+   * TALLET LAGT INN 27.09.2026. Svaret sa «til samme pris per dag» uten å
+   * oppgi hva dagen koster, og det var det eneste stedet på nettstedet som
+   * berørte spørsmålet. Påls ordlyd, bekreftet samme dag: «30K er prisen på
+   * tjenesten vår, planlegging, produksjon og publisering. Skal du ha en
+   * ekstra produksjonsdag må du betale 30k til.» Altså i tillegg, ikke som
+   * erstatning for dagen som allerede inngår.
+   *
+   * Dette er den ENESTE endringen i en migrert FAQ-tekst. Den er gjort fordi
+   * Pål ga tallet, ikke fordi formuleringen ble vurdert — resten av setningen
+   * står som den sto.
+   */
   {
     sporsmal: "Kan dere levere mer enn 8–10 videoer i måneden?",
-    svar: "Ja. Leveransen skalerer med antall produksjonsdager. Én produksjonsdag i måneden gir 8–10 ferdige videoer til 30 000 kr/mnd. Trenger dere mer, legger vi til flere produksjonsdager til samme pris per dag, og publiseringsfrekvensen økes tilsvarende. Har dere flere lokasjoner eller avdelinger, kan produksjonsdagene fordeles på ulike steder. Trenger dere flere varianter av åpningen på en video til testing i annonsering, lager vi det når det er et konkret behov.",
+    svar: "Ja. Leveransen skalerer med antall produksjonsdager. Én produksjonsdag i måneden gir 8–10 ferdige videoer til 30 000 kr/mnd. Trenger dere mer, legger vi til flere produksjonsdager til 30 000 kr per ekstra dag, og publiseringsfrekvensen økes tilsvarende. Har dere flere lokasjoner eller avdelinger, kan produksjonsdagene fordeles på ulike steder. Trenger dere flere varianter av åpningen på en video til testing i annonsering, lager vi det når det er et konkret behov.",
     kategori: "tjenesten",
   },
 ];
