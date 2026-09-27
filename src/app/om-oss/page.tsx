@@ -205,7 +205,14 @@ export default function OmOss() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────────────── */}
-      <section className="pb-24 sm:pb-32">
+      {/*
+        INGEN BUNNPADDING HER. Bunnteksten har `mt-24`, og det er den
+        gjennomgående luften mot footeren — se Bunnlogoer.tsx, der
+        avstanden er begrunnet. Med `pb-24 sm:pb-32` i tillegg ble
+        tomrommet 224 px, altså dobbelt, og Pål meldte at det så tomt ut
+        rett over footeren. Målt 27.09.2026.
+      */}
+      <section>
         <Container>
           <div className="rounded-flate border border-kant px-6 py-12 sm:px-14 sm:py-14">
             <h2 className="max-w-2xl text-3xl text-balance sm:text-4xl">

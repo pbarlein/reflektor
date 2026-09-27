@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Logorad } from "@/components/Logorad";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -134,7 +135,7 @@ export default function Blogg() {
       )}
 
       {/* ── Arkivet ──────────────────────────────────────────────── */}
-      <section className="pb-24 sm:pb-32">
+      <section className="pb-24 sm:pb-20">
         <Container>
           <Merkelapp som="h2">Flere artikler</Merkelapp>
           <ul className="mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-8">
@@ -175,6 +176,21 @@ export default function Blogg() {
           </ul>
         </Container>
       </section>
+
+      {/*
+        LOGORADEN OVER BUNNTEKSTEN. Lagt til 27.09.2026.
+
+        Denne siden endte uten noen form for sosialt bevis — forsiden,
+        tjenestesidene, /om-oss og /vart-arbeid har alle logoraden, disse tre
+        hadde ingenting. Samtidig sto det 224 px tomrom rett over footeren,
+        som Pål meldte om. Raden løser begge: den fyller luften med noe som
+        gjør en jobb, på det siste punktet leseren ser før hun forlater siden.
+
+        `dekorativ` fordi de samme elleve navnene ikke skal leses opp som et
+        eget landemerke av en skjermleser når de ikke bærer ny informasjon.
+        Ingen egen bunnmarg — bunnteksten har `mt-24`, og det er luften.
+      */}
+      <Logorad dekorativ />
     </>
   );
 }

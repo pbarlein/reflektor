@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Logorad } from "@/components/Logorad";
 import Link from "next/link";
 
 import { Container } from "@/components/Container";
@@ -68,7 +69,7 @@ export default function Faq() {
         ledd={[{ navn: "Hjem", sti: "/" }, { navn: "Ofte stilte spørsmål" }]}
       />
 
-      <section className="pt-16 pb-24 sm:pt-24 sm:pb-32">
+      <section className="pt-16 pb-16 sm:pt-24 sm:pb-20">
         <Container>
           <h1 className="max-w-3xl text-4xl text-balance sm:text-5xl lg:text-6xl">
             Ofte stilte spørsmål om SoMe-byrå og fast pris
@@ -192,6 +193,21 @@ export default function Faq() {
           </div>
         </Container>
       </section>
+
+      {/*
+        LOGORADEN OVER BUNNTEKSTEN. Lagt til 27.09.2026.
+
+        Denne siden endte uten noen form for sosialt bevis — forsiden,
+        tjenestesidene, /om-oss og /vart-arbeid har alle logoraden, disse tre
+        hadde ingenting. Samtidig sto det 224 px tomrom rett over footeren,
+        som Pål meldte om. Raden løser begge: den fyller luften med noe som
+        gjør en jobb, på det siste punktet leseren ser før hun forlater siden.
+
+        `dekorativ` fordi de samme elleve navnene ikke skal leses opp som et
+        eget landemerke av en skjermleser når de ikke bærer ny informasjon.
+        Ingen egen bunnmarg — bunnteksten har `mt-24`, og det er luften.
+      */}
+      <Logorad dekorativ />
     </>
   );
 }

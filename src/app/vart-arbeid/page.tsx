@@ -293,7 +293,11 @@ export default function VartArbeid() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────────────── */}
-      <section className="pb-24 sm:pb-32">
+      {/*
+        INGEN BUNNPADDING. Bunnteksten har `mt-24`, og det er luften mot
+        footeren. Med `pb-24 sm:pb-32` i tillegg ble tomrommet 224 px.
+      */}
+      <section>
         <Container>
           <div className="rounded-flate border border-kant px-6 py-12 sm:px-14 sm:py-14">
             <h2 className="max-w-2xl text-3xl text-balance sm:text-4xl">

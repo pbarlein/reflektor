@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Logorad } from "@/components/Logorad";
 
 import Image from "next/image";
 
@@ -41,16 +42,16 @@ export default function KontaktOss() {
         ledd={[{ navn: "Hjem", sti: "/" }, { navn: "Kontakt oss" }]}
       />
 
-      <section id="kontakt" className="pt-16 pb-24 sm:pt-24 sm:pb-32">
+      <section id="kontakt" className="pt-16 pb-16 sm:pt-24 sm:pb-20">
         <Container>
           <Eyebrow>Kontakt</Eyebrow>
           <h1 className="mt-4 max-w-3xl text-4xl text-balance sm:text-5xl lg:text-6xl">
             Se hva vi ville filmet hos dere
           </h1>
           <p className="mt-8 max-w-2xl border-l-2 border-aksent pl-6 text-lg leading-relaxed text-pretty sm:pl-8 sm:text-xl">
-            Dere får et forslag til hvordan en måned med Reflektor kan se ut
-            hos dere, innen {tilbud.strategiforslagVirkedager} virkedager. Vi
-            holder til i Oslo og jobber i hele Norge.
+            Dere får et forslag til hvordan en måned med Reflektor kan se ut hos
+            dere, innen {tilbud.strategiforslagVirkedager} virkedager. Vi holder
+            til i Oslo og jobber i hele Norge.
           </p>
 
           <div className="mt-14 grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
@@ -119,8 +120,8 @@ export default function KontaktOss() {
                     2
                   </span>
                   <span className="leading-relaxed text-pretty">
-                    Innen {tilbud.strategiforslagVirkedager} virkedager får
-                    dere et konkret forslag — ikke en generisk presentasjon.
+                    Innen {tilbud.strategiforslagVirkedager} virkedager får dere
+                    et konkret forslag — ikke en generisk presentasjon.
                   </span>
                 </li>
                 <li className="flex gap-4">
@@ -145,6 +146,21 @@ export default function KontaktOss() {
           </div>
         </Container>
       </section>
+
+      {/*
+        LOGORADEN OVER BUNNTEKSTEN. Lagt til 27.09.2026.
+
+        Denne siden endte uten noen form for sosialt bevis — forsiden,
+        tjenestesidene, /om-oss og /vart-arbeid har alle logoraden, disse tre
+        hadde ingenting. Samtidig sto det 224 px tomrom rett over footeren,
+        som Pål meldte om. Raden løser begge: den fyller luften med noe som
+        gjør en jobb, på det siste punktet leseren ser før hun forlater siden.
+
+        `dekorativ` fordi de samme elleve navnene ikke skal leses opp som et
+        eget landemerke av en skjermleser når de ikke bærer ny informasjon.
+        Ingen egen bunnmarg — bunnteksten har `mt-24`, og det er luften.
+      */}
+      <Logorad dekorativ />
     </>
   );
 }

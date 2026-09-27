@@ -132,9 +132,8 @@ export const artikler: Artikkel[] = [
   {
     slug: "hva-koster-et-some-byra",
     bilde: {
-      fil: "dag1-1600",
-      alt: "Nærbilde av bakverk på brett",
-      fokus: "center 40%",
+      fil: "pa-vei",
+      alt: "Fotograf med stativ, kamera og utstyrskoffert på vei til oppdrag",
     },
     tittel: "Hva koster et SoMe-byrå i Norge? Priser og prismodeller",
     beskrivelse:

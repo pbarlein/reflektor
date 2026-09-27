@@ -49,6 +49,14 @@ bygget i 2026 har ennå ingen tall. Fravær av data er ikke bevis på fravær av
 verdi. Bruk Ahrefs til å finne URL-er med lenker som må redirigeres – ikke til
 å avgjøre hva siden skal handle om.
 
+## Påbegynt arbeid fullføres (bestilt av Pål 27.09.2026)
+
+Kommer det nye oppgaver mens noe pågår, skal **ikke** det pågående krympes for
+å rekke begge. Alt gjøres 100 %, uavhengig av hva som ligger i to-do-lista.
+
+Rekker du ikke alt: si det rett ut og oppgi hva som gjenstår. Ikke lever en
+redusert versjon og kall den ferdig.
+
 ## Slik skal svar skrives (bestilt av Pål 27.09.2026)
 
 Pål er ikke teknisk og bruker for lang tid på å lese. **Kort, konkret, og kun
