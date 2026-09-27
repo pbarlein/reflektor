@@ -57,13 +57,30 @@ function avvist(): NextResponse {
   );
 }
 
+/**
+ * Er inntaket i det hele tatt satt opp?
+ *
+ * ── HVORFOR DETTE ER EN EGEN SJEKK, OG HVORFOR BEGGE RUTENE GJØR DEN ──────
+ *
+ * Bare POST gjorde den først. Åpnet man adressen i en nettleser — altså en
+ * GET — svarte den «Ugyldig eller manglende nøkkel», som ser ut som at
+ * inntaket står klart og bare venter på riktig nøkkel. Det gjorde det ikke:
+ * variabelen var ikke satt i det hele tatt.
+ *
+ * To ruter som svarer forskjellig på samme tilstand, sender den som setter
+ * opp systemet i feil retning. Nå sier begge det samme.
+ */
+function ikkeSattOpp(): NextResponse | null {
+  if (process.env.RAPPORT_NOKKEL) return null;
+  return NextResponse.json(
+    { feil: "RAPPORT_NOKKEL er ikke satt i miljøet. Leveringen er stengt." },
+    { status: 503 },
+  );
+}
+
 export async function POST(foresporsel: NextRequest) {
-  if (!process.env.RAPPORT_NOKKEL) {
-    return NextResponse.json(
-      { feil: "RAPPORT_NOKKEL er ikke satt i miljøet. Leveringen er stengt." },
-      { status: 503 },
-    );
-  }
+  const stengt = ikkeSattOpp();
+  if (stengt) return stengt;
   if (!nokkelOk(foresporsel)) return avvist();
 
   const lengde = Number(foresporsel.headers.get("content-length") ?? 0);
@@ -127,6 +144,8 @@ export async function POST(foresporsel: NextRequest) {
  * og hva han svarte. Uten dette må den gjette på «forrige ukes steg».
  */
 export async function GET(foresporsel: NextRequest) {
+  const stengt = ikkeSattOpp();
+  if (stengt) return stengt;
   if (!nokkelOk(foresporsel)) return avvist();
 
   const type =
