@@ -30,20 +30,38 @@ import { useSpillNarSynlig } from "@/lib/videosynlighet";
  * - Høyden er reservert av containeren, så ingen CLS.
  * - `prefers-reduced-motion` slår av autospill helt. Da står posterbildet.
  */
+/**
+ * Hvor mange medier som vises under lg.
+ *
+ * Seksjonen har elleve. Målt på en 390 px telefon ble den 1 472 px høy — over
+ * halvannen skjermhøyde med bare bilder, og Pål meldte at den krever for mye
+ * rulling. Seks gir tre rader på telefon og to på nettbrett, begge fulle, og
+ * omtrent 700 px.
+ *
+ * Resten blir stående i HTML-en med alt-tekst, skjult med `hidden`. De lastes
+ * ikke — `next/image` er lat, og et element i `display: none` er aldri i
+ * synsfeltet — så det koster ingenting i ytelse, og søk og språkmodeller får
+ * fortsatt hele galleriet.
+ *
+ * Tallet må være delelig med både 2 og 3, ellers får den siste raden hull i
+ * seg på den ene bredden.
+ */
+const MOBILGRENSE = 6;
+
 export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
   const fest = useSpillNarSynlig();
 
-  const celle = (c: Celle, mobilFormat: string) => (
+  const celle = (c: Celle, skjultPaMobil: boolean) => (
     <figure
       key={c.fil}
       /*
-        `break-inside-avoid` og `mb-3` hører til spaltemodusen under lg — se
-        rutenettet nedenfor. De nullstilles fra lg, der cellene igjen er
-        flex-barn med egen høyde.
+        `aspect-[4/5]` gjelder BARE under lg, og er likt for alle cellene —
+        det er dette som gir en rett bunnkant. Fra lg nullstilles det, og
+        cellene blir flex-barn med egen høyde igjen.
       */
-      className={`relative mb-3 break-inside-avoid overflow-hidden rounded-flate bg-flate-dempet ${mobilFormat} lg:mb-0 lg:aspect-auto ${
-        c.enheter === 2 ? "lg:flex-[2]" : "lg:flex-1"
-      }`}
+      className={`relative aspect-[4/5] overflow-hidden rounded-flate bg-flate-dempet lg:aspect-auto lg:block ${
+        skjultPaMobil ? "hidden" : ""
+      } ${c.enheter === 2 ? "lg:flex-[2]" : "lg:flex-1"}`}
     >
       {c.type === "foto" ? (
         <Image
@@ -58,6 +76,8 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
       )}
     </figure>
   );
+
+  let teller = 0;
 
   return (
     <Container>
@@ -86,15 +106,13 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
         et kuratert galleri uten bildetekster er det uten betydning — det
         finnes ingen rekkefølge å miste.
       */}
-      <div className="columns-2 gap-3 sm:columns-3 sm:gap-4 lg:grid lg:h-[60.5rem] lg:grid-cols-4 lg:gap-4 lg:[column-count:auto]">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:h-[60.5rem] lg:grid-cols-4 lg:gap-4">
         {kolonner.map((kol, k) => (
           <div
             key={k}
             className="contents lg:flex lg:h-full lg:flex-col lg:gap-4"
           >
-            {kol.map((c) =>
-              celle(c, c.enheter === 2 ? "aspect-[9/16]" : "aspect-[4/5]"),
-            )}
+            {kol.map((c) => celle(c, teller++ >= MOBILGRENSE))}
           </div>
         ))}
       </div>
