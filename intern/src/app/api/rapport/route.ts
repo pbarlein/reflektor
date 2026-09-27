@@ -30,24 +30,63 @@ export const dynamic = "force-dynamic";
 const MAKS_BYTES = 1_000_000;
 
 function nokkelOk(foresporsel: NextRequest): boolean {
-  const ventet = process.env.RAPPORT_NOKKEL;
+  const ventet = (process.env.RAPPORT_NOKKEL ?? "").trim();
   if (!ventet) return false;
 
-  const gitt =
+  /*
+   * ── KLIPPES I BEGGE ENDER ─────────────────────────────────────────────
+   *
+   * En nøkkel som limes inn i et tekstfelt får ofte et linjeskift eller et
+   * mellomrom med på kjøpet, i den ene enden eller den andre. Det er ikke
+   * en annen nøkkel — det er den samme nøkkelen med usynlig søppel rundt,
+   * og å avvise den lærer ingen noe.
+   */
+  const gitt = (
     foresporsel.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??
     foresporsel.headers.get("x-rapport-nokkel") ??
-    "";
+    ""
+  ).trim();
 
   /*
-   * Lengdesjekken først: `timingSafeEqual` kaster på ulik lengde, og en
-   * feil der ville blitt til 500 i stedet for 401.
+   * Lengdesjekken først: en tegn-for-tegn-sammenligning over ulike lengder
+   * ville lest utenfor strengen.
    */
-  if (gitt.length !== ventet.length) return false;
-  let ulikt = 0;
-  for (let i = 0; i < gitt.length; i++) {
-    ulikt |= gitt.charCodeAt(i) ^ ventet.charCodeAt(i);
+  const like = gitt.length === ventet.length;
+  let ulikt = like ? 0 : 1;
+  if (like) {
+    for (let i = 0; i < gitt.length; i++) {
+      ulikt |= gitt.charCodeAt(i) ^ ventet.charCodeAt(i);
+    }
   }
-  return ulikt === 0;
+  if (ulikt === 0) return true;
+
+  /*
+   * ── DIAGNOSE I LOGGEN, ALDRI I SVARET ─────────────────────────────────
+   *
+   * En avvist levering uten spor er umulig å feilsøke: den som satte opp
+   * oppgaven ser bare «401», og vet ikke om nøkkelen er avkortet, har feil
+   * tegn, eller aldri kom fram.
+   *
+   * Lengdene og formen skrives derfor til Vercel-loggen, som er
+   * tilgangsstyrt. Selve nøkkelen skrives ALDRI noe sted — hverken hele
+   * eller delvis. Lengde og antall like tegn fra start sier nok til å
+   * skille «limte inn feil» fra «limte inn halvparten», uten å røpe noe
+   * som kan brukes.
+   */
+  let felles = 0;
+  while (
+    felles < gitt.length &&
+    felles < ventet.length &&
+    gitt[felles] === ventet[felles]
+  ) {
+    felles += 1;
+  }
+  console.warn(
+    `[rapport] nøkkel avvist · mottatt ${gitt.length} tegn, ventet ${ventet.length} · ` +
+      `like fra start: ${felles} · ` +
+      `header: ${foresporsel.headers.get("authorization") ? "authorization" : foresporsel.headers.get("x-rapport-nokkel") ? "x-rapport-nokkel" : "ingen"}`,
+  );
+  return false;
 }
 
 function avvist(): NextResponse {
