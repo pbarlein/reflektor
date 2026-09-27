@@ -78,9 +78,26 @@ export default async function Dokumenter() {
             <h1 className="mt-2.5 text-[clamp(1.75rem,3.4vw,2.5rem)] tracking-[-0.02em]">
               Velg mal
             </h1>
+            {/*
+              ── HVA DENNE LINJA SKAL GJØRE ────────────────────────────────
+
+              Den skal si hva verktøyet gjør, til en som ikke har brukt det
+              før. Ikke noe mer.
+
+              Forrige utgave lød: «Skjemaet samler det dokumentet faktisk
+              trenger, så ingen glemmer publiseringsmåneden.» Den var halen
+              av en lengre tanke — at et dokument sjelden feiler på språket,
+              men på en manglende opplysning, og at publiseringsmåneden er
+              én slik. Da toppen ble kortet ned, ble eksempelet stående og
+              resonnementet borte, og igjen sto en setning som så ut til å
+              si at skjemaet finnes for å huske én bestemt måned.
+
+              Lærdommen er ikke «skriv lengre». Den er at når man korter
+              ned, er det premisset som må overleve, ikke eksempelet.
+            */}
             <p className="mt-2 max-w-[54ch] text-[1.0625rem] leading-relaxed text-pretty text-blekk-dempet">
-              Skjemaet samler det dokumentet faktisk trenger, så ingen glemmer
-              publiseringsmåneden.
+              Du velger mal, fyller ut skjemaet, og får en ensider du kan sende.
+              Skjemaet spør om alt dokumentet trenger, så ingenting blir glemt.
             </p>
           </Malvelger>
         </div>
