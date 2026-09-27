@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, after, type NextRequest } from "next/server";
 
 import { arkSkjema, deleneI, lesArk, lesSvar } from "@/content/arktype";
 import { briefTilTekst, type Brief } from "@/content/brieftype";
@@ -247,6 +247,35 @@ export async function POST(foresporsel: NextRequest) {
   /* Brukeren lukket fanen: begge fasene skal stoppe. */
   const stopp = new AbortController();
 
+  /*
+   * ── ARBEID SOM SKAL SKJE ETTER AT SVARET ER SENDT ─────────────────────────
+   *
+   * Hukommelsen skrives når dokumentet er levert, ikke før. Produsenten skal
+   * ikke vente på en lagring hen ikke har bedt om.
+   *
+   * FØRSTE FORSØK VAR `void husKunde(...)` RETT ETTER `kontroller.close()`,
+   * OG DET VIRKET ALDRI. Vercel fryser funksjonen i det svaret er ferdig, og
+   * et løfte som fortsatt venter på en TLS-håndtrykk blir revet med. I loggen
+   * kom det ut som to feil per forespørsel:
+   *
+   *   hukommelse: klarte ikke lese kunde/<kunde>.json
+   *   hukommelse: klarte ikke lese laerdom/<mal>.json
+   *
+   *   Client network socket disconnected before secure TLS connection
+   *   was established
+   *
+   * Begge er lesedelen av en skriving — `husKunde` og `husRettelse` leser før
+   * de skriver. At `hentGoogletoken` samtidig virket hver gang, var beviset:
+   * den ventes på INNE i forespørselen. Lagringen var altså aldri i nærheten
+   * av å skje, og hukommelsen hadde stått tom siden den ble bygget.
+   *
+   * `after` er plattformens eget svar på dette: funksjonen holdes i live til
+   * jobben er ferdig. Den registreres synkront i rutehåndtereren, mens
+   * forespørselskonteksten finnes — inne i strømmens `start` er den ikke
+   * garantert å være der.
+   */
+  const etterpaa: (() => Promise<unknown>)[] = [];
+
   const ut = new ReadableStream<Uint8Array>({
     async start(kontroller) {
       const send = (o: unknown) =>
@@ -371,8 +400,14 @@ export async function POST(foresporsel: NextRequest) {
            */
           if (brukt) {
             send({ research: brukt });
-            /* Lagringen skal aldri stoppe dokumentet. */
-            void husKunde(kunde, { research: brukt });
+            /*
+             * Verdien fanges her, ikke i lukningen. `brukt` er en `let` som
+             * kan være null når køen tømmes; det er DENNE researchen som
+             * skal lagres.
+             */
+            const nyResearch = brukt;
+            /* Lagringen skal aldri stoppe dokumentet. Se `etterpaa`. */
+            etterpaa.push(() => husKunde(kunde, { research: nyResearch }));
           }
         }
 
@@ -534,8 +569,9 @@ export async function POST(foresporsel: NextRequest) {
          * Etter at dokumentet er sendt, ikke før. Hukommelsen er et
          * biprodukt, og produsenten skal ikke vente på den.
          */
-        if (kunde) void husKunde(kunde, { dokument: mal.slug });
-        if (tekstRettelse) void husRettelse(mal.slug, tekstRettelse);
+        if (kunde) etterpaa.push(() => husKunde(kunde, { dokument: mal.slug }));
+        if (tekstRettelse)
+          etterpaa.push(() => husRettelse(mal.slug, tekstRettelse));
       } catch (e) {
         if (e instanceof Error && e.name === "AbortError") {
           return kontroller.close();
@@ -571,6 +607,26 @@ export async function POST(foresporsel: NextRequest) {
     cancel() {
       stopp.abort();
     },
+  });
+
+  /*
+   * Køen er tom nå og fylles mens strømmen går. Lukkingen `after` venter på,
+   * skjer etter at strømmen er ferdig, så alt som skulle lagres, ligger der
+   * når den kjører.
+   *
+   * Én om gangen, ikke i parallell. Det er bakgrunnsarbeid ingen venter på,
+   * og to samtidige tilkoblinger mot samme lager er den slags som gjorde
+   * dette vanskelig å feilsøke i utgangspunktet.
+   */
+  after(async () => {
+    for (const jobb of etterpaa) {
+      /* `les` og `skriv` svelger sine egne feil; dette er en siste skanse. */
+      try {
+        await jobb();
+      } catch (e) {
+        console.error("hukommelse: etterarbeid feilet", e);
+      }
+    }
   });
 
   return new NextResponse(ut, {

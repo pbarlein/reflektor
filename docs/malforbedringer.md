@@ -131,3 +131,36 @@ runde seks måtte hen spørre «nå er voice over borte?».
 **Regelen dette er et tilfelle av:** en modell som må velge bort noe, velger
 bort det ingenting forsvarer. Skal noe overleve en innstramming, må det stå
 skrevet at det er bestilt.
+
+## 27.09.2026 — hukommelsen hadde aldri virket
+
+**Symptom i loggen, på hver eneste forespørsel:**
+
+```
+hukommelse: klarte ikke lese kunde/<kunde>.json
+hukommelse: klarte ikke lese laerdom/<mal>.json
+Client network socket disconnected before secure TLS connection was established
+```
+
+**Ikke det det så ut som.** Blob-lagringen var ikke nede, tokenet var ikke
+feil, og API-bruken var riktig. Beviset lå i hva som IKKE feilet:
+`hentGoogletoken` leser fra samme lager og virket hver gang — den ventes på
+inne i forespørselen.
+
+**Årsaken:** `void husKunde(...)` og `void husRettelse(...)` ble fyrt av
+rett etter `kontroller.close()`. Vercel fryser funksjonen i det svaret er
+ferdig, og løftene ble revet med midt i et TLS-håndtrykk. Begge feilene er
+lesedelen av en skriving — begge funksjonene leser før de skriver.
+
+Lagringen skjedde altså aldri. Hukommelsen hadde stått tom siden den ble
+bygget 24.09, uten at noe sa fra.
+
+**Fikset** med `after` fra `next/server`: jobbene legges i en kø mens
+strømmen går, og køen tømmes etter at svaret er ferdig — én om gangen.
+Verifisert lokalt at `after` kjører etter at strømmen lukkes, og at køen er
+fylt når den gjør det.
+
+**Regelen dette er et tilfelle av:** arbeid som skal skje etter et svar, må
+planlegges hos plattformen. Et løfte ingen venter på, er et løfte som dør
+med funksjonen. En test vokter nå mønsteret, siden ingen enhetstest kan se
+selve feilen.
