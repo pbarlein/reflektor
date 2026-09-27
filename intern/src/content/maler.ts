@@ -71,11 +71,15 @@ const GRUNNLAGSFELT: readonly Felt[] = [
 
 export const MALER: readonly Mal[] = [
   /*
-   * ── PRODUKSJONSPLAN + OPPTAKSLISTE BLE ÉN MAL ─────────────────────────
+   * ── OPPTAKSLISTEN BLE EN DEL AV PRODUKSJONSPLANEN ─────────────────────
    *
    * Bestilt 28.09.2026: «jeg er ikke enig i at vi trenger produksjonsplan
    * og opptaksliste. så lenge den er såpass konkret, strippet for
    * unødvendigheter og enkel å forstå, kan disse være ett dokument.»
+   *
+   * Navnet består. Produksjonsplan er det de to var kjent som til sammen,
+   * og det er ordet som sitter i fingrene — malen het kort «Produksjonsdagen»
+   * en time 28.09.2026, og det navnet er nå bare et kallenavn i søket.
    *
    * De to var allerede det samme arbeidet gjort to ganger. Opptakslisten
    * hadde et eget opplastingsfelt som het «Last opp produksjonsplanen»,
@@ -103,9 +107,9 @@ export const MALER: readonly Mal[] = [
    * av åtte kolonner og tre av ti opptak kastet i stillhet. Se `Maltak`.
    */
   {
-    slug: "produksjonsdagen",
+    slug: "produksjonsplan",
     fase: "Før opptak",
-    navn: "Produksjonsdagen",
+    navn: "Produksjonsplan",
     kort: "Planen kunden får, og listen du filmer etter. Ett skjema, ett dokument.",
     ansvarlig: "Produsent",
     naar: "Etter oppstartsmøtet, senest en uke før produksjonsdagen",
@@ -119,7 +123,7 @@ export const MALER: readonly Mal[] = [
       "liste",
     ],
     tak: { rader: 12, kolonner: 8 },
-    kallenavn: ["Produksjonsplan", "Opptaksliste", "Kjøreplan", "Shotliste"],
+    kallenavn: ["Opptaksliste", "Kjøreplan", "Shotliste", "Produksjonsdagen"],
     rubrikker: [
       "produksjonsdag-som-gir-8-10",
       "bransjen-bestemmer-alt",
@@ -811,8 +815,7 @@ export const MALER: readonly Mal[] = [
  * dokumentet har byttet navn.
  */
 export const TIDLIGERE_SLUGGER: Readonly<Record<string, string>> = {
-  produksjonsplan: "produksjonsdagen",
-  opptaksliste: "produksjonsdagen",
+  opptaksliste: "produksjonsplan",
 };
 
 export function malFraSlug(slug: string): Mal | undefined {
@@ -861,7 +864,7 @@ function ensiderregelen(mal: Mal): string {
   /*
    * ── EN MAL KAN BÆRE MER ENN ÉN SIDE ───────────────────────────────────
    *
-   * Produksjonsdagen har to deler med ulik leser: planen kunden får, og
+   * Produksjonsplanen har to deler med ulik leser: planen kunden får, og
    * listen den som filmer holder. Å presse begge ned på én A4 ville gjort
    * nøyaktig det denne teksten advarer mot — kutte det leseren trenger.
    *

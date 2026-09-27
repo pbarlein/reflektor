@@ -28,18 +28,26 @@ test("tomt søk viser alt", () => {
 
 test("navnet treffer, også på en bit av det", () => {
   assert.deepEqual(funn("befaring"), ["Befaringsnotat"]);
-  assert.ok(funn("produksjonsdagen").includes("Produksjonsdagen"));
+  assert.ok(funn("produksjonsplan").includes("Produksjonsplan"));
 });
 
 /**
- * Produksjonsplan og Opptaksliste var to maler fram til 28.09.2026. Navnene
- * sitter i fingrene, og den som skriver dem skal finne arvtakeren — ikke
- * «ingen maler heter noe som ligner».
+ * Opptakslisten var en egen mal fram til 28.09.2026 og er nå del to av
+ * produksjonsplanen. Navnet sitter i fingrene, og den som skriver det skal
+ * finne dokumentet — ikke «ingen maler heter noe som ligner».
  */
 test("de gamle navnene finner den sammenslåtte malen", () => {
-  for (const gammelt of ["produksjonsplan", "opptaksliste", "shotliste"]) {
-    assert.deepEqual(funn(gammelt), ["Produksjonsdagen"], gammelt);
+  /* Ord som bare denne malen bærer, skal treffe den alene. */
+  for (const gammelt of ["opptaksliste", "shotliste"]) {
+    assert.deepEqual(funn(gammelt), ["Produksjonsplan"], gammelt);
   }
+  /*
+   * «Produksjonsdagen» heter ingen mal lenger, men ordet står i teksten til
+   * både befaringsnotatet og publiseringsplanen — begge handler om dagen.
+   * Det er søket som virker, ikke et treff for mye: kravet er at malen er
+   * med, ikke at den er alene.
+   */
+  assert.ok(funn("produksjonsdagen").includes("Produksjonsplan"));
 });
 
 /**

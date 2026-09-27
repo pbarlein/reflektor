@@ -21,7 +21,7 @@ import type { Mal } from "../src/content/maltype.ts";
  * gjennom dit. Testene under er derfor på grensen, ikke på lykketreffet.
  */
 
-const plan = malFraSlug("produksjonsdagen");
+const plan = malFraSlug("produksjonsplan");
 assert.ok(plan);
 
 test("delene er malens skisse uten toppen", () => {
@@ -111,7 +111,7 @@ test("for lange verdier kappes, de kastes ikke", () => {
  * sier «mangler ett, er listen ikke ferdig». Se `Maltak`.
  */
 test("en mal med eget tak beholder det den faktisk trenger", () => {
-  const mal = malFraSlug("produksjonsdagen")!;
+  const mal = malFraSlug("produksjonsplan")!;
   const t = takFor(mal);
   assert.equal(t.kolonner, 8, "åtte kolonner per opptak");
   assert.equal(t.rader, 12, "plass til 8–10 opptak");
@@ -126,7 +126,7 @@ test("en mal med eget tak beholder det den faktisk trenger", () => {
 
 /** Det modellen får vite, må være det samme som valideringen håndhever. */
 test("instruksen oppgir malens eget tak, ikke standarden", () => {
-  const ut = delforklaring(malFraSlug("produksjonsdagen")!);
+  const ut = delforklaring(malFraSlug("produksjonsplan")!);
   assert.match(ut, /«kolonner» \(8 maks\)/);
   assert.match(ut, /«rader» \(12 maks\)/);
 
@@ -191,7 +191,7 @@ test("instruksen sier hvilke deler malen har, og hvor mye som får plass", () =>
     );
     assert.match(ut, /DELENE DU SKAL FYLLE UT/, `${m.slug}`);
     /*
-     * Produksjonsdagen er ikke en ensider — den bærer både kundens plan og
+     * Produksjonsplanen er ikke en ensider — den bærer både kundens plan og
      * opptakslisten. Plassregelen gjelder likevel, med en annen overskrift.
      */
     assert.match(
