@@ -34,7 +34,7 @@ export const REDIGERING: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "En video i en feed konkurrerer ikke med andre videoer. Den konkurrerer med tommelen. Seeren har ikke valgt å se på noe bestemt, og avgjørelsen tas på det som er i bildet — ikke på det som kommer.",
+          "En video i en feed konkurrerer ikke med andre videoer. Den konkurrerer med at seeren ruller videre. Seeren har ikke valgt å se på noe bestemt, og avgjørelsen tas på det som er i bildet — ikke på det som kommer.",
       },
       {
         type: "avsnitt",

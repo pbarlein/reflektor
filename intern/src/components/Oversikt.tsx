@@ -59,21 +59,34 @@ export type Gruppe = {
 export function Oversikt({
   grupper,
   tilstander,
-  neste,
 }: {
   grupper: readonly Gruppe[];
   tilstander: Record<string, Lesetilstand>;
-  /** Slug-en til den første uleste. Se `pensumrekkefolge`. */
-  neste?: string;
 }) {
   const erLest = (r: Rubrikk) => tilstander[r.slug] === "lest";
-  const alle = grupper.flatMap((g) => g.rubrikker);
-  const lest = alle.filter(erLest).length;
-  const utkast = alle.filter((r) => !r.godkjent).length;
+  const utkast = grupper
+    .flatMap((g) => g.rubrikker)
+    .filter((r) => !r.godkjent).length;
 
   const faser = grupper.filter((g) => g.kategori.nr);
   const kunde = grupper.filter((g) => g.kategori.bolk === "kunde");
   const oss = grupper.filter((g) => g.kategori.bolk === "oss");
+
+  /*
+   * ── «START HER» REGNES UT FRA DET SOM FAKTISK VISES ───────────────────
+   *
+   * Merket kom før fra `pensumrekkefolge`, som setter den fremhevede
+   * rubrikken først. Den ligger i «Oss», altså nederst til høyre — mens
+   * seksjonen leser som en vei som begynner med 01 Research øverst til
+   * venstre. Merket sa altså «begynn her» og pekte på rute elleve.
+   *
+   * Rekkefølgen her ER leserekkefølgen: fasene 01–05, så Kunden, så Oss,
+   * i samme orden som de tegnes. Da kan merket og oppsettet ikke komme i
+   * utakt, fordi de leser fra samme liste.
+   */
+  const iVist = [...faser, ...kunde, ...oss].flatMap((g) => g.rubrikker);
+  const lest = iVist.filter(erLest).length;
+  const neste = iVist.find((r) => !erLest(r))?.slug;
 
   return (
     <section
@@ -89,7 +102,7 @@ export function Oversikt({
         </h2>
         <p className="text-[0.9375rem] text-blekk-dempet">
           <span className="font-medium text-blekk tabular-nums">{lest}</span> av{" "}
-          <span className="tabular-nums">{alle.length}</span> lest
+          <span className="tabular-nums">{iVist.length}</span> lest
         </p>
       </div>
 
@@ -104,10 +117,6 @@ export function Oversikt({
               tilstander={tilstander}
               erLest={erLest}
               neste={neste}
-              forrigeFerdig={
-                i > 0 ? faser[i - 1].rubrikker.every(erLest) : undefined
-              }
-              forste={i === 0}
               prioriter={i < 3}
             />
           ))}
@@ -145,7 +154,6 @@ export function Oversikt({
                   tilstander={tilstander}
                   erLest={erLest}
                   neste={neste}
-                  forste={false}
                   prioriter={false}
                 />
               ))}
@@ -165,7 +173,6 @@ export function Oversikt({
                   tilstander={tilstander}
                   erLest={erLest}
                   neste={neste}
-                  forste={false}
                   prioriter={false}
                 />
               ))}
@@ -175,9 +182,9 @@ export function Oversikt({
       </div>
 
       {utkast > 0 && (
-        <p className="mt-10 text-[0.8125rem] text-blekk-svak">
-          <span aria-hidden>*</span> {utkast} av {alle.length} er fagutkast som
-          ikke er kvalitetssikret ennå.
+        <p className="mt-10 border-t border-kant-regel pt-3 text-[0.8125rem] text-blekk-svak">
+          {utkast} av {iVist.length} er fagutkast som ikke er kvalitetssikret
+          ennå. Det står på hver enkelt rubrikk.
         </p>
       )}
     </section>
@@ -201,13 +208,20 @@ function Bolk({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mt-10 sm:mt-12">
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-        <h3 className="display text-[1.125rem] tracking-[-0.015em] text-blekk">
-          {navn}
-        </h3>
-        <p className="text-[0.9375rem] text-blekk-dempet">{ingress}</p>
-      </div>
+    <div className="mt-10 border-t border-blekk/15 pt-5 sm:mt-12">
+      {/*
+        NAVNET PÅ EGEN LINJE. Før sto navn og forklaring inntil hverandre
+        på samme linje, og «Produksjon   De fem fasene en produksjon går
+        gjennom» leste som én løpende setning der det første ordet tilfeldig
+        var uthevet. Over hverandre er det en overskrift og en undertittel.
+
+        Regelen over bolken gjør det samme for blokken som hårstreken gjør
+        for kolonnen: den viser hvor en gruppe begynner.
+      */}
+      <h3 className="font-sans text-[0.75rem] font-semibold tracking-[0.12em] text-blekk uppercase">
+        {navn}
+      </h3>
+      <p className="mt-1 text-[0.9375rem] text-blekk-dempet">{ingress}</p>
       <div className="mt-5">{children}</div>
     </div>
   );
@@ -226,8 +240,6 @@ function Stasjon({
   tilstander,
   erLest,
   neste,
-  forrigeFerdig,
-  forste,
   prioriter,
 }: {
   kategori: Kategori;
@@ -236,43 +248,12 @@ function Stasjon({
   tilstander: Record<string, Lesetilstand>;
   erLest: (r: Rubrikk) => boolean;
   neste?: string;
-  forrigeFerdig?: boolean;
-  forste: boolean;
   prioriter: boolean;
 }) {
   const ferdig = rubrikker.every(erLest) && rubrikker.length > 0;
-  const paaVeien = Boolean(kategori.nr);
 
   return (
     <li>
-      {paaVeien && (
-        /*
-          STASJONSMERKET. Linjen kommer inn fra venstre og farges bare når
-          forrige fase er lest ut — da leses den som tilbakelagt vei, ikke
-          som dekor. Skjult under lg, der stasjonene ligger under hverandre
-          og en vannrett linje ville pekt på ingenting.
-        */
-        <div aria-hidden className="mb-2.5 hidden items-center lg:flex">
-          <span
-            className={`h-px flex-1 ${
-              forste
-                ? "bg-transparent"
-                : forrigeFerdig
-                  ? "bg-aksent/50"
-                  : "bg-kant-regel"
-            }`}
-          />
-          <span
-            className={`mx-1.5 size-2 shrink-0 rounded-full border transition-colors duration-500 motion-reduce:transition-none ${
-              ferdig ? "border-aksent bg-aksent" : "border-kant-sterk bg-side"
-            }`}
-          />
-          <span
-            className={`h-px flex-1 ${ferdig ? "bg-aksent/50" : "bg-kant-regel"}`}
-          />
-        </div>
-      )}
-
       {navn && (
         /*
           HÅRSTREKEN GÅR NØYAKTIG SÅ LANGT SOM KOLONNEN, og det er den som
@@ -381,12 +362,14 @@ function Rute({
       >
         {rubrikk.tittel}
         {!rubrikk.godkjent && (
-          <>
-            <span aria-hidden className="ml-0.5 align-super text-blekk-svak">
-              *
-            </span>
-            <span className="sr-only"> (fagutkast, ikke kvalitetssikret)</span>
-          </>
+          /*
+            INGEN STJERNE PÅ RUTA. Fjorten av seksten rubrikker er utkast,
+            og fjorten merker som først kan tydes av en fotnote to skjermer
+            lenger ned, gjør oversikten vanskeligere å lese uten å gi noen
+            opplysning de kan bruke. Linjen under seksjonen sier det samme
+            for alle sammen, og selve rubrikksiden merker seg selv.
+          */
+          <span className="sr-only"> (fagutkast, ikke kvalitetssikret)</span>
         )}
       </p>
       <p className="mt-0.5 font-sans text-[0.6875rem] text-blekk-svak tabular-nums">

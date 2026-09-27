@@ -41,7 +41,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Grepet er å slutte å tenke i videoer og begynne å tenke i oppsett. Alt som deler lokasjon, lys og medvirkende filmes samlet — uansett hvilken video det ender i. Redigeringen setter det sammen etterpå; kameraet bryr seg bare om hvor det står.",
+          "Grepet er å slutte å tenke i videoer og begynne å tenke i oppsett. Alt som deler lokasjon, lys og medvirkende filmes samlet — uansett hvilken video det ender i. Rekkefølgen i den ferdige videoen bestemmes i redigeringen, ikke på lokasjon.",
       },
       {
         type: "avsnitt",
@@ -206,7 +206,7 @@ export const PLANLEGGING: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "En shotliste uten avkryssing er en ønskeliste. Avkryssingen er den eneste måten å oppdage at noe mangler mens man fortsatt står på lokasjon — og det er forskjellen på en liten justering og en ny reise.",
+          "En shotliste uten avkryssing er en ønskeliste. Avkryssingen er det som gjør at man oppdager et hull mens man fortsatt står på lokasjon. Oppdages det først i redigeringen, må noen tilbake.",
       },
     ],
   },

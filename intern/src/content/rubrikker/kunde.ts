@@ -430,7 +430,7 @@ export const KUNDE: readonly Rubrikk[] = [
       {
         type: "merknad",
         tekst:
-          "Er du i tvil om det er en forventning eller en feil, behandle det som en feil. Det koster oss lite, og det er den billigste måten å kjøpe tilbake tillit på.",
+          "Er du i tvil om det er en forventning eller en feil, behandle det som en feil. Det koster oss lite, og det fjerner diskusjonen om hvem som har skylden.",
       },
     ],
   },

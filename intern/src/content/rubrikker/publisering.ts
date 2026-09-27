@@ -213,7 +213,7 @@ export const PUBLISERING: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Si hva vi ser, hva vi tror det betyr, og hva vi gjør med det neste måned. Det holder med tre setninger. Ikke lov et tall: vi har ingen kontroll over rekkevidde, og et løfte du ikke kan holde er det dyreste du kan si i et kundemøte.",
+          "Si hva vi ser, hva vi tror det betyr, og hva vi gjør med det neste måned. Det holder med tre setninger. Ikke lov et tall. Vi har ingen kontroll over rekkevidde, og et tall kunden husker, må vi svare for neste måned.",
       },
       {
         type: "sitat",

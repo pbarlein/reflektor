@@ -177,7 +177,7 @@ export const MARKED: readonly Rubrikk[] = [
       {
         type: "merknad",
         tekst:
-          "Svarene under er IKKE fylt ut. Å skrive hva Reflektor mener om resultater eller konkurrenter uten at noen har sagt det, ville vært påfunn. Rammen står; svarene må inn fra folk.",
+          "Svarene under er IKKE fylt ut. Å skrive hva Reflektor mener om resultater eller konkurrenter uten at noen har sagt det, ville vært påfunn. Strukturen er satt opp. Teksten må skrives av noen i Reflektor.",
       },
       { type: "seksjon", id: "ulike", tittel: "Hvorfor det betyr noe" },
       {

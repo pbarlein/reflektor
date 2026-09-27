@@ -325,7 +325,7 @@ export const FOLK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Velg én ting før hver produksjonsdag som du ikke er trygg på, og gjør den med vilje. Ikke fem. Én ting gir deg noe å legge merke til; fem gir deg en dårlig dag og ingen læring.",
+          "Velg én ting før hver produksjonsdag som du ikke er trygg på, og gjør den med vilje. Ikke fem. Med én ting å følge med på lærer du noe. Med fem klarer du ikke å følge med på noen av dem.",
       },
       {
         type: "punkter",
@@ -340,7 +340,7 @@ export const FOLK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Åpne noe du lagde for tre måneder siden og se på det uten å huske hvorfor valgene ble tatt. Det koster ingenting, og det er den eneste måten å oppdage vaner du ikke visste du hadde.",
+          "Åpne noe du lagde for tre måneder siden og se på det uten å huske hvorfor valgene ble tatt. Det koster ingenting, og det er en av få måter å oppdage vaner du ikke visste du hadde.",
       },
       { type: "seksjon", id: "stjel", tittel: "Stjel systematisk" },
       {
@@ -465,7 +465,7 @@ export const FOLK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "En brukbar regel: prøv selv i tjue minutter, så spør. Kortere, og du lærer ingenting. Lenger, og du bruker en time av din tid på noe en kollega løser på to minutter — og det er ikke gjerrig, det er bare dyrt.",
+          "En brukbar regel: prøv selv i tjue minutter, så spør. Kortere, og du lærer ingenting. Lenger, og du bruker en time på noe en kollega løser på to minutter.",
       },
       { type: "seksjon", id: "hvordan", tittel: "Hvordan du spør" },
       {

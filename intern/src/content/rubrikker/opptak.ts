@@ -112,7 +112,7 @@ export const OPPTAK: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Uten romtone hører man hvert klipp som et hopp, fordi stillheten skifter karakter. Med romtone under, hører man ingenting — og det er hele poenget.",
+          "Uten romtone hører man hvert klipp som et hopp, fordi stillheten skifter karakter. Med romtone under merkes ikke overgangene.",
       },
       { type: "seksjon", id: "hor", tittel: "Hør underveis" },
       {

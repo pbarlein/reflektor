@@ -192,7 +192,7 @@ export const FORRETNING: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Når prisen er fast, er tid vår risiko. En dag som går dårlig, en ekstra runde med endringer, en reise til — alt det betaler vi selv. Det er ikke urettferdig; det er prisen for forutsigbarheten kunden kjøper.",
+          "Når prisen er fast, er tid vår risiko. En dag som går dårlig, en ekstra runde med endringer, en reise til — alt det betaler vi selv. Det er motstykket til at kunden slipper å forholde seg til variable kostnader.",
       },
       {
         type: "avsnitt",

@@ -505,7 +505,7 @@ export const RESEARCH: readonly Rubrikk[] = [
       {
         type: "avsnitt",
         tekst:
-          "Skriv ned svarene rett etterpå, med deres ord. Ikke oversett til markedsføringsspråk. Formuleringen deres ER innholdet; den er allerede testet på ekte kunder.",
+          "Skriv ned svarene rett etterpå, med deres ord. Ikke oversett til markedsføringsspråk. Formuleringene deres er allerede prøvd på ekte kunder. Bruk dem som de er.",
       },
       { type: "seksjon", id: "gull", tittel: "Spørsmål tre" },
       {

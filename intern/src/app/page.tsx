@@ -79,13 +79,6 @@ export default async function Forside() {
 
   const antallLest = I_DRIFT.filter((r) => lest.has(r.nr)).length;
 
-  /*
-   * DEN ENE INNGANGEN. Oversikten merker denne med «Start her», og den
-   * hentes fra samme rekkefølge som pensumrekka bruker — ellers ville de
-   * to seksjonene pekt hver sin vei på samme side.
-   */
-  const neste = pensumrekkefolge(I_DRIFT).find((r) => !lest.has(r.nr))?.slug;
-
   return (
     <>
       <Maalet navn={fornavn(bruker)} />
@@ -120,7 +113,7 @@ export default async function Forside() {
         </div>
       </Container>
 
-      <Oversikt grupper={grupper} tilstander={tilstander} neste={neste} />
+      <Oversikt grupper={grupper} tilstander={tilstander} />
     </>
   );
 }
