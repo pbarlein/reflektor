@@ -2892,3 +2892,62 @@ kontorvideo utover det ene klippet som allerede lå der — de tre nye er fra et
 firmaarrangement, ikke fra en arbeidsdag. Og eventsiden har fortsatt tre
 stillbilder mot ett klipp. Begge krever nytt opptak eller et dypere søk i
 Videoarkivet enn det denne runden rakk.
+
+
+## A70 — Kontorvideo fantes likevel. 28.09.2026
+
+A69 endte med at «arkivet har ingen ekte kontorvideo utover det ene klippet
+som lå der fra før». Pål, kort etter: «smarketing har kontorvideo med talking
+head. samme med eiendomskreditt.»
+
+Begge stemte.
+
+### Hvorfor jeg ikke fant dem
+
+Jeg listet ut hele Videoarkivet — hundre mapper — og plukket ut de jeg kjente
+igjen som «corporate» på navnet: Tietoevry, Autopay, 3stepIT, Millum, Aceve,
+Malthe Winje. Smarketing og Eiendomskreditt sa meg ingenting, og jeg åpnet dem
+aldri.
+
+Feilen er ikke at jeg gjettet feil på to navn. Det er at jeg brukte
+mappenavnet som filter i det hele tatt, på et arkiv der mappenavnet er kunden
+og ingenting annet. Det finnes ingen indeks over hva slags opptak som ligger
+hvor, og det eneste som faktisk svarer på spørsmålet er å åpne mappen.
+
+### Hva de inneholdt
+
+**Smarketing**: rå 4K-opptak fra et åpent kontorlandskap. En ansatt som går
+gjennom lokalet med telefonen, en som jobber ved skjermen foran en vindusvegg,
+og gateopptak utenfor. Ingen ferdig eksport, men råmaterialet er rent.
+
+**Eiendomskreditt**: `Kundeomtale 9x16.mov`, 2160x3840, 51 sekunder. Ferdig
+klippet, skutt stående, et intervju i kontorlokale. Nøyaktig formatet
+rutenettet bruker.
+
+### Rutenettet er byttet igjen
+
+Fire klipp fra faktiske kontorer: en som går gjennom landskapet, en som jobber
+ved skjermen, klippet som lå der fra før, og intervjuet. To kvinner og to menn.
+
+De tre klippene fra firmaarrangementet i A69 er tatt ut igjen, og filene er
+slettet. De var riktig type innhold — folk i bedriftsmiljø — men et
+arrangement er ikke en arbeidsdag, og siden selger film til rekruttering.
+Ligger de i repoet uten å brukes, er de bare vekt i git-historikken. Kildene
+står i Dropbox under Autopay/Video og kan hentes igjen på en halvtime.
+
+### Navneskiltet
+
+Intervjuklippet har innbrent navneskilt nederst i bildet: personnavn, tittel
+og selskap. Utsnittet er derfor 1659x2950 fra toppen av 2160x3840 — fortsatt
+9:16, og skiltet faller utenfor.
+
+Grunnen er ikke bare navnekonvensjonen i mediearkivet. Filmen er en
+kundeomtale, ikke en employer branding-leveranse. Et navneskilt på denne siden
+ville påstått at kunden har kjøpt akkurat det siden selger, og det er ikke
+sant.
+
+### Regelen som følger av dette
+
+Når arkivet skal gjennomsøkes for en bestemt type opptak, holder det ikke å
+lese mappenavn. Enten åpnes mappene, eller så spørres Pål — han vet hva som
+ligger hvor, og det tok ham én setning.

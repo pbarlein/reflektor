@@ -462,41 +462,49 @@ export const employerBranding: Tjenesteside = {
   ],
   pris: null,
   /*
-   * EMPLOYER BRANDING. BYTTET UT I SIN HELHET 28.09.2026, etter tre feil Pål
-   * fant på én skjerm:
+   * EMPLOYER BRANDING. BYTTET UT TO GANGER 28.09.2026.
    *
-   * 1. DUPLIKAT. `fabrikk-vegg.jpg` og `mat1-1600.jpg` er to utsnitt av samme
-   *    opptak i samme fabrikk. Som rute 1 og rute 3 i den samme raden så det
-   *    ut som en feil i koden, ikke som to bilder.
-   * 2. LAV OPPLØSNING. `stallen-1600.jpg` er 1600 px bred og ble vist i en
-   *    stående celle — den ble skalert opp og var synlig uskarp. Bildet står
-   *    fortsatt på /kontaktoss, der rammen er liggende og bredden holder.
-   * 3. FEIL INNHOLD. Hele siden handler om employer branding-VIDEO, og tre av
-   *    fire ruter var stillbilder. Fra fabrikk og kjøkken, dessuten — ikke
-   *    fra miljøene siden selger inn mot.
+   * FØRSTE RUNDE rettet tre feil Pål fant på én skjerm: rute 1 og 3 var to
+   * utsnitt av samme opptak i samme fabrikk, rute 4 var et liggende bilde
+   * presset inn i en stående celle og synlig uskarp, og tre av fire ruter var
+   * stillbilder — på en side som selger employer branding-VIDEO.
    *
-   * Nå: fire klipp, ingen stillbilder, alle fra kontor- og bedriftsmiljø.
-   * Presentasjon, arbeid ved skjerm, én i samtale, to i en pause — fire
-   * situasjoner en jobbsøker kjenner igjen.
+   * Erstatningen var fire klipp fra et firmaarrangement: presentasjon,
+   * samtale, pause. Riktig type innhold, men feil sted. Jeg skrev i samme
+   * slengen at «arkivet har ingen ekte kontorvideo utover det ene klippet som
+   * lå der fra før».
    *
-   * DET FJERDE KLIPPET BLE BYTTET EN GANG TIL. Først lå det et klipp av en
-   * tilhører i en sal her, og da var alle fire menn alene i bildet. På en
-   * side som skal få folk til å søke jobb er det et signal i seg selv.
+   * ANDRE RUNDE kom fordi det var feil. Pål: «smarketing har kontorvideo med
+   * talking head. samme med eiendomskreditt.» Begge stemte. Jeg hadde lett i
+   * mapper etter kundenavn jeg kjente igjen som «corporate», og gikk glipp av
+   * to som ikke sa meg noe.
    *
-   * INGEN KUNDE NAVNGIS, verken i alt-tekst eller filnavn. Samme regel som
-   * arbeid.ts følger: et klipp av en navngitt kunde over en tjenesteside
-   * ville antydet at kunden har kjøpt akkurat den tjenesten, og det er en
-   * påstand vi ikke kan belegge.
+   * Nå: fire klipp fra faktiske kontorer. En som går gjennom et åpent
+   * landskap, en som jobber ved skjermen, ett klipp som lå der fra før, og et
+   * intervju i kontorlokale. To kvinner og to menn — første runde hadde fire
+   * menn alene i bildet, på en side som skal få folk til å søke jobb.
    *
-   * Klippene er beskåret fra 16:9 til 9:16 og hvert utsnitt er kontrollert
-   * bilde for bilde gjennom hele lengden — ikke bare på plakaten. To av dem
-   * ble kortet ned fordi kameraet panorerte vekk fra motivet mot slutten.
+   * INGEN KUNDE NAVNGIS. Intervjuklippet hadde innbrent navneskilt med
+   * personnavn, tittel og selskap nederst i bildet. Utsnittet er 1659x2950
+   * fra toppen av en 2160x3840-kilde — fortsatt 9:16, og skiltet faller
+   * utenfor. Grunnen er ikke bare navnekonvensjonen: filmen er en
+   * kundeomtale, ikke en employer branding-leveranse, og et navneskilt her
+   * ville påstått at kunden har kjøpt akkurat det denne siden selger.
+   *
+   * De to klippene fra Smarketing er beskåret fra 16:9 til 9:16 ved 45 og 60
+   * prosent av bredden. Alle tre er kontrollert bilde for bilde gjennom hele
+   * lengden, ikke bare på plakaten.
    */
   arbeid: [
     {
       type: "video",
-      sti: "/arbeid/presentasjon",
-      alt: "Vertikalt klipp fra en presentasjon på et firmaarrangement",
+      sti: "/arbeid/skjermarbeid",
+      alt: "Vertikalt klipp av en ansatt som jobber ved en bærbar PC",
+    },
+    {
+      type: "video",
+      sti: "/arbeid/intervju",
+      alt: "Vertikalt klipp fra et intervju i et kontorlokale",
     },
     {
       type: "video",
@@ -505,13 +513,8 @@ export const employerBranding: Tjenesteside = {
     },
     {
       type: "video",
-      sti: "/arbeid/samtale",
-      alt: "Vertikalt klipp av to kolleger i samtale",
-    },
-    {
-      type: "video",
-      sti: "/arbeid/pause",
-      alt: "Vertikalt klipp av to kolleger i en pause",
+      sti: "/arbeid/kontorgang",
+      alt: "Vertikalt klipp av en ansatt i et åpent kontorlandskap",
     },
   ],
 };
