@@ -59,6 +59,27 @@ export type Seksjon = {
  * `sti` er uten filendelse for video (Klipp legger på .mp4 og .jpg selv) og
  * MED endelse for foto.
  */
+/**
+ * En ferdig film vist i sin helhet på en tjenesteside.
+ *
+ * `sti` er uten filendelse; komponenten legger på .mp4 og .jpg.
+ *
+ * `lyd` avgjør avspilleren, ikke bare volumet: med lyd får filmen
+ * kontroller og spiller én gang, uten lyd går den dempet i løkke. Se
+ * Referansefilmer i components/tjeneste/Tjenestemedier.tsx.
+ *
+ * `sekunder` er målt med ffmpeg på filen, ikke avrundet etter hukommelse.
+ * Den brukes i VideoObject-markeringen.
+ */
+export type Referansefilm = {
+  sti: string;
+  format: "16/9" | "9/16";
+  alt: string;
+  bildetekst: string;
+  sekunder: number;
+  lyd?: boolean;
+};
+
 export type Arbeidsmedie = {
   type: "foto" | "video";
   sti: string;
@@ -116,26 +137,25 @@ export type Tjenesteside = {
   /** Fra-pris som tekst, eller null når den ikke er oppgitt. */
   pris: string | null;
   /**
-   * Én film i 16:9, vist stort rett under svaret.
+   * Referansefilmer: hele filmer, vist stort rett under svaret.
    *
-   * LAGT TIL 27.09.2026. /reklamefilm hadde ingen reklamefilm å se på — bare
-   * stående klipp i et rutenett. Pål delte den ekte 15-sekunderen for Peppes
-   * i Dropbox, og en side som selger reklamefilm bør vise en reklamefilm.
+   * VAR `hovedfilm`, ÉN FILM I 16:9. Utvidet 28.09.2026 på Påls beskjed: «la
+   * videoene gå i sin helhet. blir en dårlig referanse på siden om man bare
+   * ser en liten del.» Feltet tar nå en liste, og hver film oppgir sitt eget
+   * format — arkivets ferdige eksporter finnes både liggende og stående, og
+   * å presse en stående film inn i en 16:9-ramme kaster bort to tredeler av
+   * bildet.
    *
    * Plasseringen er høyt oppe med vilje: 44 % av sitatene språkmodeller
    * henter kommer fra første tredel av en side, og for et menneske er det å
    * faktisk se filmen det sterkeste beviset siden har.
    *
-   * Formatet er 16:9 fordi filmen er det. Å presse den inn i det stående
-   * rutenettet ville kastet 70 % av bildet.
+   * KUN FERDIGE EKSPORTER. Ikke råopptak fra kamera. Rått materiale er
+   * ugradert og uklippet, og en referanse som viser ugradert materiale sier
+   * det motsatte av det den skal si. Regelen kom fra Pål 28.09.2026 etter at
+   * jeg hadde lagt inn to klipp skåret rett ut av 4K-råfiler.
    */
-  hovedfilm?: {
-    sti: string;
-    alt: string;
-    bildetekst: string;
-    /** Målt med ffmpeg på filen i public/, ikke avrundet etter hukommelse. */
-    sekunder: number;
-  };
+  filmer?: Referansefilm[];
 
   /**
    * «Fra arbeidet»: fire medier valgt etter hva siden handler om.
@@ -233,13 +253,22 @@ export const reklamefilm: Tjenesteside = {
     },
   ],
   pris: null,
-  hovedfilm: {
-    sti: "/reels/peppes-reklamefilm",
-    alt: "Stillbilde fra reklamefilm for Peppes Pizza",
-    bildetekst:
-      "Reklamefilm for Peppes Pizza. 15 sekunder, produsert av Reflektor.",
-    sekunder: 15,
-  },
+  /*
+   * INGEN LYD HER, og det er et valg. Filmen er femten sekunder uten replikk
+   * og leses som bevegelse; dempet løkke er riktig avspiller for den. De to
+   * filmene på employer branding-siden er intervjuer der poenget er det som
+   * blir sagt, og de får kontroller.
+   */
+  filmer: [
+    {
+      sti: "/reels/peppes-reklamefilm",
+      format: "16/9",
+      alt: "Stillbilde fra reklamefilm for Peppes Pizza",
+      bildetekst:
+        "Reklamefilm for Peppes Pizza. 15 sekunder, produsert av Reflektor.",
+      sekunder: 15,
+    },
+  ],
   /*
    * REKLAMEFILM. Her lå antonsport og goretex — to klipp fra sportsbutikk,
    * rett under en setning som sier at Anton Sport IKKE er reklamefilmkunde.
@@ -462,59 +491,51 @@ export const employerBranding: Tjenesteside = {
   ],
   pris: null,
   /*
-   * EMPLOYER BRANDING. BYTTET UT TO GANGER 28.09.2026.
+   * TO HELE FILMER I STEDET FOR ET RUTENETT MED UTDRAG.
    *
-   * FØRSTE RUNDE rettet tre feil Pål fant på én skjerm: rute 1 og 3 var to
-   * utsnitt av samme opptak i samme fabrikk, rute 4 var et liggende bilde
-   * presset inn i en stående celle og synlig uskarp, og tre av fire ruter var
-   * stillbilder — på en side som selger employer branding-VIDEO.
+   * Seksjonen «Fra arbeidet» er borte fra denne siden, og det er bestilt:
+   * «la videoene gå i sin helhet. blir en dårlig referanse på siden om man
+   * bare ser en liten del.» Rutenettet er fire ruter à fire sekunder. Det
+   * fungerer som stemning, men det er ikke en referanse — og på en side som
+   * selger film til rekruttering er referansen hele poenget.
    *
-   * Erstatningen var fire klipp fra et firmaarrangement: presentasjon,
-   * samtale, pause. Riktig type innhold, men feil sted. Jeg skrev i samme
-   * slengen at «arkivet har ingen ekte kontorvideo utover det ene klippet som
-   * lå der fra før».
+   * VEIEN HIT TOK TRE RUNDER, og to av dem var feil:
    *
-   * ANDRE RUNDE kom fordi det var feil. Pål: «smarketing har kontorvideo med
-   * talking head. samme med eiendomskreditt.» Begge stemte. Jeg hadde lett i
-   * mapper etter kundenavn jeg kjente igjen som «corporate», og gikk glipp av
-   * to som ikke sa meg noe.
+   * 1. Rutenettet hadde duplikat, et uskarpt bilde og tre stillbilder på en
+   *    side som selger video. Pål meldte alle tre.
+   * 2. Erstatningen var fire klipp fra et firmaarrangement. Riktig type
+   *    innhold, men jeg skrev samtidig at arkivet ikke hadde kontorvideo.
+   *    Det var feil — Pål pekte på Smarketing og Eiendomskreditt.
+   * 3. Erstatningen etter det var klippet ut av RÅ 4K-kamerafiler. Ugradert
+   *    og uklippet materiale, presentert som referanse. Pål: «ikke bruk
+   *    råklipp... åpenbart.»
    *
-   * Nå: fire klipp fra faktiske kontorer. En som går gjennom et åpent
-   * landskap, en som jobber ved skjermen, ett klipp som lå der fra før, og et
-   * intervju i kontorlokale. To kvinner og to menn — første runde hadde fire
-   * menn alene i bildet, på en side som skal få folk til å søke jobb.
+   * Nå: begge filmene er ferdige eksporter fra kundemappen, lagt inn hele og
+   * med kontroller. Den ene er liggende, den andre stående, og begge er
+   * filmet i kontorlokaler.
    *
-   * INGEN KUNDE NAVNGIS. Intervjuklippet hadde innbrent navneskilt med
-   * personnavn, tittel og selskap nederst i bildet. Utsnittet er 1659x2950
-   * fra toppen av en 2160x3840-kilde — fortsatt 9:16, og skiltet faller
-   * utenfor. Grunnen er ikke bare navnekonvensjonen: filmen er en
-   * kundeomtale, ikke en employer branding-leveranse, og et navneskilt her
-   * ville påstått at kunden har kjøpt akkurat det denne siden selger.
-   *
-   * De to klippene fra Smarketing er beskåret fra 16:9 til 9:16 ved 45 og 60
-   * prosent av bredden. Alle tre er kontrollert bilde for bilde gjennom hele
-   * lengden, ikke bare på plakaten.
+   * INGEN PÅSTAND OM HVA KUNDEN HAR KJØPT. Bildetekstene sier hva filmene
+   * ER — profilfilm og kundeomtale — ikke at de er employer branding.
+   * Seksjonen viser arbeid, den hevder ikke at arbeidet var denne tjenesten.
    */
-  arbeid: [
+  filmer: [
     {
-      type: "video",
-      sti: "/arbeid/skjermarbeid",
-      alt: "Vertikalt klipp av en ansatt som jobber ved en bærbar PC",
+      sti: "/arbeid/profilfilm",
+      format: "16/9",
+      alt: "Stillbilde fra en profilfilm filmet i kontorlokaler",
+      bildetekst:
+        "Profilfilm for et rådgivningsselskap. 39 sekunder, filmet på kontoret.",
+      sekunder: 39,
+      lyd: true,
     },
     {
-      type: "video",
-      sti: "/arbeid/intervju",
-      alt: "Vertikalt klipp fra et intervju i et kontorlokale",
-    },
-    {
-      type: "video",
-      sti: "/arbeid/kontor",
-      alt: "Vertikalt klipp fra en arbeidsplass",
-    },
-    {
-      type: "video",
-      sti: "/arbeid/kontorgang",
-      alt: "Vertikalt klipp av en ansatt i et åpent kontorlandskap",
+      sti: "/arbeid/kundeomtale",
+      format: "9/16",
+      alt: "Stillbilde fra et intervju filmet i kontorlokaler",
+      bildetekst:
+        "Kundeomtale, filmet stående for sosiale medier. 22 sekunder.",
+      sekunder: 22,
+      lyd: true,
     },
   ],
 };

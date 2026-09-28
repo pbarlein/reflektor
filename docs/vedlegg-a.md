@@ -2951,3 +2951,87 @@ sant.
 Når arkivet skal gjennomsøkes for en bestemt type opptak, holder det ikke å
 lese mappenavn. Enten åpnes mappene, eller så spørres Pål — han vet hva som
 ligger hvor, og det tok ham én setning.
+
+
+## A71 — Råklipp er ikke en referanse. 28.09.2026
+
+To beskjeder fra Pål, med få minutters mellomrom:
+
+> ikke bruk råklipp... åpenbart
+
+> la videoene gå i sin helhet. blir en dårlig referanse på siden om man bare
+> ser en liten del
+
+Begge traff samme feil fra to kanter.
+
+### Hva jeg hadde gjort
+
+A70 hentet kontorvideo fra Smarketing og Eiendomskreditt. Eiendomskreditt-filen
+var en ferdig eksport. Smarketing-klippene var skåret rett ut av
+`B51A7885.MP4` og `B51A7896.MP4` — rå 4K-filer fra kameraet, ugradert.
+
+Jeg lette i `Videoarkiv/Smarketing/` og fant bare råfiler og et utkast, og
+konkluderte med at det ikke fantes noe ferdig. Jeg så aldri i
+`Kundemappe/Smarketing/Video/`, der «Smarketing full.mp4», «kort v1» og
+«kort v2» har ligget siden 2024.
+
+**Videoarkivet er arbeidsmappen. Kundemappen er leveransen.** Det burde vært
+åpenbart av navnene. Det er nå skrevet ned i docs/media.md, sammen med
+kjennetegnet som skiller dem: en ferdig fil har et navn et menneske har
+skrevet, en råfil har et kameranavn.
+
+### Hva siden har nå
+
+Rutenettet «Fra arbeidet» er borte fra employer branding-siden. I stedet står
+to hele filmer:
+
+- **Profilfilm**, 39 sekunder, 16:9, filmet i kontorlokaler
+- **Kundeomtale**, 22 sekunder, 9:16, intervju i kontorlokale
+
+Begge er ferdige eksporter fra kundemappen, begge lagt inn hele.
+
+Rutenettet er fire ruter à fire sekunder. Det er riktig format for tekstur —
+reel-veggen og arbeidsrutenettet gjør nettopp det — men en arbeidsprøve er noe
+annet. På en side som selger film til rekruttering er referansen hele poenget.
+
+### Avspilleren måtte bygges om
+
+`Klipp` er dempet, i løkke, uten kontroller. Det er riktig for seks sekunder
+bevegelse og feil for et 22 sekunders intervju: et ansikt som beveger leppene
+og aldri kommer til poenget er verre enn ingen film.
+
+`Referansefilm` har derfor et `lyd`-felt. Med lyd får filmen ekte kontroller,
+lyd, ingen løkke og ingen autospill. Uten lyd oppfører den seg som før —
+Peppes-reklamen på /reklamefilm er uendret, fordi femten sekunder uten replikk
+faktisk leses som bevegelse.
+
+`preload="none"` på begge. Ingenting lastes før noen trykker play, og det er
+også hvorfor autospill ikke gir mening: fire megabyte skal ikke lastes ned for
+noen som ruller forbi.
+
+### Formatet leses av innholdet
+
+`hovedfilm` tok én film og antok 16:9. Feltet heter nå `filmer`, tar en liste,
+og hver film oppgir sitt eget format. De ferdige eksportene finnes både
+liggende og stående, og å presse en stående film inn i en 16:9-ramme kaster
+bort to tredeler av bildet.
+
+### Hva bildetekstene sier, og ikke sier
+
+«Profilfilm for et rådgivningsselskap» og «Kundeomtale, filmet stående for
+sosiale medier». Ingen av dem sier employer branding, for det er ikke det de
+er. Seksjonen viser arbeid; den hevder ikke at arbeidet var denne tjenesten.
+
+Begge filmene har kundens egen merking innbrent — logo, teksting, sluttplakat
+med kontaktinfo. Det er en del av filmen, og «i sin helhet» betyr at den blir
+stående. Verdt at Pål ser det og sier fra hvis han vil ha det annerledes.
+
+### Tre runder på én seksjon
+
+Duplikat og uskarphet → klipp fra et firmaarrangement → råklipp → ferdige
+filmer. Hver runde rettet det forrige svaret på et punkt jeg ikke hadde tenkt
+på, og alle fire innvendingene var riktige.
+
+Det som går igjen: jeg lette der jeg hadde lett sist, og konkluderte fra det
+jeg fant der. Både «arkivet har ingen kontorvideo» og «Smarketing har ingen
+ferdig eksport» var konklusjoner trukket fra én mappe.

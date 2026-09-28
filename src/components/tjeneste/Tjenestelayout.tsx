@@ -1,7 +1,7 @@
 import Image from "next/image";
 import {
   Arbeidsrutenett,
-  Hovedfilm,
+  Referansefilmer,
 } from "@/components/tjeneste/Tjenestemedier";
 import Link from "next/link";
 
@@ -72,15 +72,16 @@ export function Tjenestelayout({
         PLAKATEN («Stillbilde fra …»), og et VideoObject som heter
         «stillbilde» er feil på den måten ingen oppdager.
       */}
-      {side.hovedfilm && (
+      {side.filmer?.map((f) => (
         <FilmSchema
-          navn={side.hovedfilm.bildetekst}
+          key={f.sti}
+          navn={f.bildetekst}
           beskrivelse={side.svar}
-          sti={side.hovedfilm.sti}
-          sekunder={side.hovedfilm.sekunder}
+          sti={f.sti}
+          sekunder={f.sekunder}
           sidesti={side.sti}
         />
-      )}
+      ))}
 
       {/* ── Svaret, før alt annet ─────────────────────────────────── */}
       <section className="pt-16 pb-14 sm:pt-24 sm:pb-20">
@@ -132,25 +133,21 @@ export function Tjenestelayout({
         </section>
       )}
 
-      {/* ── Hovedfilmen, i sitt eget format ───────────────────────── */}
-      {side.hovedfilm && (
+      {/* ── Referansefilmene, hver i sitt eget format ─────────────── */}
+      {side.filmer && (
         <section className="pb-20">
           <Container>
             {/*
-              16:9 OG IKKE 9:16. Filmen er skutt i bredformat, og det
-              stående rutenettet lenger nede ville beskåret bort 70 % av
-              bildet. En reklamefilm vist som en mobilreel er ikke lenger
-              en reklamefilm.
+              HVERT FORMAT FÅR SIN EGEN RAMME. En liggende film presset inn
+              i en stående ramme mister 70 % av bildet, og omvendt. Arkivets
+              ferdige eksporter finnes i begge deler, så komponenten leser
+              formatet av innholdet i stedet for å anta ett.
 
-              Plakaten er 1280x720, hentet som ramme ut av filmen selv.
-              Kilden er 1920x1080, så rammen er nedskalert og ikke oppskalert
-              — den er mykere enn originalen, men skarpere enn rammen den
-              vises i. Den står bare til filmen begynner å spille.
+              Plakatene er hentet som ramme ut av filmene selv, nedskalert
+              og ikke oppskalert. De står til noen trykker play — og det er
+              alt som lastes før det, fordi filmene er 2–4 MB.
             */}
-            <Hovedfilm
-              sti={side.hovedfilm.sti}
-              bildetekst={side.hovedfilm.bildetekst}
-            />
+            <Referansefilmer filmer={side.filmer} />
           </Container>
         </section>
       )}

@@ -77,6 +77,29 @@ alt-tekster, sette riktige størrelser og sørge for at de lastes effektivt.
 Filene finnes allerede i Dropbox under `/Reflektor/Bildearkiv`,
 `/Reflektor/Videoarkiv` og `/Reflektor/Assets`.
 
+## To regler for hva som kan brukes (bestilt av Pål 28.09.2026)
+
+**Bare ferdige eksporter. Aldri råopptak fra kamera.** Videoarkivet er stort
+sett rått materiale — ugradert, uklippet, ofte i logg-profil. Det ser flatt og
+grått ut, og en referansefilm som viser ugradert materiale sier det motsatte av
+det den skal si. De ferdige filene ligger i `Kundemappe/<kunde>/Video/`, ikke i
+`Videoarkiv/<kunde>/`. Videoarkivet er arbeidsmappen; kundemappen er leveransen.
+
+Kjennetegn på en ferdig fil: den har et navn et menneske har skrevet
+(«Smarketing kort v2.mp4»), ikke et kameranavn («B51A7897.MP4»). Er du i tvil,
+hent en ramme og se: rått 4K-materiale fra disse kameraene er merkbart flatere
+enn den ferdige filmen fra samme opptak.
+
+**Hele filmen, ikke et utdrag.** Påls ordlyd: «la videoene gå i sin helhet.
+blir en dårlig referanse på siden om man bare ser en liten del.» Fire sekunder
+klippet ut av en profilfilm er stemning, ikke en referanse. Skal en film stå på
+siden som arbeidsprøve, skal den stå hel — og da trenger den kontroller og lyd,
+ikke dempet autospill i løkke. Se `Referansefilm` i `src/content/tjenester.ts`.
+
+Unntaket er det korte klippet som leses som bevegelse: reel-veggen,
+arbeidsrutenettet, en femten sekunders reklamefilm uten replikk. De er ikke
+arbeidsprøver, de er tekstur.
+
 ## Dropbox som mediekilde (verifisert 15.09.2026)
 
 Pål kan legge bilder og video i Dropbox, og Claude Code henter og komprimerer
