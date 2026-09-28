@@ -2804,3 +2804,91 @@ Seksjonen «Hvem produserer Reflektor for?» står nesten ordrett likt på
 /innholdsproduksjon og /videoproduksjon-i-oslo — samme kundeliste, ulikt sitat.
 Det er godkjent copy, så det er ikke rørt, men to sider med samme avsnitt er en
 svakhet neste redaksjonelle runde bør se på.
+
+
+## A69 — «Fra arbeidet» på employer branding-siden. 28.09.2026
+
+Pål, om rutenettet på `/employer-branding-video-oslo`: «dårlig oppløsning på
+bildet til høyre, duplikat av bilde, og hele teksten handler om employer
+branding video. vis videoer av folk i coorporate miljøer.»
+
+Alle tre observasjonene stemte, og de var tre forskjellige feil.
+
+**Duplikatet.** Rute 1 var `fabrikk-vegg.jpg` og rute 3 var `mat1-1600.jpg` —
+to utsnitt av samme opptak i samme fabrikk, ved siden av hverandre i samme rad.
+Ikke samme fil, så ingen sjekk fanget det, men på skjermen leses det som en
+feil i koden.
+
+**Oppløsningen.** Rute 4 var `stallen-1600.jpg`, et liggende bilde beskåret inn
+i en stående celle. Etter beskjæringen sto det igjen 711 px effektiv bredde mot
+en celle som ber om 691 på dobbel pikseltetthet — akkurat på grensen, og
+synlig mykere enn naboene. Bildet står fortsatt på /kontaktoss, der rammen er
+liggende og hele bredden brukes.
+
+**Innholdet.** Tre av fire ruter var stillbilder, på en side som selger
+employer branding-VIDEO. Og motivene var fabrikk og restaurantkjøkken, ikke
+miljøene siden faktisk selger inn mot.
+
+### Hva som ble gjort
+
+Fire klipp, ingen stillbilder: en presentasjon, arbeid ved skjermen, en samtale
+og to kolleger i en pause. Tre av dem er hentet fra Dropbox og klippet ned her;
+det fjerde (`kontor`) lå allerede i repoet.
+
+Kildene er 4K i 16:9, så hvert klipp er beskåret til 9:16. Utsnittet er valgt
+per klipp — 55 %, 40 % og 45 % av bredden, ikke midtstilt — og kontrollert
+bilde for bilde gjennom hele lengden, ikke bare på plakaten. To av dem måtte
+kortes ned fra seks til rundt fire sekunder fordi kameraet panorerte vekk fra
+motivet mot slutten; det så man ikke på førstebildet.
+
+**Det fjerde klippet ble byttet to ganger.** Først lå det et klipp av en
+tilhører i en sal der. Da var alle fire menn, alene i bildet, på en side som
+skal få folk til å søke jobb. Erstatningen viser to kolleger i en pause.
+
+Ingen kunde er navngitt, verken i alt-tekst eller filnavn. Samme regel som
+resten av mediearkivet følger.
+
+### Tre feil til, av samme slag, funnet i samme gjennomgang
+
+**Toppbildene var `-vegg`-filer.** Disse er skalert for cellene i
+arbeidsveggen og er 640–1000 px brede. Som 21:9-banner rendres de på inntil
+2176 px. `/innholdsproduksjon` strakk en 640 px fil over hele bredden — tre
+ganger opp.
+
+- `/employer-branding-video-oslo`: `fabrikk-vegg` (1000 px) →
+  `ansatte-produksjon-1600` (1600 px). Samme opptak, liggende, skarp.
+- `/eventfotograf-eventvideo`: samme bilde sto BÅDE som toppbilde og som rute
+  to i rutenettet. Rettet i rutenettet, ikke i toppen — se under.
+- `/innholdsproduksjon`: toppbildet er **fjernet**. Se under.
+
+**Hvorfor eventsidens toppbilde ikke ble byttet.** Første forsøk erstattet det
+med et dronebilde: skarpere, men et tomt basseng uten mennesker over en
+overskrift om eventfotografi. Skarphet som gjør bildet mindre relevant er ikke
+en forbedring. Aktiveringsbildet er et faktisk arrangement, og 1000 px holder i
+den rammen på vanlige skjermer. Duplikatet ble fjernet i rutenettet i stedet.
+
+**Hvorfor navet mistet toppbildet sitt.** Den store filen fra samme opptak
+finnes, men hele popup-dagen ligger i tre utsnitt, og to av dem sto allerede på
+eventsiden. Tre nesten like bilder fordelt på to sider er samme feil som
+duplikatet vi nettopp fjernet, bare spredt utover. Arkivet har ikke et stort,
+liggende bilde som sier «innholdsproduksjon» og ikke allerede brukes et annet
+sted. Ingen banner er bedre enn en uskarp eller en lånt — /reklamefilm og
+/videoproduksjon-i-oslo har heller ingen. Feltet er valgfritt og settes tilbake
+når det finnes et egnet bilde.
+
+### Lenkesjekken meldte feil to ganger
+
+Åtte «foreldreløse» mediefiler, hvorav seks ikke var det. Heuristikken lette
+etter filstammen i egne anførselstegn, men to konvensjoner i koden skriver den
+annerledes: `Klipp` tar stien uten filendelse (`"/reels/peppes-reklamefilm"`),
+og toppbildene lagrer hele navnet med suffiks (`"ansatte-produksjon-1600"`).
+Begge er lagt inn. Listen er nå tom, og det er poenget: en advarsel som stort
+sett tar feil, er en advarsel ingen leser.
+
+### Hva som gjenstår
+
+Arkivet er tynt på to områder som siden trenger. Det finnes ingen ekte
+kontorvideo utover det ene klippet som allerede lå der — de tre nye er fra et
+firmaarrangement, ikke fra en arbeidsdag. Og eventsiden har fortsatt tre
+stillbilder mot ett klipp. Begge krever nytt opptak eller et dypere søk i
+Videoarkivet enn det denne runden rakk.

@@ -386,8 +386,15 @@ export const videoproduksjon: Tjenesteside = {
    ──────────────────────────────────────────────────────────────────── */
 
 export const employerBranding: Tjenesteside = {
+  /*
+   * TOPPBILDET ER EN 21:9-BANNER PÅ INNTIL 1088 px, altså 2176 px på en
+   * skjerm med dobbel pikseltetthet. `-vegg`-filene er skalert for cellene i
+   * arbeidsveggen og er 640–1000 px brede. Lagt inn her ble de skalert opp
+   * to til tre ganger, og det var synlig. Byttet 28.09.2026 til de store
+   * filene fra samme opptak.
+   */
   bilde: {
-    fil: "fabrikk-vegg",
+    fil: "ansatte-produksjon-1600",
     alt: "Ansatte i arbeidstøy i et produksjonslokale",
     fokus: "center 30%",
   },
@@ -454,14 +461,42 @@ export const employerBranding: Tjenesteside = {
     },
   ],
   pris: null,
-  /* EMPLOYER BRANDING. Siden handler om folk på jobb, og det er nettopp det
-     arkivet har mest av. Alle fire viser ansatte i arbeid — ikke produkter,
-     ikke lokaler uten mennesker. */
+  /*
+   * EMPLOYER BRANDING. BYTTET UT I SIN HELHET 28.09.2026, etter tre feil Pål
+   * fant på én skjerm:
+   *
+   * 1. DUPLIKAT. `fabrikk-vegg.jpg` og `mat1-1600.jpg` er to utsnitt av samme
+   *    opptak i samme fabrikk. Som rute 1 og rute 3 i den samme raden så det
+   *    ut som en feil i koden, ikke som to bilder.
+   * 2. LAV OPPLØSNING. `stallen-1600.jpg` er 1600 px bred og ble vist i en
+   *    stående celle — den ble skalert opp og var synlig uskarp. Bildet står
+   *    fortsatt på /kontaktoss, der rammen er liggende og bredden holder.
+   * 3. FEIL INNHOLD. Hele siden handler om employer branding-VIDEO, og tre av
+   *    fire ruter var stillbilder. Fra fabrikk og kjøkken, dessuten — ikke
+   *    fra miljøene siden selger inn mot.
+   *
+   * Nå: fire klipp, ingen stillbilder, alle fra kontor- og bedriftsmiljø.
+   * Presentasjon, arbeid ved skjerm, én i samtale, to i en pause — fire
+   * situasjoner en jobbsøker kjenner igjen.
+   *
+   * DET FJERDE KLIPPET BLE BYTTET EN GANG TIL. Først lå det et klipp av en
+   * tilhører i en sal her, og da var alle fire menn alene i bildet. På en
+   * side som skal få folk til å søke jobb er det et signal i seg selv.
+   *
+   * INGEN KUNDE NAVNGIS, verken i alt-tekst eller filnavn. Samme regel som
+   * arbeid.ts følger: et klipp av en navngitt kunde over en tjenesteside
+   * ville antydet at kunden har kjøpt akkurat den tjenesten, og det er en
+   * påstand vi ikke kan belegge.
+   *
+   * Klippene er beskåret fra 16:9 til 9:16 og hvert utsnitt er kontrollert
+   * bilde for bilde gjennom hele lengden — ikke bare på plakaten. To av dem
+   * ble kortet ned fordi kameraet panorerte vekk fra motivet mot slutten.
+   */
   arbeid: [
     {
-      type: "foto",
-      sti: "/arbeid/fabrikk-vegg.jpg",
-      alt: "Ansatte i arbeidstøy i et produksjonslokale",
+      type: "video",
+      sti: "/arbeid/presentasjon",
+      alt: "Vertikalt klipp fra en presentasjon på et firmaarrangement",
     },
     {
       type: "video",
@@ -469,14 +504,14 @@ export const employerBranding: Tjenesteside = {
       alt: "Vertikalt klipp fra en arbeidsplass",
     },
     {
-      type: "foto",
-      sti: "/arbeid/mat1-1600.jpg",
-      alt: "Ansatte i et produksjonslokale",
+      type: "video",
+      sti: "/arbeid/samtale",
+      alt: "Vertikalt klipp av to kolleger i samtale",
     },
     {
-      type: "foto",
-      sti: "/arbeid/stallen-1600.jpg",
-      alt: "Kokker på et kjøkken med en plakett",
+      type: "video",
+      sti: "/arbeid/pause",
+      alt: "Vertikalt klipp av to kolleger i en pause",
     },
   ],
 };
@@ -486,6 +521,17 @@ export const employerBranding: Tjenesteside = {
    ──────────────────────────────────────────────────────────────────── */
 
 export const event: Tjenesteside = {
+  /*
+   * DUPLIKATET RETTET 28.09.2026 I RUTENETTET, IKKE HER. `aktivering-vegg`
+   * sto både som toppbilde og som rute to i «Fra arbeidet» — samme bilde to
+   * ganger på samme side.
+   *
+   * Første forsøk byttet toppbildet i stedet, til et dronebilde av et
+   * anleggsområde. Det var skarpere, men viste et tomt basseng uten
+   * mennesker over en overskrift om eventfotografi. Skarphet som gjør bildet
+   * mindre relevant er ikke en forbedring. Aktiveringsbildet er et faktisk
+   * arrangement, og 1000 px holder i denne rammen på vanlige skjermer.
+   */
   bilde: {
     fil: "aktivering-vegg",
     alt: "Utendørs aktivering med stand og publikum",
@@ -548,10 +594,20 @@ export const event: Tjenesteside = {
       sti: "/arbeid/scene-vegg.jpg",
       alt: "Foredragsholder foran en skjerm",
     },
+    /*
+     * BYTTET 28.09.2026. Her lå `aktivering-vegg.jpg` — det SAMME bildet som
+     * står som toppbilde øverst på siden. To ruter over hverandre med samme
+     * motiv leses som en feil i koden, ikke som to bilder. Nå står
+     * aktiveringen bare ett sted, øverst, der den er stor.
+     *
+     * Erstatningen er fra prisutdelingen: et kjøkkenteam i det de får
+     * beskjeden. Det er dekning av noe som skjer én gang, som er nøyaktig
+     * det siden lover.
+     */
     {
       type: "foto",
-      sti: "/arbeid/aktivering-vegg.jpg",
-      alt: "Utendørs aktivering med stand og publikum",
+      sti: "/arbeid/stallen-team-1800.jpg",
+      alt: "Kokker som får en pris på et kjøkken",
     },
     {
       type: "foto",
@@ -599,7 +655,23 @@ export const event: Tjenesteside = {
  * Dette er den.
  */
 export const innholdsproduksjon: Tjenesteside = {
-  bilde: { fil: "dag4-vegg", alt: "Opptak med kamera under et arrangement" },
+  /*
+   * INTET TOPPBILDE, fjernet 28.09.2026. Her lå `dag4-vegg` — 640x960,
+   * strukket over en banner på inntil 2176 px. Tre ganger opp, og synlig.
+   *
+   * Det ble forsøkt byttet til den store filen fra samme opptak, men da
+   * kolliderte det med eventsiden: hele popup-dagen finnes i tre utsnitt, og
+   * to av dem sto allerede på /eventfotograf-eventvideo. Tre nesten like
+   * bilder fordelt på to sider er samme feil som duplikatet vi nettopp
+   * fjernet, bare spredt utover.
+   *
+   * Arkivet har ikke et stort, liggende bilde som sier «innholdsproduksjon»
+   * og ikke allerede brukes et annet sted. Da er ingen banner bedre enn en
+   * uskarp eller en lånt: /reklamefilm og /videoproduksjon-i-oslo har heller
+   * ingen, og siden har fire eikekort og et medierutenett fra før.
+   *
+   * Kommer det et egnet bilde, settes `bilde` tilbake — feltet er valgfritt.
+   */
   sti: "/innholdsproduksjon",
   tittel: "Innholdsproduksjon | Foto og video for bedrifter",
   beskrivelse:

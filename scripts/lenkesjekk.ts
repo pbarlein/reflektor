@@ -163,6 +163,14 @@ for (const mappe of MEDIEMAPPER) {
       .replace(/\.[a-z0-9]+$/i, "")
       .replace(/-(vegg|1600|640)$/, "");
     if (allKilde.includes(`"${stamme}"`)) continue;
+    /*
+     * HELE FILNAVNET UTEN ENDELSE. Suffikset strippes over fordi veggen
+     * refererer `"fabrikk"` og legger på `-vegg.jpg` selv. Men toppbildet på
+     * tjenestesidene gjør det motsatte: det lagrer `"ansatte-produksjon-1600"`
+     * og legger bare på `.jpg`. Uten denne linjen meldes hvert eneste
+     * toppbilde som foreldreløst.
+     */
+    if (allKilde.includes(`"${navn.replace(/\.[a-z0-9]+$/i, "")}"`)) continue;
     if (allKilde.includes(`/${navn}`)) continue;
     /*
      * UTEN FILENDELSE. `Klipp` tar stien uten endelse og legger på .mp4 og
