@@ -447,3 +447,35 @@ test("en rapport fra før v2.1 gir en fil uten de nye avsnittene", () => {
   assert.equal(md.includes("Klikkpris Google, fire uker"), false);
   assert.match(md, /## Nøkkeltall/, "resten av filen står som før");
 });
+
+/**
+ * Forordet er en ordliste. Forklarer den noe som ikke står i filen, lover
+ * den en seksjon som ikke finnes — og i ett tilfelle sier den noe direkte
+ * galt: at pris per lead er regnet kun på leadkampanjer. Før mal v2.1 var
+ * `meta_cost` alt Meta-forbruk, så den setningen ville vært usann om de
+ * ukene.
+ */
+test("forordet forklarer bare det filen faktisk inneholder", () => {
+  const foer = byggMarkdown([{ rapport: rapport(), svar: TOMT }], NAA);
+  assert.equal(foer.includes("Endringer i kontoene"), false);
+  assert.equal(
+    foer.includes("kun på leadkampanjer"),
+    false,
+    "usant om rapporter fra før v2.1",
+  );
+
+  const etter = byggMarkdown(
+    [
+      {
+        rapport: rapport({
+          ...V21,
+          kpis: { ...rapport().kpis, other_spend_4w: 1200 },
+        }),
+        svar: TOMT,
+      },
+    ],
+    NAA,
+  );
+  assert.match(etter, /\*\*«Endringer i kontoene»\*\*/);
+  assert.match(etter, /\*\*«Annet forbruk»\*\*/);
+});

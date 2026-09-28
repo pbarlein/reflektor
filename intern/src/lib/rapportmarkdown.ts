@@ -492,7 +492,27 @@ export function rapportTilMarkdown(
  * Alt her står fast fordi det følger av systemet, ikke av tallene i en
  * bestemt uke. Ingenting tolkes.
  */
-function forord(): string[] {
+function forord(rapporter: readonly Nedlastbar[]): string[] {
+  /*
+   * ── FORORDET FORKLARER BARE DET SOM ER I FILEN ──────────────────────────
+   *
+   * Første utgave forklarte alltid endringsloggen og skillet mellom
+   * leadkampanjer og annet forbruk. På en fil med rapporter fra før mal
+   * v2.1 lovet den da en seksjon som ikke fantes — og verre: den påsto at
+   * pris per lead er regnet kun på leadkampanjer, noe som er USANT for de
+   * ukene. `meta_cost` var alt Meta-forbruk før v2.1.
+   *
+   * En forklaring som ikke stemmer med tallene under, er dyrere enn ingen
+   * forklaring. Begge punktene står nå bare når filen faktisk har det de
+   * beskriver.
+   */
+  const harEndringer = rapporter.some((x) => x.rapport.changes.length > 0);
+  const harAnnetForbruk = rapporter.some(
+    (x) =>
+      x.rapport.kpis.other_spend_4w > 0 ||
+      x.rapport.weeks.some((u) => u.meta_other_cost > 0),
+  );
+
   return [
     "## Om denne filen",
     "",
@@ -509,12 +529,22 @@ function forord(): string[] {
     "- **«Dom»** er oppgavens egen vurdering av uka: *Handle*, *Følg med*",
     "  eller *I rute*.",
     "- **«Pris per lead»** måles over et firewukersvindu, mot en grense som",
-    "  står oppgitt i hver rapport. Den regnes **kun på leadkampanjer** —",
-    "  boostede innlegg og liknende står for seg som «annet forbruk».",
-    "- **«Endringer i kontoene»** er lest av endringsloggen hos Meta og",
-    "  Google. Et hopp i klikkpris eller forbruk betyr noe helt annet når",
-    "  en innstilling ble endret samtidig: da skal innstillingen rettes og",
-    "  testes, ikke kanalen stoppes.",
+    "  står oppgitt i hver rapport.",
+    ...(harAnnetForbruk
+      ? [
+          "- **«Annet forbruk»** er boostede innlegg og liknende. Det holdes",
+          "  utenfor pris per lead, fordi det ikke er leadkampanjer — men",
+          "  pengene er brukt.",
+        ]
+      : []),
+    ...(harEndringer
+      ? [
+          "- **«Endringer i kontoene»** er lest av endringsloggen hos Meta og",
+          "  Google. Et hopp i klikkpris eller forbruk betyr noe helt annet",
+          "  når en innstilling ble endret samtidig: da skal innstillingen",
+          "  rettes og testes, ikke kanalen stoppes.",
+        ]
+      : []),
     "- **Avkryssinger, beslutningssvar og notater er Påls egne**, gjort på",
     "  intranettet i etterkant. De sier hva som faktisk ble gjort — resten",
     "  er hva oppgaven foreslo.",
@@ -547,7 +577,7 @@ export function byggMarkdown(
     "",
     `*Lastet ned fra intranettet ${norskTidspunkt(lastetNed.toISOString())}.*`,
     "",
-    ...forord(),
+    ...forord(rapporter),
   ];
 
   if (!en && rapporter.length > 0) {
