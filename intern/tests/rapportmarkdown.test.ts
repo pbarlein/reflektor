@@ -217,6 +217,7 @@ test("et rørtegn i et annonsenavn ødelegger ikke tabellen", () => {
           ads: [
             {
               platform: "Meta",
+              ad_id: "120219",
               campaign: "Leads | Q4",
               ad: "Video A",
               on: true,
@@ -241,10 +242,11 @@ test("et rørtegn i et annonsenavn ødelegger ikke tabellen", () => {
    */
   assert.equal(
     rader[0].split(/(?<!\\)\|/).length - 1,
-    9,
+    10,
     `raden har feil antall celler: ${rader[0]}`,
   );
   assert.match(rader[0], /Leads \\\| Q4/);
+  assert.match(rader[0], /120219/, "annonse-id skiller to like navn");
 });
 
 test("flere rapporter får oversiktstabell og overskriftsnivå to", () => {
@@ -270,4 +272,178 @@ test("null rapporter gir en fil som sier det, ikke en tom fil", () => {
   const md = byggMarkdown([], NAA);
   assert.match(md, /Ingen rapporter å laste ned ennå/);
   assert.ok(md.endsWith("\n"));
+});
+
+/**
+ * ── MAL v2.1 ──────────────────────────────────────────────────────────────
+ *
+ * Feltene under kom med mal v2.1 (28.09.2026). De ble lagret av API-et fra
+ * første dag, men falt ut av den validerte lesningen — altså av skjermene
+ * OG av denne filen. Endringsloggen er det mest verdifulle i v2.1, og den
+ * forsvant stille. Testene her er grunnen til at det ikke skjer igjen.
+ */
+
+const V21 = {
+  changes: [
+    {
+      date: "2026-08-31",
+      date_label: "31.8.",
+      platform: "google",
+      platform_name: "Google",
+      what: "Byttet budstrategi til maks konverteringer.",
+      effect: "Klikkprisen steg fra 21 til 38 kr.",
+    },
+    {
+      date: "2026-09-14",
+      date_label: "14.9.",
+      platform: "meta",
+      platform_name: "Meta",
+      what: "Satte sommervideoen på pause.",
+      effect: "",
+    },
+  ],
+  unexplained: ["Klikkprisen i Google har økt +81 % uten registrert endring."],
+};
+
+test("endringsloggen står i filen, nyeste først, før «Hva vi ser»", () => {
+  const md = byggMarkdown([{ rapport: rapport(V21), svar: TOMT }], NAA);
+  assert.match(md, /## Endringer i kontoene/);
+  assert.match(md, /2026-09-14 · Meta:\*\* Satte sommervideoen på pause\./);
+  assert.match(md, /budstrategi til maks konverteringer\..*Klikkprisen steg/);
+  assert.ok(
+    md.indexOf("Endringer i kontoene") < md.indexOf("Hva vi ser"),
+    "endringene forklarer tallene og må stå før observasjonene",
+  );
+  /* Nyeste først: 14.9. skal komme før 31.8. */
+  assert.ok(md.indexOf("2026-09-14") < md.indexOf("2026-08-31"));
+});
+
+test("et uforklart hopp står som eget avsnitt med forbehold", () => {
+  const md = byggMarkdown([{ rapport: rapport(V21), svar: TOMT }], NAA);
+  assert.match(md, /## Uforklart endring/);
+  assert.match(md, /Ikke konkluder med at en kanal ikke virker/);
+});
+
+test("annet forbruk og klikkpris står i nøkkeltallene", () => {
+  const md = byggMarkdown(
+    [
+      {
+        rapport: rapport({
+          kpis: {
+            ...rapport().kpis,
+            other_spend_4w: 1200,
+            google_cpc_4w: { value: 38, prev: 21, change_pct: 81 },
+          },
+        }),
+        svar: TOMT,
+      },
+    ],
+    NAA,
+  );
+  assert.match(md, /Annet forbruk, fire uker:\*\* 1 200 kr/);
+  assert.match(md, /Teller ikke i pris per lead/);
+  assert.match(md, /Klikkpris Google, fire uker:\*\* 38 kr \(\+81 %/);
+});
+
+/**
+ * Den viktigste av dem. «3 kunder · 32 667 kr per kunde» er sant og
+ * misvisende: Meta ga alle tre, Google ga null og kostet 46 000 kr. Snittet
+ * skjuler nøyaktig det man trenger for å flytte budsjett.
+ */
+test("en kanal uten kunder vises som forbruk, ikke som en pris", () => {
+  const md = byggMarkdown(
+    [
+      {
+        rapport: rapport({
+          kpis: {
+            ...rapport().kpis,
+            customers_90d: {
+              count: 3,
+              spend: 98000,
+              names: ["A", "B", "C"],
+              cost_per_customer: 32667,
+              by_channel: [
+                {
+                  channel: "meta",
+                  name: "Meta",
+                  count: 3,
+                  spend: 52000,
+                  names: ["A", "B", "C"],
+                  cost_per_customer: 17333,
+                },
+                {
+                  channel: "google",
+                  name: "Google",
+                  count: 0,
+                  spend: 46000,
+                  names: [],
+                  cost_per_customer: null,
+                },
+              ],
+            },
+          },
+        }),
+        svar: TOMT,
+      },
+    ],
+    NAA,
+  );
+  assert.match(md, /Meta: 3 kunder for 52 000 kr, 17 333 kr per kunde/);
+  assert.match(md, /Google: ingen kunder, 46 000 kr brukt\./);
+  assert.equal(
+    /Google.*per kunde/.test(md),
+    false,
+    "en kanal uten kunder skal ikke få en pris per kunde",
+  );
+});
+
+test("uketabellen skiller leadkampanjer fra annet forbruk", () => {
+  const md = byggMarkdown(
+    [
+      {
+        rapport: rapport({
+          weeks: [
+            {
+              w: 39,
+              meta_cost: 400,
+              meta_other_cost: 600,
+              meta_leads: 1,
+              g_cost: 4059,
+              g_clicks: 105,
+              g_cpc: 39,
+              g_leads: 0,
+              cost: 4459,
+              leads: 1,
+              cpl: 4459,
+            },
+          ],
+        }),
+        svar: TOMT,
+      },
+    ],
+    NAA,
+  );
+  const hode = md.split("\n").find((l) => l.startsWith("| Uke |"));
+  assert.ok(hode, "fant ikke tabellhodet");
+  for (const kol of ["Meta lead", "Meta annet", "Google klikk", "Klikkpris"]) {
+    assert.ok(hode.includes(kol), `mangler kolonnen «${kol}»`);
+  }
+  const rad39 = md.split("\n").find((l) => l.startsWith("| 39 |"));
+  assert.ok(rad39, "fant ikke raden for uke 39");
+  assert.match(rad39, /600 kr/, "annet forbruk skal stå i raden");
+  assert.match(rad39, /105/, "google-klikk skal stå i raden");
+  assert.match(rad39, /39 kr/, "klikkprisen skal stå i raden");
+});
+
+/**
+ * Rapporter lagret før v2.1 har ingen av feltene. De skal gi en fil uten
+ * de nye avsnittene — ikke en fil med tomme overskrifter, og ikke et kast.
+ */
+test("en rapport fra før v2.1 gir en fil uten de nye avsnittene", () => {
+  const md = byggMarkdown([{ rapport: rapport(), svar: TOMT }], NAA);
+  assert.equal(md.includes("## Endringer i kontoene"), false);
+  assert.equal(md.includes("## Uforklart endring"), false);
+  assert.equal(md.includes("Annet forbruk"), false);
+  assert.equal(md.includes("Klikkpris Google, fire uker"), false);
+  assert.match(md, /## Nøkkeltall/, "resten av filen står som før");
 });

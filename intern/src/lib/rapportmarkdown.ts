@@ -196,8 +196,44 @@ export function rapportTilMarkdown(
         : "") +
       ".",
   );
-  if (kp.customers_90d.names.length) {
+  if (kp.customers_90d.by_channel.length) {
+    /*
+     * Per kanal, når malen har det. Et samlet snitt skjuler at den ene
+     * kanalen ga alle kundene og den andre kostet penger uten å gi noen —
+     * og det er nøyaktig det man trenger for å flytte budsjett.
+     */
+    for (const kanal of kp.customers_90d.by_channel) {
+      /*
+       * En kanal uten kunder får ikke en pris per kunde — den finnes
+       * ikke. Den får forbruket sitt, som er det tallet som betyr noe
+       * når man vurderer å flytte pengene et annet sted.
+       */
+      ut.push(
+        kanal.count > 0 && kanal.cost_per_customer !== null
+          ? `  - ${kanal.name}: ${t(kanal.count)} kunder for ` +
+              `${k(kanal.spend)}, ${k(kanal.cost_per_customer)} per kunde` +
+              (kanal.names.length ? ` (${kanal.names.join(", ")})` : "") +
+              "."
+          : `  - ${kanal.name}: ingen kunder, ${k(kanal.spend)} brukt.`,
+      );
+    }
+  } else if (kp.customers_90d.names.length) {
     ut.push(`  - Kundene: ${kp.customers_90d.names.join(", ")}`);
+  }
+  if (kp.other_spend_4w > 0) {
+    ut.push(
+      `- **Annet forbruk, fire uker:** ${k(kp.other_spend_4w)} til boostede` +
+        ` innlegg og liknende. Teller ikke i pris per lead.`,
+    );
+  }
+  if (kp.google_cpc_4w.value !== null) {
+    ut.push(
+      `- **Klikkpris Google, fire uker:** ${k(kp.google_cpc_4w.value)}` +
+        (kp.google_cpc_4w.change_pct !== null
+          ? ` (${p(kp.google_cpc_4w.change_pct)} mot fire uker før)`
+          : "") +
+        ".",
+    );
   }
   ut.push("");
 
@@ -222,6 +258,43 @@ export function rapportTilMarkdown(
 
   if (r.quiet) {
     ut.push("*Malen vurderte uka som stille: ingen handling nødvendig.*", "");
+  }
+
+  /* ── ENDRINGENE, FØR OBSERVASJONENE DE FORKLARER ──────────────────── */
+  if (r.changes.length) {
+    ut.push(`${h(2)} Endringer i kontoene`, "");
+    ut.push(
+      "Lest av endringsloggen hos Meta og Google. Et hopp i klikkpris eller",
+      "forbruk er ubrukelig uten denne: forskjellen på å stoppe en kanal og",
+      "å rette en innstilling ligger her.",
+      "",
+    );
+    for (const c of [...r.changes].sort((a, b) =>
+      b.date.localeCompare(a.date),
+    )) {
+      ut.push(
+        `- **${c.date}${c.platform_name ? ` · ${c.platform_name}` : ""}:**` +
+          ` ${c.what}` +
+          (c.effect ? ` — ${c.effect}` : ""),
+      );
+    }
+    ut.push("");
+  }
+
+  /*
+   * Uforklart står ETTER endringsloggen. Sto det før, leste man «ingen
+   * registrert endring forklarer hoppet» uten å ha sett hvilke endringer
+   * som var registrert, og de to avsnittene så ut som en selvmotsigelse.
+   */
+  if (r.unexplained.length) {
+    ut.push(`${h(2)} Uforklart endring`, "");
+    ut.push(
+      "Hopp i tallene som ingen registrert endring i kontoene forklarer.",
+      "Ikke konkluder med at en kanal ikke virker før noen har sett etter.",
+      "",
+    );
+    for (const u of r.unexplained) ut.push(`- ${u}`);
+    ut.push("");
   }
 
   /* ── HVA VI SER ───────────────────────────────────────────────────── */
@@ -265,18 +338,26 @@ export function rapportTilMarkdown(
   /* ── UKENE ────────────────────────────────────────────────────────── */
   if (r.weeks.length) {
     ut.push(`${h(2)} Uke for uke`, "");
+    /*
+     * «Meta forbruk» er KUN leadkampanjer fra mal v2.1, og «Meta annet» er
+     * boostede innlegg. Skilles de ikke, ser en uke med mye boosting ut
+     * som en uke der leadkampanjene var dyre.
+     */
     ut.push(
       rad([
         "Uke",
         "Forbruk",
         "Leads",
         "Pris per lead",
-        "Meta forbruk",
+        "Meta lead",
+        "Meta annet",
         "Meta leads",
-        "Google forbruk",
+        "Google",
+        "Google klikk",
+        "Klikkpris",
         "Google leads",
       ]),
-      skille(8),
+      skille(11),
     );
     for (const u of r.weeks) {
       ut.push(
@@ -286,8 +367,11 @@ export function rapportTilMarkdown(
           t(u.leads),
           k(u.cpl),
           k(u.meta_cost),
+          u.meta_other_cost ? k(u.meta_other_cost) : "–",
           t(u.meta_leads),
           k(u.g_cost),
+          u.g_clicks === null ? "–" : t(u.g_clicks),
+          k(u.g_cpc),
           t(u.g_leads),
         ]),
       );
@@ -301,6 +385,7 @@ export function rapportTilMarkdown(
     ut.push(
       rad([
         "Plattform",
+        "Annonse-ID",
         "Kampanje",
         "Annonse",
         "På",
@@ -309,12 +394,14 @@ export function rapportTilMarkdown(
         "Frekvens",
         "Leads uka",
       ]),
-      skille(8),
+      skille(9),
     );
     for (const a of r.ads) {
       ut.push(
         rad([
           celle(a.platform),
+          /* To annonser kan hete det samme. Id-en er det som skiller dem. */
+          celle(a.ad_id) || "–",
           celle(a.campaign),
           celle(a.ad),
           a.on ? "Ja" : "Nei",
@@ -422,7 +509,12 @@ function forord(): string[] {
     "- **«Dom»** er oppgavens egen vurdering av uka: *Handle*, *Følg med*",
     "  eller *I rute*.",
     "- **«Pris per lead»** måles over et firewukersvindu, mot en grense som",
-    "  står oppgitt i hver rapport.",
+    "  står oppgitt i hver rapport. Den regnes **kun på leadkampanjer** —",
+    "  boostede innlegg og liknende står for seg som «annet forbruk».",
+    "- **«Endringer i kontoene»** er lest av endringsloggen hos Meta og",
+    "  Google. Et hopp i klikkpris eller forbruk betyr noe helt annet når",
+    "  en innstilling ble endret samtidig: da skal innstillingen rettes og",
+    "  testes, ikke kanalen stoppes.",
     "- **Avkryssinger, beslutningssvar og notater er Påls egne**, gjort på",
     "  intranettet i etterkant. De sier hva som faktisk ble gjort — resten",
     "  er hva oppgaven foreslo.",

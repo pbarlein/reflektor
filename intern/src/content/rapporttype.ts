@@ -42,6 +42,46 @@ export type Vindu = {
   complete?: boolean;
 };
 
+/**
+ * Kunder og forbruk for én kanal, siste 90 dager.
+ *
+ * Kom med mal v2.1. Poenget er kanaler som har kostet penger UTEN å gi
+ * kunder: et samlet «32 667 kr per kunde» skjuler at den ene kanalen ga
+ * alle kundene og den andre ga ingen. Da er `count` null og `spend` det
+ * som gikk med.
+ */
+export type Kanalkunder = {
+  channel: string;
+  name: string;
+  count: number;
+  spend: number;
+  names: string[];
+  cost_per_customer: number | null;
+};
+
+/** Klikkprisen i Google, fire uker mot fire uker før. Mal v2.1. */
+export type Klikkpris = {
+  value: number | null;
+  prev: number | null;
+  change_pct: number | null;
+};
+
+/**
+ * En endring i annonsekontoene, lest av endringsloggen.
+ *
+ * Mal v2.1, og den er grunnen til at v2.1 finnes: uten den er et hopp i
+ * klikkpris eller forbruk en gåte man gjetter på. `effect` er hva som
+ * skjedde med tallene etterpå, og kan være tom når det er for tidlig å si.
+ */
+export type Endring = {
+  date: string;
+  date_label: string;
+  platform: string;
+  platform_name: string;
+  what: string;
+  effect: string;
+};
+
 export type Nokkeltall = {
   cpl_4w: Vindu & { prev?: Vindu; change_pct: number | null; limit: number };
   leads_week: { value: number; meta: number; google: number };
@@ -50,7 +90,12 @@ export type Nokkeltall = {
     spend: number;
     names: string[];
     cost_per_customer: number | null;
+    /** Per kanal. Tom på rapporter fra før mal v2.1. */
+    by_channel: Kanalkunder[];
   };
+  /** Boostede innlegg o.l. siste fire uker. Teller ikke i pris per lead. */
+  other_spend_4w: number;
+  google_cpc_4w: Klikkpris;
   spend_week: {
     value: number;
     meta: number;
@@ -61,9 +106,13 @@ export type Nokkeltall = {
 
 export type Uke = {
   w: number;
+  /** Fra mal v2.1: KUN leadkampanjer. Boostede innlegg ligger i `meta_other_cost`. */
   meta_cost: number;
+  meta_other_cost: number;
   meta_leads: number;
   g_cost: number;
+  g_clicks: number | null;
+  g_cpc: number | null;
   g_leads: number;
   cost: number;
   leads: number;
@@ -72,6 +121,8 @@ export type Uke = {
 
 export type Annonse = {
   platform: string;
+  /** Mal v2.1. To annonser kan hete det samme; id-en gjør dem forskjellige. */
+  ad_id: string;
   campaign: string;
   ad: string;
   on: boolean;
@@ -128,6 +179,10 @@ export type Rapport = {
     paid_social_customers_new_week: number;
   };
   insights: string[];
+  /** Mal v2.1. Tom på eldre rapporter. */
+  changes: Endring[];
+  /** Hopp i tallene malen ikke fant en forklaring på. Mal v2.1. */
+  unexplained: string[];
   steps: Steg[];
   previous_steps: Forrigesteg[];
   data_gaps: string[];
@@ -233,6 +288,7 @@ export function lesRapport(rått: unknown): Lesning {
   const lw = (k.leads_week ?? {}) as Record<string, unknown>;
   const c90 = (k.customers_90d ?? {}) as Record<string, unknown>;
   const sw = (k.spend_week ?? {}) as Record<string, unknown>;
+  const gc = (k.google_cpc_4w ?? {}) as Record<string, unknown>;
   const al = (o.alert ?? {}) as Record<string, unknown>;
   const hs = (o.hubspot ?? {}) as Record<string, unknown>;
   const dec = o.decision as Record<string, unknown> | null | undefined;
@@ -293,6 +349,29 @@ export function lesRapport(rått: unknown): Lesning {
         spend: tall(c90.spend),
         names: strenger(c90.names),
         cost_per_customer: tallEllerNull(c90.cost_per_customer),
+        /*
+         * En kanal uten navn kan ikke vises, og en kanal uten forbruk OG
+         * uten kunder er ingen opplysning. Begge slippes.
+         */
+        by_channel: liste(c90.by_channel, (x) => {
+          const q = (x ?? {}) as Record<string, unknown>;
+          const navn = tekst(q.name).trim();
+          if (!navn) return null;
+          return {
+            channel: tekst(q.channel),
+            name: navn,
+            count: tall(q.count),
+            spend: tall(q.spend),
+            names: strenger(q.names),
+            cost_per_customer: tallEllerNull(q.cost_per_customer),
+          };
+        }),
+      },
+      other_spend_4w: tall(k.other_spend_4w),
+      google_cpc_4w: {
+        value: tallEllerNull(gc.value),
+        prev: tallEllerNull(gc.prev),
+        change_pct: tallEllerNull(gc.change_pct),
       },
       spend_week: {
         value: tall(sw.value),
@@ -323,8 +402,11 @@ export function lesRapport(rått: unknown): Lesning {
       return {
         w: q.w,
         meta_cost: tall(q.meta_cost),
+        meta_other_cost: tall(q.meta_other_cost),
         meta_leads: tall(q.meta_leads),
         g_cost: tall(q.g_cost),
+        g_clicks: tallEllerNull(q.g_clicks),
+        g_cpc: tallEllerNull(q.g_cpc),
         g_leads: tall(q.g_leads),
         cost: tall(q.cost),
         leads: tall(q.leads),
@@ -336,6 +418,7 @@ export function lesRapport(rått: unknown): Lesning {
       if (!tekst(q.ad).trim() && !tekst(q.campaign).trim()) return null;
       return {
         platform: tekst(q.platform),
+        ad_id: tekst(q.ad_id),
         campaign: tekst(q.campaign),
         ad: tekst(q.ad),
         on: q.on === true,
@@ -368,6 +451,25 @@ export function lesRapport(rått: unknown): Lesning {
       paid_social_customers_new_week: tall(hs.paid_social_customers_new_week),
     },
     insights: strenger(o.insights),
+    /*
+     * En endring uten `what` sier ingenting, og datoen er det som gjør at
+     * den kan knyttes til et hopp i tallene. Begge kreves.
+     */
+    changes: liste(o.changes, (x) => {
+      const q = (x ?? {}) as Record<string, unknown>;
+      const hva = tekst(q.what).trim();
+      const dato = tekst(q.date).trim();
+      if (!hva || !dato) return null;
+      return {
+        date: dato,
+        date_label: tekst(q.date_label) || dato,
+        platform: tekst(q.platform),
+        platform_name: tekst(q.platform_name) || tekst(q.platform),
+        what: hva,
+        effect: tekst(q.effect),
+      };
+    }),
+    unexplained: strenger(o.unexplained),
     steps: liste(o.steps, (x) => {
       const q = (x ?? {}) as Record<string, unknown>;
       if (!tekst(q.title).trim()) return null;
@@ -406,4 +508,58 @@ export function lesRapport(rått: unknown): Lesning {
   };
 
   return { ok: true, rapport, rå: o };
+}
+
+/**
+ * Fyller ut felt som kom etter at en lagret rapport ble skrevet.
+ *
+ * ── FEILEN DENNE FINNES FOR ───────────────────────────────────────────────
+ *
+ * 28.09.2026 ble mal v2.1-feltene lagt til i `Rapport` og i `lesRapport`.
+ * Alle fire rapportene i butikken begynte å svare 500:
+ * «Cannot read properties of undefined (reading 'value')».
+ *
+ * Grunnen er at `lesRapport` kjører ved MOTTAK, ikke ved lesing. Den
+ * validerte rapporten skrives til Blob og ligger der i den formen den
+ * hadde den dagen den kom inn. Å utvide typen retter altså ingenting for
+ * det som allerede er lagret — det gjør bare at typen lyver: TypeScript
+ * tror `kpis.google_cpc_4w` finnes, og kompilatoren godtar `.value` på et
+ * objekt som er `undefined` i virkeligheten.
+ *
+ * ── HVORFOR ÉN FUNKSJON OG IKKE `?.` OVERALT ──────────────────────────────
+ *
+ * Valgfri lenking på hvert bruksted er den samme rettelsen gjort på nytt
+ * hver gang noen skriver en ny skjerm, og den som glemmer den får en hvit
+ * side i stedet for en typefeil. Her normaliseres formen ÉN gang, i
+ * `hentRapport`, og etter det er typen sann.
+ *
+ * Neste gang malen får nye felt: legg dem til her samtidig som i typen.
+ */
+export function medStandarder(r: Rapport): Rapport {
+  const k = r.kpis ?? ({} as Rapport["kpis"]);
+  return {
+    ...r,
+    kpis: {
+      ...k,
+      customers_90d: {
+        ...k.customers_90d,
+        by_channel: k.customers_90d?.by_channel ?? [],
+      },
+      other_spend_4w: k.other_spend_4w ?? 0,
+      google_cpc_4w: k.google_cpc_4w ?? {
+        value: null,
+        prev: null,
+        change_pct: null,
+      },
+    },
+    weeks: (r.weeks ?? []).map((u) => ({
+      ...u,
+      meta_other_cost: u.meta_other_cost ?? 0,
+      g_clicks: u.g_clicks ?? null,
+      g_cpc: u.g_cpc ?? null,
+    })),
+    ads: (r.ads ?? []).map((a) => ({ ...a, ad_id: a.ad_id ?? "" })),
+    changes: r.changes ?? [],
+    unexplained: r.unexplained ?? [],
+  };
 }

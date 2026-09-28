@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import type { Nokkeltall as Tall } from "@/content/rapporttype";
 import { kr, prosent, tall } from "@/lib/rapportformat";
 
@@ -21,7 +23,8 @@ function Kort({
 }: {
   verdi: string;
   etikett: string;
-  under?: string;
+  /** ReactNode og ikke string: kundekortet trenger én linje per kanal. */
+  under?: ReactNode;
   framhevet?: boolean;
 }) {
   return (
@@ -87,13 +90,31 @@ export function Nokkeltall({
         etikett={`Leads uke ${uke}`}
         under={`Meta ${lw.meta} · Google ${lw.google}`}
       />
+      {/*
+        ── KUNDER PER KANAL, IKKE BARE SAMLET (mal v2.1) ─────────────────
+
+        «3 kunder · 32 667 kr per kunde» er sant og misvisende på samme
+        tid: den ene kanalen ga alle tre, den andre ga null og kostet
+        46 000 kr. Snittet skjuler nøyaktig det man må vite for å flytte
+        penger. Står en kanal med null kunder, vises forbruket i stedet
+        for en pris som ikke finnes.
+      */}
       <Kort
         verdi={tall(c90.count)}
         etikett="Kunder fra annonser, 90 dager"
         under={
-          c90.cost_per_customer
-            ? `${kr(c90.cost_per_customer)} per kunde`
-            : "ingen ennå"
+          c90.by_channel.length > 0
+            ? c90.by_channel.map((k) => (
+                <span key={k.channel || k.name} className="block">
+                  {k.name} {k.count} ·{" "}
+                  {k.count > 0 && k.cost_per_customer !== null
+                    ? `${kr(k.cost_per_customer)} per kunde`
+                    : `${kr(k.spend)} uten kunder`}
+                </span>
+              ))
+            : c90.cost_per_customer
+              ? `${kr(c90.cost_per_customer)} per kunde`
+              : "ingen ennå"
         }
       />
       <Kort

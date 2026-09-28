@@ -3,7 +3,7 @@ import { dirname, join } from "node:path";
 
 import { BlobNotFoundError, get, list, put } from "@vercel/blob";
 
-import type { Rapport } from "@/content/rapporttype";
+import { type Rapport, medStandarder } from "@/content/rapporttype";
 import { type Avkryssing, type Mistet, flyttMedOver } from "@/lib/rapportflytt";
 
 /**
@@ -178,7 +178,18 @@ export async function hentRapport(
   type: string,
   id: string,
 ): Promise<Lagret | null> {
-  return les<Lagret>(sti(type, id));
+  const l = await les<Lagret>(sti(type, id));
+  if (!l) return null;
+  /*
+   * ── ÉN NORMALISERING, HER ─────────────────────────────────────────────
+   *
+   * `lesRapport` kjører ved MOTTAK. Den validerte rapporten ligger lagret
+   * i den formen den hadde den dagen den kom inn, så nye felt i typen
+   * finnes ikke i det som allerede er skrevet. Uten denne linja lyver
+   * typen, og skjermene faller på et `undefined` kompilatoren ikke ser.
+   * Se `medStandarder` for feilen den ble skrevet etter.
+   */
+  return { ...l, rapport: medStandarder(l.rapport) };
 }
 
 /**

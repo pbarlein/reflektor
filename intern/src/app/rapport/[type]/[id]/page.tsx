@@ -6,11 +6,12 @@ import { Container } from "@/components/Container";
 import { Annonsegraf } from "@/components/rapport/Annonsegraf";
 import { Beslutningen } from "@/components/rapport/Beslutningen";
 import { Dommerke } from "@/components/rapport/Dommerke";
+import { Endringene, Uforklart } from "@/components/rapport/Endringene";
 import { Nedlastingsknapp } from "@/components/rapport/Nedlastingsknapp";
 import { Nokkeltall } from "@/components/rapport/Nokkeltall";
 import { Notatene, Stegene } from "@/components/rapport/Stegene";
 import { Ukegraf, Uketabell } from "@/components/rapport/Ukegraf";
-import { kr, norskTidspunkt } from "@/lib/rapportformat";
+import { kr, norskTidspunkt, prosent } from "@/lib/rapportformat";
 import { hentIndeks, hentInnstillinger, hentRapport } from "@/lib/rapportlager";
 import { erRapportleser } from "@/lib/rapporttilgang";
 import { krevBruker } from "@/lib/tilgang";
@@ -204,6 +205,28 @@ export default async function Rapportside({ params }: Params) {
             </p>
           ) : (
             <>
+              {/*
+                ── 5c ENDRINGER I KONTOENE (mal v2.1) ───────────────────
+
+                Før «Hva vi ser», fordi endringene forklarer tallene som
+                observasjonene bygger på. Leser man dem etterpå, har man
+                allerede trukket konklusjonen.
+              */}
+              <Endringene endringer={r.changes} />
+
+              {/*
+                ── 5d UFORKLART ENDRING ─────────────────────────────────
+
+                ETTER endringsloggen, ikke før. Sto den over, leste man
+                «ingen registrert endring forklarer hoppet» før man hadde
+                sett hvilke endringer som faktisk var registrert — og da
+                ser de to avsnittene ut som om de motsier hverandre.
+
+                Rekkefølgen er nå: hva som ble endret, hva som likevel
+                ikke lar seg forklare, og så hva vi ser.
+              */}
+              <Uforklart punkter={r.unexplained} />
+
               {/* ── 6 HVA VI SER ────────────────────────────────────────── */}
               {r.insights.length > 0 && (
                 <section>
@@ -330,6 +353,42 @@ export default async function Rapportside({ params }: Params) {
                       <div className="mt-3 rounded-interaktiv bg-kort px-4 pt-5 pb-4">
                         <Ukegraf uker={r.weeks} grense={grense} />
                         <Uketabell uker={r.weeks} grense={grense} />
+
+                        {/*
+                          ── TO TALL SOM IKKE ER I TABELLEN (mal v2.1) ──
+
+                          Annet forbruk holdes UTENFOR pris per lead, fordi
+                          et boostet innlegg ikke er en leadkampanje og
+                          ville gjort tallet dårligere uten at noe var
+                          verre. Men pengene er brukt, så de må stå et
+                          sted. Klikkprisen i Google er det tidligste
+                          varselet om at noe er endret i kontoen — den
+                          beveger seg uker før pris per lead gjør det.
+                        */}
+                        {(r.kpis.other_spend_4w > 0 ||
+                          r.kpis.google_cpc_4w.value !== null) && (
+                          <p className="mt-3 border-t border-kant pt-3 text-[0.8125rem] leading-relaxed text-pretty text-blekk-svak">
+                            {r.kpis.other_spend_4w > 0 && (
+                              <>
+                                Tabellen gjelder bare leadkampanjer. I tillegg
+                                gikk {kr(r.kpis.other_spend_4w)} til boostede
+                                innlegg og liknende de siste fire ukene — det
+                                teller ikke i pris per lead.{" "}
+                              </>
+                            )}
+                            {r.kpis.google_cpc_4w.value !== null && (
+                              <>
+                                Klikkpris Google, fire uker:{" "}
+                                {kr(r.kpis.google_cpc_4w.value)}
+                                {r.kpis.google_cpc_4w.change_pct !== null &&
+                                  ` (${prosent(
+                                    r.kpis.google_cpc_4w.change_pct,
+                                  )} mot fire uker før)`}
+                                .
+                              </>
+                            )}
+                          </p>
+                        )}
                       </div>
                     </section>
                   )}
