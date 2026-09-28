@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { Container } from "@/components/Container";
 import { Dommerke } from "@/components/rapport/Dommerke";
+import { Nedlastingsknapp } from "@/components/rapport/Nedlastingsknapp";
 import { Slettknapp } from "@/components/rapport/Slettknapp";
 import { forfalt, norskTidspunkt } from "@/lib/rapportformat";
 import { harLager, hentIndeks, hentRapport } from "@/lib/rapportlager";
@@ -157,6 +158,28 @@ export default async function Rapporter() {
                 ? "Ingen ekte rapporter ennå — bare testdataene nederst. Den planlagte oppgaven leverer den første mandag morgen."
                 : "Ingen rapporter ennå. Den planlagte oppgaven leverer den første mandag morgen."}
             </p>
+          )}
+
+          {/* ── HELE HISTORIKKEN SOM FIL ───────────────────────────────── */}
+          {ekte.length > 0 && (
+            <section className="mt-7 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-flate border border-kant px-5 py-4">
+              <div className="max-w-[46ch]">
+                <h2 className="font-sans text-[0.9375rem] font-medium text-blekk">
+                  Ta med rapportene som kontekst
+                </h2>
+                {/*
+                  Setningen sier hva filen inneholder, ikke hvor god den er.
+                  Se `Nedlastingsknapp` for hvorfor det siste punktet står
+                  der.
+                */}
+                <p className="mt-1 text-[0.8125rem] leading-relaxed text-pretty text-blekk-svak">
+                  Én Markdown-fil med alle {ekte.length} ukene: tall, varsler,
+                  stegene og det du har krysset av og svart. Testdataene er ikke
+                  med. Filen inneholder kundenavn og annonseforbruk.
+                </p>
+              </div>
+              <Nedlastingsknapp antall={ekte.length} />
+            </section>
           )}
 
           {/* ── ARKIV ──────────────────────────────────────────────────── */}

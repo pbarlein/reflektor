@@ -6,6 +6,7 @@ import { Container } from "@/components/Container";
 import { Annonsegraf } from "@/components/rapport/Annonsegraf";
 import { Beslutningen } from "@/components/rapport/Beslutningen";
 import { Dommerke } from "@/components/rapport/Dommerke";
+import { Nedlastingsknapp } from "@/components/rapport/Nedlastingsknapp";
 import { Nokkeltall } from "@/components/rapport/Nokkeltall";
 import { Notatene, Stegene } from "@/components/rapport/Stegene";
 import { Ukegraf, Uketabell } from "@/components/rapport/Ukegraf";
@@ -64,12 +65,21 @@ export default async function Rapportside({ params }: Params) {
   return (
     <Container>
       <div className="pt-8 pb-16 sm:pt-10">
-        <Link
-          href="/rapport"
-          className="inline-flex items-center gap-2 rounded-interaktiv text-[0.9375rem] text-blekk-dempet transition-colors hover:text-blekk motion-reduce:transition-none print:hidden"
-        >
-          <span aria-hidden>←</span> Alle rapporter
-        </Link>
+        {/*
+          Tilbakelenken og nedlastingen på samme linje. Nedlastingen hører
+          til rapporten som helhet, ikke til noen av seksjonene under, og da
+          er toppen det ene stedet den ikke ser ut som den gjelder det den
+          står ved siden av.
+        */}
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+          <Link
+            href="/rapport"
+            className="inline-flex items-center gap-2 rounded-interaktiv text-[0.9375rem] text-blekk-dempet transition-colors hover:text-blekk motion-reduce:transition-none print:hidden"
+          >
+            <span aria-hidden>←</span> Alle rapporter
+          </Link>
+          <Nedlastingsknapp type={type} id={id} />
+        </div>
 
         <article className="mt-7 flex max-w-[58rem] flex-col gap-7">
           {r.test && (
