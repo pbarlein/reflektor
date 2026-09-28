@@ -3035,3 +3035,108 @@ på, og alle fire innvendingene var riktige.
 Det som går igjen: jeg lette der jeg hadde lett sist, og konkluderte fra det
 jeg fant der. Både «arkivet har ingen kontorvideo» og «Smarketing har ingen
 ferdig eksport» var konklusjoner trukket fra én mappe.
+
+
+## A72 — Usynlig for kjeder i AI-svar. 29.09.2026
+
+Pål testet Google AI Mode som «markedssjef i en norsk interiørkjede som
+trenger et byrå til løpende innhold for sosiale medier».
+
+Reflektor kom ikke med i svaret. Anbefalingen gikk til Smood Social, HER
+Agency, Under The Influence, Snakk og Spoon.
+
+**AI-en begrunnet det med vår egen tekst.** «Én produksjonsdag, 8–10
+videoer», «Instagram og Facebook» og FAQ-en «Hva er ikke inkludert?» ble lest
+som at vi er for små for en kjede, mangler TikTok og ikke tar community
+management.
+
+Vurderingen snudde først da Pål selv nevnte Anton Sport, Egon, Peppes og
+TV-reklamene for Vitusapotek og Peppes. Da hentet AI-en case-sidene og kalte
+Reflektor «en av de sterkeste kandidatene».
+
+### Diagnosen
+
+Fakta manglet ikke. De lå i repoet hele tiden. To ting gjorde at de ikke ble
+hentet:
+
+1. **Feil ord.** Kjedefakta var skrevet uten ordene en kjede søker med:
+   kjede, retail, landsdekkende, markedssjef, faste månedlige avtaler.
+2. **Begrensninger uten sammenheng.** En liste over hva vi ikke gjør leses
+   som et tak når ingenting sier hvorfor, eller hva kunden får i stedet.
+
+Det andre punktet er verdt å merke seg. Ærligheten i «Hva er ikke inkludert?»
+er et bevisst salgsargument — den står beskrevet som det i site.ts. Men
+ærlighet uten kontekst er bare en mangelliste for en maskin som leser raskt.
+
+### Hva som er gjort
+
+**Ny side /kjeder.** Én blokk per kunde med hva vi leverer, hvor lenge og
+omfanget. Bygget på `Tjenestelayout` som de fem andre, så den arver
+serverrendret HTML, brødsmuler, Service-markering og samme kontaktskjema.
+I tillegg WebPage-markering med `about` på de fire kjedene ved navn.
+
+**Forsiden:** to tillegg. «Også fra Reflektor» med lenker til /kjeder og
+/reklamefilm, og en merknad ved prisen om at videoene leveres i 9:16 og kan
+brukes fritt på TikTok, i annonser og på nettsiden.
+
+**FAQ «Hva er ikke inkludert?»:** ingen fakta fjernet, tre stykker kontekst
+lagt til — at dialogen er et valg og hvem det passer for, at hvor vi
+publiserer ikke er det samme som hvor innholdet kan brukes, og at volumet har
+en pris på neste produksjonsdag i stedet for et tak.
+
+**Egon-caset:** kjede, retail og landsdekkende inn i ingress og metadata.
+Historien er urørt.
+
+**Krysslenker:** forside, reklamefilm og Egon-caset til /kjeder; /kjeder til
+forsiden, reklamefilm og caset.
+
+### Låst copy er verifisert, ikke antatt
+
+Forsidens rå HTML er hentet med curl før og etter og diffet ord for ord.
+Resultatet: **ingenting slettet, ingenting endret, bare tillegg.** Alle ni
+låste formuleringer står i samme antall som før — «sosiale medier-byrå … i
+Oslo», «30 000 kr/mnd» (tre steder), «Instagram og Facebook», «ingen
+timepriser», vilkårslinjen og alle fire punktene i `inngar` som AI-en siterer.
+
+Det var ikke en selvfølge. Den nye setningen om 9:16 handler om hva kunden
+kan BRUKE videoene til; punkt fire om hvor vi publiserer står uendret ved
+siden av. Å rette opp punkt fire hadde vært enklere og feil.
+
+### Kildene
+
+| Påstand | Kilde |
+|---|---|
+| Anton Sport: kampanjer, skjermer i butikk, sosiale medier, merkevarebygging | Reflektors egen tekst på dagens /vart-arbeid |
+| Anton Sport: over tre år | Ocast-profilen, «Anton Sport + Reflektor — 3+ år samarbeid» |
+| Axel Hauge-sitatet | anmeldelser.ts, ordrett, klarert |
+| Egon: nærmere 50 restauranter, siden 2022, seks formater | caser.ts |
+| Peppes: Premier League. Vitusapotek: Skal vi danse | Reflektors egen tekst på dagens /reklamefilm, ordrett |
+| Ekstra produksjonsdag 30 000 kr | Pål 28.09.2026, se `tilbud.ekstraProduksjonsdag` |
+| 9:16 og fri bruk på andre flater | Pål 29.09.2026 |
+
+**«Siden 2022» for Anton Sport ble ikke brukt.** Utkastet til ingress sa det,
+men ingen kilde sier 2022 — Ocast sier «3+ år». Siden skriver derfor «over
+tre år». Spørsmålet står i rapporten til Pål.
+
+### To plassholdere står igjen
+
+`[BEKREFT: styrer Anton Sport selv publisering og dialog i kanalene?]` og
+`[BEKREFT: samme team — gjelder dette alle kjedekundene?]`. Begge er
+påstander oppdraget ba om, og ingen av dem finnes i publisert materiale.
+
+`scripts/bekreft-check.ts` leser hele src/ etter mønsteret og feiler. Den
+ligger i CI mellom content:check og lenkesjekk. Plassholderne er synlige i
+preview med vilje — det er den eneste måten Pål kan se dem i sammenheng — men
+de kan ikke merges.
+
+Forskjellen fra TBD: TBD er copy som ikke er levert, BEKREFT er en påstand
+som venter på bekreftelse. De to skal ikke slås sammen.
+
+### Verifisert
+
+curl uten JS mot /kjeder, forsiden og /faq: all tekst står i serverrendret
+HTML. JSON-LD på /kjeder parser og gir WebPage, BreadcrumbList, Service og
+FAQPage — Organization er ikke duplisert. Med indekseringssperren åpnet:
+canonical peker på reflektor.no/kjeder, robots gir Allow, og sitemapet har
+/kjeder på prioritet 0,9. axe på alle fem berørte sider: null brudd. tsc,
+eslint, 41 tester, content:check og lenkesjekk grønne.

@@ -95,8 +95,27 @@ export const faqSporsmal: FaqPunkt[] = [
     kategori: "tjenesten",
   },
   {
+    /*
+     * UTVIDET 29.09.2026. INGEN FAKTA ER FJERNET — alt som sto her står
+     * fortsatt, ordrett. Det som er lagt til er sammenhengen.
+     *
+     * Bakgrunnen er målt. Pål spurte Google AI Mode som markedssjef i en
+     * norsk interiørkjede, og Reflektor kom ikke med i svaret. AI-en
+     * begrunnet det blant annet med NETTOPP DETTE SVARET, og leste det som
+     * at vi mangler TikTok og ikke tar community management.
+     *
+     * Begge deler er riktig lest. Feilen er vår: begrensningene sto uten
+     * sammenheng, og en liste over hva vi ikke gjør leses som et tak når
+     * ingenting forklarer hvorfor eller hva kunden får i stedet.
+     *
+     * Tre tillegg, alle bekreftet av Pål 29.09.2026:
+     * - kommentarer og meldinger er et VALG, og hvem det passer for
+     * - hvor vi publiserer er ikke det samme som hvor innholdet kan brukes
+     * - volumet er ikke et tak, det er én produksjonsdag med en pris på
+     *   den neste
+     */
     sporsmal: "Hva er ikke inkludert?",
-    svar: "Vi produserer og publiserer. Vi drifter ikke kontoen utover det. Konkret betyr det at vi ikke svarer på kommentarer eller meldinger, ikke liker eller kommenterer på vegne av dere, og ikke publiserer stories. Vi kjøper heller ikke annonser eller styrer annonsebudsjetter. Kommentarfeltet og innboksen beholder dere selv. Det er som regel også best: svar fra dere treffer riktigere enn svar fra et byrå, og det tar sjelden mye tid når innholdet allerede ligger der. Vi sier dette tydelig fordi «SoMe-byrå» betyr ulike ting hos ulike leverandører. Hos oss betyr det research, produksjon og publisering — gjort ordentlig, hver uke.",
+    svar: "Vi produserer og publiserer. Vi drifter ikke kontoen utover det. Konkret betyr det at vi ikke svarer på kommentarer eller meldinger, ikke liker eller kommenterer på vegne av dere, og ikke publiserer stories. Vi kjøper heller ikke annonser eller styrer annonsebudsjetter. Kommentarfeltet og innboksen beholder dere selv. Det passer bedrifter som vil eie dialogen med kundene selv, og det er som regel også best: svar fra dere treffer riktigere enn svar fra et byrå, og det tar sjelden mye tid når innholdet allerede ligger der.\n\nVi publiserer på Instagram og Facebook. Videoene leveres stående i 9:16, og dere står helt fritt til å bruke dem på TikTok, i annonser, på nettsiden og andre flater. Hvor vi publiserer er ikke det samme som hvor innholdet kan brukes.\n\nAbonnementet har én produksjonsdag i måneden. Trenger dere mer innhold, koster hver ekstra produksjonsdag 30 000 kr.\n\nVi sier dette tydelig fordi «SoMe-byrå» betyr ulike ting hos ulike leverandører. Hos oss betyr det research, produksjon og publisering — gjort ordentlig, hver uke.",
     kategori: "tjenesten",
   },
   {

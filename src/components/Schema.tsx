@@ -574,3 +574,60 @@ export function OversiktSchema({
     />
   );
 }
+
+/**
+ * WebPage: selve siden som entitet, koblet til organisasjonen.
+ *
+ * LAGT TIL 29.09.2026 for /kjeder. De andre tjenestesidene har Service og
+ * BreadcrumbList, men ingen WebPage, og det har holdt: Service sier hva vi
+ * tilbyr, brødsmulene sier hvor siden ligger.
+ *
+ * Her er det verdt det likevel. /kjeder finnes fordi Google AI Mode ikke
+ * hentet Reflektor da en kjede spurte. `about` og `mentions` gjør det
+ * eksplisitt hvilke entiteter siden handler om — kjedene ved navn — i
+ * stedet for å la det ligge i brødteksten. Det er hele grepet siden er
+ * bygget for.
+ *
+ * `isPartOf` og `publisher` peker på Organization via @id. Entiteten
+ * gjentas ikke — den eies av forsiden. Se hodet på denne fila.
+ */
+export function SideSchema({
+  navn,
+  beskrivelse,
+  sti,
+  handlerOm,
+}: {
+  navn: string;
+  beskrivelse: string;
+  sti: string;
+  /** Entitetene siden handler om. Her: kjedene, ved navn. */
+  handlerOm?: string[];
+}) {
+  const base = basisUrl();
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${base}${sti}`,
+    url: `${base}${sti}`,
+    name: navn,
+    description: beskrivelse,
+    inLanguage: "nb-NO",
+    isPartOf: { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
+    ...(handlerOm && handlerOm.length > 0
+      ? {
+          about: handlerOm.map((navn) => ({
+            "@type": "Organization",
+            name: navn,
+          })),
+        }
+      : {}),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}

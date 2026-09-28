@@ -24,6 +24,9 @@ jobs:
         run: npm test
       - name: content:check
         run: npm run content:check
+      - name: Plassholdere
+        # [BEKREFT: …] er synlig i preview med vilje, men skal ikke merges.
+        run: npm run bekreft:check
       - name: Lenkesjekk
         run: npm run lenkesjekk
       - name: Bygg

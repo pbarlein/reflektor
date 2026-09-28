@@ -415,6 +415,18 @@ export default async function CaseSide({ params }: Props) {
               >
                 Se alt arbeid
               </Link>
+              {/*
+                Returlenken til siden som samler denne kundetypen. Se
+                `lesVidere` i src/content/caser.ts for hvorfor den finnes.
+              */}
+              {k.lesVidere && (
+                <Link
+                  href={k.lesVidere.sti}
+                  className="text-[0.9375rem] text-blekk-dempet hover:text-aksent-tekst"
+                >
+                  {k.lesVidere.tekst}
+                </Link>
+              )}
             </div>
           </Container>
         </section>

@@ -44,6 +44,37 @@ export const site = {
     "til Gaselle-bedrift av Dagens Næringsliv i 2025.",
 } as const;
 
+/**
+ * De to setningene som peker ut av abonnementet, på forsiden.
+ *
+ * BAKGRUNN, MÅLT 29.09.2026. Pål spurte Google AI Mode som markedssjef i en
+ * norsk interiørkjede. Reflektor kom ikke med i svaret. AI-en begrunnet det
+ * med forsidens egen tekst og konkluderte med at vi er for små for en kjede.
+ * Vurderingen snudde da Pål nevnte Anton Sport, Egon, Peppes og
+ * TV-reklamene — fakta som fantes i repoet, men ikke på forsiden.
+ *
+ * Disse to setningene er broen. De flytter ingen låst slot og endrer ingen
+ * setning AI-en siterer i dag; de legger til det som manglet.
+ *
+ * Formuleringene er Påls, bekreftet 29.09.2026.
+ */
+export const ogsaFraReflektor = [
+  {
+    tekst:
+      "Jobber du i en kjede? Vi lager foto, video og reklamefilm for blant " +
+      "andre Anton Sport, Egon og Peppes Pizza.",
+    sti: "/kjeder",
+    lenketekst: "Innhold for kjeder og retail",
+  },
+  {
+    tekst:
+      "Vi lager også reklamefilm for TV og nett, blant annet for " +
+      "Vitusapotek og Peppes Pizza.",
+    sti: "/reklamefilm",
+    lenketekst: "Reklamefilm for TV og nett",
+  },
+] as const;
+
 /** Prisen står åpent på dagens side. Det er et bevisst posisjoneringsvalg. */
 export const tilbud = {
   prisPerManed: 30000,
@@ -127,6 +158,23 @@ export const tilbud = {
     "Resultatbasert optimalisering: vi ser hva som engasjerer, og justerer produksjonsplanene etter det",
     "Fri bruk av alt innhold – annonser, nettsider, skjermer, presentasjoner",
   ],
+
+  /**
+   * Hva kunden kan BRUKE videoene til. Ikke hvor vi publiserer.
+   *
+   * LAGT TIL 29.09.2026, og forskjellen er hele poenget. `inngar` sier at vi
+   * publiserer på Instagram og Facebook — det står, og det er låst. Google
+   * AI Mode leste den setningen som at innholdet ikke kan brukes på TikTok,
+   * og strøk Reflektor fra svaret da en kjede spurte. Det er en feilslutning
+   * vi selv la opp til ved å si hvor vi publiserer og aldri hva kunden kan
+   * gjøre med filene.
+   *
+   * Formuleringen er Påls, bekreftet 29.09.2026.
+   */
+  bruksrett:
+    "Videoene leveres stående i 9:16 og kan brukes fritt på TikTok, i " +
+    "annonser og på nettsiden. Trenger dere mer, koster hver ekstra " +
+    "produksjonsdag 30 000 kr.",
 
   /**
    * Betingelsen som knytter stillbilder til videotallet. Står som egen

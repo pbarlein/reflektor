@@ -110,6 +110,16 @@ export type Kundecase = {
     merkelapper: string[];
   };
 
+  /**
+   * Lenke fra caset til siden som samler denne typen kunde.
+   *
+   * LAGT TIL 29.09.2026. /kjeder lenker til Egon-caset, og caset skal lenke
+   * tilbake. Uten returlenken er kjedesiden en blindgate for den som kommer
+   * inn på caset fra søk — og caset er den siden AI-en faktisk hentet da
+   * Pål nevnte Egon.
+   */
+  lesVidere?: { sti: string; tekst: string };
+
   /** Kort oppsummering til kortet på oversiktssiden. */
   kortingress: string;
   /**
@@ -284,13 +294,25 @@ export const kundecaser: Kundecase[] = [
     tjenester: "Foto, video og skjermer",
     siden: "Siden 2022",
 
-    metaTittel: "Egon: foto og video for restaurantkjeden",
+    /*
+     * ORDENE «KJEDE», «RETAIL» OG «LANDSDEKKENDE» ER LAGT TIL 29.09.2026, i
+     * metadata og ingress. Ikke i historien — den står som den sto.
+     *
+     * Grunnen er målt: Google AI Mode hentet ikke Reflektor da en kjede
+     * spurte etter et byrå. Fakta om Egon lå her hele tiden, men ikke med
+     * ordene en markedssjef i en kjede skriver. Se `kjeder` i tjenester.ts.
+     */
+    metaTittel: "Egon: foto og video for en landsdekkende kjede",
     metaBeskrivelse:
-      "Foto, reels, kampanjefilm og skjermreklame for Egon på fast månedlig basis siden 2022: nærmere 50 restauranter og 323 000 reels-visninger.",
+      "Foto, reels, kampanjefilm og skjermreklame for restaurantkjeden Egon siden 2022: nærmere 50 restauranter over hele landet.",
 
     h1: "Foto og video for Egon",
     ingress:
-      "Månedlige produksjoner for en av Norges største restaurantkjeder siden 2022. Menyfoto, reels, kampanjefilm og skjermreklame – alt fra samme opptaksdag.",
+      "Månedlige produksjoner for en landsdekkende restaurantkjede siden 2022. Menyfoto, reels, kampanjefilm og skjermreklame – alt fra samme opptaksdag.",
+    lesVidere: {
+      sti: "/kjeder",
+      tekst: "Slik jobber vi med kjeder og retail",
+    },
 
     fakta: [
       "1984 åpnet den første Egon på Nordstrand",

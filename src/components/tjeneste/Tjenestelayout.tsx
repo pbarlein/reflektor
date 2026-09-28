@@ -243,7 +243,7 @@ export function Tjenestelayout({
         <Container>
           <div className="grid gap-x-10 gap-y-14 lg:grid-cols-[9rem_1fr]">
             <Merkelapp className="lg:pt-2" som="h2">
-              Det dere lurer på
+              {side.seksjonstittel ?? "Det dere lurer på"}
             </Merkelapp>
             <div className="max-w-2xl">
               {side.seksjoner.map((s, i) => (
@@ -285,6 +285,24 @@ export function Tjenestelayout({
                             className="mt-2.5 size-1 shrink-0 rounded-full bg-aksent"
                           />
                           <span className="leading-relaxed">{p}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {s.lenker && (
+                    <ul className="mt-6 flex flex-wrap gap-x-7 gap-y-2">
+                      {s.lenker.map((l) => (
+                        <li key={l.sti}>
+                          <Link
+                            href={l.sti}
+                            className="inline-flex min-h-6 items-center gap-2 text-[0.9375rem] underline decoration-transparent underline-offset-4 transition-colors hover:decoration-aksent motion-reduce:transition-none"
+                          >
+                            {l.tekst}
+                            <span aria-hidden className="text-aksent">
+                              →
+                            </span>
+                          </Link>
                         </li>
                       ))}
                     </ul>

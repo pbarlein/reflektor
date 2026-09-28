@@ -68,9 +68,17 @@ export function Faq() {
                         <span className="absolute top-0 left-1/2 h-3 w-px -translate-x-1/2 bg-current transition-transform duration-200 group-open:scale-y-0 motion-reduce:transition-none" />
                       </span>
                     </summary>
-                    <p className="pr-8 pb-6 leading-relaxed text-pretty text-blekk-dempet">
-                      {p.svar}
-                    </p>
+                    {/* Flere avsnitt — se samme sted i src/app/faq/page.tsx. */}
+                    <div className="pr-8 pb-6">
+                      {p.svar.split("\n\n").map((avsnitt, i) => (
+                        <p
+                          key={i}
+                          className="mt-3 leading-relaxed text-pretty text-blekk-dempet first:mt-0"
+                        >
+                          {avsnitt}
+                        </p>
+                      ))}
+                    </div>
                   </details>
                 ))}
               </div>

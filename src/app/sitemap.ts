@@ -32,6 +32,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
         url: url(`/${side.slug}`),
         priority: side.status === "live" ? 0.9 : 0.5,
       })),
+    /*
+       /kjeder er en kommersiell side på linje med landingssidene, men den
+       ligger ikke i `alleLandingssider` — den er ikke en gammel
+       Squarespace-URL og har ingen annonsegruppe. Derfor står den her.
+    */
+    { url: url("/kjeder"), priority: 0.9 },
     { url: url("/kontaktoss"), priority: 0.8 },
     { url: url("/vart-arbeid"), priority: 0.7 },
     ...kundecaser.map((c) => ({

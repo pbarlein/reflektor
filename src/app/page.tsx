@@ -15,6 +15,7 @@ import { Hero } from "@/components/forside/Hero";
 import { Kontakt } from "@/components/forside/Kontakt";
 import { Logostripe } from "@/components/forside/Logostripe";
 import { Pris } from "@/components/forside/Pris";
+import { Ogsa } from "@/components/forside/Ogsa";
 import { SlikFungererDet } from "@/components/forside/SlikFungererDet";
 import { Vegg } from "@/components/forside/Vegg";
 import { forsidensSporsmalForMarkup } from "@/content/faq";
@@ -88,6 +89,7 @@ export default function Forside() {
       <SlikFungererDet />
       <Arbeidsrutenett />
       <Pris />
+      <Ogsa />
       <Anmeldelsesseksjon />
       <Vegg />
       <Faq />

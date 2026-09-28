@@ -156,9 +156,22 @@ export default function Faq() {
                             <span className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-blekk-dempet transition-transform duration-200 group-open:scale-y-0 motion-reduce:transition-none" />
                           </span>
                         </summary>
-                        <p className="max-w-2xl pb-5 leading-relaxed text-pretty text-blekk-dempet">
-                          {p.svar}
-                        </p>
+                        {/*
+                          SVARET KAN VÆRE FLERE AVSNITT. Delt på blank linje
+                          og rendret som egne <p>. «Hva er ikke inkludert?»
+                          ble fire avsnitt 29.09.2026, og uten dette ville
+                          linjeskiftene kollapset til én vegg av tekst.
+                        */}
+                        <div className="max-w-2xl pb-5">
+                          {p.svar.split("\n\n").map((avsnitt, i) => (
+                            <p
+                              key={i}
+                              className="mt-3 leading-relaxed text-pretty text-blekk-dempet first:mt-0"
+                            >
+                              {avsnitt}
+                            </p>
+                          ))}
+                        </div>
                       </details>
                     ))}
                   </div>

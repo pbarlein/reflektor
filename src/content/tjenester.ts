@@ -42,6 +42,15 @@ export type Seksjon = {
   punkter?: string[];
   /** Sitat fra en navngitt kilde. +37 % siteringssannsynlighet. */
   sitat?: { tekst: string; navn: string; rolle: string };
+  /**
+   * Lenker under seksjonen, til siden som utdyper den.
+   *
+   * LAGT TIL 29.09.2026 for /kjeder, der hver kundeblokk skal kunne peke
+   * videre til kundecaset. Ankerteksten sier hva den andre siden ER — samme
+   * regel som `lesVidere` på bloggen følger, og av samme grunn: ankertekst
+   * er et av de sterkeste interne relevanssignalene som finnes.
+   */
+  lenker?: { sti: string; tekst: string }[];
 };
 
 /**
@@ -132,6 +141,15 @@ export type Tjenesteside = {
    * `null` for sider som ikke trenger den.
    */
   avgrensning: Avgrensningsdel[] | null;
+  /**
+   * Overskriften over seksjonene. Standard er «Det dere lurer på».
+   *
+   * LAGT TIL 29.09.2026. På de fem tjenestesidene ER seksjonene spørsmål, og
+   * standarden er riktig. På /kjeder er de kundeblokker — «Det dere lurer
+   * på» over en overskrift som bare sier «Anton Sport» er en merkelapp som
+   * ikke passer innholdet.
+   */
+  seksjonstittel?: string;
   seksjoner: Seksjon[];
   faq: { sporsmal: string; svar: string }[];
   /** Fra-pris som tekst, eller null når den ikke er oppgitt. */
@@ -229,9 +247,22 @@ export const reklamefilm: Tjenesteside = {
         "Etterarbeid og korrigeringer",
       ],
     },
+    /*
+     * KAMPANJENE ER LAGT TIL 29.09.2026, og de er ikke ny copy. Setningen
+     * «TV-reklamen for Vitusapotek i forbindelse med Skal vi Danse og for
+     * Peppes i forbindelse med Premier League er begge laget av oss» står
+     * ordrett på dagens /reklamefilm. Den forsvant i migreringen.
+     *
+     * Den står her fordi den er det mest gjenkjennelige beviset siden har.
+     * Google AI Mode hentet ikke Reflektor da en kjede spurte, og snudde
+     * først da Pål nevnte nettopp disse to reklamefilmene.
+     */
     {
       sporsmal: "Hvem har Reflektor produsert for?",
-      svar: "Reflektor har laget reklamefilm for Vitusapotek, Peppes Pizza og Samlerhuset. Utover reklamefilm har vi produsert foto og video for blant andre Anton Sport, The Well, Egon og Baker Brun.",
+      svar: "Reflektor har laget reklamefilm for Vitusapotek, Peppes Pizza og Samlerhuset. TV-reklamen for Vitusapotek i forbindelse med Skal vi danse, og for Peppes i forbindelse med Premier League, er begge laget av oss. Utover reklamefilm har vi produsert foto og video for blant andre Anton Sport, The Well, Egon og Baker Brun.",
+      lenker: [
+        { sti: "/kjeder", tekst: "Foto, video og reklamefilm for kjeder" },
+      ],
     },
   ],
   faq: [
@@ -797,8 +828,142 @@ export const innholdsproduksjon: Tjenesteside = {
   ],
 };
 
+/* ────────────────────────────────────────────────────────────────────
+   /kjeder — kjedeerfaringen, skrevet med ordene en kjede søker på
+   ──────────────────────────────────────────────────────────────────── */
+
+/**
+ * SIDEN FINNES PÅ GRUNN AV EN MÅLING, IKKE EN IDÉ.
+ *
+ * Pål testet Google AI Mode 29.09.2026 som «markedssjef i en norsk
+ * interiørkjede som trenger et byrå til løpende innhold». Reflektor kom ikke
+ * med i svaret. AI-en begrunnet det med VÅR EGEN TEKST: «én produksjonsdag,
+ * 8–10 videoer», «Instagram og Facebook» og FAQ-en «Hva er ikke inkludert?».
+ * Den leste dette som at vi er for små for en kjede, mangler TikTok og ikke
+ * tar community management.
+ *
+ * Vurderingen snudde først da Pål selv nevnte Anton Sport, Egon, Peppes og
+ * TV-reklamene. Da hentet AI-en case-sidene og kalte Reflektor «en av de
+ * sterkeste kandidatene».
+ *
+ * Diagnosen er derfor ikke at fakta mangler. Den er at kjedefakta ikke er
+ * skrevet med ordene en kjede bruker — kjede, retail, landsdekkende,
+ * markedssjef, faste månedlige avtaler — og at begrensningene står uten
+ * sammenheng og leses som et tak.
+ *
+ * REFERANSEKUNDENE ER IKKE SOME-ABONNENTER. Anton Sport, Egon, Peppes og
+ * Vitusapotek er kunder på foto, video og reklamefilm. Ingen setning her
+ * skal antyde noe annet — det er en låst ramme i AGENTS.md, og det er
+ * dessuten sant: abonnementet er den eneste tjenesten der vi publiserer.
+ *
+ * HVER PÅSTAND HAR EN KILDE. Sitatet er ordrett fra anmeldelser.ts.
+ * Egon-tallene fra caser.ts. Setningene om Anton Sport, Premier League og
+ * Skal vi danse er Reflektors egen publiserte tekst på dagens side. Det som
+ * IKKE har kilde står som en BEKREFT-plassholder, og scripts/bekreft-check.ts
+ * stopper byggen på dem. To slike står igjen i denne filen.
+ */
+export const kjeder: Tjenesteside = {
+  sti: "/kjeder",
+  tittel: "Innhold for kjeder og retail",
+  beskrivelse:
+    "Reflektor lager foto, video og reklamefilm for norske kjeder: Anton Sport, Egon, Peppes Pizza og Vitusapotek. Faste månedlige avtaler, landsdekkende.",
+  h1: "Foto, video og reklamefilm for kjeder",
+  merkelapp: "Kjeder og retail",
+  tjenestetype: "Løpende foto- og videoproduksjon for kjeder og retail",
+  svar: "Reflektor lager foto, video og reklamefilm for norske kjeder. Vi har produsert for Anton Sport i over tre år, laget innhold til Egons nærmere 50 restauranter over hele landet, og laget TV-reklame for Vitusapotek og Peppes Pizza. Arbeidet går på faste månedlige avtaler, og markedsteamet hos kunden styrer kanalene selv.",
+  seksjonstittel: "Kjedene vi produserer for",
+  avgrensning: [
+    "Skal dere ha én film til én kampanje, er det ",
+    { sti: "/reklamefilm", tekst: "reklamefilm" },
+    ". Skal dere ha løpende innhold til egne kanaler der vi også publiserer, er det ",
+    { sti: "/", tekst: "SoMe-abonnementet" },
+    ".",
+  ],
+  seksjoner: [
+    {
+      sporsmal: "Anton Sport",
+      svar: "Reflektor produserer foto og video for Anton Sport til kampanjer, skjermer i butikk, sosiale medier og merkevarebygging gjennom året. Samarbeidet er månedlig, og har vart i over tre år.",
+      punkter: [
+        "Løpende foto og video, hver måned",
+        "Kampanjer, skjermer i butikk, sosiale medier og merkevarebygging",
+        "Over tre år med samarbeid",
+        "[BEKREFT: styrer Anton Sport selv publisering og dialog i kanalene? Påstanden finnes ikke i noe publisert materiale.]",
+      ],
+      sitat: {
+        tekst:
+          "Vi liker spesielt godt hvordan de får alle til å føle seg avslappet, naturlig og finne seg til rette foran kamera, selv med lite modell-erfaring fra tidligere. De ser aldri begrensninger og heller muligheter uansett årstid eller lokasjon.",
+        navn: "Axel Hauge",
+        rolle: "Anton Sport",
+      },
+    },
+    {
+      sporsmal: "Egon",
+      svar: "Egon har servert nordmenn siden 1984 og er i dag nærmere 50 restauranter fra sør til nord. Reflektor har produsert menyfoto, reels, kampanjefilm og skjermreklame for kjeden siden 2022, fra én fast produksjonsdag i måneden.",
+      punkter: [
+        "Nærmere 50 restauranter over hele landet",
+        "Menyfoto, reels, kampanjefilm og skjermreklame",
+        "Seks formater per film — sosiale medier, skjermer i restaurant og kjøpesenter, og annonser",
+        "Fast produksjonsdag hver måned siden 2022",
+      ],
+      lenker: [{ sti: "/vart-arbeid/egon", tekst: "Hele kundecaset for Egon" }],
+    },
+    {
+      sporsmal: "Peppes Pizza",
+      svar: "Reflektor har laget reklamefilm for Peppes Pizza. TV-reklamen i forbindelse med Premier League er laget av oss.",
+      punkter: [
+        "Reklamefilm for TV og nett",
+        "TV-reklame knyttet til Premier League",
+      ],
+    },
+    {
+      sporsmal: "Vitusapotek",
+      svar: "Reflektor har laget TV-reklame for Vitusapotek, i forbindelse med Skal vi danse.",
+      punkter: ["TV-reklame", "Kampanje knyttet til Skal vi danse"],
+    },
+    {
+      sporsmal: "Passer for dere hvis …",
+      svar: "Passer for kjeder med eget markedsteam som vil eie publisering og dialog med kundene. Vi leverer innholdet, dere styrer kanalene.",
+    },
+    {
+      sporsmal: "Løpende innhold og kampanjefilm fra samme team",
+      svar: "Det samme teamet lager løpende innhold og kampanjefilm, slik at butikkinnhold og reklame har samme bildespråk. [BEKREFT: samme team — gjelder dette alle kjedekundene, eller bare noen?]",
+    },
+    {
+      sporsmal: "Volum og format",
+      svar: `Trenger dere mer innhold, legger dere til produksjonsdager. Hver ekstra produksjonsdag koster ${kr(tilbud.ekstraProduksjonsdag)} kr. Videoene leveres stående i 9:16, og dere står helt fritt til å bruke dem på TikTok, i annonser, på nettsiden og andre flater.`,
+      punkter: [
+        `SoMe-abonnementet koster ${kr(tilbud.prisPerManed)} kr/mnd`,
+        `Hver ekstra produksjonsdag koster ${kr(tilbud.ekstraProduksjonsdag)} kr`,
+        "Ingen bindingstid. 3 måneders oppsigelse.",
+      ],
+    },
+  ],
+  /*
+   * SPØRSMÅLENE ER KONTROLLERT MOT ALLE ANDRE FAQ-ER PÅ NETTSTEDET.
+   * tests/faq.test.ts feiler hvis ett av dem allerede står et annet sted —
+   * Google forbyr samme spørsmål og svar som FAQPage på to URL-er.
+   */
+  faq: [
+    {
+      sporsmal: "Kan dere produsere for flere butikker i samme kjede?",
+      svar: "Ja. For Egon produserer vi til nærmere 50 restauranter fra sør til nord, fra én fast produksjonsdag i måneden. Produksjonsdagene kan også fordeles på flere lokasjoner når kjeden trenger materiale fra ulike steder.",
+    },
+    {
+      sporsmal:
+        "Kan innholdet brukes på skjermer i butikk, ikke bare i sosiale medier?",
+      svar: "Ja. For Egon leveres hver film i seks formater: til sosiale medier, til skjermer i restaurant og kjøpesenter, og til annonser. Dere har fri bruk av alt vi produserer.",
+    },
+    {
+      sporsmal: "Jobber dere for kjeder utenfor Oslo?",
+      svar: "Ja. Reflektor holder til i Oslo og produserer for bedrifter i hele Norge. Egon-materialet dekker restauranter fra sør til nord.",
+    },
+  ],
+  pris: null,
+};
+
 export const tjenestesider: Tjenesteside[] = [
   innholdsproduksjon,
+  kjeder,
   reklamefilm,
   videoproduksjon,
   employerBranding,

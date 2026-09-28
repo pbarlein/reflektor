@@ -285,6 +285,21 @@ export function Pris() {
             </p>
 
             {/*
+              ANDRE MERKNAD, LAGT TIL 29.09.2026. Den svarer på et spørsmål
+              punktene over reiser uten å besvare: punkt fire sier hvor VI
+              publiserer, og sier ingenting om hva kunden kan gjøre med
+              filene.
+
+              Google AI Mode leste det som en begrensning og strøk Reflektor
+              fra svaret da en kjede spurte. Setningen retter ikke opp punkt
+              fire — det står som det står, og er låst — den legger til det
+              som manglet. Se `tilbud.bruksrett` i site.ts.
+            */}
+            <p className="mt-3 max-w-3xl px-5 py-4 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet rounded-flate border border-[rgba(245,240,232,0.10)] bg-[rgba(245,240,232,0.05)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.03)]">
+              {tilbud.bruksrett}
+            </p>
+
+            {/*
               «Inngår ikke» skal være en LITEN dose — se
               research-konvertering.md om blemishing-effekten: negativ
               informasjon løfter inntrykket bare når den er liten, perifer
