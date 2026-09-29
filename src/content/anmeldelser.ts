@@ -41,6 +41,21 @@ export type Anmeldelse = {
 };
 
 export const anmeldelser: Anmeldelse[] = [
+  /*
+   * VINDU BUTIKKEN ER IKKE LENGER KUNDE FRA OKTOBER 2026. Opplyst av Pål
+   * 29.09.2026.
+   *
+   * Anmeldelsen står likevel. Den er en ekte, publisert Google-anmeldelse av
+   * arbeid som faktisk er gjort, og den slutter ikke å være sann fordi
+   * samarbeidet tar slutt. Den er heller ikke fjernet fra Google.
+   *
+   * Men det er Påls valg, ikke vårt. Skal den ut, er det denne oppføringen
+   * som slettes — og da må `googleProfil.antall` kontrolleres samtidig, siden
+   * tallet er hentet fra profilen og ikke fra lengden på denne lista.
+   *
+   * SAMME FAKTUM STYRTE ET ANNET VALG: BTS-filmen fra Vindubutikken i
+   * Dropbox er ikke brukt i bloggen. Se docs/blogg-gjennomgang.md avsnitt 9.
+   */
   {
     navn: "Thomas Messel",
     selskap: "Vindu Butikken",

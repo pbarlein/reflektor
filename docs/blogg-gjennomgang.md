@@ -408,6 +408,14 @@ står ikke på lista, og filmen avslutter med et co-brandet logokort. Regelen i
 site.ts er utvetydig: «Legg aldri til et navn uten at Pål har godkjent
 nettopp det navnet.»
 
+**Bekreftet i ettertid, 29.09.2026:** Vindubutikken er ikke lenger kunde fra
+oktober. Valget var altså riktig av en grunn jeg ikke kjente da. Filmen skal
+ikke hentes fram igjen senere.
+
+Google-anmeldelsen fra Vindu Butikken står fortsatt på forsiden. Den er ekte og
+handler om arbeid som er gjort, så den er ikke fjernet — men det er Påls valg,
+og spørsmålet er stilt. Se merknaden i `src/content/anmeldelser.ts`.
+
 Filene er komprimert til 720×1280 uten lydspor, som kjedefilmene. 6,1 MB til
 sammen.
 
