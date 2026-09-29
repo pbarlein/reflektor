@@ -1,0 +1,256 @@
+# Gjennomgang av bloggen
+
+Bestilt av Pål 29.09.2026: «veldig grundig gjennomgang av all copy på
+bloggen. alt skal være reelt nyttig, SEO og AEO optimalisert, ikke noe
+byråvås eller ai-formuleringer.»
+
+Ni artikler lest i sin helhet. Alle tall under er hentet, ikke anslått.
+
+---
+
+## 1. Hva bloggen faktisk leverer i dag
+
+| Artikkel | Trafikk/mnd | Søkeord | Beste søkeord | Volum | Plass |
+|---|---|---|---|---|---|
+| markedsforing-i-sosiale-medier-some | 25 | 6 | some markedsføring | 150 | 6 |
+| hva-innebaerer-digital-historiefortelling | 14 | 1 | digital historiefortelling | 40 | **1** |
+| hvordan-markedsfore-bedrift *(alias, 301)* | 6 | 1 | markedsføring bedrift | 200 | 9 |
+| hva-er-inbound-marketing *(død, 301)* | 5 | 1 | innholdsmarkedsføring | 350 | **3** |
+| /blogg | 4 | 5 | virkemidler i reklame | 70 | 9 |
+| hva-er-innholdsmarkedsforing | 3 | 2 | innholdsmarkedsføring | 350 | 7 |
+| hva-er-reklame *(død, 301)* | 2 | 2 | reklame | 2 200 | 19 |
+| hva-er-videomarkedsfring | 0 | 1 | videomarkedsføring | 20 | 12 |
+| hva-er-personas, hvordan-ta-portrett-bilder | 0 | — | — | 0 | — |
+
+Kilde: Ahrefs Site Explorer, reflektor.no, 29.09.2026.
+
+**Hele bloggen henter rundt 59 besøk i måneden.** Fire av ni artikler har
+null. Til sammenligning: 578 levende refererende domener peker på
+reflektor.no. Det er lenkeverdien som er verdien — akkurat som AGENTS.md sier
+— ikke trafikken.
+
+**En ting som retter seg selv ved cutover:** `hva-er-inbound-marketing` er en
+død slug som ligger på plass 3 for «innholdsmarkedsføring» (350 i volum),
+mens den levende `hva-er-innholdsmarkedsforing` ligger på plass 7 for samme
+ord. To av våre URL-er konkurrerer, og den som skal bort rangerer best.
+301-en i `next.config.ts` slår dem sammen. Det er det største enkeltløftet
+bloggen får, og det er allerede bygget.
+
+---
+
+## 2. Feil som må rettes
+
+### 2.1 To faktafeil — begge står live på reflektor.no i dag
+
+**a) «4:5 som tilsvarer Reels på Instagram og poster på TikTok»**
+(markedsforing-i-sosiale-medier-some)
+
+Feil på begge. Reels er **9:16** (1080 × 1920). 4:5 (1080 × 1350) er stående
+feed-post. TikTok er 9:16. Kontrollert mot Figma, Adobe og Hootsuites
+størrelsesguider 29.09.2026.
+
+Dette er verre enn en vanlig faktafeil: Reflektors egne tjenestesider sier
+«Videoene leveres stående i 9:16». Bloggen motsier salgssiden på selskapets
+kjernekompetanse — og det er nettopp formatspørsmål en kjøper bruker for å
+vurdere om et byrå kan faget.
+
+**b) «Så mange som ni av ti nordmenn bruker sosiale medier hver eneste dag.
+Ifølge undersøkelsen …»** (samme artikkel)
+
+SSB, Norsk mediebarometer 2025: **82 prosent** — altså 8 av 10. Tallet er
+overdrevet med rundt åtte prosentpoeng.
+
+«Ifølge undersøkelsen» viser dessuten til en undersøkelse som aldri nevnes.
+Samme avsnitt trekker fram X (tidligere Twitter) som en kanal nordmenn er
+storbrukere av; SSB 2025 viser X på 8–15 prosent i de yngste gruppene, og
+Snapchat, TikTok og YouTube langt over. Avsnittet er utdatert.
+
+### 2.2 Ingen av de åtte migrerte artiklene har én eneste kilde
+
+Null `kilde`-blokker, null tabeller, null utgående lenker til noe
+etterprøvbart. Tre av dem oppgir likevel tall:
+
+- «ni av ti nordmenn» — ingen kilde, og feil
+- «Ifølge en studie fra Wyzowl mener 90 % … og 87 % …» — ingen lenke, intet årstall
+- «Facebook rapporterer at folk har 1,5 ganger større sannsynlighet …» — ingen lenke, intet årstall
+
+Dette er den viktigste AEO-svakheten i hele bloggen. Svarmotorer kan ikke
+verifisere en påstand uten kilde, og foretrekker en konkurrent som oppgir
+tall det går an å sjekke. De to nye artiklene fra 2026 gjør det riktig —
+Altinn og SSB med lenke — og forskjellen er tydelig.
+
+### 2.3 Tre skrivefeil og én betydningsfeil
+
+| Står | Skal være | Hvor |
+|---|---|---|
+| innholdsproduks**en**ter | innholdsprodus**ent**er | hva-er-innholdsmarkedsforing |
+| «autoritær spiller på markedet» | autoritativ | hva-er-innholdsmarkedsforing |
+| «kjempe viktig» | kjempeviktig | markedsforing-i-sosiale-medier-some |
+| «Les også:Hvordan …» | manglende mellomrom | markedsforing-i-sosiale-medier-some |
+
+«Autoritær» betyr myndig i betydningen udemokratisk. Setningen sier at
+innhold gjør deg til en autoritær aktør i markedet.
+
+### 2.4 Fire foreldreløse bildetekster
+
+Setninger som beskriver bilder som ikke ble med i migreringen, og som nå
+står midt i brødteksten som løsrevne påstander:
+
+- «Dette er kun et eksempel ment å illustrere hvordan man kan og bør merke en annonse i en Instagram-post.»
+- «Bruk tid på å formulere unikt og engasjerende skriftlig innhold.»
+- «Sørg for at bildene dine er unike og engasjerende, og bruk gjerne tid på redigere dem før du publiserer dem.» *(også manglende «å»)*
+- «Samarbeid gjerne med profesjonelle videografer som hjelper deg med å lage videoer som gjør inntrykk på folk.»
+
+### 2.5 Tre «Les også» uten lenke
+
+`Innlenke`-mekanismen ble laget 27.09.2026 nettopp for dette, men disse tre
+ble ikke fanget:
+
+- «Les også:Hvordan lykkes med innholdsproduksjon»
+- «Les også: Hva innebærer inbound marketing?» → må peke på
+  `/blogg/hva-er-innholdsmarkedsforing`, ikke på den døde slugen
+- «Les også: Hva gjør en innholdsprodusent?»
+
+Teksten inviterer til klikk som ikke finnes.
+
+### 2.6 Samme avslutning fire ganger
+
+«Hos Reflektor kan du hente uvurderlig hjelp fra … Våre fotografer fanger de
+riktige salgsutløsende øyeblikkene … Tilgangen på godt innhold er bare et
+klikk unna!» står i fire artikler i nær identisk form. Det er duplisert
+innhold på tvers av URL-er, og det er den svakeste teksten i hver av dem.
+
+---
+
+## 3. Byråvåset, målt
+
+Talt over hele bloggen: **uvurderlig** 5, **engasjerende** 12, **verdifull**
+15, **avgjørende** 12, **unik** 18, **helhetlig** 7, **skreddersydd** 4,
+«gull verdt» 2, «et klikk unna» 2, «nøkkelen til» 3.
+
+Verst: *«God belysning, klar lyd og stabil kameraføring er essensielle
+faktorer som vi i Reflektor håndterer med perfeksjon!»* — en påstand som ikke
+kan dokumenteres, om noe som burde vises i stedet for sies. Siden har nå
+ekte referansefilmer; de gjør jobben denne setningen prøver på.
+
+**Tre definisjoner av samme ord etter hverandre.** `hva-er-innholdsproduksjon`
+åpner med «Innholdsproduksjon er en strategisk tilnærming …», så kommer
+«## Hva er innholdsproduksjon? Innholdsproduksjon er en strategisk innsats
+…», så «## Definisjon på innholdsproduksjon: Man kan definere
+innholdsproduksjon som …». 2 000 ord, null trafikk.
+
+**Tiltaleform.** Bloggen bruker du/deg/din 157 ganger mot dere/deres 30.
+Resten av nettstedet sier bevisst «dere» — nettstedet snakker til et selskap.
+Et personskifte mellom blogg og tjenesteside leser som to forfattere.
+
+---
+
+## 4. Hva jeg vil gjøre med de åtte gamle
+
+Ikke skrive dem om. AGENTS.md er tydelig: bloggen beholdes for lenkeverdien
+og skal ikke styre arkitekturen. Å bruke dager på å pusse tekst som henter
+59 besøk i måneden er feil bruk av tiden.
+
+**Men fire ting koster lite og bør gjøres før lansering:**
+
+1. Rett de to faktafeilene. De er live i dag og motsier salgssidene våre.
+2. Rett de fire skrivefeilene og fjern de fire foreldreløse bildetekstene.
+3. Gjør de tre «Les også» til ekte lenker.
+4. Erstatt den dupliserte avslutningen med én kort, felles avslutning som
+   sier pris og leveranse — samme grep som allerede er gjort nederst i
+   `markedsforing-i-sosiale-medier-some`.
+
+**Én artikkel fortjener mer:** `hva-koster-et-some-byra` er 429 ord uten
+tabell og uten kilde, på det mest kjøpsnære søket bloggen har. Den bør få
+prissammenligningen som tabell og Byråmatch som oppgitt kilde med lenke.
+Sammenligningstabeller er blant de mest siterte formatene i svarmotorer.
+
+---
+
+## 5. Hvilke nye innlegg som bør produseres
+
+Utgangspunktet er hva folk faktisk søker på i Norge. Volumene er små — det er
+realiteten i et norsk B2B-marked — så antallet innlegg er ikke poenget.
+Poenget er at hvert innlegg skal svare på noe **bare Reflektor kan svare
+på**, med tall og kilder.
+
+Målte volum (Ahrefs, Norge, 29.09.2026):
+
+| Søk | Volum/mnd | Vanskelighet | CPC |
+|---|---|---|---|
+| innholdsproduksjon | 450 | 0 | 180 |
+| hva er some | 400 | 0 | 90 |
+| sosiale medier strategi | 200 | 0 | 80 |
+| some byrå | 100 | 21 | 200 |
+| innhold til sosiale medier | 100 | — | — |
+| hva er innholdsproduksjon | 100 | — | 70 |
+| hva koster videoproduksjon bedrift | 50 | — | — |
+| hvordan lage reklamefilm | 50 | — | — |
+| sosiale medier byrå | 50 | 19 | 250 |
+
+**Merk en felle:** norsk «SoMe» kolliderer med engelsk «some». Flere av
+treffene på «hva er some» er engelske søk. Volumet er reelt, men lavere enn
+tallet ser ut.
+
+### Fem innlegg, i prioritert rekkefølge
+
+**1. «Hva koster videoproduksjon for en bedrift?»** — 50/mnd, ren
+kjøpsintensjon
+Reflektor oppgir pris åpent; nesten ingen andre gjør det. Samme mal som
+prisartikkelen: hva prisen består av, hva som driver den opp, hva vi tar.
+Dette er søket som kommer rett før en henvendelse.
+
+**2. «Hva er en produksjonsdag?»** — lite volum, høy AEO-verdi
+Hele tilbudet hviler på denne enheten, og ingen andre forklarer den. En
+svarmotor som ikke forstår enheten, kan ikke gjengi prisen riktig. Skal
+inneholde: hva som skjer på dagen, hva dere må stille med, hva som kommer ut
+(8–10 ferdige videoer), og hva en ekstra dag koster.
+
+**3. «SoMe-byrå, frilanser eller ansatt?»** — utvider det som virker
+Artikkelen om ansatt mot byrå er den beste teksten på hele nettstedet. Den
+mangler det tredje alternativet, som er det de fleste faktisk vurderer.
+Samme form: tall, tabell, kilder, og ærlig om når frilanser er riktig valg.
+
+**4. «Innhold til sosiale medier for kjeder med flere lokasjoner»** —
+100/mnd på hovedordet
+Støtter den nye kjedesiden, og treffer et segment ingen norske byråer
+skriver for. Reflektor har fire kjeder å vise til og seks leveranseformater
+å forklare.
+
+**5. «Sosiale medier-strategi: hva den faktisk må inneholde»** — 200/mnd,
+vanskelighet 0
+Størst volum av de kjøpsnære. Må unngå å bli enda en definisjonsartikkel:
+den skal være malen Reflektor selv bruker på en produksjonsplan, ikke en
+lærebok.
+
+### Ett grep uten ny artikkel
+
+«Hva er SoMe» og variantene er til sammen rundt 550 i volum med
+vanskelighetsgrad 0. Svaret ligger allerede som en H2 i
+`markedsforing-i-sosiale-medier-some`, men det er to setninger uten
+struktur. Å gjøre det til et skikkelig, siterbart definisjonssvar koster ett
+avsnitt — og AGENTS.md forbyr å lage **flere** ordbokartikler, ikke å svare
+ordentlig der spørsmålet allerede står.
+
+### Det som ikke bør skrives
+
+Ingen flere «Hva er X»-artikler av typen personas, virkemidler i reklame
+eller holdningskampanje. Det er skoleoppgavestoff, det konverterer ikke, og
+AGENTS.md forbyr det uttrykkelig. De seks døde slugene av den typen 301-es
+allerede til oversikten.
+
+---
+
+## 6. Ferskhet er en siteringsfaktor, og fem artikler er fra 2024
+
+83 prosent av AI-siteringer på kommersielle søk går til sider oppdatert siste
+tolv måneder. Fem artikler er fra juni–august 2024.
+
+Datoene skal ikke pyntes — det står allerede i `artikler.ts`, og det er
+riktig. Men en artikkel som faktisk oppdateres, kan få ny dato ærlig. Rettes
+faktafeilene og legges kilder inn, er det en reell oppdatering.
+
+Forslag til rytme: to artikler oppdateres ordentlig per halvår, de som
+rangerer best først — altså `markedsforing-i-sosiale-medier-some` og
+`hva-innebaerer-digital-historiefortelling`, som ligger på plass 1 for sitt
+ord.
