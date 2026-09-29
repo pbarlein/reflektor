@@ -58,6 +58,24 @@ export const site = {
  *
  * Formuleringene er Påls, bekreftet 29.09.2026.
  */
+/*
+ * BILDENE ER LAGT TIL 29.09.2026, etter at Pål så seksjonen på forsiden:
+ * «denne seksjonen ser litt random plassert ut og ikke så bra designet.»
+ *
+ * Han hadde rett, og feilen var ikke plasseringen. Seksjonen sto mellom to
+ * tunge, mørke blokker — priskortet over og anmeldelsene under — som to løse
+ * avsnitt i venstre halvdel av en 1440 px bred side. Den hadde ingen ramme,
+ * ingen flate og ingen bilde, mens alt rundt den har det. Da leser den som
+ * noe som ble til overs, ikke som noe som ble plassert.
+ *
+ * INGEN NY COPY. Setningene og lenketekstene er de samme som før; de er bare
+ * satt inn i kortmalen resten av nettstedet bruker (se /vart-arbeid).
+ * Lenketeksten er nå kortets overskrift, og hele kortet er klikkbart.
+ *
+ * Bildene er plakatbildene til to filmer som allerede ligger på nettstedet,
+ * og alt-tekstene er de samme som i tjenester.ts. Ingen kunde navngis i en
+ * alt-tekst.
+ */
 export const ogsaFraReflektor = [
   {
     tekst:
@@ -65,6 +83,8 @@ export const ogsaFraReflektor = [
       "andre Anton Sport, Egon og Peppes Pizza.",
     sti: "/kjeder",
     lenketekst: "Innhold for kjeder og retail",
+    bilde: "/arbeid/kjeder-anton-sport.jpg",
+    alt: "Stillbilde fra en film: to syklister på en grusvei i skogen",
   },
   {
     tekst:
@@ -72,6 +92,15 @@ export const ogsaFraReflektor = [
       "Vitusapotek og Peppes Pizza.",
     sti: "/reklamefilm",
     lenketekst: "Reklamefilm for TV og nett",
+    /*
+     * EGET STILLBILDE, ikke plakatbildet til filmen på /kjeder. Det bildet
+     * er mørkt og tett beskåret, og i et kort på forsiden ble det en svart
+     * flate ved siden av et lyst. Dette er en annen ramme fra den samme
+     * ferdige filmen, valgt fordi den leser som reklamefilm på et blikk.
+     * /kjeder beholder sitt eget plakatbilde uendret.
+     */
+    bilde: "/arbeid/ogsa-reklamefilm-1280.jpg",
+    alt: "Stillbilde fra en reklamefilm: fire ungdommer deler pizza i en sofa",
   },
 ] as const;
 
