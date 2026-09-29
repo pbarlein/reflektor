@@ -18,6 +18,68 @@
 Ingenting i denne filen er utført. Alt her er bestilt, begrunnet og skal
 gjøres **på cutover-dagen**, ikke før.
 
+---
+
+# Kjørelista for dagen
+
+Skrevet 29.09.2026. Rekkefølgen er ikke valgfri — hvert steg forutsetter det
+forrige. Kolonnen «hvem» står der fordi flere av stegene ikke kan gjøres av
+Claude Code: de krever innlogginger Pål har og Claude ikke har.
+
+| #   | Steg                                                                                                | Hvem   |
+| --- | --------------------------------------------------------------------------------------------------- | ------ |
+| 1   | Kjør hele sjekkrunden lokalt og få grønt på alt                                                     | Claude |
+| 2   | Legg `reflektor.no` og `www.reflektor.no` til i Vercel-prosjektet `reflektor-ny`                    | Pål    |
+| 3   | Bytt endelig URL i Google Ads fra `/sosiale-medier-byra` til `/`                                    | Pål    |
+| 4   | Legg inn 301-en fra `/sosiale-medier-byra` og rett de to redirectene som peker dit (punkt 1 under)  | Claude |
+| 5   | Flytt DNS for reflektor.no til Vercel                                                                | Pål    |
+| 6   | Sett `NEXT_PUBLIC_TILLAT_INDEKSERING=true` i Vercel og redeploy                                      | Pål    |
+| 7   | Verifiser `/takk` med ett ekte testskjema (punkt 3 under)                                            | Begge  |
+| 8   | Meld nettstedet i Search Console som domeneegenskap og send inn sitemapet                            | Pål    |
+| 9   | Rydd «ACCEPT»-utløseren i GTM (punkt 6 under)                                                        | Pål    |
+
+Steg 1 er disse kommandoene, i denne rekkefølgen. Alle skal gå grønt:
+
+```
+npm audit --omit=dev --audit-level=high
+npx tsc --noEmit
+npm run lint
+npm test
+npm run content:check
+npm run bekreft:check
+npm run build
+npm run lenkesjekk
+```
+
+Steg 6 skal gjøres **etter** steg 5, ikke før. Åpnes sperren mens DNS fortsatt
+peker på Squarespace, indekserer Google forhåndsvisningen på vercel.app — og
+da har nettstedet to adresser i indeksen.
+
+## Det som mangler i Vercel i dag
+
+Kontrollert 29.09.2026:
+
+- **Ingen egne domener er koblet til.** Prosjektet svarer kun på
+  `reflektor-ny.vercel.app`. Både `reflektor.no` og `www.reflektor.no` må
+  legges til før DNS flyttes, ellers svarer Vercel med feil sertifikat i det
+  øyeblikket DNS peker hit. Å legge dem til rører ikke DNS i seg selv.
+- **Bare `RESEND_API_KEY` er satt.** `LEAD_MOTTAKER` og `LEAD_AVSENDER` er
+  ikke satt, og faller derfor tilbake på standardene i `src/lib/lead.ts`:
+  leads går til `pal@reflektor.no`, sendt fra Resends `onboarding@resend.dev`.
+  Det virker, men **bare til den adressen Resend-kontoen er registrert på**.
+  Skal leads gå til flere mottakere, må et eget domene verifiseres i Resend
+  først. Det krever DNS-oppføringer for e-post, ikke for nettstedet, og
+  flytter altså ikke reflektor.no.
+
+## Det som IKKE lenger er en stopper
+
+AGENTS.md punkt 4 sa at bloggtekstene ikke er migrert fra Squarespace, og at
+siden ikke kan lanseres før de er det. Det er utdatert, og punktet er merket
+som utført. De ni artiklene ble migrert ordrett 21.09.2026, og bloggen har i
+tillegg fem artikler skrevet for den nye siden. Alle fjorten svarer 200,
+ligger i sitemapet og er lenket fra bloggoversikten. De åtte gamle slugene uten
+innhold — tre aliaser og seks døde — 301-es som før.
+
 Grunnen til at det har en egen fil: hver av disse handlingene er trygg på
 cutover-dagen og skadelig i dag.
 
@@ -154,6 +216,9 @@ annonsesettene i september peker på facebook.com — to reels og et innlegg.
   måling.
 
 **Handling ved cutover: ingen.** Pikselen forsvinner av seg selv.
+
+**Bekreftet av Pål 29.09.2026: «la pixelen stå.»** Saken er lukket, og det står
+ingenting igjen å gjøre med den verken før eller på cutover-dagen.
 
 **Én betingelse.** Begynner Meta å sende trafikk til reflektor.no igjen —
 annonser med nettsiden som destinasjon, ikke reels og Instant Forms — må

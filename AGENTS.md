@@ -39,8 +39,10 @@ mot om den gir flere utfylte skjemaer.
    lenkeverdien – ~481 refererende domener. Men innholdet er ordbok- og
    skoleoppgavestoff som ikke konverterer: det skal ikke styre arkitekturen, og
    det skal ikke lages mer av den typen.
-4. **Bloggtekstene er ikke migrert fra Squarespace.** Siden kan ikke lanseres
-   før de er det.
+4. ~~**Bloggtekstene er ikke migrert fra Squarespace.** Siden kan ikke lanseres
+   før de er det.~~ **Utført.** De ni artiklene ble migrert ordrett 21.09.2026,
+   og bloggen har i tillegg fem artikler skrevet for den nye siden. Punktet
+   står igjen som historikk — det er ikke lenger en stopper for lansering.
 
 ## Ahrefs-data må leses med forbehold
 

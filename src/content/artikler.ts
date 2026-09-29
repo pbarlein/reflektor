@@ -64,6 +64,36 @@ export type Innlenke = {
   sti: string;
 };
 
+/**
+ * Ett bilde eller én film inne i en artikkel.
+ *
+ * LAGT TIL 29.09.2026, bestilt av Pål: «vær nøye med å bruke gode, relevante
+ * eksempler på bilder og videoer i blogginnleggene. alt skal være pent, on
+ * brand og visuelt moderne og tilfredsstillende.»
+ *
+ * Før dette hadde en artikkel ett toppbilde og deretter to tusen ord ren
+ * tekst. De nye artiklene handler om noe Reflektor faktisk gjør, og da er
+ * arbeidet selv det sterkeste argumentet — en setning om at en film leveres
+ * i flere formater er svakere enn de filmene ved siden av hverandre.
+ *
+ * `lyd` velger avspiller på samme måte som på tjenestesidene: uten lyd blir
+ * det dempet autospill i løkke (riktig for korte, visuelle klipp), med lyd
+ * blir det en ekte avspiller med kontroller (riktig for intervjuer og
+ * profilfilmer, der poenget er det som blir SAGT). Se `Referansefilmer` i
+ * Tjenestemedier.tsx for hele begrunnelsen.
+ */
+export type Bloggmedie = {
+  slag: "foto" | "film";
+  /** Sti uten filendelse. Film leser .mp4 og .jpg, foto leser .jpg. */
+  sti: string;
+  alt: string;
+  format: "16/9" | "4/5" | "9/16";
+  /** Film med kontroller og lyd i stedet for dempet autospill. */
+  lyd?: boolean;
+  /** `object-position` for foto som ikke skal beskjæres i midten. */
+  fokus?: string;
+};
+
 export type Blokk =
   | { type: "avsnitt"; tekst: string; lenker?: Innlenke[] }
   | { type: "overskrift"; niva: 2 | 3; tekst: string }
@@ -84,7 +114,20 @@ export type Blokk =
    */
   | { type: "kilde"; tekst: string; url: string }
   /** Tabell. Sammenligningstabeller er blant de mest siterte formatene. */
-  | { type: "tabell"; kolonner: string[]; rader: string[][] };
+  | { type: "tabell"; kolonner: string[]; rader: string[][] }
+  /**
+   * Ett eller to medier med felles bildetekst.
+   *
+   * MAKS TO, OG SAMME FORMAT I BEGGE. Begrensningen er ikke vilkårlig.
+   * To rammer med ulikt sideforhold i samme rad får ulik høyde, og da
+   * henger bildeteksten i løse lufta ved siden av et bilde som fortsetter
+   * nedenfor den — nøyaktig den feilen formatraden på /kjeder måtte løses
+   * for. Tre stående klipp i bredden blir 117 px hver på en telefon, og da
+   * ser man ikke hva de viser.
+   *
+   * `kontroller()` under håndhever begge deler i byggetid.
+   */
+  | { type: "medier"; elementer: Bloggmedie[]; bildetekst?: string };
 
 export type Bilde = { fil: string; alt: string; fokus?: string };
 
@@ -167,6 +210,12 @@ export function lesetid(a: Artikkel): number {
       return sum + b.punkter.join(" ").split(/\s+/).length;
     if (b.type === "tabell")
       return sum + b.rader.flat().join(" ").split(/\s+/).length;
+    /*
+     * MEDIER TELLER IKKE SOM ORD. Bildeteksten er tre-fire ord og ville
+     * bare støyet i anslaget. Å la den falle gjennom til `b.tekst` under
+     * ville dessuten kastet — blokken har ikke feltet.
+     */
+    if (b.type === "medier") return sum;
     return sum + b.tekst.split(/\s+/).length;
   }, 0);
   return Math.max(1, Math.round(ord / 200));
@@ -2242,12 +2291,7 @@ export const artikler: Artikkel[] = [
             "50 000–200 000 kr",
             "fra 200 000 kr",
           ],
-          [
-            "Byråmatch, mai 2026",
-            "—",
-            "50 000–150 000 kr",
-            "flere millioner",
-          ],
+          ["Byråmatch, mai 2026", "—", "50 000–150 000 kr", "flere millioner"],
         ],
       },
       {
@@ -2298,6 +2342,25 @@ export const artikler: Artikkel[] = [
           "Kompleksitet i etterarbeidet er den posten folk undervurderer oftest. Selve opptaket er en dag du kan se; etterarbeidet er en uke du ikke ser.",
       },
       {
+        type: "medier",
+        elementer: [
+          {
+            slag: "film",
+            sti: "/arbeid/kjeder-peppes",
+            format: "16/9",
+            alt: "Stillbilde fra reklamefilmen: to personer spiser pizza i en sofa",
+          },
+          {
+            slag: "film",
+            sti: "/arbeid/kjeder-vitusapotek",
+            format: "16/9",
+            alt: "Stillbilde fra sponsorvignetten: to dansere på et parkettgulv",
+          },
+        ],
+        bildetekst:
+          "To ferdige reklamefilmer, 15 og 4 sekunder. Lengden sier lite om prisen — antall opptaksdager og mengden etterarbeid gjør.",
+      },
+      {
         type: "overskrift",
         niva: 2,
         tekst: "Slik får dere prisen ned uten å kutte i kvaliteten",
@@ -2344,16 +2407,12 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Hva et prosjekt faktisk lander på avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.`,
-        lenker: [
-          { frase: "Enkeltprosjekter", sti: "/reklamefilm" },
-        ],
+        lenker: [{ frase: "Enkeltprosjekter", sti: "/reklamefilm" }],
       },
       {
         type: "avsnitt",
         tekst: `Trenger dere innhold jevnlig og ikke én gang, er løpende samarbeid ${kr(tilbud.prisPerManed)} kr i måneden. Det er fast pris, med én produksjonsdag hver måned og et produksjonsmål på ${tilbud.videoerPerManed} ferdig redigerte videoer. Vi bruker ikke timepriser.`,
-        lenker: [
-          { frase: "løpende samarbeid", sti: "/" },
-        ],
+        lenker: [{ frase: "løpende samarbeid", sti: "/" }],
       },
       {
         type: "overskrift",
@@ -2411,7 +2470,895 @@ export const artikler: Artikkel[] = [
       },
     ],
   },
+  /*
+   * SKREVET 29.09.2026. Innlegg nummer 2 i lista i docs/blogg-gjennomgang.md.
+   *
+   * HVORFOR DEN IKKE BRYTER FORBUDET MOT «HVA ER X»-ARTIKLER. AGENTS.md
+   * regel 3 forbyr flere ordbok- og skoleoppgavetekster — personas,
+   * virkemidler i reklame, holdningskampanje. Dette er ikke et oppslagsord:
+   * produksjonsdagen er enheten hele tilbudet og hele prisen er bygget på,
+   * og den forklares ikke noe sted utenfor FAQ-svarene. En språkmodell som
+   * ikke forstår enheten, kan heller ikke gjengi prisen riktig.
+   *
+   * ALLE FAKTA ER HENTET FRA GODKJENTE SVAR, ikke skrevet på nytt: FAQ-en i
+   * faq.ts og tjenester.ts, og tallene i `tilbud`. Ingen ny påstand om hva
+   * som skjer på en produksjonsdag er funnet på her.
+   *
+   * OVERSKRIFTENE ER MED VILJE IKKE DE SAMME som FAQ-spørsmålene på
+   * tjenestesidene og /faq. «Hvor mye tid må vi sette av?» og «Trenger vi
+   * eget kamera eller utstyr?» eies av /faq, og vakten i tests/faq.test.ts
+   * feiler hvis en artikkeloverskrift gjentar dem.
+   */
+  {
+    slug: "hva-er-en-produksjonsdag",
+    bilde: {
+      fil: "produksjonsdag-rigg-1600",
+      alt: "Kamera montert på rigg over et bord med bakverk under en produksjonsdag",
+    },
+    tittel: "Hva er en produksjonsdag?",
+    beskrivelse:
+      "Én dag, ett team, en måned med innhold. Hva som skjer før, under og etter — og hva dere sitter igjen med når dagen er over.",
+    publisert: "2026-09-29",
+    blokker: [
+      {
+        type: "avsnitt",
+        tekst: `En produksjonsdag er én dag der et filmteam kommer til dere og produserer innholdet for en hel måned. Hos oss er produksjonsmålet ${tilbud.videoerPerManed} ferdig redigerte videoer fra den ene dagen, og selve dagen tar som regel noen timer — ikke hele arbeidsdagen.`,
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Enheten er verdt å forstå, for det er den prisen er bygget på. Et tilbud på innhold som ikke sier hvor mange produksjonsdager som inngår, sier egentlig ingenting.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hvorfor innhold produseres i dager og ikke i timer",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det meste av kostnaden ved en filmproduksjon ligger i å komme i gang. Teamet skal reise, utstyret skal rigges, lyset skal settes, og lokalet skal gjøres klart. Den jobben er den samme enten det skal lages én film eller ti.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Derfor er den femte filmen på en dag mye billigere enn den første. Og derfor er en dag den enheten som gir mest innhold per krone — forutsatt at dagen er planlagt for det.",
+      },
+      {
+        type: "medier",
+        elementer: [
+          {
+            slag: "film",
+            sti: "/arbeid/bts-baker-brun",
+            format: "9/16",
+            alt: "Stillbilde fra opptak: kamera på rigg over et bord med kaker",
+          },
+          {
+            slag: "film",
+            sti: "/arbeid/bts-anton-sport",
+            format: "9/16",
+            alt: "Stillbilde fra opptak: filmfotograf med kamera på gimbal ute om høsten",
+          },
+        ],
+        bildetekst:
+          "Bak kulissene fra to produksjonsdager: Baker Brun innendørs, Anton Sport på lokasjon.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hva som skjer i forkant",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Dagen er planlagt før noen slår på et kamera. Vi går gjennom det dere allerede har publisert og måler hva som faktisk har fungert — hvilke formater, lengder og motiver som får rekkevidde. Et typisk grunnlag er rundt hundre publiseringer over fire måneder.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Funnene blir til navngitte innholdsserier med konkrete filmer, og de blir til en kjøreplan dere får på forhånd. Kjøreplanen sier hvem som skal være med, hvor vi filmer, og hva som eventuelt må klargjøres før vi kommer.",
+        lenker: [
+          { frase: "navngitte innholdsserier", sti: "/innholdsproduksjon" },
+        ],
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hva som skjer mens vi er der",
+      },
+      {
+        type: "liste",
+        punkter: [
+          "Vi stiller med alt: kamera, objektiver, lys, lyd og stativ. Dere trenger ikke eget utstyr.",
+          "Vi filmer som regel hos dere. Det er der folkene, produktene og lokalene er, og det er det som gjør innholdet gjenkjennelig.",
+          "Vi filmer de som faktisk jobber der, og helst ikke bare ledelsen. Vi bruker ikke skuespillere.",
+          "Vi rigger om mellom oppsettene etter kjøreplanen, slik at én dag dekker flere serier og ikke bare én.",
+          "Stillbilder tas ved behov, ikke som en fast leveranse. Kapasiteten deles med video, og derfor er videotallet et produksjonsmål og ikke en garanti.",
+        ],
+      },
+      {
+        type: "medier",
+        elementer: [
+          {
+            slag: "foto",
+            sti: "/arbeid/produksjonsdag-skjerm-1600",
+            format: "16/9",
+            alt: "Skjerm på settet som viser bildet som akkurat er tatt",
+          },
+        ],
+        bildetekst:
+          "Bildet går rett på skjerm mens det tas. Da ser alle det samme, og feil oppdages på settet og ikke i etterarbeidet.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hva dagen gir",
+      },
+      {
+        type: "avsnitt",
+        tekst: `Alt klippes, fargekorrigeres og tekstes i etterarbeid. Vi leverer som regel innen to uker etter opptaksdagen. Haster deler av leveransen, sier dere fra i planleggingen, så legger vi opp dagen etter det.`,
+      },
+      {
+        type: "tabell",
+        kolonner: ["", "Én produksjonsdag", "Tolv produksjonsdager"],
+        rader: [
+          ["Ferdige videoer", `${tilbud.videoerPerManed}`, "rundt hundre"],
+          [
+            "Publiseringer",
+            `${tilbud.posterPerUke} i uka i fire uker`,
+            "over hundre",
+          ],
+          ["Tidsbruk hos dere", "noen timer", "én dag i måneden"],
+          [
+            "Pris",
+            `${kr(tilbud.prisPerManed)} kr`,
+            `${kr(tilbud.prisPerManed * 12)} kr`,
+          ],
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Videoene leveres stående i 9:16. Skal noe brukes på skjerm i butikk, i en annonse, på nettsiden eller på trykk, tilpasser vi det eller produserer for det — si fra i planleggingen, så er det med i kjøreplanen.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hva dere må stille med",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Dere selv, og det som skal vises: produktene, lokalene, menneskene. Ikke utstyr, ikke filmkompetanse internt, ikke manus. Står det noe dere må klargjøre eller bestille før vi kommer, står det i kjøreplanen.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Når én dag i måneden ikke strekker til",
+      },
+      {
+        type: "avsnitt",
+        tekst: `Leveransen skalerer med antall produksjonsdager. Én dag i måneden gir ${tilbud.videoerPerManed} ferdige videoer til ${kr(tilbud.prisPerManed)} kr/mnd. Trenger dere mer, koster hver ekstra produksjonsdag ${kr(tilbud.ekstraProduksjonsdag)} kr, og publiseringsfrekvensen økes tilsvarende.`,
+        lenker: [
+          {
+            frase: "Leveransen skalerer med antall produksjonsdager",
+            sti: "/",
+          },
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Har dere flere lokasjoner eller avdelinger, kan produksjonsdagene fordeles på ulike steder i stedet for å legges på samme adresse.",
+        lenker: [
+          { frase: "flere lokasjoner eller avdelinger", sti: "/kjeder" },
+        ],
+      },
+    ],
+    lesVidere: [
+      { sti: "/", tekst: "abonnementet produksjonsdagen inngår i" },
+      { sti: "/innholdsproduksjon", tekst: "hva Reflektor produserer" },
+    ],
+    tilleggsfaq: [
+      {
+        sporsmal: "Blir ikke alt likt når det filmes på samme dag?",
+        svar: "Det er den vanligste innvendingen, og den er berettiget hvis dagen ikke er planlagt. Derfor rigger vi om mellom oppsettene: ulike lokasjoner i bygget, ulike personer, ulike motiver og ulike lengder. Kjøreplanen er bygget rundt flere innholdsserier, ikke én. Klær, lys og bakgrunn varierer med oppsettet, og materialet publiseres over fire uker — ikke samme uke.",
+      },
+      {
+        sporsmal: "Må vi stenge mens dere filmer?",
+        svar: "Nei. Vi filmer som regel mens driften går som normalt, og det er ofte det som gjør innholdet troverdig. Er det et oppsett som krever ro eller et tomt lokale, legger vi det til et tidspunkt som passer — før åpning, etter stengetid eller i en rolig time. Det avklares i kjøreplanen dere får på forhånd, slik at ingen blir overrasket på dagen.",
+      },
+    ],
+  },
+  /*
+   * SKREVET 29.09.2026. Innlegg nummer 3 i lista i docs/blogg-gjennomgang.md.
+   *
+   * HVORFOR DEN FINNES. `some-ansvarlig-eller-byra` er den beste teksten på
+   * nettstedet, men den stiller et spørsmål med to svar — og de fleste
+   * vurderer tre. Frilanseren er alternativet som mangler, og det er som
+   * regel det billigste på papiret.
+   *
+   * DEN GJENTAR IKKE REGNESTYKKET FOR EN ANSATT. Altinn-tallene, tabellen
+   * over arbeidsgiveravgift og feriepenger, og «når er ansettelse riktig»
+   * står i den andre artikkelen og skal bli stående der. Denne lenker dit i
+   * brødteksten i stedet. To artikler som regner det samme regnestykket
+   * konkurrerer med hverandre i søk, og da taper begge.
+   *
+   * TO OPPGITTE KILDER, BEGGE LEST 29.09.2026:
+   * - Norsk Journalistlags minstesatser, oppdatert 17.04.2026. De er de
+   *   eneste publiserte dagsatsene for norske film- og fotofrilansere som
+   *   lar seg etterprøve. Forbeholdet om at de er minstesatser for
+   *   journalistikk står i teksten — å presentere dem som markedspris for
+   *   kommersiell produksjon ville vært feil.
+   * - Skatteetaten om arbeidsgiveravgift. Dette er det punktet flest kjøpere
+   *   ikke vet om, og det snur regnestykket for en frilanser uten
+   *   næringsvirksomhet.
+   */
+  {
+    slug: "some-byra-frilanser-eller-ansatt",
+    bilde: {
+      fil: "fotograf-pa-jobb-1600",
+      alt: "Fotograf som kontrollerer bildet på kameraet under et opptak",
+    },
+    tittel: "SoMe-byrå, frilanser eller ansatt?",
+    beskrivelse:
+      "Dagsatser fra Norsk Journalistlag, en avgiftsfelle fra Skatteetaten, og hva som faktisk skiller de tre alternativene.",
+    publisert: "2026-09-29",
+    blokker: [
+      {
+        type: "avsnitt",
+        tekst:
+          "Frilanser er det billigste alternativet på papiret, og det stemmer så lenge oppgaven er én film. Skal det produseres innhold hver måned, året rundt, blir de tre alternativene overraskende like i pris — og da er det ikke prisen som avgjør, men hvor mye av jobben dere selv må holde i.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hva de tre alternativene faktisk er",
+      },
+      {
+        type: "liste",
+        punkter: [
+          "Ansatt: en person på lønn, til stede hver dag, som skal dekke strategi, foto, video, klipping, tekst og publisering alene.",
+          "Frilanser: en person dere leier inn per oppdrag eller per dag. Dere kjøper timene, og beholder alt rundt dem selv.",
+          "Byrå: et team med utstyr, på fast avtale. Dere kjøper en leveranse, ikke timer.",
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Regnestykket for en ansatt står i en egen artikkel, med tall fra Altinn og SSB. Den skal ikke gjentas her — under handler det om frilanseren, som er alternativet ingen har regnet på.",
+        lenker: [
+          {
+            frase: "Regnestykket for en ansatt",
+            sti: "/blogg/some-ansvarlig-eller-byra",
+          },
+        ],
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hva koster en frilanser per dag?",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Norsk Journalistlag publiserer minstesatser for frilansere, og de er det nærmeste Norge kommer en offentlig prisliste for film- og fotofrilansere. Satsene under gjelder fra april 2026 og regner en dag som 7,5 timer.",
+      },
+      {
+        type: "tabell",
+        kolonner: ["Fag", "Dagsats", "Lengre oppdrag, per dag"],
+        rader: [
+          ["Tekst og radio", "8 130 kr", "6 480 kr"],
+          ["Foto", "8 830 kr", "7 070 kr"],
+          ["TV og video", "9 220 kr", "7 810 kr"],
+        ],
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Satsene er Norsk Journalistlags minstesatser for frilansere, oppdatert 17.04.2026. De gjelder journalistisk arbeid og er minstesatser, ikke markedspris — kommersiell produksjon ligger som regel høyere. NJ oppgir samtidig at driftskostnadene de er beregnet ut fra er rundt 200 000 kroner i året for fotografer og 300 000 for videojournalister, siden utstyret er dyrt.",
+        url: "https://www.nj.no/nj-frilans/minstesatser-for-frilansere/",
+      },
+      {
+        type: "medier",
+        elementer: [
+          {
+            slag: "film",
+            sti: "/arbeid/profilfilm",
+            format: "16/9",
+            lyd: true,
+            alt: "Stillbilde fra en profilfilm filmet i kontorlokaler",
+          },
+        ],
+        bildetekst:
+          "Profilfilm for et rådgivningsselskap. 39 sekunder — filmet på én dag, klippet over flere.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Én dag med filming er ikke én dag med arbeid",
+      },
+      {
+        type: "avsnitt",
+        tekst: `Det er her regnestykket for en frilanser sprekker for de fleste. Opptaksdagen er én dag. Å klippe, fargekorrigere og tekste ${tilbud.videoerPerManed} videoer fra den dagen er to til tre dager til.`,
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Med satsene over betyr det rundt 25 000 til 33 000 kroner for én måneds produksjon — før planlegging, før research på hva som faktisk har fungert i kanalene deres, og før noen har publisert noe.",
+      },
+      {
+        type: "avsnitt",
+        tekst: `Til sammenligning koster et løpende samarbeid hos oss ${kr(tilbud.prisPerManed)} kr i måneden, og da inngår planlegging, én produksjonsdag, ${tilbud.videoerPerManed} ferdige videoer og publisering ${tilbud.posterPerUke} ganger i uka.`,
+        lenker: [{ frase: "et løpende samarbeid hos oss", sti: "/" }],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Poenget er ikke at frilanseren er dyr. Poenget er at timeprisen bare dekker timene, og at alt annet blir liggende hos dere.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Avgiftsfellen de færreste kjenner",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Leier dere inn en person som ikke driver egen næringsvirksomhet, er det dere som er ansvarlig for arbeidsgiveravgiften. Skatteetaten er tydelig: «Som arbeidsgiver plikter du å betale arbeidsgiveravgift av lønn og annen godtgjørelse for arbeid og oppdrag i og utenfor tjenesteforhold.»",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Fritaket gjelder bare når arbeidet er utført som ledd i selvstendig næringsvirksomhet. Får dere en faktura fra et registrert foretak, er dere trygge. Betaler dere et honorar til en privatperson, kommer avgiften i tillegg til honoraret — og da er ikke frilanseren så mye billigere som tilbudet så ut til.",
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Formuleringene er Skatteetatens egne, fra siden om hvem som plikter å betale arbeidsgiveravgift. Fritaksregelen der lyder: «Du skal ikke betale arbeidsgiveravgift når arbeidet eller oppdraget er utført som ledd i selvstendig næringsvirksomhet.»",
+        url: "https://www.skatteetaten.no/bedrift-og-organisasjon/arbeidsgiver/arbeidsgiveravgift/plikter-jeg-a-betale-arbeidsgiveravgift/",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Be om organisasjonsnummer før dere inngår avtalen. Det tar ett minutt og avgjør hvem som sitter med regningen.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hva som faktisk skiller de tre",
+      },
+      {
+        type: "tabell",
+        kolonner: ["", "Ansatt", "Frilanser", "Byrå"],
+        rader: [
+          ["Til stede hver dag", "ja", "nei", "nei"],
+          ["Utstyr", "må kjøpes", "frilanserens eget", "inngår"],
+          ["Flere fagfelt dekket", "én person", "én person", "team"],
+          ["Planlegging og research", "deres", "deres", "inngår"],
+          ["Publisering", "deres", "deres", "inngår"],
+          [
+            "Ved sykdom og ferie",
+            "deres risiko",
+            "oppdraget utsettes",
+            "vår risiko",
+          ],
+          ["Forutsigbar kostnad", "lønn", "per oppdrag", "fast månedspris"],
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Legg merke til hvor «deres» står. Det er den egentlige forskjellen mellom en frilanser og et byrå: frilanseren løser oppgaven dere har definert, byrået definerer den også.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Når frilanser er riktig valg",
+      },
+      {
+        type: "liste",
+        punkter: [
+          "Dere har én konkret leveranse, ikke et løpende behov.",
+          "Noen hos dere har allerede ansvaret for plan, tekst og publisering, og mangler bare noen som filmer.",
+          "Dere trenger en spesifikk kompetanse for ett oppdrag — drone, animasjon, en bestemt stil.",
+          "Behovet svinger så mye at en fast avtale ville stått ubrukt halve året.",
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "En dyktig frilanser er ofte det beste kjøpet som finnes i denne bransjen. Forutsetningen er at noen hos dere gjør resten av jobben.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Når de to andre passer bedre",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Trenger dere daglig tilstedeværelse i kanalene og noen som svarer kundene innen en time, er ansettelse riktig. Ingen leverandør erstatter det.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Er problemet derimot at det ikke blir produsert nok godt innhold jevnt nok, og at innhold alltid taper mot mer akutte oppgaver, er det problemet en fast avtale er bygget for å løse.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Og den vanligste løsningen er ikke ett av tre. Mange har en markedsansvarlig som eier dialogen og strategien, og setter bort produksjonen.",
+      },
+    ],
+    lesVidere: [
+      { sti: "/", tekst: "Reflektors pris og leveranse, oppgitt åpent" },
+      { sti: "/innholdsproduksjon", tekst: "hva Reflektor produserer" },
+    ],
+    tilleggsfaq: [
+      {
+        sporsmal: "Kan vi bruke frilanser og byrå om hverandre?",
+        svar: "Ja, og mange gjør det. Den vanligste kombinasjonen er en fast avtale for det løpende innholdet og en frilanser inn på enkeltoppdrag som krever noe spesielt — drone, animasjon, en fotograf med en bestemt stil. Det som skaper trøbbel er ikke kombinasjonen, men at ingen eier helheten: to leverandører som leverer i hver sin stil, i hver sine formater, uten en felles plan, gir et arkiv som ikke henger sammen. Bestem hvem som eier planen før dere bestiller noe.",
+      },
+      {
+        sporsmal: "Hvem eier materialet en frilanser har laget for oss?",
+        svar: "Det avhenger av hva dere har avtalt, og det er verdt å avklare skriftlig før oppdraget starter. Åndsverkloven gir opphavsretten til den som har skapt verket, og en betaling for et oppdrag overfører ikke automatisk full bruksrett til alt, i alle kanaler, for all tid. Be om at avtalen sier konkret hva materialet kan brukes til: nettside, annonser, skjerm i butikk, trykk, og hvor lenge. Be også om råmaterialet hvis dere vil kunne klippe om senere — det følger sjelden med av seg selv.",
+      },
+    ],
+  },
+  /*
+   * SKREVET 29.09.2026. Innlegg nummer 4 i lista i docs/blogg-gjennomgang.md.
+   *
+   * DEN STØTTER /kjeder, OG /kjeder FINNES PÅ GRUNN AV EN MÅLING. Pål
+   * spurte Google AI Mode som markedssjef i en norsk interiørkjede, og
+   * Reflektor kom ikke med i svaret — fordi kjedefakta ikke var skrevet med
+   * ordene en kjede bruker. Tjenestesiden svarte på det. Artikkelen dekker
+   * det søket som kommer før: hvordan løser en kjede innhold i det hele
+   * tatt, uavhengig av leverandør.
+   *
+   * KUNDENE ER PRODUKSJONSKUNDER, IKKE SOME-ABONNENTER. Anton Sport, Egon,
+   * Peppes og Vitusapotek er kunder på foto, video og reklamefilm. Ingen
+   * setning her skal antyde noe annet — låst ramme i AGENTS.md. Formuleringene
+   * er derfor hentet ordrett fra /kjeder, der de allerede er godkjent.
+   *
+   * INGEN NYE TALL. Alt som står her om antall restauranter, antall formater
+   * og hvor lenge samarbeidene har vart, står allerede i tjenester.ts og
+   * caser.ts.
+   */
+  {
+    slug: "innhold-til-sosiale-medier-for-kjeder",
+    bilde: {
+      fil: "kafe1-1600",
+      alt: "Rad med flasker i en butikkhylle foran en farget vegg",
+      fokus: "center 32%",
+    },
+    tittel: "Innhold til sosiale medier for kjeder med flere lokasjoner",
+    metaTittel: "Sosiale medier for kjeder med flere lokasjoner",
+    beskrivelse:
+      "Femti butikker, seks flater og én markedsavdeling. Hvordan kjeder løser innholdsproduksjon uten å sette i gang femti produksjoner.",
+    publisert: "2026-09-29",
+    blokker: [
+      {
+        type: "avsnitt",
+        tekst:
+          "En kjede har ikke det samme problemet som en enkeltbutikk. Utfordringen er sjelden å lage innhold — den er å lage innhold som fungerer for femti lokasjoner og et halvt dusin flater, uten å sette i gang femti produksjoner.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Løsningen de fleste kjeder lander på er den samme: produser sentralt, lever i mange formater, og la lokasjonene bruke materialet i stedet for å lage sitt eget.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Tre problemer en kjede har som en enkeltbutikk ikke har",
+      },
+      {
+        type: "liste",
+        punkter: [
+          "Volum. Det som holder for én butikk i en måned, er tomt etter en uke når femti skal dele på det.",
+          "Flater. Innholdet skal ikke bare i feeden. Det skal på skjerm i butikk, på skjerm i kjøpesenteret, i annonser, på nettsiden og i kampanjer — og hver flate har sitt format.",
+          "Samme uttrykk overalt. Femti lokasjoner som lager sitt eget blir femti ulike merkevarer, og den kostnaden dukker ikke opp i noe budsjett.",
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det tredje er det dyreste, og det som oppdages sist. Et bildespråk som sprekker opp er vanskelig å samle igjen.",
+      },
+      {
+        type: "medier",
+        elementer: [
+          {
+            slag: "film",
+            sti: "/arbeid/kjeder-anton-sport",
+            format: "16/9",
+            alt: "Stillbilde fra filmen: to syklister på en grusvei i skogen",
+          },
+          {
+            slag: "film",
+            sti: "/arbeid/kjeder-egon",
+            format: "16/9",
+            alt: "Stillbilde fra filmen: en hånd heller saus over en rett",
+          },
+        ],
+        bildetekst:
+          "To kjeder, to bransjer, samme arbeidsmåte: Anton Sport og Egon. Begge filmene er fra én produksjonsdag.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Sentralt eller lokalt — hvem skal publisere?",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Dette er valget som avgjør resten. Lar dere hver lokasjon styre sin egen konto, får dere nærhet og lokal tilstedeværelse — og et uttrykk som spriker, en kvalitet som varierer med hvem som er på jobb, og ingen som kan svare på hva kjeden faktisk publiserte forrige måned.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Styrer markedsavdelingen alt sentralt, får dere kontroll og konsistens — men innholdet mister det lokale, og butikksjefene mister et verktøy de faktisk har bruk for.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Den vanligste mellomløsningen er at produksjonen er sentral og publiseringen lokal: ett arkiv alle henter fra, med føringer for hva som kan endres. Kjedene vi produserer for gjør det slik — markedsteamet hos kunden styrer kanalene selv, og vi leverer innholdet de bruker.",
+        lenker: [{ frase: "Kjedene vi produserer for", sti: "/kjeder" }],
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Én film, seks formater",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det som skiller kjedeproduksjon fra vanlig innholdsproduksjon er ikke motivet. Det er at hver film må ut i flere utsnitt fordi flatene er ulike — stående til sosiale medier, liggende til skjerm, kvadratisk til annonser, og egne oppløsninger til skjermene i butikk og kjøpesenter.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "For Egon leverer vi seks formater per film. Det er ikke seks filmer, det er én film beskåret og tilpasset seks ganger — og det er en beslutning som må tas før opptaket, ikke etter. Filmes det uten at utsnittene er planlagt, finnes ikke bildet som skal til for det stående formatet.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det er derfor formatene hører hjemme i kjøreplanen og ikke i etterarbeidet. På kjedesiden står den samme filmen i tre av de seks formatene ved siden av hverandre.",
+        lenker: [
+          {
+            frase: "den samme filmen i tre av de seks formatene",
+            sti: "/kjeder",
+          },
+        ],
+      },
+      {
+        type: "medier",
+        elementer: [
+          {
+            slag: "foto",
+            sti: "/arbeid/kjeder-foto-peppes",
+            format: "4/5",
+            alt: "To pizzaer og en dessert på et bord, fotografert for en restaurantkjede",
+          },
+          {
+            slag: "foto",
+            sti: "/arbeid/kjeder-foto-vitusapotek",
+            format: "4/5",
+            alt: "Sesongvarer lagt ut på grønt stoff, fotografert for en apotekkjede",
+          },
+        ],
+        bildetekst:
+          "Stillbilder fra to kjeder. Samme produksjonsdag gir både film og foto.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hvordan volumet faktisk løses",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Ikke ved å filme i hver butikk. For Egon produserer vi til nærmere 50 restauranter fra sør til nord, fra én fast produksjonsdag i måneden. Det som gjør det mulig er at maten, menyen og uttrykket er felles — det lokale ligger i hvem som publiserer, ikke i hvor kameraet sto.",
+      },
+      {
+        type: "avsnitt",
+        tekst: `Trenger kjeden materiale fra flere steder, fordeles produksjonsdagene på ulike lokasjoner i stedet for å legges på samme adresse. Og trengs det mer volum, legges det til dager: hver ekstra produksjonsdag koster ${kr(tilbud.ekstraProduksjonsdag)} kr.`,
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det er den egentlige skalaen i modellen. Ikke flere leverandører, men flere dager med det samme teamet — slik at butikkinnhold og reklamefilm får samme bildespråk.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Seks spørsmål å avklare før dere ber om tilbud",
+      },
+      {
+        type: "liste",
+        punkter: [
+          "Hvilke flater skal innholdet ut på, og i hvilke formater og oppløsninger?",
+          "Hvem publiserer — markedsavdelingen, butikkene, eller begge?",
+          "Hvor mange produksjonsdager i måneden trenger dere, og skal de ligge på samme sted?",
+          "Skal reklamefilm og løpende innhold komme fra samme team?",
+          "Hvem svarer på kommentarer og meldinger i kanalene?",
+          "Hva skal skje med materialet etterpå — hvem eier det, og hvor lagres det?",
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Spørsmål én er det som oftest mangler i en brief, og det som oftest gjør at materialet må lages om. Ta det først.",
+      },
+    ],
+    lesVidere: [
+      { sti: "/kjeder", tekst: "Reflektors arbeid for kjeder og retail" },
+      { sti: "/reklamefilm", tekst: "reklamefilm fra samme team" },
+    ],
+    tilleggsfaq: [
+      {
+        sporsmal: "Må vi filme i hver eneste butikk?",
+        svar: "Nei, og det er sjelden verdt det. Er produktene, menyen og uttrykket felles, kan innholdet produseres ett sted og brukes av alle. Det lokale ligger i hvem som publiserer og hva de skriver til bildet, ikke i hvor kameraet sto. Unntakene er når lokasjonen faktisk er poenget: en ny butikk som åpner, et lokale som skiller seg ut, eller ansatte som skal vises fram. Da legger vi en produksjonsdag dit i stedet for å legge alle på samme adresse.",
+      },
+      {
+        sporsmal: "Hva gjør vi med butikker som allerede har egen konto?",
+        svar: "La dem beholde den, men gi dem noe å publisere. Det vanligste problemet er ikke at butikkene har egne kontoer — det er at de ikke har materiale, og derfor lager sitt eget med mobilen. Et felles arkiv de kan hente fra løser mesteparten av det. Legg ved enkle føringer for hva som kan endres og hva som ikke kan det, så beholder dere uttrykket uten å ta fra butikkene verktøyet.",
+      },
+    ],
+  },
+  /*
+   * SKREVET 29.09.2026. Innlegg nummer 5 i lista i docs/blogg-gjennomgang.md.
+   *
+   * FAREN VAR Å SKRIVE ENDA EN DEFINISJONSARTIKKEL. «Sosiale medier-strategi»
+   * har 200 i volum og vanskelighetsgrad 0 nettopp fordi alle har skrevet
+   * den samme læreboka. AGENTS.md forbyr flere tekster av den typen, og en
+   * til ville ikke rangert uansett.
+   *
+   * DERFOR ER DEN EN MAL OG IKKE EN FORKLARING. Seks steg, i den rekkefølgen
+   * de faktisk gjøres, med det som skal stå i hvert. Metoden er Reflektors
+   * egen, hentet ordrett fra FAQ-svarene i faq.ts: research på hundre
+   * publiseringer over fire måneder, median mot median, navngitte
+   * innholdsserier, to kanaler gjort ordentlig, et halvår før noe kan
+   * bedømmes.
+   *
+   * INGEN LOVEDE TALL. Svaret «Hvilke resultater kan vi forvente?» i faq.ts
+   * sier rett ut at vi ikke lover prosenter og anbefaler skepsis mot byråer
+   * som gjør det. Artikkelen holder samme linje — den ville vært lettere å
+   * skrive med en garanti i, og verdiløs.
+   */
+  {
+    slug: "sosiale-medier-strategi",
+    bilde: {
+      fil: "aktivering-vegg",
+      alt: "Utendørs aktivering med stand og publikum",
+    },
+    tittel: "Sosiale medier-strategi: hva den faktisk må inneholde",
+    metaTittel: "Sosiale medier-strategi: hva den må inneholde",
+    beskrivelse:
+      "Seks steg, i den rekkefølgen de gjøres. Malen vi selv bruker når vi legger en produksjonsplan — ikke en lærebok i hva sosiale medier er.",
+    publisert: "2026-09-29",
+    blokker: [
+      {
+        type: "avsnitt",
+        tekst:
+          "En strategi som ikke ender i en produksjonsplan er et dokument. Den skal svare på hva som skal lages, av hvem, hvor ofte, i hvilke formater, og hvordan dere vet om det virker. Klarer den ikke det, er den ikke en strategi — den er en presentasjon.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Under står de seks stegene i den rekkefølgen de faktisk gjøres, og hva som må stå i hvert enkelt.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Steg 1: Mål det dere allerede har publisert",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Nesten alle hopper over dette, og det er det eneste steget som gir svar i stedet for meninger. Dere har allerede publisert. Tallene ligger åpent i Metas egne verktøy, og de sier hvilke formater, lengder og motiver som faktisk fikk rekkevidde hos akkurat deres publikum.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Et brukbart grunnlag er rundt hundre publiseringer over fire måneder. Sammenlign median mot median, ikke snitt mot snitt — én post som gikk viralt trekker snittet så mye at resten forsvinner, og da måler dere flaksen i stedet for mønsteret.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Se like mye på hva dere allerede kan. Fagartikler dere har skrevet, spørsmål kundene stiller igjen og igjen, ansatte som kan noe andre lurer på. Det sterkeste innholdet er som regel kunnskap dere allerede sitter på — filmet i stedet for skrevet.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Steg 2: Velg kanaler etter hva dere klarer å levere",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Kanalvalget er en kapasitetsbeslutning, ikke en målgruppebeslutning. To kanaler gjort ordentlig slår fire gjort halvveis, hver eneste gang. Hver ny kanal krever egne formater, egen tone og egen redigering — og koster like mye som den forrige.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Velg ut fra hvor publikummet er OG hvor ofte dere realistisk klarer å publisere. En kanal som står stille kommuniserer noe den ikke skulle kommunisert.",
+      },
+      {
+        type: "medier",
+        elementer: [
+          {
+            slag: "foto",
+            sti: "/arbeid/kjeder-foto-anton-sport",
+            format: "4/5",
+            alt: "Sko i en bekk, fotografert for en sportskjede",
+          },
+          {
+            slag: "foto",
+            sti: "/arbeid/kjeder-foto-egon",
+            format: "4/5",
+            alt: "Tacos på et fat, fotografert for en restaurantkjede",
+          },
+        ],
+        bildetekst:
+          "4:5 er formatet som tar mest plass i Instagram-feeden. Det er også formatet flest glemmer å planlegge for.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Steg 3: Gjør funnene om til navngitte serier",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Dette er steget som skiller en strategi fra en idémyldring. En liste med løse ideer overlever ikke første travle uke. En navngitt serie gjør det, fordi den sier hva neste film er uten at noen må finne på noe.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "En serie har et navn, et fast format, en fast lengde og en grunn til å finnes. «Kokken forklarer» er en serie. «Mer bak kulissene» er ikke.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Tre til fem serier er nok. Færre blir ensformig, flere blir umulig å holde i gang.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Steg 4: Bestem formatene før opptaket",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Skal en film både i feeden, på nettsiden og på en skjerm, må utsnittene planlegges før kameraet rigges. Filmes det bare liggende, finnes ikke bildet som skal til for det stående formatet — og motsatt.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det er en beslutning som koster ingenting i planleggingen og svært mye i etterarbeidet. Har dere flere flater å fylle, er det her mesteparten av gjenbruket ligger.",
+        lenker: [
+          {
+            frase: "flere flater å fylle",
+            sti: "/blogg/innhold-til-sosiale-medier-for-kjeder",
+          },
+        ],
+      },
+      {
+        type: "medier",
+        elementer: [
+          {
+            slag: "film",
+            sti: "/arbeid/noods",
+            format: "16/9",
+            alt: "Stillbilde fra klipp: nudelretter fotografert ovenfra",
+          },
+          {
+            slag: "film",
+            sti: "/arbeid/servering",
+            format: "16/9",
+            alt: "Stillbilde fra klipp: et måltid serveres ved et bord",
+          },
+        ],
+        bildetekst:
+          "Liggende format går til nettside, skjerm og YouTube. Samme opptak, annet utsnitt.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Steg 5: Legg en rytme dere klarer å holde hele året",
+      },
+      {
+        type: "avsnitt",
+        tekst: `Frekvensen betyr mindre enn jevnheten. ${tilbud.posterPerUke} ganger i uka, 52 uker i året, slår fem ganger i uka i tre måneder og så stille. Algoritmene straffer opphold, og de fleste hull oppstår i ferier og i travle perioder — altså akkurat når ingen har tid til å lage noe nytt.`,
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Løsningen er å produsere i forkant, ikke å publisere oftere. Et arkiv som er fylt opp tåler en travel måned; en kalender som fylles fortløpende gjør det ikke.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Steg 6: Bestem hva dere skal måle — og hva dere ikke skal måle",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Sett mål på det dere kontrollerer: antall ferdige filmer, antall publiseringer, jevnheten. Ikke på prosentvis vekst i engasjement. Et byrå som styrer etter et engasjementstall, ender med å lage innhold som jager tallet i stedet for å bygge merkevaren.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Og gi det tid. De første to månedene handler om å finne formen, og tallene er ustabile i den perioden. Fra måned tre begynner mønstrene å vise seg. Regn med et halvår før dere kan bedømme det ordentlig.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Malen på én side",
+      },
+      {
+        type: "tabell",
+        kolonner: ["Steg", "Hva som skal stå der"],
+        rader: [
+          ["1. Måling", "Hva som faktisk fungerte, målt median mot median"],
+          ["2. Kanaler", "Hvilke, og hvor ofte dere klarer å levere i dem"],
+          ["3. Serier", "Tre til fem, med navn, format og lengde"],
+          ["4. Formater", "Hvilke utsnitt hver film skal leveres i"],
+          ["5. Rytme", "Antall publiseringer i uka, 52 uker i året"],
+          ["6. Måltall", "Det dere kontrollerer, ikke det dere håper på"],
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst: `Får dere dette ned på én side, har dere en strategi. Vil dere se hvordan vi ville gjort det for dere, lager vi et komplett forslag med research på deres egne kanaler innen ${tilbud.strategiforslagVirkedager} virkedager, uten forpliktelser.`,
+        lenker: [{ frase: "et komplett forslag", sti: "/#kontakt" }],
+      },
+    ],
+    lesVidere: [
+      { sti: "/", tekst: "Reflektors leveranse og pris, oppgitt åpent" },
+      { sti: "/innholdsproduksjon", tekst: "hva Reflektor produserer" },
+    ],
+    tilleggsfaq: [
+      {
+        sporsmal: "Hvor ofte bør strategien revideres?",
+        svar: "Selve retningen tåler et år. Det som bør gjennomgås oftere er hvilke serier som virker — et kvartal er en passende rytme, fordi tallene svinger for mye fra uke til uke til å si noe om en måned alene. En gjennomgang på tjue minutter der dere ser på hva som har fungert og hva som ikke har det, er som regel nok. Å skrive strategien om fra bunnen hvert halvår er et tegn på at den var for detaljert til å begynne med.",
+      },
+      {
+        sporsmal: "Trenger vi en strategi hvis vi bare skal publisere litt?",
+        svar: "Ja, men den blir kort. Skal dere publisere én gang i uka, trenger dere fortsatt å vite hvilke to eller tre serier det skal være, hvilket format de har, og hvem som lager dem. Det tar en halv side. Det som ikke fungerer er å publisere litt uten å ha bestemt noe — da blir innholdet det noen rekker den dagen, og det er den varianten som koster mest tid per publisering og gir minst igjen.",
+      },
+    ],
+  },
 ];
+
+/**
+ * Vakt på medieblokkene, kjørt ved import — ikke ved rendring.
+ *
+ * SAMME VALG SOM `delOppAvsnitt` OG `hentFaq`: den kaster. En medieblokk med
+ * tre elementer eller med to ulike sideforhold er en innholdsfeil, og
+ * alternativet er en rad som ser ødelagt ut på telefon uten at noe sier fra.
+ * Da er det bedre at byggen stopper med navnet på artikkelen i feilmeldingen.
+ *
+ * Her og ikke i komponenten, fordi komponenten bare kjører for den artikkelen
+ * noen faktisk åpner. Dette treffer alle ti ved første import.
+ */
+for (const a of artikler) {
+  for (const b of a.blokker) {
+    if (b.type !== "medier") continue;
+    if (b.elementer.length < 1 || b.elementer.length > 2) {
+      throw new Error(
+        `${a.slug}: en medieblokk må ha ett eller to elementer, ikke ${b.elementer.length}`,
+      );
+    }
+    const formater = new Set(b.elementer.map((m) => m.format));
+    if (formater.size > 1) {
+      throw new Error(
+        `${a.slug}: medieblokken blander formatene ${[...formater].join(" og ")}. Begge må ha samme sideforhold, ellers får rammene ulik høyde.`,
+      );
+    }
+  }
+}
 
 /** Slugene som faktisk har innhold. Undersett av bloggSlugs i site.ts. */
 export const artikkelSlugs = artikler.map((a) => a.slug);

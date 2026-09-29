@@ -345,3 +345,83 @@ retninger: testen feiler med duplikatet og passerer uten.
 
 Produksjonsdag, frilanser mot byrå mot ansatt, kjeder med flere lokasjoner
 og SoMe-strategi. Rekkefølgen i avsnitt 5 står.
+
+**Skrevet samme dag. Se avsnitt 9.**
+
+---
+
+## 9. De fire siste innleggene, og bilder i bloggen
+
+Bestilt av Pål 29.09.2026: «lag alle innleggene og forbered til overgangen så
+godt du kan … vær nøye med å bruke gode, relevante eksempler på bilder og
+videoer i blogginnleggene. alt skal være pent, on brand og visuelt moderne og
+tilfredsstillende.»
+
+Alle fem innleggene fra avsnitt 5 er dermed skrevet. Bloggen har fjorten
+artikler: ni migrert ordrett fra Squarespace, fem skrevet for den nye siden.
+
+### De fire nye
+
+**«Hva er en produksjonsdag?»** — enheten hele tilbudet og hele prisen er
+bygget på, og som ikke forklares noe sted utenfor FAQ-svarene. En språkmodell
+som ikke forstår enheten, kan ikke gjengi prisen riktig.
+
+**«SoMe-byrå, frilanser eller ansatt?»** — det tredje alternativet som manglet
+i `some-ansvarlig-eller-byra`. To oppgitte kilder: Norsk Journalistlags
+minstesatser for frilansere (oppdatert 17.04.2026) og Skatteetaten om
+arbeidsgiveravgift. Det siste er poenget de færreste kjøpere kjenner: leier
+dere inn noen uten egen næringsvirksomhet, er det dere som skylder avgiften.
+Artikkelen gjentar ikke regnestykket for en ansatt — det står i den andre
+artikkelen og lenkes dit.
+
+**«Innhold til sosiale medier for kjeder med flere lokasjoner»** — støtter
+/kjeder og dekker søket som kommer før: hvordan løser en kjede innhold i det
+hele tatt. Ingen nye tall; alt om antall restauranter, formater og varighet
+står allerede i tjenester.ts og caser.ts.
+
+**«Sosiale medier-strategi: hva den faktisk må inneholde»** — skrevet som en
+mal i seks steg, ikke som en definisjon. Faren var å lage enda en lærebok;
+ordet har vanskelighetsgrad 0 nettopp fordi alle allerede har skrevet den.
+
+### Bilder og film i artiklene
+
+Bloggmalen hadde ett toppbilde og deretter ren tekst. Nå kan en artikkel ha
+medier underveis — ett eller to om gangen, med felles bildetekst. Korte,
+visuelle klipp spiller av seg selv, dempet og i løkke, når de kommer i
+synsfeltet. Intervjuer og profilfilmer får en ekte avspiller med kontroller,
+fordi poenget der er det som blir SAGT.
+
+**Begrensningen er bevisst: maks to medier, og samme sideforhold i begge.**
+To rammer med ulikt format i samme rad får ulik høyde, og da henger
+bildeteksten i løse lufta ved siden av et bilde som fortsetter nedenfor den.
+En vakt i artikler.ts stopper byggen på begge deler.
+
+### To bak-kulissene-filmer hentet fra Dropbox
+
+`Marketing_Reflektor/Reflektor - ads & SoMe/BTS til SoMe/` viste seg å ha et
+helt arkiv av ferdige BTS-filmer fra produksjonsdager. To er tatt inn:
+Baker Brun (2026) og Anton Sport (2024). Begge navnene står på den bekreftede
+kundelista i site.ts.
+
+En tredje, Vindubutikken, er **ikke** brukt. Filmen er like god, men navnet
+står ikke på lista, og filmen avslutter med et co-brandet logokort. Regelen i
+site.ts er utvetydig: «Legg aldri til et navn uten at Pål har godkjent
+nettopp det navnet.»
+
+Filene er komprimert til 720×1280 uten lydspor, som kjedefilmene. 6,1 MB til
+sammen.
+
+### Delingsbildet som manglet
+
+Nettstedet hadde ingen `og:image`. Deles en lenke i Slack, på LinkedIn eller i
+en e-post, ble kortet en grå boks med en URL. For et selskap som selger foto
+og video er det den dyreste tomme plassen som finnes. Et 1200×630-kort er
+laget av et stillbilde fra en av våre egne produksjonsdager, med logoen nede
+til venstre.
+
+### Fortsatt åpent
+
+Det samme som sto i avsnitt 7: den dupliserte avslutningen i fire artikler,
+Wyzowl- og Facebook-tallene uten kilde, og prissammenligningen i
+`hva-koster-et-some-byra` som bør bli en tabell med Byråmatch som oppgitt
+kilde.

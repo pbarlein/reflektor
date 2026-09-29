@@ -73,11 +73,47 @@ export const metadata: Metadata = {
    * setningene er ordrett de samme, de siste er bare utelatt.
    */
   description: kortBeskrivelse(site.ingress),
+  /*
+   * DELINGSBILDET, lagt til 29.09.2026.
+   *
+   * Siden hadde ingen `og:image`. Deles en lenke til reflektor.no i Slack,
+   * på LinkedIn, i Messenger eller i en e-post, viser flatene et kort — og
+   * uten bilde blir kortet en grå boks med en URL. For et selskap som
+   * selger foto og video er det den dyreste tomme plassen som finnes, og
+   * den koster klikk hver eneste gang noen deler noe.
+   *
+   * ÉN BILDE FOR HELE NETTSTEDET, med vilje. Et bilde per side ville
+   * betydd tjuefem bilder å holde i live, og gevinsten er marginal: flatene
+   * viser tittelen og beskrivelsen som tekst uansett, og de er allerede
+   * unike per side. Bildet skal si hvem avsenderen er, ikke hva siden
+   * handler om.
+   *
+   * 1200×630 er formatet Facebook, LinkedIn, X og Slack alle leser. Motivet
+   * er fra en av våre egne produksjonsdager, med logoen nede til venstre.
+   *
+   * ABSOLUTT URL KOMMER AV SEG SELV: `metadataBase` over gjør den relative
+   * stien absolutt, og det er et krav — flatene henter bildet fra en annen
+   * server enn leseren.
+   */
   openGraph: {
     type: "website",
     locale: "nb_NO",
     siteName: site.navn,
+    images: [
+      {
+        url: "/bilder/og/reflektor-og.jpg",
+        width: 1200,
+        height: 630,
+        alt: `${site.navn} — foto og video på månedlig basis`,
+      },
+    ],
   },
+  /*
+   * `summary_large_image` gir kortet i full bredde i stedet for en liten
+   * firkant ved siden av teksten. Tittel, beskrivelse og bilde arves fra
+   * `openGraph` når de ikke settes her.
+   */
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({

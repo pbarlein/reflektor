@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { Bloggmedier } from "@/components/blogg/Bloggmedier";
 import { Container } from "@/components/Container";
 import { Eyebrow, Merkelapp } from "@/components/Eyebrow";
 import { Knappelenke } from "@/components/Knapp";
@@ -236,6 +237,15 @@ export default async function BloggInnlegg({ params }: Props) {
                       Kilde
                     </a>
                   </p>
+                );
+              }
+              if (b.type === "medier") {
+                return (
+                  <Bloggmedier
+                    key={i}
+                    elementer={b.elementer}
+                    bildetekst={b.bildetekst}
+                  />
                 );
               }
               if (b.type === "tabell") {
