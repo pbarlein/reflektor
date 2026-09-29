@@ -73,11 +73,19 @@ export const hovedCta = { navn: "Ta kontakt", sti: "/kontaktoss" };
  * den er også den ene URL-en som er bestilt 301-et til forsiden ved cutover.
  * En sidevis bunntekstlenke til en URL som skal dø, er en lenke som blir en
  * omdirigering på hver eneste side. Annonsene peker dit; det holder.
+ *
+ * `/kjeder` LAGT TIL 29.09.2026, meldt av Pål: siden ble bygget uten å bli
+ * lenket herfra. Den lå da bare bak to lenker i brødtekst — fra forsiden og
+ * fra /reklamefilm — og var ikke nåbar fra de andre sidene i det hele tatt.
+ * Bunnteksten er der de andre tjenestesidene ligger, av grunnene over, og
+ * den hører til i samme spalte som dem. Den står FØRST fordi de tre nederste
+ * i lista er eldre landingssider som er beholdt for å unngå 404.
  */
 export const bunnmeny: { tittel: string; lenker: Lenke[] }[] = [
   {
     tittel: "Tjenester",
     lenker: [
+      { navn: "Kjeder og retail", sti: "/kjeder" },
       { navn: "Innholdsproduksjon", sti: "/innholdsproduksjon" },
       { navn: "Reklamefilm", sti: "/reklamefilm" },
       { navn: "Videoproduksjon i Oslo", sti: "/videoproduksjon-i-oslo" },

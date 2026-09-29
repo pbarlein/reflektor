@@ -51,6 +51,23 @@ export type Seksjon = {
    * er et av de sterkeste interne relevanssignalene som finnes.
    */
   lenker?: { sti: string; tekst: string }[];
+  /**
+   * Film(er) som hører til NETTOPP denne seksjonen.
+   *
+   * LAGT TIL 29.09.2026, bestilt av Pål: «legg til eksempler på siden basert
+   * på hovedmappen med bilder og videoer i dropbox».
+   *
+   * Sidens `filmer` ligger samlet øverst, før seksjonene. Det er riktig når
+   * filmene viser det SIDEN handler om. På /kjeder viser hver film én
+   * bestemt kunde, og da hører den hjemme i kundens egen blokk: filmen står
+   * som belegg rett under påstanden den belegger. Fire filmer stablet øverst
+   * ville tvunget leseren til å huske hvilken som var hvem.
+   *
+   * Én film fyller spalten. Flere legges på rad — det er formatraden under
+   * «Volum og format», der hele poenget er å se de samme 23 sekundene i tre
+   * fasonger ved siden av hverandre.
+   */
+  filmer?: Referansefilm[];
 };
 
 /**
@@ -82,7 +99,12 @@ export type Seksjon = {
  */
 export type Referansefilm = {
   sti: string;
-  format: "16/9" | "9/16";
+  /**
+   * `4/5` kom til 29.09.2026. Det er ikke et webformat vi har funnet på —
+   * det er ett av de seks Egon faktisk får levert hver måned, og hele
+   * poenget med formatraden på /kjeder er å vise de ekte eksportene.
+   */
+  format: "16/9" | "9/16" | "4/5";
   alt: string;
   bildetekst: string;
   sekunder: number;
@@ -93,6 +115,15 @@ export type Arbeidsmedie = {
   type: "foto" | "video";
   sti: string;
   alt: string;
+  /**
+   * Rutenettets format. Standard er stående 9:16, som klippene er.
+   *
+   * `4/5` finnes fordi /kjeder viser stillfoto og ikke klipp. Arkivbildene
+   * er tatt i 2:3 og 3:2, og en 9:16-ramme skjærer bort halve motivet i et
+   * liggende bilde. 4:5 tar begge deler med en beskjæring som ikke merkes.
+   * Formatet må være likt for alle fire, ellers blir underkanten ujevn.
+   */
+  format?: "9/16" | "4/5";
 };
 
 /** En bit av avgrensningen: ren tekst, eller en lenke. */
@@ -889,6 +920,17 @@ export const kjeder: Tjenesteside = {
         "Over tre år med samarbeid",
         "[BEKREFT: styrer Anton Sport selv publisering og dialog i kanalene? Påstanden finnes ikke i noe publisert materiale.]",
       ],
+      filmer: [
+        {
+          sti: "/arbeid/kjeder-anton-sport",
+          format: "16/9",
+          alt: "Stillbilde fra filmen: to syklister på en grusvei i skogen.",
+          bildetekst:
+            "Anton Sport, mai 2026. Film fra én produksjonsdag, levert i 16:9 og 9:16.",
+          sekunder: 25,
+          lyd: true,
+        },
+      ],
       sitat: {
         tekst:
           "Vi liker spesielt godt hvordan de får alle til å føle seg avslappet, naturlig og finne seg til rette foran kamera, selv med lite modell-erfaring fra tidligere. De ser aldri begrensninger og heller muligheter uansett årstid eller lokasjon.",
@@ -905,6 +947,17 @@ export const kjeder: Tjenesteside = {
         "Seks formater per film — sosiale medier, skjermer i restaurant og kjøpesenter, og annonser",
         "Fast produksjonsdag hver måned siden 2022",
       ],
+      filmer: [
+        {
+          sti: "/arbeid/kjeder-egon",
+          format: "16/9",
+          alt: "Stillbilde fra filmen: en hånd heller saus over en rett, med teksten «Trøffelsoppsaus».",
+          bildetekst:
+            "Egon, august 2026. Kampanjefilmen «Min drømmerett», levert i fem formater.",
+          sekunder: 19,
+          lyd: true,
+        },
+      ],
       lenker: [{ sti: "/vart-arbeid/egon", tekst: "Hele kundecaset for Egon" }],
     },
     {
@@ -914,11 +967,47 @@ export const kjeder: Tjenesteside = {
         "Reklamefilm for TV og nett",
         "TV-reklame knyttet til Premier League",
       ],
+      filmer: [
+        {
+          sti: "/arbeid/kjeder-peppes",
+          format: "16/9",
+          alt: "Stillbilde fra filmen: to personer spiser pizza i en sofa.",
+          bildetekst: "Peppes Pizza, august 2026. Reklamefilm på 15 sekunder.",
+          sekunder: 15,
+          lyd: true,
+        },
+      ],
     },
     {
       sporsmal: "Vitusapotek",
       svar: "Reflektor har laget TV-reklame for Vitusapotek, i forbindelse med Skal vi danse.",
-      punkter: ["TV-reklame", "Kampanje knyttet til Skal vi danse"],
+      punkter: [
+        "TV-reklame",
+        "Kampanje knyttet til Skal vi danse",
+        /*
+         * PUNKT LAGT TIL 29.09.2026, og det er en utvidelse av innholdet —
+         * ikke en omskriving av det som sto. Seksjonen sa bare TV-reklame,
+         * og da hadde filmen under ingen forankring i teksten.
+         *
+         * Belegget er leveransen selv: Kundemappe/Vitusapoteket/2025/Juli/
+         * Reels V3/ har de samme fem filmene i 16-9, 9-16 og 1-1, og i dem
+         * står apotekets egen farmasøyt navngitt på skjermen. Det er en
+         * sterkere kilde enn noen av de publiserte tekstene — men det er en
+         * ny opplysning på siden, og den er meldt til Pål som nettopp det.
+         */
+        "Filmer med apotekets egne farmasøyter, levert i 16:9, 9:16 og 1:1",
+      ],
+      filmer: [
+        {
+          sti: "/arbeid/kjeder-vitusapotek",
+          format: "16/9",
+          alt: "Stillbilde fra filmen: en farmasøyt i Vitusapotek-uniform ved et bord.",
+          bildetekst:
+            "Vitusapotek, juli 2025. Film med apotekets egen farmasøyt.",
+          sekunder: 54,
+          lyd: true,
+        },
+      ],
     },
     {
       sporsmal: "Passer for dere hvis …",
@@ -930,12 +1019,86 @@ export const kjeder: Tjenesteside = {
     },
     {
       sporsmal: "Volum og format",
-      svar: `Trenger dere mer innhold, legger dere til produksjonsdager. Hver ekstra produksjonsdag koster ${kr(tilbud.ekstraProduksjonsdag)} kr. Videoene leveres stående i 9:16, og dere står helt fritt til å bruke dem på TikTok, i annonser, på nettsiden og andre flater.`,
+      svar: `Trenger dere mer innhold, legger dere til produksjonsdager. Hver ekstra produksjonsdag koster ${kr(tilbud.ekstraProduksjonsdag)} kr. Videoene leveres stående i 9:16, og dere står helt fritt til å bruke dem på TikTok, i annonser, på nettsiden og andre flater.\n\nUnder står den samme filmen på 23 sekunder i tre av de seks formatene Egon får levert hver måned.`,
       punkter: [
         `SoMe-abonnementet koster ${kr(tilbud.prisPerManed)} kr/mnd`,
         `Hver ekstra produksjonsdag koster ${kr(tilbud.ekstraProduksjonsdag)} kr`,
         "Ingen bindingstid. 3 måneders oppsigelse.",
       ],
+      /*
+       * FORMATRADEN. Dette er sidens eneste påstand som ellers bare er en
+       * påstand: «seks formater per film» står tre steder på siden, og et
+       * tall i en kulepunktliste er lett å skrive og umulig å etterprøve.
+       *
+       * Filene er de ekte eksportene fra Kundemappe/Egon/2026/Mai/, der
+       * 16x9, 9x16, 4x5, 1152x1058, 1700x1500 og Store filer ligger side om
+       * side med samme film i hver. Tre av dem er tatt med — seks ville vært
+       * seks avspillere av det samme, og poenget er sett etter tre.
+       *
+       * Bildetekstene sier BARE formatet. Å skrive hvilken flate hvert
+       * format går til ville vært en ny påstand; hvilke flater kjeden bruker
+       * står allerede i teksten over, hentet fra kundecaset.
+       */
+      filmer: [
+        {
+          sti: "/arbeid/kjeder-format-16x9",
+          format: "16/9",
+          alt: "Stillbilde fra filmen i 16:9-format: en rett fotografert ovenfra.",
+          bildetekst: "16:9",
+          sekunder: 23,
+        },
+        {
+          sti: "/arbeid/kjeder-format-4x5",
+          format: "4/5",
+          alt: "Samme film i 4:5-format.",
+          bildetekst: "4:5",
+          sekunder: 23,
+        },
+        {
+          sti: "/arbeid/kjeder-format-9x16",
+          format: "9/16",
+          alt: "Samme film i 9:16-format.",
+          bildetekst: "9:16",
+          sekunder: 23,
+        },
+      ],
+    },
+  ],
+  /*
+   * STILLFOTO, ETT PER KJEDE. Filmene viser bevegelse; dette viser det
+   * andre halve av leveransen. Bildene er hentet fra hver kundes egen mappe
+   * i Kundemappe, og alt-teksten navngir kunden — det gjør den ikke på
+   * tjenestesidene, der et navngitt kundebilde ville antydet at kunden har
+   * kjøpt akkurat den tjenesten. Her ER kunden temaet for seksjonen over,
+   * så navnet er riktig og ikke en påstand.
+   *
+   * 4:5 og ikke 9:16: originalene er 2:3 og 3:2, og en 9:16-ramme skjærer
+   * bort halve motivet i de liggende.
+   */
+  arbeid: [
+    {
+      type: "foto",
+      sti: "/arbeid/kjeder-foto-anton-sport.jpg",
+      alt: "Sko i en bekk, fotografert for Anton Sport.",
+      format: "4/5",
+    },
+    {
+      type: "foto",
+      sti: "/arbeid/kjeder-foto-egon.jpg",
+      alt: "Tacos på et fat, fotografert for Egon.",
+      format: "4/5",
+    },
+    {
+      type: "foto",
+      sti: "/arbeid/kjeder-foto-peppes.jpg",
+      alt: "To pizzaer og en dessert på et bord, fotografert for Peppes Pizza.",
+      format: "4/5",
+    },
+    {
+      type: "foto",
+      sti: "/arbeid/kjeder-foto-vitusapotek.jpg",
+      alt: "Julevarer lagt ut på grønt stoff, fotografert for Vitusapotek.",
+      format: "4/5",
     },
   ],
   /*

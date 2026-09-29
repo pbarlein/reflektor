@@ -626,3 +626,57 @@ Avsnittet «MÅ SJEKKES AV PÅL: gjenkjennelige tredjepartsmerker» over gjaldt
 blant annet Freia-bildene. Pål bestilte dette bildet uttrykkelig 19.09.2026.
 Casen navngir allerede samarbeidet i klartekst — «Freia x Soulcake» — så
 bildet sier ikke noe teksten ikke alt sier.
+
+## Kjedesiden: hvilke filer som ligger på /kjeder (29.09.2026)
+
+Bestilt av Pål: «legg til eksempler på siden basert på hovedmappen med bilder
+og videoer i dropbox. se igjennom hva som passer før du tar noe tilfeldig.»
+
+Alt er hentet fra `Reflektor/Kundemappe/<kunde>/`, altså **ferdige eksporter**
+— regelen fra 28.09.2026 gjelder, se avsnittet over om råklipp. Ingenting er
+hentet fra `Videoarkiv/`.
+
+### Utvalget ble gjort ved å se, ikke ved å lese filnavn
+
+Tolv filmkandidater og tolv stillbilder ble lastet ned og gjennomgått som
+kontaktark før noe ble valgt. Det er grunnen til at Egons «Samlefilm» ble
+valgt framfor «EGON Stemning» (215 MB, ett motiv), og at Peppes'
+15-sekunders er med i stedet for buffet-filmen (17,9 s, mørk, mange uskarpe
+rammer).
+
+| På siden | Kilde i Dropbox | Lengde |
+|---|---|---|
+| `kjeder-anton-sport` | `Anton Sport/2026/MAI/Bilder/Video/Maridalen 16x9.mp4` | 24,8 s |
+| `kjeder-egon` | `Egon/2026/August/Min drømmerett/16x9/EGON Min dr - 16-9-lang.mov` | 19,1 s |
+| `kjeder-peppes` | `Peppes/2026/August/4k/Peppes 15 sek 4k.mov` | 15,0 s |
+| `kjeder-vitusapotek` | `Vitusapoteket/2025/Juli/Oppdaterte reels/MP4/16.9/16.9 1.mp4` | 53,9 s |
+| `kjeder-format-16x9` | `Egon/2026/Mai/16x9/Samlefilm 16x9.mov` | 23,0 s |
+| `kjeder-format-4x5` | `Egon/2026/Mai/4x5/Samlefilm 4x5.mov` | 23,0 s |
+| `kjeder-format-9x16` | `Egon/2026/Mai/9x16/Samlefilm 9x16.mov` | 23,0 s |
+| `kjeder-foto-anton-sport.jpg` | `Anton Sport/2026/SEP/Shoot1 - Gore tex/Bilder/Gore Tex September22.jpg` | |
+| `kjeder-foto-egon.jpg` | `Egon/2026/Februar/Sharing/Februar EGON2694.jpg` | |
+| `kjeder-foto-peppes.jpg` | `Peppes/2026/September/Retter på bord/Peppes produkt 4. mai1065.jpg` | |
+| `kjeder-foto-vitusapotek.jpg` | `Vitusapoteket/2025/August/V1/Produktbilder/EmptyName 15.jpg` | |
+
+### «Seks formater» er etterprøvd, ikke sitert
+
+Påstanden står tre steder på nettstedet. `Egon/2026/Mai/` har seks
+søskenmapper med samme film i hver: `16x9`, `9x16`, `4x5`, `1152x1058`,
+`1700x1500` og `Store filer` (4K). Tre av dem ligger på siden.
+`Min drømmerett` i august har fem: 16x9, 9x16, 4x5, 1152x og 1700x1500 —
+derfor sier bildeteksten der «fem formater» og ikke «seks».
+
+### Vitusapotek-filmen er en utvidelse av innholdet
+
+Seksjonen sa bare TV-reklame. `Vitusapoteket/2025/Juli/Reels V3/` har fem
+filmer i 16-9, 9-16 og 1-1 der apotekets egen farmasøyt står navngitt på
+skjermen. Det er belegg for et nytt kulepunkt på siden, og punktet er lagt
+inn — men det er en ny opplysning, ikke en omskriving, og den er meldt til
+Pål som nettopp det.
+
+### Vekt
+
+Syv filmer på til sammen 35 MB ligger på siden. Målt i nettleser laster
+`/kjeder` **1,52 MB** ved åpning og **1,82 MB** etter å ha rullet gjennom
+hele siden — **null byte video**. Alle syv har `preload="none"` og
+plakatbilde; filmene lastes først når noen trykker play.

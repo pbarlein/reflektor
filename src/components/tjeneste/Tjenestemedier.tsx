@@ -37,7 +37,16 @@ export function Arbeidsrutenett({ medier }: { medier: Arbeidsmedie[] }) {
       {medier.map((m) => (
         <li
           key={m.sti}
-          className="relative aspect-[9/16] overflow-hidden rounded-medie bg-flate-dempet"
+          /*
+            FORMATET LESES AV FØRSTE MEDIE, ikke av hvert enkelt. Blandede
+            formater i samme rutenett gir ujevn underkant — samme feil som
+            arbeidsseksjonen på forsiden hadde, og grunnen til at denne
+            komponenten låste 9:16 til å begynne med. Den låsingen holdt bare
+            så lenge alt innholdet var stående klipp.
+          */
+          className={`relative overflow-hidden rounded-medie bg-flate-dempet ${
+            medier[0].format === "4/5" ? "aspect-[4/5]" : "aspect-[9/16]"
+          }`}
         >
           {m.type === "foto" ? (
             <Image
@@ -79,45 +88,102 @@ export function Arbeidsrutenett({ medier }: { medier: Arbeidsmedie[] }) {
  * trykker play, og det er også derfor autospill ikke gir mening her: fire
  * megabyte skal ikke lastes ned for noen som ruller forbi.
  */
-export function Referansefilmer({ filmer }: { filmer: Referansefilm[] }) {
+export function Referansefilmer({
+  filmer,
+  rad = false,
+}: {
+  filmer: Referansefilm[];
+  rad?: boolean;
+}) {
   const fest = useSpillNarSynlig();
 
-  return (
-    <div className="grid gap-10 lg:gap-12">
-      {filmer.map((f) => (
-        <figure key={f.sti} className={f.format === "9/16" ? "max-w-sm" : ""}>
-          <div
-            className={`relative overflow-hidden rounded-medie bg-flate-dempet ${
-              f.format === "9/16" ? "aspect-[9/16]" : "aspect-video"
-            }`}
-          >
-            {f.lyd ? (
-              /*
-                ABSOLUTT POSISJONERT som i Klipp: et <video> uten posisjon
-                bryter ut av en `aspect-*`-ramme i Safari.
+  const ramme: Record<Referansefilm["format"], string> = {
+    "16/9": "aspect-video",
+    "4/5": "aspect-[4/5]",
+    "9/16": "aspect-[9/16]",
+  };
 
-                `controlsList` uten `nofullscreen` — i motsetning til Klipp.
-                Dette er en film noen skal SE, og da skal fullskjerm være der.
-              */
-              <video
-                className="absolute inset-0 size-full object-cover"
-                src={`${f.sti}.mp4`}
-                poster={`${f.sti}.jpg`}
-                preload="none"
-                controls
-                playsInline
-                controlsList="nodownload noremoteplayback"
-                aria-label={f.alt}
-              />
-            ) : (
-              <Klipp sti={f.sti} festRef={fest(f.sti)} />
-            )}
-          </div>
-          <figcaption className="mt-3 text-sm text-blekk-dempet">
-            {f.bildetekst}
-          </figcaption>
-        </figure>
-      ))}
-    </div>
+  const film = (f: Referansefilm) => (
+    <figure
+      key={f.sti}
+      className={rad ? "flex flex-col" : f.format !== "16/9" ? "max-w-sm" : ""}
+    >
+      <div
+        /*
+          I RADEN PÅ TELEFON STYRES RAMMENE AV HØYDEN, ikke av bredden.
+
+          Der ligger de to stående filmene ved siden av hverandre i to like
+          brede spalter. Med breddestyrte rammer blir 4:5-en 25 % lavere enn
+          9:16-en, og bildeteksten «4:5» havner og henger i løse lufta ved
+          siden av et bilde som fortsetter nedenfor den. En fast høyde gir
+          dem samme underkant og bildetekstene samme linje.
+
+          13 rem er valgt av bredden, ikke av høyden: 9:16 blir 117 px og
+          4:5 blir 166 px, og begge får plass i en spalte på 169 px på en
+          390 px skjerm.
+
+          Fra sm overtar spaltebreddene igjen — se kommentaren under.
+        */
+        className={`relative overflow-hidden rounded-medie bg-flate-dempet ${ramme[f.format]} ${
+          rad && f.format !== "16/9" ? "h-52 w-auto sm:h-auto sm:w-full" : ""
+        }`}
+      >
+        {f.lyd ? (
+          /*
+            ABSOLUTT POSISJONERT som i Klipp: et <video> uten posisjon
+            bryter ut av en `aspect-*`-ramme i Safari.
+
+            `controlsList` uten `nofullscreen` — i motsetning til Klipp.
+            Dette er en film noen skal SE, og da skal fullskjerm være der.
+          */
+          <video
+            className="absolute inset-0 size-full object-cover"
+            src={`${f.sti}.mp4`}
+            poster={`${f.sti}.jpg`}
+            preload="none"
+            controls
+            playsInline
+            controlsList="nodownload noremoteplayback"
+            aria-label={f.alt}
+          />
+        ) : (
+          <Klipp sti={f.sti} festRef={fest(f.sti)} />
+        )}
+      </div>
+      <figcaption className="mt-3 text-sm text-blekk-dempet">
+        {f.bildetekst}
+      </figcaption>
+    </figure>
   );
+
+  /*
+    FORMATRADEN: tre fasonger av samme film, side om side.
+
+    SPALTEBREDDENE ER SIDEFORHOLDENE. 1,778fr / 0,8fr / 0,5625fr er 16:9,
+    4:5 og 9:16 skrevet som tall. Da blir de tre rammene nøyaktig like høye
+    uten at høyden er satt noe sted, og raden fyller spalten helt ut. Med
+    like brede spalter ville den stående filmen blitt dobbelt så høy som den
+    liggende, og sammenligningen — som er hele poenget — hadde blitt umulig
+    å lese.
+
+    PÅ TELEFON tar den liggende hele bredden, og de to andre deler raden
+    under. Tre i bredden på 375 px gir en 16:9-ramme på 95 px høyde, og da
+    ser man ikke hva filmen viser.
+  */
+  if (rad) {
+    return (
+      <div className="mt-6 grid grid-cols-2 items-start gap-3 sm:grid-cols-[1.778fr_0.8fr_0.5625fr] sm:gap-4">
+        {filmer.map((f, i) => (
+          <div
+            key={f.sti}
+            className={i === 0 ? "col-span-2 sm:col-span-1" : ""}
+          >
+            {film(f)}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return <div className="grid gap-10 lg:gap-12">{filmer.map(film)}</div>;
 }

@@ -72,11 +72,22 @@ export function Tjenestelayout({
         PLAKATEN («Stillbilde fra …»), og et VideoObject som heter
         «stillbilde» er feil på den måten ingen oppdager.
       */}
-      {side.filmer?.map((f) => (
+      {/*
+        Seksjonsfilmene teller med. De er like mye ferdige filmer som sidens
+        egne, og på /kjeder er de faktisk de eneste — der ligger hver film i
+        kundens egen blokk. Beskrivelsen er seksjonens svar og ikke sidens,
+        slik at et VideoObject for Peppes-filmen ikke beskriver kjedesiden.
+      */}
+      {[
+        ...(side.filmer ?? []).map((f) => ({ f, beskrivelse: side.svar })),
+        ...side.seksjoner.flatMap((s) =>
+          (s.filmer ?? []).map((f) => ({ f, beskrivelse: s.svar })),
+        ),
+      ].map(({ f, beskrivelse }) => (
         <FilmSchema
           key={f.sti}
           navn={f.bildetekst}
-          beskrivelse={side.svar}
+          beskrivelse={beskrivelse}
           sti={f.sti}
           sekunder={f.sekunder}
           sidesti={side.sti}
@@ -288,6 +299,24 @@ export function Tjenestelayout({
                         </li>
                       ))}
                     </ul>
+                  )}
+
+                  {/*
+                    FILMEN STÅR UNDER PÅSTANDEN DEN BELEGGER, over lenkene
+                    og over sitatet. Rekkefølgen er påstand → punkter →
+                    bevis → videre lesning, og et bevis som kommer etter en
+                    lenke videre blir ikke sett.
+
+                    Én film fyller spalten. Flere er formatraden, og den har
+                    sin egen layout — se `rad` i Referansefilmer.
+                  */}
+                  {s.filmer && (
+                    <div className={s.filmer.length > 1 ? "" : "mt-8"}>
+                      <Referansefilmer
+                        filmer={s.filmer}
+                        rad={s.filmer.length > 1}
+                      />
+                    </div>
                   )}
 
                   {s.lenker && (
