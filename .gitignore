@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Råmedia sluppet i prosjektroten.
+#
+# Tre BTS-filer på til sammen 167 MB lå sporet her fra 2026 til 29.09.2026 —
+# de kom inn med en `git add -A` i en commit om typografi og ble referert
+# ingen steder. Mønsteret gjelder KUN roten (`/`), så alt i public/ er
+# upåvirket: der hører mediene hjemme, og lenkesjekken passer på dem.
+/*.mov
+/*.mp4
+/*.MOV
+/*.MP4

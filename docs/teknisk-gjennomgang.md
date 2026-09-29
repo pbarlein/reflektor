@@ -113,16 +113,20 @@ og kilden ført opp.
 e-postadressen i `site.kontakt`. NAP-konsistens er ett av fire synlighetskrav;
 to kopier i samme fil er nettopp det som glir fra hverandre.
 
-### Funnet, ikke rettet
+**13. 167 MB råvideo i repoets rot.** `bts-morgen.mov`, `bts-vindu.mov` og
+`bts-well.mov` var sporet i git, ble referert ingen steder, og kom inn med en
+`git add -A` i en commit om typografi. `.git` var 274 MB; filene var 61 % av
+det. De gjorde hver kloning og hvert Vercel-bygg tyngre uten å tjene noe.
 
-**167 MB råvideo i repoets rot.** `bts-morgen.mov`, `bts-vindu.mov` og
-`bts-well.mov` er sporet i git, refereres ingen steder, og kom inn med en
-`git add -A` i en commit om typografi. `.git` er 274 MB; filene er 61 % av
-det. De gjør hver kloning og hvert Vercel-bygg tyngre uten å tjene noe.
+Slettet 29.09.2026 etter Påls ja. Originalene ligger i Dropbox under
+`Marketing_Reflektor/Reflektor - ads & SoMe/BTS til SoMe/` som
+`TheWell_BTS.mov`, `VinduButikken_BTS_V1.mov` og `BTS_Morgenlevering_V2.mov`.
+Størrelsene avviker noen megabyte, så kopiene i repoet var trolig
+re-eksporter — ikke byte-identiske, men samme opptak.
 
-Sletting krever Påls godkjenning. Merk også at en vanlig sletting fjerner dem
-fra arbeidstreet, ikke fra historikken — filene følger med greina til den
-skvises ved fletting. De ligger ikke på `main`.
+MERK: en vanlig sletting fjerner filene fra arbeidstreet, ikke fra
+historikken. De følger med greina til den skvises ved fletting. De har aldri
+ligget på `main`, så en squash-merge etterlater dem ingen steder.
 
 ### Vurdert og bevisst latt stå
 
