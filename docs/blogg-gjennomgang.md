@@ -412,9 +412,10 @@ nettopp det navnet.»
 oktober. Valget var altså riktig av en grunn jeg ikke kjente da. Filmen skal
 ikke hentes fram igjen senere.
 
-Google-anmeldelsen fra Vindu Butikken står fortsatt på forsiden. Den er ekte og
-handler om arbeid som er gjort, så den er ikke fjernet — men det er Påls valg,
-og spørsmålet er stilt. Se merknaden i `src/content/anmeldelser.ts`.
+Google-anmeldelsen fra Vindu Butikken står fortsatt på forsiden. Pål ble spurt
+og svarte «la den stå» samme dag. Den er ekte og handler om arbeid som er
+gjort, og den ligger fortsatt ute på Google. Se merknaden i
+`src/content/anmeldelser.ts`.
 
 Filene er komprimert til 720×1280 uten lydspor, som kjedefilmene. 6,1 MB til
 sammen.
