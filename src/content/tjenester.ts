@@ -918,7 +918,16 @@ export const kjeder: Tjenesteside = {
         "Løpende foto og video, hver måned",
         "Kampanjer, skjermer i butikk, sosiale medier og merkevarebygging",
         "Over tre år med samarbeid",
-        "[BEKREFT: styrer Anton Sport selv publisering og dialog i kanalene? Påstanden finnes ikke i noe publisert materiale.]",
+        /*
+         * BESVART AV PÅL 29.09.2026: «anton produserer vi for, og har ikke
+         * ansvaret for publisering. vi planlegger sammen med kunden.»
+         *
+         * Punktet sier begge deler, og rekkefølgen er ikke tilfeldig:
+         * planleggingen er felles, kanalene er kundens. Det er den samme
+         * arbeidsdelingen som «Passer for dere hvis …» beskriver lenger
+         * nede, og som skiller kjedekundene fra SoMe-abonnementet.
+         */
+        "Vi planlegger sammen med Anton Sport. Publisering og dialog i kanalene gjør de selv.",
       ],
       filmer: [
         {
@@ -1015,7 +1024,16 @@ export const kjeder: Tjenesteside = {
     },
     {
       sporsmal: "Løpende innhold og kampanjefilm fra samme team",
-      svar: "Det samme teamet lager løpende innhold og kampanjefilm, slik at butikkinnhold og reklame har samme bildespråk. [BEKREFT: samme team — gjelder dette alle kjedekundene, eller bare noen?]",
+      /*
+       * BESVART AV PÅL 29.09.2026: «vi er et lite team totalt i hele
+       * reflektor, og alle kan gjøre alt.»
+       *
+       * Svaret er altså ja, og det gjelder alle kjedekundene. Setningen sier
+       * hva det betyr for kunden — samme folk på begge leveransene — og ikke
+       * hvor mange vi er. En kjede som vurderer et byrå leser «lite team»
+       * som en kapasitetsrisiko, og det er ikke poenget Pål gjør.
+       */
+      svar: "Det samme teamet lager løpende innhold og kampanjefilm, slik at butikkinnhold og reklame har samme bildespråk. Det gjelder alle kjedekundene våre: det er de samme folkene på produksjonsdagen i butikk og på reklamefilmen.",
     },
     {
       sporsmal: "Volum og format",
