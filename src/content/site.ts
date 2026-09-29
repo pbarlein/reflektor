@@ -430,11 +430,43 @@ export const kundelogoer = [
   "Premium PT",
 ] as const;
 
-/** Kontaktperson på /kontaktoss. Navn og direktenummer bygger tillit. */
-/** Samme forbehold som `team`: ikke i bruk ennå, beholdt til /om-oss bygges. */
-export const kontaktperson = {
-  navn: "Pål Barlein",
-  rolle: "CEO",
-  epost: "pal@reflektor.no",
-  telefon: "+47 47605070",
-} as const;
+/*
+ * `kontaktperson` ER FJERNET 29.09.2026, etter teknisk gjennomgang.
+ *
+ * Den holdt navn, rolle, e-post og telefon, med kommentaren «ikke i bruk
+ * ennå, beholdt til /om-oss bygges». /om-oss er bygget, og ingenting brukte
+ * den — verken der eller andre steder.
+ *
+ * Grunnen til at den ble slettet og ikke bare stående: den var en ANDRE kopi
+ * av telefonnummeret og e-postadressen i `site.kontakt` over. NAP-konsistens
+ * er ett av de fire kravene AGENTS.md stiller til synlighet, og bunntekst,
+ * JSON-LD og eksterne kataloger må si nøyaktig det samme. To kopier i samme
+ * fil er nettopp det som glir fra hverandre den dagen ett av dem endres.
+ *
+ * Trengs en kontaktperson senere, skal den lese `site.kontakt`.
+ */
+
+/**
+ * Kutter en tekst ved siste hele setning som holder seg under grensen.
+ *
+ * HVORFOR DEN FINNES. `site.ingress` er 238 tegn og er godkjent copy — den
+ * skal ikke skrives om. Men den er også standardbeskrivelsen i layout.tsx,
+ * altså den enhver ny side arver uten egen `description`, og Google kutter
+ * ved rundt 155. En avkuttet beskrivelse er det første en annonseklikker ser.
+ *
+ * Kutting ved setning og ikke ved tegn: en beskrivelse som ender midt i et
+ * ord ser ødelagt ut. Finnes ingen setning som passer, returneres teksten
+ * uendret — en for lang beskrivelse er bedre enn en meningsløs.
+ *
+ * Samme grep lå allerede inline i /sosiale-medier-byra. Det står nå ett sted.
+ */
+export function kortBeskrivelse(tekst: string, grense = 155): string {
+  const setninger = tekst.split(/(?<=\.)\s+/);
+  let ut = "";
+  for (const s of setninger) {
+    const neste = ut ? `${ut} ${s}` : s;
+    if (neste.length > grense) break;
+    ut = neste;
+  }
+  return ut || tekst;
+}

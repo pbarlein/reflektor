@@ -6,7 +6,7 @@ import { Footer } from "@/components/Footer";
 import { Samtykkebanner } from "@/components/Samtykke";
 import { Samtykkestandard, Sporing } from "@/components/Sporing";
 import { Ankerhopp } from "@/components/Ankerhopp";
-import { site } from "@/content/site";
+import { kortBeskrivelse, site } from "@/content/site";
 import { basisUrl, tillatIndeksering } from "@/lib/miljo";
 
 // Poppins er merkevarefonten. Vektene følger manualen:
@@ -61,7 +61,18 @@ export const metadata: Metadata = {
     default: `${site.navn} – strategi, innhold og publisering til fast pris`,
     template: `%s | ${site.navn}`,
   },
-  description: site.ingress,
+  /*
+   * STANDARDBESKRIVELSEN, kuttet 29.09.2026 etter teknisk gjennomgang.
+   *
+   * Her sto `site.ingress` rått — 238 tegn, der Google kutter ved rundt 155.
+   * Forsiden og alle tjenestesidene setter sin egen, så feilen var usynlig:
+   * den slo bare inn på sider som IKKE setter en, og den neste som lages
+   * ville arvet den uten at noe sa fra. `/takk` gjorde det allerede.
+   *
+   * Ingen copy er endret. `kortBeskrivelse` kutter ved siste hele setning —
+   * setningene er ordrett de samme, de siste er bare utelatt.
+   */
+  description: kortBeskrivelse(site.ingress),
   openGraph: {
     type: "website",
     locale: "nb_NO",

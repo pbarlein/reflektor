@@ -1,5 +1,3 @@
-import type { Side } from "@/content/sider/_slot";
-
 /*
  * OPPSLAGSFUNKSJONENE BOR I _slot.ts, ikke her.
  *
@@ -11,8 +9,6 @@ import type { Side } from "@/content/sider/_slot";
  *
  * Re-eksporten står slik at ingen av de sju andre importstedene må endres.
  */
-import { hentTekst } from "@/content/sider/_slot";
-
 export { finnSlot, hentTekst, slotsISeksjon } from "@/content/sider/_slot";
 
 /**
@@ -50,18 +46,15 @@ export function TbdMarkor({ id }: { id: string }) {
   );
 }
 
-/** Tekstslot med valgfritt innpakkingselement. */
-export function SlotTekst({
-  side,
-  id,
-  som: Som = "span",
-  className,
-}: {
-  side: Side;
-  id: string;
-  som?: React.ElementType;
-  className?: string;
-}) {
-  const verdi = hentTekst(side, id);
-  return <Som className={className}>{verdi ?? <TbdMarkor id={id} />}</Som>;
-}
+/*
+ * `SlotTekst` ER FJERNET 29.09.2026, etter teknisk gjennomgang.
+ *
+ * Den pakket `hentTekst` og `TbdMarkor` i ett element med valgfri tag. Ingen
+ * av de elleve stedene som bruker slots kalte den — alle gjør oppslaget selv
+ * og rendrer markøren direkte, fordi de trenger egne klasser og eget
+ * elementvalg uansett. Komponenten ble skrevet som et bekvemmelighetslag som
+ * aldri passet noen av tilfellene.
+ *
+ * Den var også den eneste grunnen til at denne fila importerte `hentTekst` og
+ * typen `Side`. Begge importene er borte med den.
+ */

@@ -26,8 +26,19 @@ export default function Takk() {
         <p className="mt-6 max-w-xl text-lg text-blekk-dempet">
           Vi tar kontakt så snart vi kan.
         </p>
-        {/* TODO: GA4-hendelse takk_page_view må utløses her. Verifiser mot
-            eksisterende oppsett før lansering – ikke gjett på navnet. */}
+        {/*
+          HER STO EN TODO om at GA4-hendelsen `takk_page_view` «må utløses
+          her». Den er fjernet 29.09.2026, og det er ikke opprydding — den
+          var en felle.
+
+          `<TakkHendelse />` over gjør nøyaktig det TODO-en ba om. Verre:
+          komponentens egen dokumentasjon advarer uttrykkelig mot å koble
+          hendelsen til en utløser i GTM, fordi nøkkelhendelsen allerede
+          lages inne i GA4 fra den samme sidevisningen. Den som fulgte
+          TODO-en ville dobbelttelt Reflektors eneste KPI.
+
+          Les TakkHendelse.tsx før du rører noe her.
+        */}
       </Container>
     </section>
   );

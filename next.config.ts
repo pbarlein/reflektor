@@ -395,7 +395,83 @@ const redirects: NextConfig["redirects"] = async () => [
    */
 ];
 
+/**
+ * Sikkerhetsheadere.
+ *
+ * LAGT TIL 29.09.2026 etter teknisk gjennomgang. Siden serverte ingen av dem;
+ * det eneste som lå der var HSTS, som Vercel setter selv.
+ *
+ * DETTE ER DE BILLIGE. Hver av dem er én linje, ingen av dem kan brekke noe
+ * på et nettsted som dette, og ingen av dem krever vedlikehold når innholdet
+ * endres.
+ *
+ * DET ER IKKE EN CSP HER, OG DET ER ET VALG. En Content-Security-Policy som
+ * faktisk begrenser skript måtte listet opp alt GTM-containeren laster — GA4,
+ * Google Ads, Apollo, Clarity, HubSpot — og containeren styres utenfor dette
+ * repoet. Første gang noen legger til en tagg i GTM, ville taggen blitt
+ * blokkert av en fil de ikke vet finnes, og det de ville mistet er målingen
+ * av den eneste KPI-en. En CSP som må vedlikeholdes to steder av to personer
+ * er verre enn ingen CSP. `frame-ancestors` er unntaket: det direktivet rører
+ * ikke skript i det hele tatt.
+ */
+const sikkerhetsheadere = [
+  // Hindrer at nettleseren gjetter innholdstype på noe vi har merket.
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  /*
+   * Referrer: fullt domene ut, aldri sti til en annen opprinnelse. Dette er
+   * nettleserens standard i dag, men standarder flytter seg og målingen vår
+   * avhenger av at referreren overlever — GA4-nøkkelhendelsen krever
+   * `page_referrer contains reflektor.no`. Da skriver vi den ned.
+   */
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  // Ingen på siden ber om kamera, mikrofon eller posisjon. Da sier vi nei.
+  {
+    key: "Permissions-Policy",
+    value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+  },
+  /*
+   * Bare vi kan ramme inn våre egne sider. Uten dette kan hvem som helst
+   * legge kontaktskjemaet i en usynlig iframe på sitt eget domene.
+   *
+   * `frame-ancestors` og ikke `X-Frame-Options`: den nyere erstatter den
+   * eldre i alle nettlesere som er i bruk, og to headere for samme jobb er
+   * nettopp rotet denne gjennomgangen skal fjerne.
+   */
+  { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },
+];
+
 const nextConfig: NextConfig = {
+  /*
+   * `X-Powered-By: Next.js` fjernet. Den forteller bare hvilket rammeverk
+   * som kjører, og det er en opplysning som gagner den som leter etter et
+   * rammeverk med et kjent hull mer enn den gagner oss.
+   */
+  poweredByHeader: false,
+
+  async headers() {
+    return [
+      { source: "/:sti*", headers: sikkerhetsheadere },
+      /*
+       * INDEKSERINGSSPERREN SOM HEADER, ikke bare som meta-tagg.
+       *
+       * `robots` i layout.tsx setter `noindex` i HTML-en. Det dekker sider.
+       * Det dekker ikke sitemap.xml, llms.txt eller en fil noen lenker
+       * direkte til — de er ikke HTML og har ingen <head>.
+       *
+       * Samme bryter som alt annet: se src/lib/miljo.ts. Er indeksering
+       * slått på, forsvinner headeren med den.
+       */
+      ...(process.env.NEXT_PUBLIC_TILLAT_INDEKSERING === "true"
+        ? []
+        : [
+            {
+              source: "/:sti*",
+              headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+            },
+          ]),
+    ];
+  },
+
   images: {
     /*
      * AVIF først, WebP som fallback. Next serverer bare WebP som standard.

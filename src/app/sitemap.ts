@@ -24,7 +24,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const url = (sti: string) => `${basisUrl()}${sti}`;
 
   return [
-    { url: url("/"), priority: 1 },
+    /*
+      FORSIDEN UTEN SKRÅSTREK. Rettet 29.09.2026.
+
+      Her sto `url("/")`, altså «https://www.reflektor.no/». Canonical-taggen
+      på samme side sier «https://www.reflektor.no» — uten. Forskjellen er
+      ikke vår: Next normaliserer bort skråstreken i canonical etter
+      `trailingSlash`-innstillingen, mens sitemapet skriver ut nøyaktig det
+      det får.
+
+      To strenger for nettstedets viktigste adresse er noe Google må tolke
+      seg ut av. Her er det ett tegn å rette, og da retter vi det på siden
+      som lar seg rette.
+    */
+    { url: basisUrl(), priority: 1 },
     // Kommersielle landingssider prioriteres – de bærer leadsene.
     ...alleLandingssider
       .filter((side) => !utelatt.has(side.slug))
@@ -46,6 +59,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     { url: url("/om-oss"), priority: 0.6 },
     { url: url("/faq"), priority: 0.6 },
+    /*
+      /personvern lå utenfor sitemapet fordi siden var `noindex` — en
+      innstilling som var arvet fra stubben og aldri vurdert. Sperren er
+      fjernet 29.09.2026, og da hører adressen hjemme her. Lav prioritet:
+      den skal finnes og kunne siteres, ikke konkurrere med salgssidene.
+    */
+    { url: url("/personvern"), priority: 0.3 },
     // Bloggen beholdes for lenkeverdien, men prioriteres lavt.
     { url: url("/blogg"), priority: 0.4 },
     /*

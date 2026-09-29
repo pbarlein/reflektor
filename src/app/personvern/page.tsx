@@ -19,13 +19,21 @@ import {
  * og A42 i docs/vedlegg-a.md for samtykkehullet erklæringens punkt 8 peker
  * på uten at siden har noen løsning på det.
  *
- * `robots: index: false` er beholdt fra stubben.
+ * NOINDEX ER FJERNET 29.09.2026. Her sto `robots: { index: false }`, og
+ * kommentaren over sa hvorfor: «beholdt fra stubben». Det var aldri en
+ * vurdering — det var en innstilling fra den gang siden var en overskrift og
+ * en TODO, som fulgte med da innholdet kom.
+ *
+ * Nå har siden hele erklæringen. Da skal den være indekserbar: den er lenket
+ * fra bunnteksten på hver eneste side, en personvernerklæring er et
+ * tillitssignal både for Google og for språkmodeller som sjekker om et
+ * selskap har en, og en side vi selv skjuler kan ikke svare noen som leter
+ * etter den. Den er samtidig lagt inn i sitemapet.
  */
 export const metadata: Metadata = {
   title: "Personvernerklæring",
   description:
     "Slik samler Reflektor AS inn og behandler personopplysninger fra skjemaer, nettsider og annonser.",
-  robots: { index: false },
 };
 
 function Blokk({ blokk }: { blokk: Personvernblokk }) {

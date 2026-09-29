@@ -82,7 +82,10 @@ export function rensEnLinje(verdi: string): string {
  * ikke det, utelates feltet, og e-posten kommer fram uansett.
  */
 export function serUtSomEpost(verdi: string): boolean {
-  return /^[^\s@]+@[^\s@.]+\.[^\s@]+$/.test(verdi) && verdi.length <= FELTGRENSER.epost;
+  return (
+    /^[^\s@]+@[^\s@.]+\.[^\s@]+$/.test(verdi) &&
+    verdi.length <= FELTGRENSER.epost
+  );
 }
 
 /**
@@ -119,11 +122,29 @@ export function foroftig(nokkel: string, na = Date.now()): boolean {
 /**
  * Henter klientens IP fra proxy-headerne Vercel setter.
  *
- * `x-forwarded-for` kan forfalskes av klienten, men Vercel legger den ekte
- * adressen SIST på lista de setter. Vi tar den første, som er det vanlige —
- * og vi bruker verdien kun til mengdebegrensning, aldri til autorisasjon,
- * så et forfalsket hopp er ikke et sikkerhetsproblem. Det er en omgåelse av
- * en grense som uansett er et gulv.
+ * KOMMENTAREN HER VAR FEIL, RETTET 29.09.2026. Den sa at «Vercel legger den
+ * ekte adressen SIST på lista», og at vi likevel tar den første. Lest slik
+ * beskriver den en mengdebegrensning hvem som helst kan slå av med én
+ * header — og den inviterte neste person til å «rette» koden til noe annet.
+ *
+ * Vercels egen dokumentasjon (Request headers, oppdatert 13.12.2025) sier
+ * det motsatte: `x-forwarded-for` er «the public IP address of the client
+ * that made the request», og «we currently overwrite the X-Forwarded-For
+ * header and do not forward external IPs. This restriction is in place to
+ * prevent IP spoofing.» Headeren inneholder altså én adresse, satt av
+ * plattformen, og en klient kan ikke skyve inn sin egen.
+ *
+ * Koden var altså riktig hele tiden. Den står som den er.
+ *
+ * TO TING Å VITE HVIS NOE ENDRER SEG. `x-real-ip` er ifølge samme side
+ * identisk med `x-forwarded-for` på Vercel og gir ingen ekstra sikkerhet —
+ * den står her kun som reserve utenfor Vercel. Og skulle nettstedet en dag
+ * ligge bak en egen proxy foran Vercel, faller garantien bort: da er det den
+ * SISTE adressen i lista som er den eneste man kan stole på. Generell
+ * praksis er derfor å lese fra høyre; her er det plattformen som gjør at
+ * venstre er riktig.
+ *
+ * Verdien brukes uansett kun til mengdebegrensning, aldri til autorisasjon.
  */
 export function klientnokkel(headers: Headers): string {
   const videresendt = headers.get("x-forwarded-for");

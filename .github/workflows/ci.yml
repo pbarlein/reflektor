@@ -16,8 +16,25 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Sikkerhetshull i avhengighetene skal stoppe her, ikke oppdages i en
+      # manuell gjennomgang måneder senere.
+      #
+      # Gjennomgangen 29.09.2026 fant next 16.3.2 i repoet med GHSA-2xp9-vwfh-vxw4
+      # — CVSS 9.5, ekstern kjøring av kode i bildeoptimaliseringen når AVIF
+      # brukes, og AVIF er eksplisitt påslått i next.config.ts. Hullet hadde
+      # ligget der siden 25.08.2026 uten at noe sa fra.
+      #
+      # `--omit=dev` fordi et hull i eslint ikke kan nås av en besøkende, og et
+      # rødt CI på en byggeavhengighet lærer folk å ignorere steget.
+      # `--audit-level=high` slipper gjennom lav og moderat; de skal vurderes,
+      # ikke blokkere en utrulling.
+      - name: Avhengigheter
+        run: npm audit --omit=dev --audit-level=high
       - name: Typesjekk
         run: npx tsc --noEmit
+      # `npm run lint` kjørte tidligere `eslint` uten flagg og returnerte 0
+      # selv med advarsler — altså håndhevet dette steget ingenting. Flagget
+      # står i package.json, ikke her, så det gjelder også lokalt.
       - name: Lint
         run: npm run lint
       - name: Tester
