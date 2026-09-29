@@ -319,19 +319,58 @@ export const artikler: Artikkel[] = [
         tekst:
           "SoMe er forkortelsen for sosiale medier, som er kanaler vi bruker for å skape og spre innhold på nett. Sosiale medier er også kjennetegnet for å utgjøre sosiale nettverk hvor man kommuniserer med både venner, kjente og ukjente.",
       },
+      /*
+       * «LES OGSÅ» GJORT TIL EKTE LENKER 29.09.2026, godkjent av Pål.
+       *
+       * Tre steder i bloggen sto «Les også: …» som ren tekst. Lenkene lå i
+       * Squarespace-utgaven og forsvant i migreringen, akkurat som de sju
+       * «Les mer om abonnementet» gjorde — se Innlenke i hodet på fila.
+       * Teksten inviterte til et klikk som ikke fantes.
+       *
+       * Manglende mellomrom etter kolon er rettet samtidig.
+       */
       {
         type: "avsnitt",
-        tekst: "Les også:Hvordan lykkes med innholdsproduksjon",
+        tekst: "Les også: Hvordan lykkes med innholdsproduksjon",
+        lenker: [
+          {
+            frase: "Hvordan lykkes med innholdsproduksjon",
+            sti: "/blogg/hva-er-innholdsproduksjon",
+          },
+        ],
       },
       {
         type: "overskrift",
         niva: 2,
         tekst: "Stor rekkevidde på sosiale medier",
       },
+      /*
+       * FAKTAFEIL RETTET 29.09.2026, godkjent av Pål.
+       *
+       * Her sto: «Så mange som ni av ti nordmenn bruker sosiale medier hver
+       * eneste dag. Ifølge undersøkelsen …» — altså 90 prosent, tilskrevet
+       * en undersøkelse som aldri ble nevnt. SSBs Norsk mediebarometer 2025
+       * sier 82 prosent. Tallet var overdrevet med åtte prosentpoeng.
+       *
+       * Samme avsnitt trakk fram X (tidligere Twitter) som en kanal
+       * nordmenn er storbrukere av, og påsto at kvinner mellom 55 og 64 år
+       * hadde økt mest. SSB fører X på 8–15 prosent i de yngste gruppene,
+       * bruker aldersbåndet 55–66 og ikke 55–64, og kjønnsfordelingen
+       * finnes ikke i den publiserte tabellen. Påstandene er derfor tatt ut,
+       * ikke omformulert — en påstand vi ikke kan belegge, skal bort.
+       *
+       * Det som står nå er hentet ordrett fra kilden under.
+       */
       {
         type: "avsnitt",
         tekst:
-          "Så mange som ni av ti nordmenn bruker sosiale medier hver eneste dag. Ifølge undersøkelsen har denne tendensen vært økende de siste fem årene, og man ser økninger på tvers av aldersgrupper. Kanskje naturlig nok er unge mellom 16 og 34 år storbrukere av SoMe-kanaler som Instagram, Facebook og X (tidligere Twitter), men kvinner mellom 55 og 64 år er den andelen av brukere som har økt mest over de seneste årene. Det vil si at potensialet for å tiltrekke sin målgruppe, uansett om den er ung eller gammel, er stort.",
+          "82 prosent av befolkningen bruker sosiale medier i løpet av en gjennomsnittsdag, og vi bruker i snitt 1 time og 55 minutter på dem. Bruken øker, og den øker i alle aldersgrupper. Blant 13–19-åringer er Snapchat og TikTok størst, mens Facebook fortsatt er den mest brukte kanalen i gruppene over 45 år. Det vil si at potensialet for å tiltrekke sin målgruppe, uansett om den er ung eller gammel, er stort — men at hvilken kanal du skal være i, avhenger helt av hvem du snakker til.",
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Tallene er fra Norsk mediebarometer 2025, Statistisk sentralbyrå.",
+        url: "https://www.ssb.no/kultur-og-fritid/tids-og-mediebruk/statistikk/norsk-mediebarometer/artikler/dette-er-de-mest-populaere-sosiale-mediene",
       },
       {
         type: "overskrift",
@@ -381,7 +420,22 @@ export const artikler: Artikkel[] = [
         tekst:
           "Hva gjør konkurrentene på markedet? Er de til stede på sosiale medier, og har de en stor skare av følgere? I så fall bør du vurdere hva de gjør godt og hvordan de skaper engasjement hos målgruppen dere har til felles. Dette er avgjørende informasjon, som du bruker for å kartlegge hvilket behov målgruppen har og ikke minst bruker for å skille deg ut blant flokken og tilby noe som konkurrentene ikke gjør.",
       },
-      { type: "avsnitt", tekst: "Les også: Hva innebærer inbound marketing?" },
+      /*
+       * PEKER PÅ DEN KANONISKE ARTIKKELEN, ikke på «inbound marketing».
+       * `/blogg/hva-er-inbound-marketing` er en av de seks døde slugene og
+       * 301-es til denne. En intern lenke til en adresse vi selv
+       * omdirigerer, er et unødvendig hopp vi kan unngå ved å peke rett.
+       */
+      {
+        type: "avsnitt",
+        tekst: "Les også: Hva innebærer inbound marketing?",
+        lenker: [
+          {
+            frase: "Hva innebærer inbound marketing?",
+            sti: "/blogg/hva-er-innholdsmarkedsforing",
+          },
+        ],
+      },
       {
         type: "overskrift",
         niva: 2,
@@ -398,11 +452,19 @@ export const artikler: Artikkel[] = [
         tekst:
           "Skjult reklame er ulovlig i sosiale medier. Her blir vi eksponert for mye informasjon, og det er derfor viktig at alle aktører er bevisste på hvordan de markedsfører produkter eller tjenester i SoMe. Loven tilsier at alle forbrukere har krav på å vite når de blir utsatt for reklame – og derfor er avgjørende å merke alle former for reklame i sosiale medier.",
       },
-      {
-        type: "avsnitt",
-        tekst:
-          "Dette er kun et eksempel ment å illustrere hvordan man kan og bør merke en annonse i en Instagram-post.",
-      },
+      /*
+       * FIRE FORELDRELØSE BILDETEKSTER FJERNET 29.09.2026, godkjent av Pål.
+       *
+       * Squarespace-utgaven hadde bilder med tekst under. Migreringen tok
+       * brødteksten, ikke bildene — og bildetekstene ble stående igjen som
+       * løsrevne avsnitt midt i artikkelen. De leste som påstander uten
+       * sammenheng, og én av dem («Dette er kun et eksempel …») viste til
+       * et eksempel som ikke lenger fantes noe sted.
+       *
+       * De er fjernet og ikke erstattet: de sa ingenting teksten rundt ikke
+       * allerede sier, og å skrive ny copy i deres sted ville brutt
+       * copy-protokollen.
+       */
       { type: "overskrift", niva: 2, tekst: "Merking av annonser" },
       {
         type: "avsnitt",
@@ -434,7 +496,16 @@ export const artikler: Artikkel[] = [
         tekst:
           "Alt innhold som fremmer et salg av et produkt eller en tjeneste, må merkes som «reklame» eller «annonse». Dette må fremgå veldig tydelig og synlig.",
       },
-      { type: "avsnitt", tekst: "Les også: Hva gjør en innholdsprodusent?" },
+      {
+        type: "avsnitt",
+        tekst: "Les også: Hva gjør en innholdsprodusent?",
+        lenker: [
+          {
+            frase: "Hva gjør en innholdsprodusent?",
+            sti: "/blogg/hva-gjr-en-innholdsprodusent",
+          },
+        ],
+      },
       {
         type: "overskrift",
         niva: 2,
@@ -469,7 +540,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Push videoen i en betalt annonse på nettsiden din, spre den på LinkedIn og andre sosiale medier, og publiser den på dine viktigste landingssider. Å bruke SoMe-innhold på nettsiden din er kjempe viktig for å skape et oppdatert digitalt butikkvindu, der potensielle kunder kan oppdage din bedrift og dine produkter. Og ikke minst som du kan lenke til og fra dine sosiale medier. Da bygger du samtidig din organiske synlighet og åpner opp for å få høyere plasseringer i søkemotoren. Dermed får du hentet ut all verdi du kan få fra et stykke innhold.",
+          "Push videoen i en betalt annonse på nettsiden din, spre den på LinkedIn og andre sosiale medier, og publiser den på dine viktigste landingssider. Å bruke SoMe-innhold på nettsiden din er kjempeviktig for å skape et oppdatert digitalt butikkvindu, der potensielle kunder kan oppdage din bedrift og dine produkter. Og ikke minst som du kan lenke til og fra dine sosiale medier. Da bygger du samtidig din organiske synlighet og åpner opp for å få høyere plasseringer i søkemotoren. Dermed får du hentet ut all verdi du kan få fra et stykke innhold.",
       },
       {
         type: "avsnitt",
@@ -504,7 +575,21 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Her er det dessuten viktig å lage videoer og bilder som er tilpasset smarttelefoner. Dette betyr blant annet at formatet på innholdet passer til skjermen på enheten, for eksempel 4:5 som tilsvarer Reels på Instagram og poster på TikTok. Tenk også på dette hvis du publiserer innhold på nettsiden din, da mange potensielle kunder bruker mobilen når de surfer på nettet.",
+          /*
+           * FAKTAFEIL RETTET 29.09.2026, godkjent av Pål.
+           *
+           * Her sto «for eksempel 4:5 som tilsvarer Reels på Instagram og
+           * poster på TikTok». Begge var feil: Reels er 9:16 (1080 × 1920),
+           * TikTok er 9:16, og 4:5 (1080 × 1350) er stående innlegg i
+           * feeden. Kontrollert mot Figma, Adobe og Hootsuite 29.09.2026.
+           *
+           * Feilen var dyrere enn en vanlig faktafeil: Reflektors egne
+           * tjenestesider sier «Videoene leveres stående i 9:16», så
+           * bloggen motsa salgssiden på selskapets kjernekompetanse — og
+           * formatspørsmål er nettopp det en kjøper bruker for å vurdere om
+           * et byrå kan faget.
+           */
+          "Her er det dessuten viktig å lage videoer og bilder som er tilpasset smarttelefoner. Dette betyr blant annet at formatet på innholdet passer til skjermen på enheten: 9:16 for Reels på Instagram og for video på TikTok, og 4:5 for stående innlegg i Instagram-feeden. Tenk også på dette hvis du publiserer innhold på nettsiden din, da mange potensielle kunder bruker mobilen når de surfer på nettet.",
       },
       {
         type: "overskrift",
@@ -565,11 +650,6 @@ export const artikler: Artikkel[] = [
           "Godt innhold må skille seg ut, være unikt og gjerne etterlate et varig inntrykk hos publikum. Du lykkes med innholdsproduksjonen hvis innholdet er av høy kvalitet og det oppleves som hjelpsomt av den relevante målgruppen. For eksempel må produksjonen av blogginnlegg gi god innsikt i emnet eller bransjen, og videoen du deler på sosiale medier må ha høy underholdningsverdi. I tillegg til å inspirere, skal det også aktivere målgruppen, for eksempel ved at de blir bevisste om aktuell aksjon eller foretar et kjøp av et produkt eller tjeneste.",
       },
       {
-        type: "avsnitt",
-        tekst:
-          "Bruk tid på å formulere unikt og engasjerende skriftlig innhold.",
-      },
-      {
         type: "overskrift",
         niva: 2,
         tekst: "Hva er formålet bak innholdsproduksjonen?",
@@ -613,11 +693,6 @@ export const artikler: Artikkel[] = [
         tekst:
           "Husk! Det er også viktig at innholdet fremstår autentisk. Folk kan gjennomskue hvis innholdet er primært produsert for å promotere bedriften og deres produkter eller tjenester.",
       },
-      {
-        type: "avsnitt",
-        tekst:
-          "Sørg for at bildene dine er unike og engasjerende, og bruk gjerne tid på redigere dem før du publiserer dem.",
-      },
       { type: "overskrift", niva: 2, tekst: "Digital innholdsproduksjon" },
       {
         type: "avsnitt",
@@ -654,11 +729,6 @@ export const artikler: Artikkel[] = [
           "Sosiale medier: Dette forutsetter aktualitet og underholdningsverdi, ettersom innholdet er kort, presist og enkelt å konsumere.",
           "E-post marketing: Del guider, gode tilbud eller bransjeinnsikt til potensielle kunder i nyhetsbrev som man sender på e-post. Bruk Call-to-Action-knapper i nyhetsbrevet og guide leserne til nettsiden din.",
         ],
-      },
-      {
-        type: "avsnitt",
-        tekst:
-          "Samarbeid gjerne med profesjonelle videografer som hjelper deg med å lage videoer som gjør inntrykk på folk.",
       },
       { type: "overskrift", niva: 2, tekst: "Innholdsproduksjon i praksis" },
       {
@@ -734,7 +804,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Innhold gir deg muligheten til å dele den fagkunnskapen eller bransjeinnsikten du sitter på, som ikke alle har tilgang på heller. Ved at du deler denne innsikten på din nettside eller sosiale medier, bygger du en sterk faglig profil som gir deg økt troverdighet. Dette gjør deg til en autoritær spiller på markedet, som atskiller deg fra konkurrenter og øker sannsynligheten for at kunder velger deg framfor andre. De vil stole på deg!",
+          "Innhold gir deg muligheten til å dele den fagkunnskapen eller bransjeinnsikten du sitter på, som ikke alle har tilgang på heller. Ved at du deler denne innsikten på din nettside eller sosiale medier, bygger du en sterk faglig profil som gir deg økt troverdighet. Dette gjør deg til en autoritativ aktør på markedet, som atskiller deg fra konkurrenter og øker sannsynligheten for at kunder velger deg framfor andre. De vil stole på deg!",
       },
       { type: "overskrift", niva: 3, tekst: "Kunder forblir lojale" },
       {
@@ -775,7 +845,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Hos Reflektor kan du hente uvurderlig hjelp fra innholdsproduksenter med lang erfaring innen foto og video. Våre fotografer fanger de riktige salgsutløsende øyeblikkene og tar bilder som vekker følelser hos din målgruppe. Våre videografer produserer videoer som fanger hva bilder ikke gjør, nemlig det levende elementet ved din bedrift eller ditt produkt og tjeneste. Vi tilbyr faglig tyngde innen bilde- og videoproduksjon og har en helhetlig tilnærming til innholdsproduksjon som kombinerer kreativitet med strategisk forretningsforståelse. Tilgangen på godt innhold er bare et klikk unna!",
+          "Hos Reflektor kan du hente uvurderlig hjelp fra innholdsprodusenter med lang erfaring innen foto og video. Våre fotografer fanger de riktige salgsutløsende øyeblikkene og tar bilder som vekker følelser hos din målgruppe. Våre videografer produserer videoer som fanger hva bilder ikke gjør, nemlig det levende elementet ved din bedrift eller ditt produkt og tjeneste. Vi tilbyr faglig tyngde innen bilde- og videoproduksjon og har en helhetlig tilnærming til innholdsproduksjon som kombinerer kreativitet med strategisk forretningsforståelse. Tilgangen på godt innhold er bare et klikk unna!",
       },
       {
         type: "overskrift",

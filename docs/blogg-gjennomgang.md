@@ -83,8 +83,8 @@ Altinn og SSB med lenke — og forskjellen er tydelig.
 
 | Står | Skal være | Hvor |
 |---|---|---|
-| innholdsproduks**en**ter | innholdsprodus**ent**er | hva-er-innholdsmarkedsforing |
-| «autoritær spiller på markedet» | autoritativ | hva-er-innholdsmarkedsforing |
+| innholdsproduks**en**ter | innholdsprodus**ent**er | hva-er-innholdsproduksjon |
+| «autoritær spiller på markedet» | autoritativ | hva-er-innholdsproduksjon |
 | «kjempe viktig» | kjempeviktig | markedsforing-i-sosiale-medier-some |
 | «Les også:Hvordan …» | manglende mellomrom | markedsforing-i-sosiale-medier-some |
 
@@ -254,3 +254,38 @@ Forslag til rytme: to artikler oppdateres ordentlig per halvår, de som
 rangerer best først — altså `markedsforing-i-sosiale-medier-some` og
 `hva-innebaerer-digital-historiefortelling`, som ligger på plass 1 for sitt
 ord.
+
+
+---
+
+## 7. Utført 29.09.2026
+
+Pål godkjente de fire punktene i avsnitt 4. Alle er gjort, ingen annen copy
+er rørt:
+
+1. **Begge faktafeilene rettet.** «Ni av ti» → 82 prosent med SSB som
+   oppgitt kilde og lenke. «4:5 som tilsvarer Reels» → 9:16 for Reels og
+   TikTok, 4:5 for stående feed-innlegg. De uverifiserbare påstandene i
+   samme avsnitt — X som storkanal, kvinner 55–64 — er tatt ut, ikke
+   omformulert.
+2. **Tre skrivefeil rettet:** innholdsproduksenter, «autoritær» og «kjempe
+   viktig».
+3. **Fire foreldreløse bildetekster fjernet.** Ikke erstattet: de sa
+   ingenting teksten rundt ikke allerede sier, og ny copy i deres sted ville
+   brutt copy-protokollen.
+4. **Tre «Les også» er nå ekte lenker.** Den til «inbound marketing» peker
+   på den kanoniske artikkelen, ikke på den døde slugen vi selv omdirigerer.
+
+`markedsforing-i-sosiale-medier-some` har med dette bloggens første
+kildehenvisning utenom de to artiklene fra 2026.
+
+### Fortsatt åpent
+
+- **Den dupliserte avslutningen** i fire artikler. Å erstatte den krever ny
+  copy, og den skal bestilles, ikke skrives her.
+- **Wyzowl- og Facebook-tallene** står fortsatt uten kilde og årstall. De er
+  trolig riktige, men jeg har ikke verifisert hvilken utgave de er fra, og
+  et årstall jeg gjetter er verre enn ingen kilde.
+- **`hva-koster-et-some-byra`** bør få prissammenligningen som tabell og
+  Byråmatch som oppgitt kilde. Det er det største enkeltløftet som gjenstår
+  på eksisterende innhold.
