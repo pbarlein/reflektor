@@ -1006,15 +1006,34 @@ export const kjeder: Tjenesteside = {
          */
         "Filmer med apotekets egne farmasøyter, levert i 16:9, 9:16 og 1:1",
       ],
+      /*
+       * BYTTET 29.09.2026 på Påls beskjed: «bytt ut eksempelet til vitus på
+       * siden med tv-reklamen der to danser.»
+       *
+       * Her lå farmasøytfilmen fra Reels V3. Den er en ekte leveranse, men
+       * den illustrerte kulepunkt tre og ikke de to første — og seksjonen
+       * handler om TV-reklamen.
+       *
+       * Sponsorplakater/Versjon 3 har seks vignetter. Tre av dem er fra
+       * skogen med en soldat, tre er fra dansegulvet. Nummer 4 er den ENESTE
+       * der to danser sammen; 5 og 6 viser én danser. Kontrollert ved å
+       * hente ut rammer fra alle seks og se på dem.
+       *
+       * INGEN KONTROLLER OG INGEN LYD, altså `lyd` utelatt. Det følger av
+       * regelen som allerede står i Referansefilmer: en kort reklamefilm
+       * uten replikk leses som bevegelse og sier det den skal si dempet. På
+       * 3,76 sekunder ville en kontrollinje tatt en tredel av flaten, og
+       * filmen vært over før noen rakk å se på den. Dempet løkke viser den
+       * flere ganger uten et eneste klikk. Vil Pål ha lyd, er det ett felt.
+       */
       filmer: [
         {
           sti: "/arbeid/kjeder-vitusapotek",
           format: "16/9",
-          alt: "Stillbilde fra filmen: en farmasøyt i Vitusapotek-uniform ved et bord.",
+          alt: "Stillbilde fra filmen: to dansere på et parkettgulv, med Vitusapotek-logoen over.",
           bildetekst:
-            "Vitusapotek, juli 2025. Film med apotekets egen farmasøyt.",
-          sekunder: 54,
-          lyd: true,
+            "Vitusapotek, september 2025. Sponsorvignett for TV 2, levert i seks varianter.",
+          sekunder: 4,
         },
       ],
     },

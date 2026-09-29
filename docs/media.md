@@ -649,7 +649,7 @@ rammer).
 | `kjeder-anton-sport` | `Anton Sport/2026/MAI/Bilder/Video/Maridalen 16x9.mp4` | 24,8 s |
 | `kjeder-egon` | `Egon/2026/August/Min drømmerett/16x9/EGON Min dr - 16-9-lang.mov` | 19,1 s |
 | `kjeder-peppes` | `Peppes/2026/August/4k/Peppes 15 sek 4k.mov` | 15,0 s |
-| `kjeder-vitusapotek` | `Vitusapoteket/2025/Juli/Oppdaterte reels/MP4/16.9/16.9 1.mp4` | 53,9 s |
+| `kjeder-vitusapotek` | `Vitusapoteket/2025/August/Sponsorplakater/Versjon 3/4_Vitusapotek_Sponsorvignette_TV2_3-75s_20250911.mov` | 3,8 s |
 | `kjeder-format-16x9` | `Egon/2026/Mai/16x9/Samlefilm 16x9.mov` | 23,0 s |
 | `kjeder-format-4x5` | `Egon/2026/Mai/4x5/Samlefilm 4x5.mov` | 23,0 s |
 | `kjeder-format-9x16` | `Egon/2026/Mai/9x16/Samlefilm 9x16.mov` | 23,0 s |
@@ -666,17 +666,29 @@ søskenmapper med samme film i hver: `16x9`, `9x16`, `4x5`, `1152x1058`,
 `Min drømmerett` i august har fem: 16x9, 9x16, 4x5, 1152x og 1700x1500 —
 derfor sier bildeteksten der «fem formater» og ikke «seks».
 
-### Vitusapotek-filmen er en utvidelse av innholdet
+### Vitusapotek: byttet til TV-reklamen 29.09.2026
 
-Seksjonen sa bare TV-reklame. `Vitusapoteket/2025/Juli/Reels V3/` har fem
-filmer i 16-9, 9-16 og 1-1 der apotekets egen farmasøyt står navngitt på
-skjermen. Det er belegg for et nytt kulepunkt på siden, og punktet er lagt
-inn — men det er en ny opplysning, ikke en omskriving, og den er meldt til
-Pål som nettopp det.
+Her lå først farmasøytfilmen fra `2025/Juli/Reels V3/`. Pål: «bytt ut
+eksempelet til vitus på siden med tv-reklamen der to danser.»
+
+`Sponsorplakater/Versjon 3/` har seks vignetter. Tre er fra skogen med en
+soldat, tre er fra dansegulvet, og **nummer 4 er den eneste der to danser
+sammen** — 5 og 6 viser én danser. Avgjort ved å hente ut rammer fra alle
+seks og se på dem; filnavnene er identiske bortsett fra tallet.
+
+Den er 3,76 sekunder og går derfor dempet i løkke uten kontroller. Det
+følger av regelen som allerede står i `Referansefilmer`: en kort
+reklamefilm uten replikk leses som bevegelse. En kontrollinje ville tatt en
+tredel av flaten på en film som er over før noen rekker å se på den.
+
+Kulepunktet om farmasøytfilmene står fortsatt. Det er belagt i `Reels V3/`
+— fem filmer i 16-9, 9-16 og 1-1 der apotekets egen farmasøyt står navngitt
+på skjermen — og det er en ny opplysning på siden, ikke en omskriving. Meldt
+til Pål som nettopp det.
 
 ### Vekt
 
-Syv filmer på til sammen 35 MB ligger på siden. Målt i nettleser laster
+Syv filmer på til sammen 30 MB ligger på siden. Målt i nettleser laster
 `/kjeder` **1,52 MB** ved åpning og **1,82 MB** etter å ha rullet gjennom
 hele siden — **null byte video**. Alle syv har `preload="none"` og
 plakatbilde; filmene lastes først når noen trykker play.
