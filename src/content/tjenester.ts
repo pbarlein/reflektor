@@ -929,6 +929,11 @@ export const kjeder: Tjenesteside = {
          */
         "Vi planlegger sammen med Anton Sport. Publisering og dialog i kanalene gjør de selv.",
       ],
+      /*
+       * AUTOSPILL, IKKE AVSPILLER. Bestilt av Pål 29.09.2026: «endre på
+       * kjede-siden slik at alle videoene blir autoplay sånn som vitus sin
+       * video.» Se samlet begrunnelse ved Vitusapotek lenger ned.
+       */
       filmer: [
         {
           sti: "/arbeid/kjeder-anton-sport",
@@ -937,7 +942,6 @@ export const kjeder: Tjenesteside = {
           bildetekst:
             "Anton Sport, mai 2026. Film fra én produksjonsdag, levert i 16:9 og 9:16.",
           sekunder: 25,
-          lyd: true,
         },
       ],
       sitat: {
@@ -956,6 +960,11 @@ export const kjeder: Tjenesteside = {
         "Seks formater per film — sosiale medier, skjermer i restaurant og kjøpesenter, og annonser",
         "Fast produksjonsdag hver måned siden 2022",
       ],
+      /*
+       * AUTOSPILL, IKKE AVSPILLER. Bestilt av Pål 29.09.2026: «endre på
+       * kjede-siden slik at alle videoene blir autoplay sånn som vitus sin
+       * video.» Se samlet begrunnelse ved Vitusapotek lenger ned.
+       */
       filmer: [
         {
           sti: "/arbeid/kjeder-egon",
@@ -964,7 +973,6 @@ export const kjeder: Tjenesteside = {
           bildetekst:
             "Egon, august 2026. Kampanjefilmen «Min drømmerett», levert i fem formater.",
           sekunder: 19,
-          lyd: true,
         },
       ],
       lenker: [{ sti: "/vart-arbeid/egon", tekst: "Hele kundecaset for Egon" }],
@@ -976,6 +984,11 @@ export const kjeder: Tjenesteside = {
         "Reklamefilm for TV og nett",
         "TV-reklame knyttet til Premier League",
       ],
+      /*
+       * AUTOSPILL, IKKE AVSPILLER. Bestilt av Pål 29.09.2026: «endre på
+       * kjede-siden slik at alle videoene blir autoplay sånn som vitus sin
+       * video.» Se samlet begrunnelse ved Vitusapotek lenger ned.
+       */
       filmer: [
         {
           sti: "/arbeid/kjeder-peppes",
@@ -983,7 +996,6 @@ export const kjeder: Tjenesteside = {
           alt: "Stillbilde fra filmen: to personer spiser pizza i en sofa.",
           bildetekst: "Peppes Pizza, august 2026. Reklamefilm på 15 sekunder.",
           sekunder: 15,
-          lyd: true,
         },
       ],
     },
@@ -1019,12 +1031,33 @@ export const kjeder: Tjenesteside = {
        * der to danser sammen; 5 og 6 viser én danser. Kontrollert ved å
        * hente ut rammer fra alle seks og se på dem.
        *
-       * INGEN KONTROLLER OG INGEN LYD, altså `lyd` utelatt. Det følger av
-       * regelen som allerede står i Referansefilmer: en kort reklamefilm
-       * uten replikk leses som bevegelse og sier det den skal si dempet. På
-       * 3,76 sekunder ville en kontrollinje tatt en tredel av flaten, og
-       * filmen vært over før noen rakk å se på den. Dempet løkke viser den
-       * flere ganger uten et eneste klikk. Vil Pål ha lyd, er det ett felt.
+       * ALLE FIRE KJEDEFILMENE SPILLER AV SEG SELV. Bestilt av Pål
+       * 29.09.2026: «endre på kjede-siden slik at alle videoene blir
+       * autoplay sånn som vitus sin video.» Denne var den første som gikk i
+       * dempet løkke; nå gjør Anton Sport, Egon og Peppes det samme, og
+       * formatraden gjorde det fra før. `lyd` er utelatt på alle syv.
+       *
+       * AUTOSPILL BETYR DEMPET, og det er ikke vårt valg. Alle nettlesere
+       * blokkerer autospill med lyd — se `muted` i Klipp.tsx. En film som
+       * skal starte selv, kan ikke høres. De fire kjedefilmene tåler det:
+       * Maridalen er sykling, «Min drømmerett» har teksten brent inn i
+       * bildet, Peppes-spoten og denne vignetten leses som bevegelse.
+       * Lydsporene er derfor fjernet fra filene — et spor som aldri kan
+       * spilles er bare vekt.
+       *
+       * DE TO PÅ /employer-branding-video-oslo BEHOLDER `lyd: true`. Der er
+       * det motsatt: en profilfilm og en kundeomtale der hele poenget er
+       * det som blir SAGT. Dempet autospill ville vist et ansikt som
+       * beveger leppene og aldri kommer til poenget. Skillet står i
+       * Referansefilmer og gjelder fortsatt.
+       *
+       * PRISEN, SAGT RETT UT: filmene lastes nå mens man ruller i stedet
+       * for ved klikk. Ruller man hele siden, er det rundt 29 MB mot null
+       * før. `preload="none"` står, så ingenting hentes før filmen faktisk
+       * kommer i synsfeltet, og den som ikke ruller ned til Peppes laster
+       * den aldri. Skal tallet ned, er det oppløsningen som må ned — og det
+       * er referansefilmer, så det er en avveining mot kvaliteten på det vi
+       * viser fram.
        */
       filmer: [
         {

@@ -74,9 +74,15 @@ export function Arbeidsrutenett({ medier }: { medier: Arbeidsmedie[] }) {
  *
  * TO OPPFØRSLER, OG DE LØSER TO FORSKJELLIGE OPPGAVER:
  *
- * `lyd: false` (standard) gir `Klipp`: dempet, i løkke, uten kontroller.
- * Riktig for en film som leses som bevegelse — en reklamefilm på femten
- * sekunder uten replikk sier det den skal si uten lyd.
+ * `lyd: false` (standard) gir `Klipp`: dempet, i løkke, uten kontroller, og
+ * den starter selv når den kommer i synsfeltet. Riktig for en film som leses
+ * som bevegelse — en reklamefilm på femten sekunder uten replikk sier det
+ * den skal si uten lyd. Alle syv filmene på /kjeder er av denne typen etter
+ * Påls beskjed 29.09.2026.
+ *
+ * MERK AT AUTOSPILL OG LYD UTELUKKER HVERANDRE. Nettleserne blokkerer
+ * autospill med lyd, så `Klipp` setter `muted`. Skal en film høres, må noen
+ * trykke på den — og da er det `lyd: true` under.
  *
  * `lyd: true` gir en ekte avspiller: kontroller, lyd, ingen løkke, ingen
  * autospill. Filmene det gjelder er intervjuer og profilfilmer på 20–40
