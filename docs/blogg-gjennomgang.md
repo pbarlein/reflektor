@@ -289,3 +289,59 @@ kildehenvisning utenom de to artiklene fra 2026.
 - **`hva-koster-et-some-byra`** bør få prissammenligningen som tabell og
   Byråmatch som oppgitt kilde. Det er det største enkeltløftet som gjenstår
   på eksisterende innhold.
+
+---
+
+## 8. Første nye artikkel skrevet 29.09.2026
+
+**«Hva koster videoproduksjon for en bedrift?»**,
+`/blogg/hva-koster-videoproduksjon`. Innlegg nummer 1 i lista i avsnitt 5.
+Pål godkjente temaet og oppga prisen: «ja. 40K.»
+
+Bloggens tiende artikkel, og den andre som ikke er migrert fra Squarespace.
+
+### Hva den gjør som de gamle ikke gjør
+
+- **Svaret står først.** Første setning gir tallene. 44,2 % av siteringene
+  språkmodeller gjør, hentes fra de første 30 prosentene av en side.
+- **Tre oppgitte kilder med lenke**, alle lest 29.09.2026: Artisan Films
+  prisguide for 2026, Ingstad Medias prisartikkel fra april 2026 og
+  Byråmatchs guide fra mai 2026.
+- **To tabeller.** Sammenligningstabeller er blant de mest siterte
+  formatene som finnes.
+- **To håndskrevne FAQ-par** i tillegg til det som utledes av overskriftene.
+
+### Vinkelen er at kildene er uenige
+
+De tre guidene spriker kraftig. Den ene kaller 50 000 kroner en enkel
+produktvideo; den andre kaller det en standard reklamefilm; den tredje
+legger hele det enkle nivået under 40 000. Det er den eneste opplysningen i
+artikkelen en leser ikke får noe annet sted, og den gjør Reflektors egen
+fra-pris til et lesbart punkt i stedet for et tall uten sammenheng.
+
+### Den kannibaliserer ikke tjenestesiden
+
+`/videoproduksjon-i-oslo` har FAQ-spørsmålet «Hva koster videoproduksjon for
+bedrift?». Arbeidsdelingen er den samme som mellom `hva-koster-et-some-byra`
+og `/sosiale-medier-byra`: tjenestesiden svarer på hva det koster **hos
+oss**, artikkelen på hva det koster **i markedet** og hvordan man leser et
+tilbud. Artikkelen lenker til siden; siden eier det kommersielle søket.
+
+### Et hull i FAQ-vakten ble funnet på veien
+
+`tests/faq.test.ts` skal stoppe at samme FAQPage-spørsmål står på to URL-er
+— noe Google forbyr eksplisitt. Testen så bare på de håndskrevne
+spørsmålene, med begrunnelsen at de som utledes av overskriftene er «per
+definisjon unike for artikkelen».
+
+Den antakelsen holdt ikke. Begge prisartiklene fikk overskriften «Hva koster
+det hos Reflektor?», og dermed sto det samme spørsmålet i markeringen på to
+adresser uten at noe sa fra. Overskriften i den nye artikkelen er endret, og
+utledningen (`somFaq`) er flyttet fra bloggmalen til `artikler.ts` slik at
+testen kan kalle den samme funksjonen som malen rendrer. Kontrollert i begge
+retninger: testen feiler med duplikatet og passerer uten.
+
+### Fire innlegg gjenstår av de fem
+
+Produksjonsdag, frilanser mot byrå mot ansatt, kjeder med flere lokasjoner
+og SoMe-strategi. Rekkefølgen i avsnitt 5 står.

@@ -15,7 +15,7 @@ import {
   artikkelSlugs,
   delOppAvsnitt,
   finnArtikkel,
-  type Blokk,
+  somFaq,
   type Innlenke,
 } from "@/content/artikler";
 import { basisUrl } from "@/lib/miljo";
@@ -37,9 +37,10 @@ type Props = { params: Promise<{ slug: string }> };
  *
  * FAQ-SCHEMA UTEN Å RØRE TEKSTEN. Artiklene har allerede spørsmålsformede
  * H2-er — «Hva er employer branding?», «Hvorfor er det så vanskelig å finne
- * en pris?» — hver etterfulgt av svaret. Det ER en FAQ. `somFaq` under
- * plukker parene ut og markerer dem opp. FAQ-schema korrelerer med ca.
- * 40 % høyere siteringsvekt i ChatGPT, og her koster det ingen ny copy.
+ * en pris?» — hver etterfulgt av svaret. Det ER en FAQ. `somFaq` i
+ * artikler.ts plukker parene ut og markerer dem opp. FAQ-schema korrelerer
+ * med ca. 40 % høyere siteringsvekt i ChatGPT, og her koster det ingen ny
+ * copy.
  */
 
 /**
@@ -89,67 +90,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: a.beskrivelse,
     alternates: { canonical: `${basisUrl()}/blogg/${a.slug}` },
   };
-}
-
-/**
- * Spørsmålsoverskrift + første avsnitt under den = ett FAQ-par.
- *
- * Bare overskrifter som faktisk ender på spørsmålstegn. En påstand markert
- * opp som et spørsmål er feil markering, og feil markering forplanter seg
- * til det som siterer den.
- */
-/**
- * Overskrifter som IKKE skal bli FAQ-markering.
- *
- * Squarespace-malen avsluttet hver artikkel med samme CTA-overskrift.
- * Migreringen tok den med, og utledningen gjorde den om til strukturerte
- * data på SEKS artikler samtidig — seks sider som hver påstår å være
- * svaret på det samme spørsmålet. Det er kannibalisering i markeringen,
- * og det var selvforskyldt.
- *
- * Lista er eksplisitt og ikke en heuristikk, fordi den skal være lett å
- * lese for den neste som lurer på hvorfor et spørsmål mangler.
- */
-const IKKE_FAQ = ["Trenger din bedrift en fotograf eller videograf?"];
-
-/** Ord en ekte FAQ-overskrift begynner med. */
-const SPØRREORD =
-  /^(hva|hvorfor|hvordan|hvem|når|hvor|kan|bør|må|trenger|er|skal|finnes|går|koster|lønner)\b/i;
-
-/**
- * Spørsmålsoverskrift + første avsnitt under den = ett FAQ-par.
- *
- * TRE FILTRE, alle lagt til 21.09.2026 etter at markeringen ble målt på
- * tvers av nettstedet. Før dette produserte utledningen 77 par, hvorav
- * ett sto på seks sider og flere ikke var spørsmål i det hele tatt.
- *
- * 1. MÅ ENDE PÅ SPØRSMÅLSTEGN. Sto fra før.
- *
- * 2. MÅ BEGYNNE MED ET SPØRREORD. «Trinn 2: Målgruppen din: Hvem skal se,
- *    lese eller lytte til innholdet?» er en stegoverskrift med et
- *    spørsmål inni. Som FAQ-oppføring er den uforståelig løsrevet, og en
- *    FAQ-oppføring som ikke gir mening alene er verdiløs — hele poenget
- *    er at den skal kunne siteres uten konteksten rundt.
- *
- * 3. MÅ IKKE STÅ PÅ SPERRELISTA. Se IKKE_FAQ over.
- *
- * Feil markering er verre enn ingen markering. Ingen markering er en
- * manglende opplysning; feil markering er en usann opplysning, og den
- * forplanter seg til alt som siterer den.
- */
-function somFaq(blokker: Blokk[]) {
-  const par: { sporsmal: string; svar: string }[] = [];
-  blokker.forEach((b, i) => {
-    if (b.type !== "overskrift") return;
-    const q = b.tekst.replace(/\u00ad/g, "").trim();
-    if (!q.endsWith("?")) return;
-    if (!SPØRREORD.test(q)) return;
-    if (IKKE_FAQ.includes(q)) return;
-    const neste = blokker[i + 1];
-    if (neste?.type !== "avsnitt") return;
-    par.push({ sporsmal: b.tekst, svar: neste.tekst });
-  });
-  return par;
 }
 
 export default async function BloggInnlegg({ params }: Props) {

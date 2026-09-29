@@ -9,6 +9,11 @@
 > `tests/redirects.test.ts` stopper det nå automatisk.
 >
 > Slås Ads på igjen før cutover, gjelder punkt 1 i sin opprinnelige form.
+>
+> **KORRIGERT 29.09.2026: Meta-annonsering er derimot i drift.** Kontoen har
+> brukt penger gjennom hele 2026, sist 27.09.2026. Setningen over om at det
+> ikke finnes betalt trafikk gjaldt Google Ads alene. Det rører likevel ikke
+> punkt 1: ingen av Meta-annonsene peker på reflektor.no. Se punkt 5.
 
 Ingenting i denne filen er utført. Alt her er bestilt, begrunnet og skal
 gjøres **på cutover-dagen**, ikke før.
@@ -94,9 +99,10 @@ Dette er den eneste KPI-en. Alt annet på siden kan repareres i ettertid.
 
 ---
 
-## 5. Meta-pikselen forsvinner — en beslutning, ikke en detalj
+## 5. Meta-pikselen forsvinner — avgjort 29.09.2026: la den gå
 
-Funnet 27.09.2026 ved å lese kildekoden til dagens side.
+Funnet 27.09.2026 ved å lese kildekoden til dagens side. Avgjort 29.09.2026
+etter at tallene ble hentet, fordi Pål spurte hva svaret er.
 
 Meta-pikselen `572759520853896` kjører på reflektor.no i dag, men den er
 **injisert direkte i Squarespace** — ikke lastet gjennom GTM-containeren.
@@ -106,20 +112,55 @@ dagen DNS flyttes.
 Det samme gjelder Elfsight-widgeten (`bafcc99b-ca46-41b5-adc6-e4435772183d`,
 `elfsightcdn.com/platform.js`).
 
-**Hva det betyr:** bygger Reflektor remarketing-målgrupper på den pikselen,
-slutter de å fylles ved cutover. Eksisterende målgrupper tømmes gradvis etter
-Metas egne vinduer. Det er ingen feil i den nye siden — pikselen har rett og
-slett aldri vært en del av den.
+### Meta-annonsering er i drift — det er nytt
 
-**Valget er:**
+Overskriften på denne filen sier at det ikke finnes betalt trafikk fordi
+Google Ads er pauset. Det var bare halve bildet. Meta-kontoen
+(`act_1105292240226528`, «Reflektor AS») har brukt penger gjennom hele 2026,
+sist **27.09.2026, to dager før dette ble skrevet**.
 
-- **La den gå.** Ingen handling. Riktig hvis Meta-annonsering ikke er planlagt.
-- **Ta den med.** Legg pikselen inn som en tagg i GTM-containeren, med
-  samtykkekontroll på `ad_storage` som de tre i `docs/gtm-samtykke.md`. Da
-  følger den med av seg selv, siden den nye siden laster samme container.
+Det endrer likevel ingenting i punkt 1, og grunnen er hele svaret på
+pikselspørsmålet.
 
-Gjøres den inn i GTM, bør det skje **før** cutover, slik at den er testet i
-containeren mens dagens side fortsatt kan verifisere at den fyrer.
+### Hva pikselen faktisk måler: 1 konvertering på 66 000 kroner
+
+Hentet fra Meta-kontoen via Supermetrics, 01.01.2026–29.09.2026:
+
+| | Kroner | Leads i Meta | Leads via piksel | Landingssidevisninger |
+|---|---|---|---|---|
+| Foto & video på månedlig basis | 49 705 | 34 | – | 15 |
+| Web - V.1 | 5 642 | – | 1 | 16 |
+| Leads - Bred Målgruppe | 3 395 | 2 | – | 10 |
+| Post: «SOULCAKE …» | 2 490 | – | – | – |
+| Fire mindre sett | 4 778 | – | – | 5 |
+| **Sum** | **66 010** | **36** | **1** | **46** |
+
+Trettifire av trettiseks leads er **skjemaer utfylt inne i Meta** —
+Instant Forms, som aldri sender noen til reflektor.no. Pikselen har registrert
+**én** konvertering på nettsiden i hele 2026.
+
+Og det som kjører nå, er ikke engang rettet mot nettsiden. Alle tre aktive
+annonsesettene i september peker på facebook.com — to reels og et innlegg.
+Åtte tusen kroner i september, null klikk til reflektor.no.
+
+### Derfor: la den gå
+
+- **Den måler ingenting.** Én konvertering på ni måneder er ikke måling.
+- **Remarketing-målgruppene er tomme uansett.** 46 landingssidevisninger på
+  ni måneder ligger langt under det Meta trenger for å bygge en
+  nettsidemålgruppe. Det er ingenting å miste.
+- **Den koster på den nye siden.** En tredjeparts sporer på hver side, med
+  samtykkekontroll som må bygges og en linje i personvernerklæringen, for null
+  måling.
+
+**Handling ved cutover: ingen.** Pikselen forsvinner av seg selv.
+
+**Én betingelse.** Begynner Meta å sende trafikk til reflektor.no igjen —
+annonser med nettsiden som destinasjon, ikke reels og Instant Forms — må
+pikselen inn i GTM-containeren **før** de annonsene settes i gang, ellers
+måles de ikke. Det er en halvtimes jobb i GTM, med samtykkekontroll på
+`ad_storage` som de tre taggene i `docs/gtm-samtykke.md`. Den jobben gjøres
+når behovet finnes, ikke på forskudd.
 
 ## 6. «ACCEPT»-utløseren kan ryddes — etterpå
 

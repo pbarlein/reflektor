@@ -1,3 +1,5 @@
+import { kr, tilbud } from "./site";
+
 /**
  * Bloggartiklene, migrert fra Squarespace 21.09.2026.
  *
@@ -2165,6 +2167,250 @@ export const artikler: Artikkel[] = [
       { sti: "/innholdsproduksjon", tekst: "hva Reflektor produserer" },
     ],
   },
+  /*
+   * FØRSTE ARTIKKEL SKREVET FOR DEN NYE SIDEN, 29.09.2026.
+   *
+   * De ni andre er migrert ordrett fra Squarespace. Denne er ikke — den er
+   * skrevet her, etter at bloggjennomgangen viste hva som mangler. Pål
+   * godkjente temaet og oppga prisen: «ja. 40K.»
+   *
+   * HVORFOR AKKURAT DENNE FØRST. «hva koster videoproduksjon bedrift» har
+   * 50 søk i måneden og ren kjøpsintensjon — det er søket som kommer rett
+   * før en henvendelse. Og Reflektor oppgir prisen åpent, noe nesten ingen
+   * andre norske byråer gjør. Det gir en artikkel som faktisk kan svare på
+   * spørsmålet i stedet for å be leseren ta kontakt for å få vite.
+   *
+   * DEN KANNIBALISERER IKKE /videoproduksjon-i-oslo, som har det nesten
+   * likelydende FAQ-spørsmålet «Hva koster videoproduksjon for bedrift?».
+   * Arbeidsdelingen er den samme som mellom hva-koster-et-some-byra og
+   * /sosiale-medier-byra: tjenestesiden svarer på hva det koster HOS OSS,
+   * artikkelen på hva det koster I MARKEDET og hvordan man leser et tilbud.
+   * Artikkelen lenker til siden; siden eier det kommersielle søket.
+   *
+   * ALLE TALL ER HENTET, IKKE HUSKET. De tre prisguidene er lest
+   * 29.09.2026 og tallene sitert slik de står. At de er uenige er ikke en
+   * svakhet ved kildene — det er hele poenget med tabellen, og det er den
+   * eneste opplysningen i artikkelen en leser ikke får noe annet sted.
+   *
+   * REFLEKTORS EGNE TALL KOMMER FRA `tilbud` i site.ts og skrives ikke inn
+   * for hånd. En pris som står i klartekst i en bloggartikkel er en pris
+   * som blir stående når den endres.
+   */
+  {
+    slug: "hva-koster-videoproduksjon",
+    bilde: {
+      fil: "drone-1600",
+      alt: "Droneopptak over et hotellanlegg med utendørs basseng",
+    },
+    tittel: "Hva koster videoproduksjon for en bedrift?",
+    beskrivelse:
+      "Tre norske prisguider oppgir helt ulike tall. Her er hva de faktisk sier, hva som driver prisen, og hva vi selv tar: fra 40 000 kr per prosjekt.",
+    publisert: "2026-09-29",
+    blokker: [
+      {
+        type: "avsnitt",
+        tekst: `Kort svar: et enkelt videoprosjekt for en bedrift ligger som regel mellom 25 000 og 50 000 kroner. En reklamefilm med konsept, et profesjonelt team og flere leveranseformater koster oftest fra 50 000 til 200 000. Hos oss starter enkeltprosjekter på ${kr(tilbud.fraPrisProsjekt)} kr.`,
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det er det korte svaret. Det lange er mer nyttig, for tallene over er hentet fra prisguider som er uenige med hverandre — og uenigheten forteller deg mer om markedet enn noen av tallene gjør alene.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hva de norske prisguidene faktisk oppgir",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Tre norske aktører har publisert priser på videoproduksjon i 2026. Slik står tallene hos dem:",
+      },
+      {
+        type: "tabell",
+        kolonner: ["Kilde", "Enkel produksjon", "Standard", "Stor produksjon"],
+        rader: [
+          [
+            "Artisan Film, prisguide 2026",
+            "15 000–40 000 kr",
+            "40 000–120 000 kr",
+            "120 000–500 000 kr+",
+          ],
+          [
+            "Ingstad Media, april 2026",
+            "25 000–50 000 kr",
+            "50 000–200 000 kr",
+            "fra 200 000 kr",
+          ],
+          [
+            "Byråmatch, mai 2026",
+            "—",
+            "50 000–150 000 kr",
+            "flere millioner",
+          ],
+        ],
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Artisan Film oppgir 15 000–40 000 kr for enkelt innhold til sosiale medier, 40 000–120 000 kr for standard reklame- eller bedriftsfilm med 1–2 opptaksdager, og 120 000–500 000 kr og oppover for større produksjoner.",
+        url: "https://www.artisanfilm.no/prisguide-2026",
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Ingstad Media oppgir 25 000–50 000 kr for én lokasjon med kort opptakstid og enkel etterproduksjon, 50 000–200 000 kr for konsept og profesjonelt team, og fra 200 000 kr for kampanjer med casting og studio.",
+        url: "https://ingstadmedia.no/blogg/hva-koster-reklamefilm",
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Byråmatch oppgir at en enkel produktvideo kan koste fra 50 000 til 150 000 kroner, og at mer omfattende reklamekampanjer med høy produksjonsverdi kan koste flere millioner.",
+        url: "https://www.xn--byrmatch-c0a.no/fagbloggen/reklamefilm-produksjon-for-bedrifter",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Legg merke til hvor lite de er enige om. Den ene kaller 50 000 kroner en enkel produktvideo. Den andre kaller det en standard reklamefilm. Den tredje legger hele det enkle nivået under 40 000. Det er ikke fordi noen tar feil — det er fordi «videoproduksjon» ikke er én tjeneste, og et tall uten en leveranse ved siden av betyr ingenting.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Den praktiske konsekvensen: to tilbud du har fått på samme film kan være riktig priset begge to, og likevel handle om helt forskjellig arbeid. Jobben din er ikke å finne den laveste prisen, men å finne ut hva de to tilbudene faktisk inneholder.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Fire poster som flytter prisen mest",
+      },
+      {
+        type: "liste",
+        punkter: [
+          "Antall produksjonsdager. Én dag på lokasjon er den største enkeltposten i de fleste tilbud. To dager er sjelden dobbelt så dyrt, men det er alltid dyrere.",
+          "Hvor mange som må være til stede. Én person med kamera koster én ting. Fotograf, lydtekniker, regissør og lyssetter koster noe annet — og noen filmer krever det.",
+          "Lokasjon og medvirkende. Leid lokale, skuespillere og statister er poster som legges oppå produksjonen, og de kan fort bli de tyngste.",
+          "Hvor mye etterarbeid filmen krever. Klipp og farge på en enkel film er timer. Animasjon, grafikk, voice-over og musikk som må klareres, er dager.",
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Kompleksitet i etterarbeidet er den posten folk undervurderer oftest. Selve opptaket er en dag du kan se; etterarbeidet er en uke du ikke ser.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Slik får dere prisen ned uten å kutte i kvaliteten",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "To av de fire postene over kan dere ta selv, og det er de to som ofte veier mest på en reklamefilm.",
+      },
+      {
+        type: "liste",
+        punkter: [
+          "Hold lokasjonen selv. Egne lokaler, en butikk, et lager eller en kundes lokaler koster ingenting å leie.",
+          "Still med egne folk. Ansatte foran kamera i stedet for skuespillere gjør filmen billigere — og som regel mer troverdig.",
+          "Samle flere leveranser på samme dag. Er teamet først rigget, koster den femte filmen langt mindre enn den første.",
+          "Bestem formatene på forhånd. Skal filmen brukes både på nettsiden, i annonser og på Instagram, er det billigere å planlegge for det enn å klippe om i etterkant.",
+        ],
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Fem spørsmål som gjør tilbudene sammenlignbare",
+      },
+      {
+        type: "liste",
+        punkter: [
+          "Hvor mange opptaksdager ligger inne i prisen?",
+          "Hvor mange ferdige filmer får vi, og i hvilke formater?",
+          "Hvem står på settet — egne ansatte eller innleide frilansere?",
+          "Hvor mange runder med endringer er inkludert før det koster ekstra?",
+          "Hvem eier det ferdige materialet, og hva kan vi bruke det til?",
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Spørsmål fire er det som oftest mangler i et tilbud, og det som oftest utløser en ekstraregning. Spør om det skriftlig.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hva tar Reflektor for et videoprosjekt?",
+      },
+      {
+        type: "avsnitt",
+        tekst: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Hva et prosjekt faktisk lander på avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.`,
+        lenker: [
+          { frase: "Enkeltprosjekter", sti: "/reklamefilm" },
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst: `Trenger dere innhold jevnlig og ikke én gang, er løpende samarbeid ${kr(tilbud.prisPerManed)} kr i måneden. Det er fast pris, med én produksjonsdag hver måned og et produksjonsmål på ${tilbud.videoerPerManed} ferdig redigerte videoer. Vi bruker ikke timepriser.`,
+        lenker: [
+          { frase: "løpende samarbeid", sti: "/" },
+        ],
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Én film eller løpende produksjon?",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det er dette valget som avgjør regnestykket, ikke prisen på den enkelte filmen.",
+      },
+      {
+        type: "tabell",
+        kolonner: ["", "Enkeltprosjekt", "Løpende samarbeid"],
+        rader: [
+          [
+            "Passer når",
+            "Dere har én konkret film som skal lages",
+            "Dere trenger nytt innhold hver måned",
+          ],
+          [
+            "Pris",
+            `fra ${kr(tilbud.fraPrisProsjekt)} kr`,
+            `${kr(tilbud.prisPerManed)} kr/mnd`,
+          ],
+          [
+            "Leveranse",
+            "Avtalt omfang, én gang",
+            `${tilbud.videoerPerManed} videoer i måneden`,
+          ],
+          ["Binding", "Ingen", "Tre måneders oppsigelse, ingen bindingstid"],
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "En enkelt film dekker ett budskap på ett tidspunkt. Skal dere være synlige gjennom året, blir fire enkeltprosjekter dyrere enn tolv måneder med løpende produksjon — og det er som regel der regnestykket faktisk avgjøres.",
+      },
+    ],
+    lesVidere: [
+      { sti: "/reklamefilm", tekst: "hva en reklamefilm fra Reflektor koster" },
+      {
+        sti: "/videoproduksjon-i-oslo",
+        tekst: "videoproduksjon i Oslo, med priser og leveranse",
+      },
+    ],
+    tilleggsfaq: [
+      {
+        sporsmal: "Hvorfor spriker tilbudene så mye på den samme filmen?",
+        svar: "Fordi «en film» ikke er en definert leveranse. Det ene tilbudet kan være én person med kamera i tre timer og en enkel klipp. Det andre kan være et team på fire, to opptaksdager, manus, farge, lyd og fem ferdige formater. Begge er reklamefilm. Be om antall opptaksdager, antall folk på settet og antall ferdige leveranser skriftlig — da blir prisene sammenlignbare med én gang.",
+      },
+      {
+        sporsmal: "Kommer annonsebudsjett i tillegg til produksjonsprisen?",
+        svar: "Ja, hos de aller fleste. Produksjonsprisen dekker å lage filmen. Skal den vises som annonse på Facebook, Instagram, YouTube eller TV, betaler dere visningene separat, og de pengene går til plattformen — ikke til produsenten. Regn det som en egen post når dere setter budsjettet, og avklar hvem som skal sette opp og følge annonsen.",
+      },
+    ],
+  },
 ];
 
 /** Slugene som faktisk har innhold. Undersett av bloggSlugs i site.ts. */
@@ -2212,6 +2458,76 @@ export function delOppAvsnitt(
   }
   if (i < tekst.length) deler.push(tekst.slice(i));
   return deler;
+}
+
+/**
+ * Spørsmålsoverskrift + første avsnitt under den = ett FAQ-par.
+ *
+ * Bare overskrifter som faktisk ender på spørsmålstegn. En påstand markert
+ * opp som et spørsmål er feil markering, og feil markering forplanter seg
+ * til det som siterer den.
+ */
+/**
+ * Overskrifter som IKKE skal bli FAQ-markering.
+ *
+ * Squarespace-malen avsluttet hver artikkel med samme CTA-overskrift.
+ * Migreringen tok den med, og utledningen gjorde den om til strukturerte
+ * data på SEKS artikler samtidig — seks sider som hver påstår å være
+ * svaret på det samme spørsmålet. Det er kannibalisering i markeringen,
+ * og det var selvforskyldt.
+ *
+ * Lista er eksplisitt og ikke en heuristikk, fordi den skal være lett å
+ * lese for den neste som lurer på hvorfor et spørsmål mangler.
+ */
+export const IKKE_FAQ = ["Trenger din bedrift en fotograf eller videograf?"];
+
+/** Ord en ekte FAQ-overskrift begynner med. */
+const SPØRREORD =
+  /^(hva|hvorfor|hvordan|hvem|når|hvor|kan|bør|må|trenger|er|skal|finnes|går|koster|lønner)\b/i;
+
+/**
+ * Spørsmålsoverskrift + første avsnitt under den = ett FAQ-par.
+ *
+ * TRE FILTRE, alle lagt til 21.09.2026 etter at markeringen ble målt på
+ * tvers av nettstedet. Før dette produserte utledningen 77 par, hvorav
+ * ett sto på seks sider og flere ikke var spørsmål i det hele tatt.
+ *
+ * 1. MÅ ENDE PÅ SPØRSMÅLSTEGN. Sto fra før.
+ *
+ * 2. MÅ BEGYNNE MED ET SPØRREORD. «Trinn 2: Målgruppen din: Hvem skal se,
+ *    lese eller lytte til innholdet?» er en stegoverskrift med et
+ *    spørsmål inni. Som FAQ-oppføring er den uforståelig løsrevet, og en
+ *    FAQ-oppføring som ikke gir mening alene er verdiløs — hele poenget
+ *    er at den skal kunne siteres uten konteksten rundt.
+ *
+ * 3. MÅ IKKE STÅ PÅ SPERRELISTA. Se IKKE_FAQ over.
+ *
+ * Feil markering er verre enn ingen markering. Ingen markering er en
+ * manglende opplysning; feil markering er en usann opplysning, og den
+ * forplanter seg til alt som siterer den.
+ *
+ * FLYTTET HIT FRA BLOGGMALEN 29.09.2026. Den lå i `src/app/blogg/[slug]/`
+ * og kunne derfor ikke testes. Vakten i `tests/faq.test.ts` antok i stedet
+ * at utledede spørsmål er «per definisjon unike for artikkelen», og den
+ * antakelsen holdt ikke: prisartikkelen og den nye videoprisartikkelen
+ * fikk begge overskriften «Hva koster det hos Reflektor?», altså samme
+ * FAQPage-spørsmål på to URL-er — nøyaktig det Google forbyr, og nøyaktig
+ * det testen finnes for å stoppe. Nå leser testen den samme funksjonen
+ * som malen rendrer.
+ */
+export function somFaq(blokker: Blokk[]) {
+  const par: { sporsmal: string; svar: string }[] = [];
+  blokker.forEach((b, i) => {
+    if (b.type !== "overskrift") return;
+    const q = b.tekst.replace(/\u00ad/g, "").trim();
+    if (!q.endsWith("?")) return;
+    if (!SPØRREORD.test(q)) return;
+    if (IKKE_FAQ.includes(q)) return;
+    const neste = blokker[i + 1];
+    if (neste?.type !== "avsnitt") return;
+    par.push({ sporsmal: b.tekst, svar: neste.tekst });
+  });
+  return par;
 }
 
 export function finnArtikkel(slug: string): Artikkel | undefined {

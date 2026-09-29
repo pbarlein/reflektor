@@ -13,7 +13,7 @@ import {
   employerBranding,
   event,
 } from "@/content/tjenester";
-import { artikler } from "@/content/artikler";
+import { artikler, somFaq } from "@/content/artikler";
 
 /**
  * Vakt mot FAQPage-duplikater på tvers av URL-er.
@@ -23,9 +23,15 @@ import { artikler } from "@/content/artikler";
  * sider, og spørsmålene er skrevet av mennesker over flere uker — det er
  * nøyaktig den slags regel som brytes uten at noen ser det.
  *
- * Artiklenes FAQ er BARE den håndskrevne (`tilleggsfaq`). Den som utledes av
- * spørsmålsoverskrifter i selve teksten bygges i bloggmalen og er per
- * definisjon unik for artikkelen.
+ * ARTIKLENE TELLER MED BEGGE SINE KILDER: den håndskrevne `tilleggsfaq` og
+ * den som utledes av spørsmålsoverskriftene i teksten.
+ *
+ * RETTET 29.09.2026. Her sto det at de utledede er «per definisjon unike for
+ * artikkelen», og testen hoppet derfor over dem. Antakelsen var feil: to
+ * prisartikler fikk begge overskriften «Hva koster det hos Reflektor?», og
+ * dermed sto det samme FAQPage-spørsmålet på to URL-er uten at noe sa fra.
+ * Utledningen (`somFaq`) er flyttet til artikler.ts nettopp så testen kan
+ * kalle den samme funksjonen som bloggmalen rendrer.
  */
 function alleKilder(): { side: string; sporsmal: string[] }[] {
   return [
@@ -41,14 +47,12 @@ function alleKilder(): { side: string; sporsmal: string[] }[] {
       side: sti as string,
       sporsmal: (t as typeof reklamefilm).faq.map((p) => p.sporsmal),
     })),
-    /*
-     * Bare den HÅNDSKREVNE tilleggs-FAQ-en. Den som utledes av artikkelens
-     * egne spørsmålsoverskrifter bygges i bloggmalen, og er per definisjon
-     * unik for artikkelen den står i.
-     */
     ...artikler.map((a) => ({
       side: `/blogg/${a.slug}`,
-      sporsmal: (a.tilleggsfaq ?? []).map((p) => p.sporsmal),
+      sporsmal: [
+        ...somFaq(a.blokker).map((p) => p.sporsmal),
+        ...(a.tilleggsfaq ?? []).map((p) => p.sporsmal),
+      ],
     })),
   ];
 }

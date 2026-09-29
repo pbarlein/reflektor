@@ -1,4 +1,4 @@
-import { site, tilbud } from "./site";
+import { kr, site, tilbud } from "./site";
 
 /**
  * Tjenestesidene.
@@ -217,13 +217,6 @@ export type Tjenesteside = {
 };
 
 const KONTAKT = { sti: "/#kontakt", tekst: "Få et forslag" };
-
-/**
- * Tall med mellomrom som tusenskille, slik prisen skrives ellers på
- * nettstedet: «30 000 kr/mnd». Aldri med mva-notasjon — låst ramme i
- * AGENTS.md kapittel 0.3.
- */
-const kr = (n: number) => new Intl.NumberFormat("nb-NO").format(n);
 
 /* ────────────────────────────────────────────────────────────────────
    /reklamefilm — filmen dere betaler for å få vist

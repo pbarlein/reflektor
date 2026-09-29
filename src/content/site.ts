@@ -75,6 +75,19 @@ export const ogsaFraReflektor = [
   },
 ] as const;
 
+/**
+ * Tall med mellomrom som tusenskille, slik prisen skrives ellers på
+ * nettstedet: «30 000 kr/mnd». Aldri med mva-notasjon — låst ramme i
+ * AGENTS.md kapittel 0.3.
+ *
+ * FLYTTET HIT 29.09.2026. Den lå som en lokal `const` i tjenester.ts, og da
+ * bloggen fikk sin første artikkel som oppgir prisen, sto valget mellom en
+ * tredje kopi og ett sted. Prisen selv bor allerede her; formateringen av
+ * den hører til samme sted. `nok()` i llms.txt er bevisst en annen — den
+ * bruker vanlig mellomrom og ikke U+00A0, av grunner som står der.
+ */
+export const kr = (n: number) => new Intl.NumberFormat("nb-NO").format(n);
+
 /** Prisen står åpent på dagens side. Det er et bevisst posisjoneringsvalg. */
 export const tilbud = {
   prisPerManed: 30000,

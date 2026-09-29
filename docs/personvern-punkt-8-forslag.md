@@ -39,7 +39,10 @@ Ingen måling ble sendt for å finne dette ut.
 | Apollo | `67f7a7f9f3af070015ab21b2` | Apollo.io |
 
 Meta-pikselen (`572759520853896`) og Elfsight-widgeten kjører i dag, men
-lastes av Squarespace og **følger ikke med** til den nye siden.
+lastes av Squarespace og **følger ikke med** til den nye siden. Avgjort
+29.09.2026 at pikselen ikke skal tas med — den har registrert én konvertering
+i hele 2026. Se `docs/cutover.md` punkt 5. Derfor står Meta ikke i tabellen
+under.
 
 ## Forslag til ny tekst
 
