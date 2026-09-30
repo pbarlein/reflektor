@@ -57,7 +57,8 @@ export function Tjenestelayout({
         beskrivelse={side.beskrivelse}
         sti={side.sti}
         tjenestetype={side.tjenestetype}
-        fraPris
+        fraPris={side.prismodell !== "abonnement"}
+        abonnementspris={side.prismodell === "abonnement"}
       />
       <FaqSchema
         qa={side.faq.map((f) => ({ sporsmal: f.sporsmal, svar: f.svar }))}
@@ -278,14 +279,24 @@ export function Tjenestelayout({
                     ett langt. Prissvarene er nettopp det: fakta først, så
                     det som nyanserer dem.
                   */}
-                  {s.svar.split("\n\n").map((avsnitt, j) => (
-                    <p
-                      key={j}
-                      className="mt-4 leading-relaxed text-pretty text-blekk-dempet"
-                    >
-                      <Tekst>{avsnitt}</Tekst>
-                    </p>
-                  ))}
+                  {/*
+                    ET TOMT `svar` GIR INGEN AVSNITT. To seksjoner på
+                    /reels-produksjon er rene lister — «Slik fungerer det»
+                    og «Hva som er inkludert» — og en liste er like siterbar
+                    som et avsnitt. Uten dette filteret rendret de en tom
+                    <p> over punktene.
+                  */}
+                  {s.svar
+                    .split("\n\n")
+                    .filter(Boolean)
+                    .map((avsnitt, j) => (
+                      <p
+                        key={j}
+                        className="mt-4 leading-relaxed text-pretty text-blekk-dempet"
+                      >
+                        <Tekst>{avsnitt}</Tekst>
+                      </p>
+                    ))}
 
                   {s.punkter && (
                     <ul className="mt-6 grid gap-3">
@@ -300,6 +311,35 @@ export function Tjenestelayout({
                       ))}
                     </ul>
                   )}
+
+                  {s.etterord && (
+                    <p className="mt-6 leading-relaxed text-pretty text-blekk-dempet">
+                      <Tekst>{s.etterord}</Tekst>
+                    </p>
+                  )}
+
+                  {/*
+                    KILDEN STÅR RETT UNDER PÅSTANDEN DEN BELEGGER, før
+                    punktene og før filmen. Samme utseende som kildeblokken
+                    i bloggen — en tynn venstrekant og mindre grad — slik at
+                    den leses som en fotnote og ikke som brødtekst.
+                  */}
+                  {s.kilde?.map((k) => (
+                    <p
+                      key={k.url}
+                      className="mt-5 border-l-2 border-kant pl-5 text-[0.9375rem] leading-relaxed text-pretty text-blekk-dempet"
+                    >
+                      {k.tekst}{" "}
+                      <a
+                        href={k.url}
+                        target="_blank"
+                        rel="noopener"
+                        className="inline-flex min-h-6 items-center underline underline-offset-2 hover:text-aksent-tekst"
+                      >
+                        Kilde
+                      </a>
+                    </p>
+                  ))}
 
                   {/*
                     FILMEN STÅR UNDER PÅSTANDEN DEN BELEGGER, over lenkene

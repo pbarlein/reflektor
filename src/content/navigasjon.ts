@@ -86,6 +86,7 @@ export const bunnmeny: { tittel: string; lenker: Lenke[] }[] = [
     tittel: "Tjenester",
     lenker: [
       { navn: "Kjeder og retail", sti: "/kjeder" },
+      { navn: "Reels-produksjon", sti: "/reels-produksjon" },
       { navn: "Innholdsproduksjon", sti: "/innholdsproduksjon" },
       { navn: "Reklamefilm", sti: "/reklamefilm" },
       { navn: "Videoproduksjon i Oslo", sti: "/videoproduksjon-i-oslo" },

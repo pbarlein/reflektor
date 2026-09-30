@@ -15,13 +15,24 @@
  * Prosjektets regel, fra Hero.tsx: «Preview er flaten Pål vurderer på — det
  * skal være umulig å tro at noe er ferdig når det ikke er det.»
  */
+/*
+ * `[BEKREFT: …]` MARKERES SOM TBD, lagt til 30.09.2026.
+ *
+ * De to markørene betyr nesten det samme — noe mangler et svar fra Pål — og
+ * begge stoppes av hvert sitt skript i CI. Men bare TBD ble rendret som en
+ * markør; en BEKREFT sto som klammer midt i en setning og så ut som en
+ * skrivefeil, ikke som et åpent spørsmål.
+ *
+ * Funnet da bransjelista på /reels-produksjon fikk sin første BEKREFT.
+ */
 export function Tekst({ children }: { children: string }) {
-  const deler = children.split(/(TBD\([^)]*\))/g);
+  const deler = children.split(/(TBD\([^)]*\)|\[BEKREFT:[^\]]*\])/g);
 
   return (
     <>
       {deler.map((del, i) => {
-        const treff = /^TBD\(([^)]*)\)$/.exec(del);
+        const bekreft = /^\[BEKREFT:\s*([^\]]*)\]$/.exec(del);
+        const treff = bekreft ?? /^TBD\(([^)]*)\)$/.exec(del);
         if (!treff) return del;
         return (
           <mark
@@ -29,7 +40,7 @@ export function Tekst({ children }: { children: string }) {
             className="inline-block rounded-xs bg-aksent/12 px-1.5 py-0.5 font-mono text-xs text-blekk ring-1 ring-aksent/40 ring-inset"
             title="Copy ikke levert. Blokkerer produksjon."
           >
-            TBD · {treff[1]}
+            {bekreft ? "BEKREFT" : "TBD"} · {treff[1]}
           </mark>
         );
       })}

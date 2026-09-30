@@ -51,6 +51,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
        Squarespace-URL og har ingen annonsegruppe. Derfor står den her.
     */
     { url: url("/kjeder"), priority: 0.9 },
+    /* /reels-produksjon er ny 30.09.2026 og av samme type som /kjeder. */
+    { url: url("/reels-produksjon"), priority: 0.9 },
     { url: url("/kontaktoss"), priority: 0.8 },
     { url: url("/vart-arbeid"), priority: 0.7 },
     ...kundecaser.map((c) => ({

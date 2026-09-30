@@ -25,6 +25,20 @@ import { join } from "node:path";
 const MAPPER = ["src/content", "src/app", "src/components"];
 const MONSTER = /\[BEKREFT:[^\]]*\]/g;
 
+/**
+ * Filer som SKAL inneholde mønsteret, og derfor ikke kan vaktes av det.
+ *
+ * `Tekst.tsx` er komponenten som rendrer markøren. Den må ha mønsteret både
+ * i sitt eget regex og i dokumentasjonen som forklarer hva den gjør. Uten
+ * dette unntaket meldte vakten tre treff i sin egen implementasjon, og da
+ * var den ubrukelig: en ekte plassholder ville druknet i støy fra koden som
+ * finnes for å vise den.
+ *
+ * Lista skal være kort, og hver oppføring skal være en fil som IMPLEMENTERER
+ * markøren — aldri en fil som bare har en plassholder man vil slippe unna.
+ */
+const UNNTAK = new Set(["src/components/tjeneste/Tekst.tsx"]);
+
 function finnFiler(katalog: string): string[] {
   const ut: string[] = [];
   for (const navn of readdirSync(katalog)) {
@@ -41,6 +55,7 @@ for (const mappe of MAPPER) {
   for (const fil of finnFiler(mappe)) {
     // Denne fila inneholder mønsteret i sin egen dokumentasjon.
     if (fil.endsWith("bekreft-check.ts")) continue;
+    if (UNNTAK.has(fil)) continue;
     const linjer = readFileSync(fil, "utf8").split("\n");
     linjer.forEach((linje, i) => {
       for (const treff of linje.match(MONSTER) ?? []) {

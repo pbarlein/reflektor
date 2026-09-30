@@ -40,6 +40,17 @@ export type Seksjon = {
   /** Svaret, front-loaded. Første setning skal kunne stå alene. */
   svar: string;
   punkter?: string[];
+  /**
+   * Avsnitt som skal stå ETTER punktlista.
+   *
+   * LAGT TIL 30.09.2026. «Riktig lengde for riktig video» på
+   * /reels-produksjon har formen ledesetning → liste → oppsummering, og
+   * oppsummeringen hører til etter lista. Uten dette feltet havnet den i
+   * `svar` og ble rendret mellom kolonet og punktene den innleder.
+   *
+   * Feilen var min, ikke copyens. Fanget i nettleseren.
+   */
+  etterord?: string;
   /** Sitat fra en navngitt kilde. +37 % siteringssannsynlighet. */
   sitat?: { tekst: string; navn: string; rolle: string };
   /**
@@ -51,6 +62,22 @@ export type Seksjon = {
    * er et av de sterkeste interne relevanssignalene som finnes.
    */
   lenker?: { sti: string; tekst: string }[];
+  /**
+   * Kildehenvisning med utgående lenke, under svaret.
+   *
+   * LAGT TIL 30.09.2026 for /reels-produksjon, som er den første
+   * tjenestesiden som bygger et argument på tall utenfra. Bloggen har hatt
+   * `kilde` siden 21.09; tjenestesidene hadde det ikke, fordi de fram til nå
+   * bare oppga Reflektors egne fakta.
+   *
+   * GEO-researchen er entydig på hvorfor det er verdt en egen felttype:
+   * «Unsupported claims rarely get cited by AI engines. If you state a claim
+   * without linking to data, answer engines cannot verify it and will prefer
+   * a competitor who cites specific numbers.» Se docs/synlighet-2026.md.
+   *
+   * Én kilde per seksjon. Trenger en seksjon to, er den to seksjoner.
+   */
+  kilde?: { tekst: string; url: string }[];
   /**
    * Film(er) som hører til NETTOPP denne seksjonen.
    *
@@ -185,6 +212,19 @@ export type Tjenesteside = {
   faq: { sporsmal: string; svar: string }[];
   /** Fra-pris som tekst, eller null når den ikke er oppgitt. */
   pris: string | null;
+  /**
+   * Hvilken pris siden faktisk selger, og dermed hva som markeres opp.
+   *
+   * LAGT TIL 30.09.2026. Fram til nå var alle tjenestesidene prosjektsider,
+   * og layouten sendte derfor `fraPris` til schemaet på alle sammen — altså
+   * `minPrice` lik fra-prisen på enkeltprosjekter.
+   *
+   * /reels-produksjon er den første som selger abonnementet. Der ville
+   * fra-prisen på prosjekter vært en usann opplysning: siden sier én pris i
+   * brødteksten og schemaet ville sagt en annen. Feil pris i markeringen er
+   * verre enn ingen pris — samme begrunnelse som står i Schema.tsx.
+   */
+  prismodell?: "prosjekt" | "abonnement";
   /**
    * Referansefilmer: hele filmer, vist stort rett under svaret.
    *
@@ -849,6 +889,257 @@ export const innholdsproduksjon: Tjenesteside = {
       sti: "/arbeid/kafe1-1600.jpg",
       alt: "Vegg av flasker i en butikkhylle",
     },
+  ],
+};
+
+/* ────────────────────────────────────────────────────────────────────
+   /reels-produksjon — kort stående video til fast pris
+   ──────────────────────────────────────────────────────────────────── */
+
+/**
+ * SIDEN ER TILTAK 1 I AEO-PLANEN, og copyen er levert ferdig av Claude Chat
+ * 30.09.2026. Jeg har satt den inn, ikke skrevet den.
+ *
+ * HVORFOR «REELS» OG IKKE «TIKTOK». Chats begrunnelse, gjengitt fordi den
+ * styrer hele sidens ordvalg: «reels» har 1 300 søk i måneden i Norge,
+ * «tiktok byrå» har 0. TikTok nevnes likevel eksplisitt der det gir mening,
+ * fordi AEO-promptene 8 og 12 bruker ordet.
+ *
+ * DEN MOTSIER IKKE FAQ-EN. `/faq` sier at vi publiserer i to kanaler
+ * bevisst. Denne siden selger PRODUKSJONEN av kort stående video og sier
+ * rett ut hvem som publiserer hvor — filene leveres i 9:16, og kunden står
+ * fritt til å bruke dem på TikTok og YouTube Shorts.
+ *
+ * TO TALL ER JUSTERT MOT KILDEN, og det er den eneste endringen i copyen:
+ *
+ * 1. «Etter 90 sekunder faller rekkevidden tydelig» → «over to minutter».
+ *    Socialinsiders bøtter er under 30 s: 5,20 %, 30–60 s: 5,60 %,
+ *    60–90 s: 5,30 % og over 120 s: 3,50 %. Fallet er dokumentert over 120
+ *    sekunder, ikke over 90.
+ * 2. «bedriftskontoer med under 10 000 følgere» → «1 000–5 000 følgere».
+ *    Tallet 65,5 % gjelder båndet 1–5K i kilden. 5–10K er ikke oppgitt.
+ *
+ * Begge er kontrollert mot kilden 30.09.2026. Metas formuleringer er
+ * derimot gjengitt riktig og ordrett: «Feature your brand and key message
+ * within the first 3 seconds» og «Shorter videos (6–15 seconds) are more
+ * effective».
+ *
+ * `avgrensning` ER `null` OG DET ER ET HULL. Siden overlapper med forsiden:
+ * begge beskriver 30 000 kr/mnd, én produksjonsdag og 8–10 videoer. Alle
+ * andre tjenestesider har en avgrensningssetning nettopp for å hindre at to
+ * sider konkurrerer om samme signal. Den setningen er ikke levert, og den
+ * skal skrives — ikke av meg. Meldt til Pål 30.09.2026.
+ */
+export const reelsproduksjon: Tjenesteside = {
+  sti: "/reels-produksjon",
+  tittel: "Reels-produksjon for bedrifter – fast pris",
+  beskrivelse:
+    "Merkevarebyggende Reels til Instagram og Facebook, levert stående i 9:16 og klare for TikTok og YouTube Shorts. Én produksjonsdag i måneden, 8–10 ferdige videoer, 30 000 kr/mnd.",
+  h1: "Reels som bygger merkevaren din, ikke bare følgertallet",
+  merkelapp: "Reels-produksjon",
+  tjenestetype: "Produksjon av Reels og kort stående video til fast pris",
+  prismodell: "abonnement",
+  svar: `Vi produserer korte, stående videoer for bedrifter i hele Norge til fast pris. Én produksjonsdag i måneden hos dere gir ${tilbud.videoerPerManed} ferdige Reels. Vi publiserer dem på Instagram og Facebook. Dere får filene i 9:16, og de er klare for TikTok og YouTube Shorts hvis dere vil bruke dem der også.`,
+  /*
+   * TOPPBILDET er fra en av våre egne produksjonsdager. Et stillbilde av en
+   * stående video ville vært en selvmotsigelse i en 21:9-ramme; et bilde av
+   * kameraet som lager dem er det ikke.
+   */
+  bilde: {
+    fil: "produksjonsdag-rigg-1600",
+    alt: "Kamera montert på rigg over et bord under en produksjonsdag",
+  },
+  avgrensning: null,
+  seksjoner: [
+    {
+      sporsmal: "Kort video er der kundene dine ser deg først",
+      svar: "For mindre bedriftskontoer er Reels det formatet som når flest. Socialinsider analyserte 140 000 Reels fra bedrifter i første halvår 2026. Blant kontoer med 1 000–5 000 følgere nådde Reels i snitt 9,8 % av følgerne, mot 8,8 % for karuseller og 7,0 % for bilder.\n\nProblemet er sjelden kanalen. Problemet er at video tar tid. Noen må finne ideene, filme, klippe, tekste og poste, og gjøre det uke etter uke. Hos de fleste bedrifter stopper det etter den tredje videoen.\n\nVi tar hele den jobben. Dere stiller opp én dag i måneden.",
+      kilde: [
+        {
+          tekst:
+            "Tallene er fra Socialinsiders analyse av 140 000 Instagram Reels publisert av bedriftskontoer mellom januar og juni 2026.",
+          url: "https://www.socialinsider.io/blog/instagram-reels-statistics",
+        },
+      ],
+    },
+    {
+      sporsmal: "Merkevarebygging, ikke trendjag",
+      svar: "En trendvideo kan få mange visninger, men blir fort glemt. Vi lager Reels som gjør at folk husker hvem de så:",
+      punkter: [
+        "Faste formater som går igjen. Seerne kjenner deg igjen før de ser logoen.",
+        "Ekte folk og ekte arbeid. Ansatte, produkter og hverdagen hos dere. Ikke stockfilm og dansetrender.",
+        "Tydelig uttrykk. Samme tone, farger og tekststil i hver video, slik at feeden henger sammen.",
+        "Laget for lyd av. Alle videoer har tekst på skjermen, fordi mange scroller uten lyd.",
+      ],
+    },
+    {
+      /*
+       * REN LISTE, UTEN LEDESETNING. Copyen har ingen, og jeg skriver den
+       * ikke. Layouten hopper over tomme avsnitt — se Tjenestelayout.
+       */
+      sporsmal: "Slik fungerer det",
+      svar: "",
+      punkter: [
+        "Plan. Før hver produksjonsdag lager vi et opptaksmanus med ideer og formater. Dere godkjenner det før vi kommer.",
+        "Produksjonsdag. Vi kommer til dere med utstyr og filmer alt på én dag. Dere trenger ikke forberede noe annet enn å være til stede.",
+        `Klipp og publisering. Vi klipper ${tilbud.videoerPerManed} ferdige Reels, tekster dem og publiserer ${tilbud.posterPerUke} ganger i uka på Instagram og Facebook.`,
+        "Filene er deres. Dere får alle videoene i 9:16 og kan bruke dem på TikTok, YouTube Shorts, nettsiden eller i annonser.",
+      ],
+      filmer: [
+        {
+          sti: "/arbeid/bts-baker-brun",
+          format: "9/16",
+          alt: "Stillbilde fra opptak: kamera på rigg over et bord med kaker.",
+          bildetekst: "Baker Brun. Bak kulissene fra en produksjonsdag.",
+          sekunder: 23,
+        },
+        {
+          sti: "/arbeid/bts-anton-sport",
+          format: "9/16",
+          alt: "Stillbilde fra opptak: filmfotograf med kamera på gimbal ute om høsten.",
+          bildetekst: "Anton Sport. Bak kulissene fra en dag på lokasjon.",
+          sekunder: 27,
+        },
+      ],
+      lenker: [
+        {
+          sti: "/blogg/hva-er-en-produksjonsdag",
+          tekst: "Les hva en produksjonsdag er",
+        },
+      ],
+    },
+    {
+      sporsmal: "Én film, flere formater",
+      svar: "Vi filmer med tanke på gjenbruk. Det samme opptaket kan bli en Reel, en kortere versjon til annonser og et stillbilde til feeden. Dere får mer ut av dagen uten å betale for flere dager.",
+      filmer: [
+        {
+          sti: "/arbeid/kjeder-format-16x9",
+          format: "16/9",
+          alt: "Stillbilde fra filmen i 16:9-format: en rett fotografert ovenfra.",
+          bildetekst: "16:9",
+          sekunder: 23,
+        },
+        {
+          sti: "/arbeid/kjeder-format-4x5",
+          format: "4/5",
+          alt: "Stillbilde fra filmen i 4:5-format: en rett fotografert ovenfra.",
+          bildetekst: "4:5",
+          sekunder: 23,
+        },
+        {
+          sti: "/arbeid/kjeder-format-9x16",
+          format: "9/16",
+          alt: "Stillbilde fra filmen i 9:16-format: en rett fotografert ovenfra.",
+          bildetekst: "9:16",
+          sekunder: 23,
+        },
+      ],
+    },
+    {
+      sporsmal: "Riktig lengde for riktig video",
+      svar: "Det finnes ingen fasit for hvor lang en Reel skal være. Lengden avhenger av hva videoen skal gjøre, så vi velger den for hver enkelt video:",
+      etterord:
+        "Uansett lengde bruker vi mest tid på de første sekundene. På bedriftskontoer med 1 000–5 000 følgere sveiper rundt 65 % av seerne videre innen tre sekunder, ifølge den samme analysen. Det er der seeren bestemmer seg for å bli.",
+      punkter: [
+        "Produktvideo og annonser: 6–15 sekunder. Meta anbefaler selv korte videoer, der merkevaren og budskapet kommer i løpet av de første tre sekundene.",
+        "Bak kulissene eller en ansatt som forteller: 30–60 sekunder. Det gir rom for en start som fanger, en historie og en avslutning. I Socialinsiders analyse av 140 000 Reels fra bedrifter nådde Reels på 30–60 sekunder litt flere enn både kortere og lengre videoer. Over to minutter faller rekkevidden tydelig.",
+        "Forklaring eller tips: så lang som poenget krever, men ikke et sekund lenger.",
+      ],
+      kilde: [
+        {
+          tekst:
+            "Meta anbefaler «shorter videos (6–15 seconds)» og at merkevaren og hovedbudskapet vises «within the first 3 seconds».",
+          url: "https://www.facebook.com/business/help/188534925073536",
+        },
+        {
+          tekst:
+            "Rekkevidde etter lengde og andelen som sveiper videre innen tre sekunder er fra Socialinsiders analyse av 140 000 Reels fra bedriftskontoer, januar–juni 2026.",
+          url: "https://www.socialinsider.io/blog/instagram-reels-statistics",
+        },
+      ],
+    },
+    {
+      sporsmal: "Klare for TikTok og YouTube Shorts",
+      svar: "Vi publiserer på Instagram og Facebook. Alle videoene leveres i 9:16, som er formatet TikTok og YouTube Shorts bruker. Dere kan legge ut de samme filene der uten ekstra produksjon.",
+    },
+    {
+      /* REN LISTE, som «Slik fungerer det». Copyen har ingen ledesetning. */
+      sporsmal: "Hva som er inkludert",
+      svar: "",
+      punkter: [
+        "Strategi og opptaksmanus før hver produksjonsdag",
+        "Én produksjonsdag i måneden hos dere",
+        `${tilbud.videoerPerManed} ferdig klippede Reels med tekst`,
+        `Publisering ${tilbud.posterPerUke} ganger i uka på Instagram og Facebook`,
+        "Alle filer i 9:16 til fri bruk på andre kanaler",
+        `Fast pris: ${kr(tilbud.prisPerManed)} kr/mnd, ingen bindingstid og tre måneders oppsigelse`,
+      ],
+    },
+    {
+      sporsmal: "Se hva vi har laget",
+      /*
+       * BRANSJELISTA MANGLER BELEGG FOR TO AV FIRE. Mat og retail er dekket
+       * av den bekreftede kundelista i site.ts — Soul Cake, Baker Brun,
+       * Peppes, Egon, Anton Sport. Eiendom og teknologi står ikke noe sted i
+       * dette repoet, og AGENTS.md er utvetydig: ikke finn på kundenavn.
+       * Derfor står de som en BEKREFT-plassholder, som stopper byggen til
+       * Pål har svart.
+       */
+      svar: "Vi har produsert foto og video for bedrifter innen mat, retail [BEKREFT: kan vi også si eiendom og teknologi? Chats copy oppgir fire bransjer, men eiendom og teknologi er ikke belagt noe sted i repoet] og flere andre bransjer.",
+      lenker: [{ sti: "/vart-arbeid", tekst: "Se kundecasene våre" }],
+    },
+  ],
+  faq: [
+    {
+      sporsmal: "Kan vi legge ut Reels-videoene på TikTok selv?",
+      svar: "Ja. Alle videoene leveres stående i 9:16, som er formatet TikTok bruker. Dere eier filene og kan publisere dem der, på YouTube Shorts eller hvor dere vil.",
+    },
+    {
+      sporsmal: "Hva er forskjellen på en merkevare-Reel og en trendvideo?",
+      svar: "En trendvideo låner en lyd eller et format som alle andre også bruker. En merkevare-Reel bygger på det som er unikt for dere: folkene, produktene og måten dere jobber på. Den varer lenger, og seerne husker hvem den kom fra.",
+    },
+    {
+      sporsmal: "Hvem står foran kamera?",
+      svar: "Det avgjør dere. Mange bruker ansatte, fordi ekte folk gir mer tillit enn skuespillere. Andre filmer bare produkter, lokaler eller prosesser. Vi hjelper dere som ikke er vant til kamera med å bli komfortable.",
+    },
+    {
+      sporsmal: "Må vi komme med ideene selv?",
+      svar: "Nei. Vi lager opptaksmanus før hver produksjonsdag. Dere kommer gjerne med innspill, men dere trenger ikke å gjøre det.",
+    },
+    {
+      sporsmal: "Hvor raskt kommer de første videoene ut?",
+      svar: "Vanligvis innen en uke etter første produksjonsdag. Dere trenger bare å gi oss tilgang til kontoene og godkjenne materialet.",
+    },
+    {
+      sporsmal: "Hvor lang bør en Reel være?",
+      svar: "Det kommer an på hva videoen skal gjøre. Produktvideoer og annonser fungerer best på 6–15 sekunder, som også er det Meta anbefaler. En historie fra bak kulissene trenger gjerne 30–60 sekunder. Over to minutter faller rekkevidden tydelig. Vi velger lengde etter innholdet, ikke etter en fast regel.",
+    },
+  ],
+  pris: null,
+  /*
+   * «FRA ARBEIDET» ER REEL-VEGGEN PÅ DENNE SIDEN. Chat ba om den under
+   * «Merkevarebygging»; rutenettet står lenger nede, der copyen uansett
+   * ender på «Se hva vi har laget». Fire klipp, fire bransjer — sportsbutikk,
+   * spa og hotell, bakeri og elsykkel. Alt-tekstene er de samme som i
+   * reels.ts og arbeid.ts, og ingen kunde navngis i dem.
+   */
+  arbeid: [
+    {
+      type: "video",
+      sti: "/reels/antonsport",
+      alt: "Vertikalt klipp fra sportsbutikk",
+    },
+    {
+      type: "video",
+      sti: "/reels/thewell",
+      alt: "Vertikalt klipp fra behandling med leire på mosaikkflis",
+    },
+    {
+      type: "video",
+      sti: "/reels/soulcake",
+      alt: "Vertikalt klipp fra bakeri",
+    },
+    { type: "video", sti: "/reels/gekko", alt: "Vertikalt klipp av elsykkel" },
   ],
 };
 

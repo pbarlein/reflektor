@@ -7,6 +7,8 @@ import {
   videoproduksjon,
   employerBranding,
   event,
+  kjeder,
+  reelsproduksjon,
 } from "@/content/tjenester";
 import { basisUrl, tillatIndeksering } from "@/lib/miljo";
 
@@ -51,12 +53,20 @@ function lag(): string {
    * Stiene står her fordi Tjenesteside ikke har noe slug-felt — rutene er
    * mapper under src/app/, og adressene er låst av Google Ads (site.ts).
    */
+  /*
+   * SJU SIDER, IKKE FEM. /kjeder manglet — den ble bygget etter at denne
+   * lista ble skrevet, og ingen la den til. /reels-produksjon kom
+   * 30.09.2026. Begge er kommersielle sider på linje med de fem andre, og
+   * en fil som skal si hvilke sider som finnes, må si alle sammen.
+   */
   const tjenester: [string, typeof innholdsproduksjon][] = [
     ["/innholdsproduksjon", innholdsproduksjon],
+    ["/reels-produksjon", reelsproduksjon],
     ["/reklamefilm", reklamefilm],
     ["/videoproduksjon-i-oslo", videoproduksjon],
     ["/employer-branding-video-oslo", employerBranding],
     ["/eventfotograf-eventvideo", event],
+    ["/kjeder", kjeder],
   ];
 
   const linjer: string[] = [

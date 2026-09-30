@@ -109,6 +109,28 @@ export function Referansefilmer({
     "9/16": "aspect-[9/16]",
   };
 
+  /*
+    SPALTEBREDDENE ER SIDEFORHOLDENE, REGNET UT — ikke skrevet.
+
+    Her sto `sm:grid-cols-[1.778fr_0.8fr_0.5625fr]` som en fast klasse. De
+    tre tallene er 16:9, 4:5 og 9:16, og de er riktige for formatraden på
+    /kjeder, som har nøyaktig de tre filmene i nøyaktig den rekkefølgen.
+
+    Men raden brukes av ENHVER seksjon med mer enn én film, og da holdt den
+    ikke: to stående bak-kulissene-filmer på /reels-produksjon fikk 1,778fr
+    og 0,8fr — den første ble mer enn dobbelt så bred som den andre, av to
+    filmer med samme sideforhold. Funnet i nettleseren 30.09.2026.
+
+    Nå regnes malen ut av filmenes egne formater. For /kjeder gir det
+    nøyaktig de samme tre tallene som sto der før, så den raden er uendret.
+  */
+  const forhold: Record<Referansefilm["format"], number> = {
+    "16/9": 1.778,
+    "4/5": 0.8,
+    "9/16": 0.5625,
+  };
+  const blandedeFormater = new Set(filmer.map((f) => f.format)).size > 1;
+
   const film = (f: Referansefilm) => (
     <figure
       key={f.sti}
@@ -116,22 +138,29 @@ export function Referansefilmer({
     >
       <div
         /*
-          I RADEN PÅ TELEFON STYRES RAMMENE AV HØYDEN, ikke av bredden.
+          I EN BLANDET RAD PÅ TELEFON STYRES RAMMENE AV HØYDEN, ikke av
+          bredden.
 
-          Der ligger de to stående filmene ved siden av hverandre i to like
-          brede spalter. Med breddestyrte rammer blir 4:5-en 25 % lavere enn
-          9:16-en, og bildeteksten «4:5» havner og henger i løse lufta ved
-          siden av et bilde som fortsetter nedenfor den. En fast høyde gir
-          dem samme underkant og bildetekstene samme linje.
+          Der ligger to stående filmer med ULIKT format ved siden av
+          hverandre i to like brede spalter. Med breddestyrte rammer blir
+          4:5-en 25 % lavere enn 9:16-en, og bildeteksten «4:5» henger i løse
+          lufta ved siden av et bilde som fortsetter nedenfor den. En fast
+          høyde gir dem samme underkant og bildetekstene samme linje.
 
           13 rem er valgt av bredden, ikke av høyden: 9:16 blir 117 px og
           4:5 blir 166 px, og begge får plass i en spalte på 169 px på en
           390 px skjerm.
 
-          Fra sm overtar spaltebreddene igjen — se kommentaren under.
+          HAR ALLE FILMENE SAMME FORMAT, skal de derimot fylle spalten sin.
+          Da er høydene like uansett, og den faste høyden ville bare gjort
+          dem unødvendig små.
+
+          Fra sm overtar spaltebreddene igjen — se kommentaren over.
         */
         className={`relative overflow-hidden rounded-medie bg-flate-dempet ${ramme[f.format]} ${
-          rad && f.format !== "16/9" ? "h-52 w-auto sm:h-auto sm:w-full" : ""
+          rad && blandedeFormater && f.format !== "16/9"
+            ? "h-52 w-auto sm:h-auto sm:w-full"
+            : ""
         }`}
       >
         {f.lyd ? (
@@ -163,26 +192,35 @@ export function Referansefilmer({
   );
 
   /*
-    FORMATRADEN: tre fasonger av samme film, side om side.
+    RADEN: flere filmer side om side, like høye.
 
-    SPALTEBREDDENE ER SIDEFORHOLDENE. 1,778fr / 0,8fr / 0,5625fr er 16:9,
-    4:5 og 9:16 skrevet som tall. Da blir de tre rammene nøyaktig like høye
-    uten at høyden er satt noe sted, og raden fyller spalten helt ut. Med
-    like brede spalter ville den stående filmen blitt dobbelt så høy som den
-    liggende, og sammenligningen — som er hele poenget — hadde blitt umulig
-    å lese.
-
-    PÅ TELEFON tar den liggende hele bredden, og de to andre deler raden
-    under. Tre i bredden på 375 px gir en 16:9-ramme på 95 px høyde, og da
-    ser man ikke hva filmen viser.
+    PÅ TELEFON deler to filmer raden. Er de tre, tar den første hele
+    bredden og de to andre deler raden under — tre i bredden på 375 px gir
+    en 16:9-ramme på 95 px høyde, og da ser man ikke hva filmen viser.
   */
   if (rad) {
     return (
-      <div className="mt-6 grid grid-cols-2 items-start gap-3 sm:grid-cols-[1.778fr_0.8fr_0.5625fr] sm:gap-4">
+      <div
+        /*
+          MALEN SETTES SOM EN CSS-VARIABEL og leses av en arbitrær
+          Tailwind-klasse ved sm. En inline `gridTemplateColumns` kunne ikke
+          brukts: den gjelder alle bredder, og på telefon skal raden være to
+          like spalter. Variabelen lar verdien være regnet ut i JavaScript og
+          likevel bare gjelde fra sm og opp.
+        */
+        className="mt-6 grid grid-cols-2 items-start gap-3 sm:grid-cols-[var(--spalter)] sm:gap-4"
+        style={{
+          ["--spalter" as string]: filmer
+            .map((f) => `${forhold[f.format]}fr`)
+            .join(" "),
+        }}
+      >
         {filmer.map((f, i) => (
           <div
             key={f.sti}
-            className={i === 0 ? "col-span-2 sm:col-span-1" : ""}
+            className={
+              filmer.length > 2 && i === 0 ? "col-span-2 sm:col-span-1" : ""
+            }
           >
             {film(f)}
           </div>
