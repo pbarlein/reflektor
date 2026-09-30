@@ -692,3 +692,80 @@ Syv filmer på til sammen 30 MB ligger på siden. Målt i nettleser laster
 `/kjeder` **1,52 MB** ved åpning og **1,82 MB** etter å ha rullet gjennom
 hele siden — **null byte video**. Alle syv har `preload="none"` og
 plakatbilde; filmene lastes først når noen trykker play.
+
+
+## Ingen stillbilder hentet fra video (regel, 30.09.2026)
+
+Pål, ordrett: «gå igjennom alle bilder og videoer og sørg for at eksemplene
+passer med hva som står på siden, og at du ikke tar screen shots fra
+videoer.» Utvidet samme dag til å gjelde **alle blogginnlegg og
+landingssider**, men ikke forsiden.
+
+Fire bilder på nettstedet var enkeltbilder klippet ut av film med ffmpeg og
+brukt som om de var fotografi:
+
+| Fil | Hvor den lå | Hentet fra |
+|---|---|---|
+| `produksjonsdag-rigg-1600.jpg` | toppbilde på `/reels-produksjon` **og** på `/blogg/hva-er-en-produksjonsdag` | `bts/baker.mov`, 4,5 s |
+| `produksjonsdag-skjerm-1600.jpg` | medieblokk i `/blogg/hva-er-en-produksjonsdag` | `bts/baker.mov`, 12,5 s |
+| `fotograf-pa-jobb-1600.jpg` | toppbilde på `/blogg/some-byra-frilanser-eller-ansatt` | `bts/baker.mov`, 14,5 s |
+| `ogsa-reklamefilm-1280.jpg` | kortet «Også fra Reflektor» på forsiden | `kjeder-peppes.mp4`, 7 s |
+
+Alle fire er 16:9-utsnitt i 1600×899 eller 1280×720 — formatet avslører dem.
+De tre første er slettet. Den fjerde står igjen fordi forsiden er holdt
+utenfor oppdraget; den bør byttes når Pål åpner for det.
+
+**Et plakatbilde er ikke det samme.** Filene som ligger ved siden av en
+`.mp4` og bare vises til noen trykker play, må være uttrekk fra nettopp den
+filmen — ellers viser plakaten et annet motiv enn videoen. Regelen gjelder
+bilder som opptrer som fotografi.
+
+### Hvorfor feilen oppsto
+
+Bildearkivet har rundt 200 kundemapper med ekte fotografi, men **nesten
+ingen fotografier av Reflektor selv på jobb**. Bak-kulissene-materialet er
+film: `bts/baker.mov`, `bts/anton.mov`, og i Dropbox
+`Banervideo/…/til redigering/` ligger `Magasin+ BTS.mov`, `FastCandy_BTS.mov`
+og `OBC_BTS.mov`. Det eneste ekte opptaksfotografiet som finnes er
+`popup-arbeid-1800.jpg` og det stående søskenbildet `dag4-vegg.jpg`, begge
+fra den samme popup-dagen.
+
+Da tre sider trengte «et bilde av en produksjonsdag», var svaret å fryse
+filmen. Riktig svar er å **vise filmen**. Trengs det et stillbilde, må det
+fotograferes — det er verdt en halvtime på neste produksjonsdag.
+
+### Hva de fire ble byttet til
+
+- `/reels-produksjon` fikk `popup-arbeid-1800.jpg`: en kunde som blir filmet
+  på lokasjon, med fotografen i bildet. Det er nøyaktig det siden selger.
+- `/blogg/hva-er-innholdsproduksjon` mistet det bildet og fikk
+  `spa-opphold-1080.jpg`, et ferdig produsert kundebilde.
+- `/blogg/hva-er-en-produksjonsdag` fikk `kjokken-servering-1080.jpg`: et
+  kjøkken midt i arbeidet, altså der en produksjonsdag foregår. Artikkelen
+  har to ekte bak-kulissene-filmer lenger nede.
+- `/blogg/some-byra-frilanser-eller-ansatt` fikk `kjokken-kokk-1080.jpg`: én
+  person som utøver faget sitt alene, som er nettopp spørsmålet artikkelen
+  stiller. `fokus: "center top"` — midtstilt beskjæring kuttet hodet, målt i
+  nettleseren.
+- Medieblokken med skjermbildet er **fjernet**, ikke byttet. Vi har ikke noe
+  ekte fotografi av en skjerm på settet, og et annet motiv ville gjort
+  bildeteksten usann.
+
+De tre nye filene er hentet fra
+`Marketing_Reflektor/foto & video til web/foto/portfolio/` i Dropbox, som er
+Reflektors egen utvalgte portefølje. Alle tre er 1080×1080 og uten synlig
+merkevare fra kunder som ikke står på logolista.
+
+### Fra arbeidet på /reels-produksjon
+
+Rutenettet hadde tre klipp og ett stillbilde fra en byggeplass. Pål: «dette
+er et elendig bilde å bruke her», og «eksempelet over burde være tre stående
+ved siden av hverandre og autoplay».
+
+Nå står tre stående klipp med autospill: Anton Sport, Egon og Soul Cake —
+Påls egne forslag. `Arbeidsrutenett` regner antall spalter av antall medier,
+så tre klipp står tre i bredden i alle bredder. Målt: 357×635 px på 1440, og
+106×188 px på 390, alle tre med `paused === false`.
+
+Eiendom mister sin flate der, men bransjen står nevnt med navn i seksjonen
+rett over — Selvaag Eiendom, godkjent av Pål samme dag.

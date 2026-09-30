@@ -32,8 +32,22 @@ import { useSpillNarSynlig } from "@/lib/videosynlighet";
 export function Arbeidsrutenett({ medier }: { medier: Arbeidsmedie[] }) {
   const fest = useSpillNarSynlig();
 
+  /*
+    ANTALL SPALTER FØLGER ANTALL MEDIER. Klassen var låst til
+    `grid-cols-2 lg:grid-cols-4`, som er riktig for fire flater og feil for
+    tre: den siste ville fått en tom rute ved siden av seg på telefon og en
+    hel tom spalte på skjerm.
+
+    Tre klipp står derfor tre i bredden i alle bredder. Bestilt av Pål
+    30.09.2026 for /reels-produksjon: «tre stående ved siden av hverandre og
+    autoplay.» På en 390 px skjerm blir hver ramme rundt 112 px bred og
+    200 px høy — smalt, men nok til å se bevegelsen, som er hele poenget.
+  */
+  const spalter =
+    medier.length === 3 ? "grid-cols-3" : "grid-cols-2 lg:grid-cols-4";
+
   return (
-    <ul className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+    <ul className={`mt-8 grid gap-3 sm:gap-4 ${spalter}`}>
       {medier.map((m) => (
         <li
           key={m.sti}
@@ -53,7 +67,11 @@ export function Arbeidsrutenett({ medier }: { medier: Arbeidsmedie[] }) {
               src={m.sti}
               alt={m.alt}
               fill
-              sizes="(max-width: 1024px) 50vw, 24vw"
+              sizes={
+                medier.length === 3
+                  ? "(max-width: 768px) 33vw, 22rem"
+                  : "(max-width: 1024px) 50vw, 24vw"
+              }
               className="object-cover"
             />
           ) : (

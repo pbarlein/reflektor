@@ -967,13 +967,20 @@ export const reelsproduksjon: Tjenesteside = {
   prismodell: "abonnement",
   svar: `Vi produserer korte, stående videoer for bedrifter i hele Norge til fast pris. Én produksjonsdag i måneden hos dere gir ${tilbud.videoerPerManed} ferdige Reels. Vi publiserer dem på Instagram og Facebook. Dere får filene i 9:16, og de er klare for TikTok og YouTube Shorts hvis dere vil bruke dem der også.`,
   /*
-   * TOPPBILDET er fra en av våre egne produksjonsdager. Et stillbilde av en
-   * stående video ville vært en selvmotsigelse i en 21:9-ramme; et bilde av
-   * kameraet som lager dem er det ikke.
+   * TOPPBILDET VAR ET UTTREKK FRA FILM. Byttet 30.09.2026 etter Påls
+   * beskjed: «sørg for at ... du ikke tar screen shots fra videoer.» Han
+   * har rett, og feilen var min: arkivet har nesten ingen FOTOGRAFIER av
+   * oss selv på jobb — bak-kulissene-materialet er film — og i stedet for
+   * å si det, klippet jeg ut enkeltbilder som så ut som nettopp det de var.
+   *
+   * ERSTATNINGEN ER DET ENESTE EKTE OPPTAKSBILDET VI HAR: en kunde som
+   * blir filmet på lokasjon, med fotografen i bildet. Det er nøyaktig det
+   * denne siden selger — vi kommer ut og filmer — og derfor er det denne
+   * siden som får det, og ikke bloggartikkelen det sto på før.
    */
   bilde: {
-    fil: "produksjonsdag-rigg-1600",
-    alt: "Kamera montert på rigg over et bord under en produksjonsdag",
+    fil: "popup-arbeid-1800",
+    alt: "En kunde blir filmet bak disken i en popup-butikk",
   },
   avgrensning: [
     "Denne siden handler om formatet: kort, stående video produsert løpende. Vil dere se hele leveransen med strategi, publisering og vilkår beskrevet samlet, står den på ",
@@ -1165,50 +1172,42 @@ export const reelsproduksjon: Tjenesteside = {
   /*
    * «FRA ARBEIDET» ER REEL-VEGGEN PÅ DENNE SIDEN. Chat ba om den under
    * «Merkevarebygging»; rutenettet står lenger nede, der copyen uansett
-   * ender på «Se hva vi har laget». Fire klipp, fire bransjer — sportsbutikk,
-   * spa og hotell, bakeri og elsykkel. Alt-tekstene er de samme som i
-   * reels.ts og arbeid.ts, og ingen kunde navngis i dem.
+   * ender på «Se hva vi har laget».
+   *
+   * TRE STÅENDE KLIPP, IKKE FIRE FLATER. Bestilt av Pål 30.09.2026:
+   * «eksempelet over burde være tre stående ved siden av hverandre og
+   * autoplay.» Her sto tre klipp og ett stillbilde fra en byggeplass, og
+   * bildet var feil på to måter: det var en flate uten bevegelse på en side
+   * om kort video, og motivet lignet et eiendomsprospekt mer enn innhold
+   * til en feed. Påls dom: «dette er et elendig bilde å bruke her.»
+   *
+   * DE TRE ER PÅLS EGNE FORSLAG — Anton Sport, Egon og Soul Cake. De
+   * dekker sportsbutikk, restaurantkjede og bakeri, alle tre er ferdige
+   * eksporter fra kundemappen, og alle tre er 9:16 med autospill. Ingen
+   * kunde navngis i alt-teksten, som i resten av rutenettene.
+   *
+   * EIENDOM MISTER SIN FLATE HER, og det er greit: bransjen står nevnt med
+   * navn i seksjonen rett over, og et navn som kan etterprøves bærer mer
+   * enn et bilde som ikke overbeviser.
    */
   arbeid: [
     {
       type: "video",
       sti: "/reels/antonsport",
-      alt: "Vertikalt klipp fra sportsbutikk",
+      alt: "Vertikalt klipp av en skiløper i bakken",
     },
     {
       type: "video",
-      sti: "/reels/thewell",
-      alt: "Vertikalt klipp fra behandling med leire på mosaikkflis",
+      sti: "/reels/egon",
+      alt: "Vertikalt klipp av delte retter på et restaurantbord",
     },
     {
       type: "video",
       sti: "/reels/soulcake",
-      alt: "Vertikalt klipp fra bakeri",
-    },
-    /*
-     * EIENDOMSBILDET ER LAGT TIL 30.09.2026, etter at Pål bekreftet bransjen
-     * og ba meg finne et eksempel i kundemappen. Det erstattet et klipp av
-     * en elsykkel: de tre andre dekket sportsbutikk, spa og bakeri, og
-     * ingenting på siden viste eiendom — som er bransjen setningen over
-     * nettopp hadde fått lov til å nevne.
-     *
-     * VALGT AV TI KANDIDATER, ikke tatt i blinde. Mappa er mest fasader,
-     * interiører og dronebilder. Dette er det eneste med mennesker i arbeid
-     * og bevegelse i bildet, og det eneste som leser som produksjon og ikke
-     * som et eiendomsprospekt. To kandidater ble valgt bort fordi kundens
-     * navn står på fasaden.
-     *
-     * Beskåret til 9:16 fra et liggende originalbilde, sentrert på personen
-     * i midten. Alt-teksten navngir ingen, som i resten av rutenettet.
-     */
-    {
-      type: "foto",
-      sti: "/arbeid/eiendom-byggeplass.jpg",
-      alt: "Håndverkere i arbeidstøy på en byggeplass under rehabilitering",
+      alt: "Vertikalt klipp av to gjester i et bakeri",
     },
   ],
 };
-
 /* ────────────────────────────────────────────────────────────────────
    /kjeder — kjedeerfaringen, skrevet med ordene en kjede søker på
    ──────────────────────────────────────────────────────────────────── */

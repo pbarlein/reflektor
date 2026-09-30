@@ -3,6 +3,22 @@ import { kr, tilbud } from "./site";
 /**
  * Bloggartiklene, migrert fra Squarespace 21.09.2026.
  *
+ * INGEN STILLBILDER HENTET FRA VIDEO. Bestilt av Pål 30.09.2026: «sørg for
+ * at ... du ikke tar screen shots fra videoer.» Et enkeltbilde klippet ut
+ * av et filmklipp ser ut som det det er — uskarpt i bevegelse, tilfeldig i
+ * komposisjonen, og med et utsnitt filmfotografen aldri valgte. Fire slike
+ * lå på nettstedet, alle laget av meg, og alle er nå borte.
+ *
+ * ET PLAKATBILDE ER NOE ANNET. Filene som ligger ved siden av en `.mp4` og
+ * bare vises til noen trykker play, er fortsatt uttrekk fra den samme
+ * filmen — det MÅ de være, ellers viser plakaten et annet motiv enn
+ * videoen. Regelen gjelder bilder som opptrer som fotografi.
+ *
+ * ARKIVET HAR NESTEN INGEN FOTOGRAFIER AV OSS SELV PÅ JOBB. Bak-kulissene-
+ * materialet er film. Det er årsaken til at uttrekkene oppsto, og det er
+ * verdt å vite neste gang en side trenger et bilde av en produksjonsdag:
+ * svaret er å vise filmen, ikke å fryse den.
+ *
  * ORDRETT. Teksten er Reflektors egen publiserte copy, hentet fra
  * www.reflektor.no og flyttet uten en eneste endring i formuleringene.
  * Regel 3 i AGENTS.md: bloggen beholdes for lenkeverdien — ~481
@@ -851,9 +867,16 @@ export const artikler: Artikkel[] = [
   },
   {
     slug: "hva-er-innholdsproduksjon",
+    /*
+     * BILDET ER BYTTET 30.09.2026. Her lå `popup-arbeid-1800`, det eneste
+     * ekte fotografiet vi har av et opptak i gang. Det flyttet til
+     * /reels-produksjon, som er siden der «vi kommer ut og filmer» er selve
+     * salgsargumentet. Denne artikkelen forklarer hva innholdsproduksjon
+     * ER, og et ferdig produsert bilde svarer på det like godt.
+     */
     bilde: {
-      fil: "popup-arbeid-1800",
-      alt: "To personer bak disken i en popup-butikk",
+      fil: "spa-opphold-1080",
+      alt: "Tre gjester i badekåper med champagne på et spa",
     },
     tittel: "Hva er innholdsproduksjon?",
     beskrivelse:
@@ -2680,9 +2703,18 @@ export const artikler: Artikkel[] = [
    */
   {
     slug: "hva-er-en-produksjonsdag",
+    /*
+     * BILDET VAR ET UTTREKK FRA FILM, byttet 30.09.2026. Se kommentaren
+     * øverst i fila om hvorfor ingen stillbilder skal hentes fra video.
+     *
+     * Erstatningen er et ekte fotografi fra et oppdrag: et kjøkken midt i
+     * arbeidet. Det er nettopp der en produksjonsdag foregår — hos kunden,
+     * mens folk jobber — og artikkelen har to ekte bak-kulissene-filmer
+     * lenger nede som viser selve riggen.
+     */
     bilde: {
-      fil: "produksjonsdag-rigg-1600",
-      alt: "Kamera montert på rigg over et bord med bakverk under en produksjonsdag",
+      fil: "kjokken-servering-1080",
+      alt: "Frityrstekt kylling løftes opp bak disken på et spisested",
     },
     tittel: "Hva er en produksjonsdag?",
     beskrivelse:
@@ -2765,19 +2797,13 @@ export const artikler: Artikkel[] = [
           "Stillbilder tas ved behov, ikke som en fast leveranse. Kapasiteten deles med video, og derfor er videotallet et produksjonsmål og ikke en garanti.",
         ],
       },
-      {
-        type: "medier",
-        elementer: [
-          {
-            slag: "foto",
-            sti: "/arbeid/produksjonsdag-skjerm-1600",
-            format: "16/9",
-            alt: "Skjerm på settet som viser bildet som akkurat er tatt",
-          },
-        ],
-        bildetekst:
-          "Bildet går rett på skjerm mens det tas. Da ser alle det samme, og feil oppdages på settet og ikke i etterarbeidet.",
-      },
+      /*
+       * HER LÅ ET BILDE AV EN SKJERM PÅ SETTET, fjernet 30.09.2026. Det var
+       * et uttrekk fra film, og vi har ikke noe ekte fotografi av det samme.
+       * Å bytte det mot et bilde som viser noe annet ville gjort
+       * bildeteksten usann, så blokken er tatt ut i stedet. Artikkelen har
+       * fortsatt to ekte bak-kulissene-filmer fra produksjonsdager.
+       */
       {
         type: "overskrift",
         niva: 2,
@@ -2885,9 +2911,25 @@ export const artikler: Artikkel[] = [
    */
   {
     slug: "some-byra-frilanser-eller-ansatt",
+    /*
+     * BILDET VAR ET UTTREKK FRA FILM, byttet 30.09.2026.
+     *
+     * Erstatningen er valgt etter hva artikkelen handler om: én person som
+     * utøver faget sitt alene. Spørsmålet i teksten er hvem som skal gjøre
+     * jobben — en ansatt, en frilanser eller et byrå — og et bilde av én
+     * håndverker i arbeid stiller det spørsmålet uten å svare på det.
+     */
     bilde: {
-      fil: "fotograf-pa-jobb-1600",
-      alt: "Fotograf som kontrollerer bildet på kameraet under et opptak",
+      fil: "kjokken-kokk-1080",
+      alt: "Kokk som anretter en rett i et mørkt kjøkken",
+      /*
+        FOKUS OVER MIDTEN. Toppbildet er en 2,6:1-stripe, og et kvadratisk
+        bilde beskåret i midten kuttet hodet av kokken — målt i nettleseren
+        30.09.2026. Ved 20 % lå haken så vidt innenfor overkanten, så
+        ansiktet ligger høyere i motivet enn antatt. Toppjustert viser
+        stripen de øverste 38 % — hode, armer og anretningen.
+      */
+      fokus: "center top",
     },
     tittel: "SoMe-byrå, frilanser eller ansatt?",
     beskrivelse:
