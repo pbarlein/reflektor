@@ -3810,6 +3810,19 @@ export const artikler: Artikkel[] = [
         lenker: [{ frase: "løpende samarbeidet", sti: "/" }],
       },
       {
+        /*
+         * RETAIL24 SOM ABONNEMENTSKUNDE ER BEKREFTET AV PÅL 30.09.2026.
+         *
+         * Spørsmålet ble stilt fordi AGENTS.md er kategorisk: produksjons-
+         * kunder navngis aldri som SoMe-abonnenter. Retail24 står på
+         * kundelista to steder på nettstedet uten at det står HVA de er
+         * kunde på, og copyen her sier det rett ut. Da må noen svare, og
+         * svaret var «det stemmer».
+         *
+         * Dette er den eneste kunden på nettstedet som er navngitt som
+         * abonnent. Skal flere navngis slik, må hver enkelt bekreftes på
+         * samme måte.
+         */
         type: "avsnitt",
         tekst:
           "Eksempel: Retail24 i Sandefjord. Retail24 er abonnementskunde hos oss. I august 2026 brukte de månedens produksjonsdag på et arrangement i Sandefjord, og vi filmet og fotograferte hele kvelden. Leveransen ble én eventvideo, åtte intervjuer og rundt 190 ferdig redigerte bilder.",
