@@ -44,9 +44,19 @@ er skrevet for den nye siden i september 2026:
 
 ## 2 · De fire tiltakene, sett fra koden
 
-### Tiltak 1 — Reels- og TikTok-side. Enig, og det er det største hullet.
+**Status 30.09.2026, etter at copyen kom:** tiltak 1 og 2 er implementert.
+`/reels-produksjon` er bygget og lenket, og pristabellen for 2026 står i
+«Hva koster et SoMe-byrå?» med seks kilder og `dateModified`. Tiltak 3 og 4
+står som beskrevet under.
 
-Ingenting dekker det i dag. Siden kan bygges så snart copyen finnes.
+### Tiltak 1 — Reels- og TikTok-side. Utført 30.09.2026.
+
+Siden ligger på `/reels-produksjon` med åtte seksjoner, seks FAQ-spørsmål og
+tre kilder. Prisen er abonnementsprisen, ikke en egen pris — svaret på det
+åpne spørsmålet under. Eiendom og teknologi er bekreftet som bransjer, og
+Selvaag Eiendom står med navn.
+
+Det som sto her før copyen kom:
 
 **To ting du bør vite før du skriver den:**
 
@@ -66,7 +76,14 @@ den samme?
 Media er klart: reel-veggen, de tre formatene av samme film, og to
 bak-kulissene-filmer fra produksjonsdager.
 
-### Tiltak 2 — «Hva koster et SoMe-byrå?». Enig, og den er raskest.
+### Tiltak 2 — «Hva koster et SoMe-byrå?». Utført 30.09.2026.
+
+Pristabellen med fem nivåer står i artikkelen, med seks kilder, `nofollow`
+på de fem konkurrentene og `dateModified: 2026-09-30`. Alle seks prisene er
+kontrollert mot kildesidene samme dag — ingen avvik fra copyen. Tabellen
+stables til kort på telefon; den var 548 px bred i en spalte på 342 px.
+
+Det som sto her før copyen kom:
 
 Artikkelen finnes (13.08.2026) og oppgir Byråmatch som kilde, men har ingen
 pristabell. Vår egen bloggjennomgang landet uavhengig på det samme: dette er

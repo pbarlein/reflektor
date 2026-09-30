@@ -1121,12 +1121,17 @@ export const reelsproduksjon: Tjenesteside = {
        * blant annet Selvaag Eiendom på abonnementet.» Bildet nederst i
        * `arbeid` er hentet fra nettopp den kundemappen.
        *
-       * NAVNET STÅR IKKE PÅ SIDEN. Selvaag er ikke ført opp i `kundelogoer`,
-       * og den lista er det eneste grunnlaget for å navngi noen. Å nevne en
-       * bransje krever ikke et navn; å skrive navnet krever at Pål godkjenner
-       * nettopp det navnet. Spørsmålet er stilt.
+       * NAVNET ER GODKJENT SAMME DAG. Spørsmålet ble stilt fordi en bransje
+       * kan nevnes uten navn, mens et navn krever at Pål godkjenner nettopp
+       * det navnet. Svaret var «Ja, selvaag eiendom skal stå med navn», og
+       * skrivemåten under er hans egen.
+       *
+       * ETT NAVN, IKKE HELE LISTA. Kundelista står allerede to steder på
+       * nettstedet, og den hører hjemme der. Her er poenget at eiendom ikke
+       * er en påstand: ett navn som kan etterprøves gjør mer for troverdig-
+       * heten enn elleve som leseren må ta på tro.
        */
-      svar: "Vi har produsert foto og video for bedrifter innen mat, eiendom, retail og teknologi.",
+      svar: "Vi har produsert foto og video for bedrifter innen mat, eiendom, retail og teknologi — blant annet Selvaag Eiendom.",
       lenker: [{ sti: "/vart-arbeid", tekst: "Se kundecasene våre" }],
     },
   ],

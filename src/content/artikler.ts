@@ -112,7 +112,16 @@ export type Blokk =
    * De migrerte Squarespace-artiklene har ingen av disse. Det er en av
    * grunnene til at de rangerer på ordbokord og ikke på kjøpsintensjon.
    */
-  | { type: "kilde"; tekst: string; url: string }
+  /**
+   * `nofollow` LAGT TIL 30.09.2026, da prisartikkelen fikk lenker til seks
+   * konkurrenter. En vanlig lenke er en anbefaling og gir lenkekraft
+   * videre; det er riktig for en offentlig kilde som SSB eller Skatteetaten,
+   * og feil for et byrå vi konkurrerer med om de samme søkene.
+   *
+   * Byråmatch er unntaket blant sammenligningstjenestene: Reflektor er selv
+   * oppført der, så den lenken er gjensidig og skal være vanlig.
+   */
+  | { type: "kilde"; tekst: string; url: string; nofollow?: boolean }
   /** Tabell. Sammenligningstabeller er blant de mest siterte formatene. */
   | { type: "tabell"; kolonner: string[]; rader: string[][] }
   /**
@@ -160,6 +169,23 @@ export type Artikkel = {
   beskrivelse: string;
   /** ISO-dato fra Squarespace. Ikke pyntet. */
   publisert: string;
+  /**
+   * ISO-dato for siste reelle innholdsoppdatering. Utelates når det ikke
+   * har skjedd noen.
+   *
+   * LAGT TIL 30.09.2026, da prisartikkelen fikk en pristabell for 2026.
+   *
+   * DEN ER IKKE PYNT, OG DEN SKAL IKKE BLI DET. Ferskhet er en
+   * siteringsfaktor — 83 % av AI-siteringer på kommersielle søk går til
+   * sider oppdatert siste tolv måneder — og nettopp derfor er fristelsen
+   * til å flytte datoen uten å endre noe reell. Samme regel som for
+   * `publisert`: en dato vi flytter for å se ferskere ut er en usann
+   * påstand. Sett den bare når innholdet faktisk er endret.
+   *
+   * Den vises på siden OG som `dateModified` i markeringen. Google
+   * krever at de to stemmer overens.
+   */
+  oppdatert?: string;
   blokker: Blokk[];
   /** Tjenestesiden artikkelen naturlig leder til. */
   lesVidere: { sti: string; tekst: string }[];
@@ -233,6 +259,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Hva koster det å sette bort sosiale medier? Hva prisen består av, sju spørsmål du bør stille før du signerer, og hva vi selv tar: 30 000 kr/mnd.",
     publisert: "2026-08-13",
+    oppdatert: "2026-09-30",
     blokker: [
       {
         type: "avsnitt",
@@ -254,20 +281,164 @@ export const artikler: Artikkel[] = [
         tekst:
           "Derfor sier månedsprisen alene lite. To tilbud på 15 000 kr i måneden kan inneholde helt ulikt arbeid.",
       },
+      /*
+       * PRISTABELLEN, lagt inn 30.09.2026. Copyen er levert ferdig av
+       * Claude Chat og erstatter to avsnitt som bare hadde Byråmatch.
+       *
+       * ALLE SEKS PRISENE ER KONTROLLERT MOT BYRÅENES EGNE SIDER samme dag,
+       * ikke tatt på tro:
+       *
+       *   Nettpakke    Mini 4 999 (1 post/uke, 1 plattform), Standard 9 999
+       *                (2 poster/uke, 2 plattformer), Pluss fra 13 999.
+       *                «899,- for innholdsproduksjon / mnd» står som eget
+       *                tillegg — derfor «koster ekstra» i tabellen.
+       *   Elevera      «3 000–5 000 kr/mnd: Strategi og rådgivning. Du lager
+       *                og poster innholdet selv.» Egen pris fra 7 900.
+       *   Ramora       «Skreddersydde retainere: fra omtrent 6 000 til
+       *                60 000 kroner per måned. Faste pakker: fra 14 500.»
+       *   Snille Tips  Pakken «Dominans» 59 990 kr/mnd, med «Full SoMe-drift
+       *                på alle plattformer» som én av mange poster.
+       *   Serotonic    «alt fra 10 000 til godt over 150 000 kroner i
+       *                måneden».
+       *   Byråmatch    Tallene sto allerede i artikkelen fra før.
+       *
+       * INGEN AV DEM ER RUNDET ELLER OMSKREVET. Der Chats copy og kilden
+       * spriker, ville kilden vunnet — det gjorde de ikke her.
+       *
+       * LENKENE LIGGER SOM KILDEBLOKKER UNDER TABELLEN, ikke inne i
+       * cellene. Tabellceller er rene strenger i denne modellen, og en
+       * lenke i en celle ville krevd en egen celletype for fem lenker.
+       * Kildeblokk under er dessuten mønsteret videoprisguiden allerede
+       * bruker, og det holder tabellen lesbar på telefon.
+       *
+       * FEM AV SEKS HAR `nofollow`. Byråmatch er unntaket: Reflektor er
+       * oppført der, så den lenken er gjensidig.
+       */
       {
         type: "overskrift",
         niva: 2,
-        tekst: "Hva koster det i det norske markedet?",
+        tekst: "Hva koster det i det norske markedet i 2026?",
       },
       {
         type: "avsnitt",
         tekst:
-          "Sammenligningstjenesten Byråmatch oppgir at norske byråer viser eksempler fra rundt 6 000 kroner i måneden til 30 000 kroner for mer omfattende løsninger med profesjonell innholdsproduksjon. Du finner oversikten deres over SoMe-byråer i Norge der flere leverandører står ved siden av hverandre. Vi er selv oppført der.",
+          "Sammenligningstjenesten Byråmatch oppgir at norske byråer har priser fra rundt 6 000 kr i måneden til 30 000 kr for mer omfattende løsninger med profesjonell innholdsproduksjon. Vi er selv oppført der.",
       },
       {
         type: "avsnitt",
         tekst:
-          "Spennet forklares nesten alltid av én ting: om noen faktisk kommer ut og filmer, og hvor ofte.",
+          "Vi har gått gjennom prisene som norske byråer oppgir åpent på nettsidene sine. Spennet er stort, men det følger et tydelig mønster. Prisen stiger med hvor mye av jobben byrået gjør selv, og særlig med om noen kommer ut og filmer.",
+      },
+      {
+        type: "tabell",
+        kolonner: [
+          "Nivå",
+          "Typisk pris per måned",
+          "Hva du vanligvis får",
+          "Eksempler med åpne priser",
+        ],
+        rader: [
+          [
+            "1. Rådgivning",
+            "3 000–5 000 kr",
+            "Strategi og sparring. Dere lager og poster innholdet selv.",
+            "Elevera oppgir dette nivået i sin prisguide.",
+          ],
+          [
+            "2. Publisering",
+            "5 000–10 000 kr",
+            "Faste innlegg på én eller to plattformer, laget av bilder og materiale dere har fra før. Ingen opptak.",
+            "Nettpakke: 4 999 kr for ett innlegg i uka på én plattform, og 9 999 kr for to innlegg i uka på to plattformer. Innholdsproduksjon koster ekstra.",
+          ],
+          [
+            "3. Drift med enkel produksjon",
+            "10 000–20 000 kr",
+            "Flere innlegg i uka, laget innhold, ofte svar på meldinger. Fotografering og video er begrenset eller kommer i tillegg.",
+            "Elevera fra 7 900 kr. Nettpakke Pluss fra 13 999 kr. Ramora har faste pakker fra 14 500 kr.",
+          ],
+          [
+            "4. Fast produksjon med video",
+            "20 000–40 000 kr",
+            "Faste opptaksdager, ferdig redigert video hver måned, strategi og publisering.",
+            `Reflektor: ${kr(tilbud.prisPerManed)} kr/mnd for én produksjonsdag, ${tilbud.videoerPerManed} ferdige videoer og publisering ${tilbud.posterPerUke} ganger i uka.`,
+          ],
+          [
+            "5. Ekstern markedsavdeling",
+            "40 000 kr og mer",
+            "Byrået fungerer som en del av markedsavdelingen: flere kanaler, kampanjer, annonsering og løpende produksjon.",
+            "Ramora har retainere opp mot 60 000 kr. Snille Tips har en pakke med full drift på alle plattformer til 59 990 kr, som del av en bredere markedsføringspakke. Serotonic oppgir at prisene kan gå over 150 000 kr.",
+          ],
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Prisene er hentet fra byråenes nettsider 30. september 2026 og oppgitt slik byråene viser dem. Pakkene inneholder ulike ting, så sammenlign alltid hva som leveres, ikke bare prisen.",
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Byråmatchs oversikt over SoMe-byråer i Norge, der flere leverandører står ved siden av hverandre.",
+        url: "https://www.xn--byrmatch-c0a.no/byra/sosiale-medier",
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Elevera oppgir 3 000–5 000 kr/mnd for strategi og rådgivning der kunden lager og poster selv, og egen pris fra 7 900 kr/mnd for publisering tre ganger i uka med innhold og svar på meldinger.",
+        url: "https://elevera.no/blogg/sosiale-medier-bedrift-pris",
+        nofollow: true,
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Nettpakkes pakkepriser: Mini 4 999 kr/mnd, Standard 9 999 kr/mnd og Pluss fra 13 999 kr/mnd. Innholdsproduksjon er oppgitt som et eget tillegg.",
+        url: "https://nettpakke.no/some/",
+        nofollow: true,
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Ramora oppgir skreddersydde retainere fra omtrent 6 000 til 60 000 kr per måned, og faste pakker fra 14 500 kr per måned.",
+        url: "https://www.ramora.no/artikler-markedsforing-marketing-sosiale-medier/hva-koster-some-byra-oslo",
+        nofollow: true,
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Snille Tips oppgir pakken «Dominans» til 59 990 kr/mnd, der full drift av sosiale medier på alle plattformer er én av flere leveranser.",
+        url: "https://snilletips.no/priser/",
+        nofollow: true,
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Serotonic oppgir et spenn fra 10 000 til godt over 150 000 kroner i måneden.",
+        url: "https://serotonic.no/blogg/hva-koster-et-sosiale-medier-byra-i-norge-i-2026",
+        nofollow: true,
+      },
+      { type: "overskrift", niva: 2, tekst: "Slik leser du tabellen" },
+      {
+        type: "avsnitt",
+        tekst:
+          "Det store hoppet skjer mellom nivå 3 og 4. Under 20 000 kr i måneden er det sjelden at noen kommer ut og filmer hos dere hver måned. Da blir innholdet laget av det dere har fra før, eller av det dere filmer selv. Over den grensen er det vanlig med faste opptaksdager.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Lav pris betyr ofte mer jobb for dere. På nivå 1 og 2 må noen i bedriften fortsatt skaffe bilder og video. Det er den delen de fleste bedrifter ikke får tid til.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Sjekk hva som er inkludert, ikke pakkenavnet. To pakker til 15 000 kr kan inneholde helt ulikt arbeid. Bruk spørsmålene lenger ned i artikkelen for å gjøre tilbudene sammenlignbare.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Video koster mer enn bilder, og det skal det gjøre. Filming, klipp og teksting tar tid. Vil du vite hva en enkelt videoproduksjon koster, har vi skrevet en egen guide.",
+        lenker: [
+          { frase: "en egen guide", sti: "/blogg/hva-koster-videoproduksjon" },
+        ],
       },
       { type: "overskrift", niva: 2, tekst: "Fem ting som avgjør prisen" },
       {
@@ -336,6 +507,22 @@ export const artikler: Artikkel[] = [
       },
     ],
     lesVidere: [{ sti: "/", tekst: "Reflektors pris, oppgitt åpent" }],
+    tilleggsfaq: [
+      {
+        sporsmal: "Hvorfor finnes det SoMe-pakker under 5 000 kr i måneden?",
+        svar: "Fordi de ikke inneholder opptak. Pakker i det prisområdet består som regel av rådgivning, eller av publisering av bilder og materiale bedriften har fra før. Det kan fungere hvis dere allerede har mye godt innhold, men dere må skaffe det selv.",
+      },
+      {
+        sporsmal:
+          "Hva er en vanlig månedspris for SoMe-drift med videoproduksjon?",
+        svar: `Blant norske byråer som oppgir prisene åpent, ligger pakker med faste opptaksdager og ferdig redigert video hver måned typisk på 20 000–40 000 kr. Hos Reflektor koster det ${kr(tilbud.prisPerManed)} kr/mnd for én produksjonsdag, ${tilbud.videoerPerManed} ferdige videoer og publisering ${tilbud.posterPerUke} ganger i uka.`,
+      },
+      {
+        sporsmal:
+          "Er det dyrere å bruke et SoMe-byrå i Oslo enn andre steder i Norge?",
+        svar: "I prisene vi har sammenlignet ser vi ingen tydelig forskjell. Ramora i Oslo har retainere fra rundt 6 000 kr, og Elevera i Ålesund har pakker fra 7 900 kr. Det som styrer prisen er leveransen, særlig om byrået filmer hos dere, ikke hvor byrået holder til.",
+      },
+    ],
   },
   {
     slug: "markedsforing-i-sosiale-medier-some",
@@ -2299,12 +2486,14 @@ export const artikler: Artikkel[] = [
         tekst:
           "Artisan Film oppgir 15 000–40 000 kr for enkelt innhold til sosiale medier, 40 000–120 000 kr for standard reklame- eller bedriftsfilm med 1–2 opptaksdager, og 120 000–500 000 kr og oppover for større produksjoner.",
         url: "https://www.artisanfilm.no/prisguide-2026",
+        nofollow: true,
       },
       {
         type: "kilde",
         tekst:
           "Ingstad Media oppgir 25 000–50 000 kr for én lokasjon med kort opptakstid og enkel etterproduksjon, 50 000–200 000 kr for konsept og profesjonelt team, og fra 200 000 kr for kampanjer med casting og studio.",
         url: "https://ingstadmedia.no/blogg/hva-koster-reklamefilm",
+        nofollow: true,
       },
       {
         type: "kilde",

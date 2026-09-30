@@ -129,6 +129,7 @@ export default async function BloggInnlegg({ params }: Props) {
         beskrivelse={a.beskrivelse}
         sti={`/blogg/${a.slug}`}
         publisert={a.publisert}
+        oppdatert={a.oppdatert}
       />
       {faq.length > 0 && <FaqSchema qa={faq} />}
 
@@ -151,6 +152,25 @@ export default async function BloggInnlegg({ params }: Props) {
                 year: "numeric",
               })}
             </time>
+            {/*
+              OPPDATERINGSDATOEN STÅR VED SIDEN AV, ikke i stedet for.
+              Leseren skal kunne se både når teksten ble skrevet og når den
+              sist ble rørt — en artikkel fra 2024 som er oppdatert i år er
+              noe annet enn en fra i år, og å skjule det første ville vært
+              å pynte på alderen.
+            */}
+            {a.oppdatert && (
+              <>
+                {" · Oppdatert "}
+                <time dateTime={a.oppdatert}>
+                  {new Date(a.oppdatert).toLocaleDateString("nb-NO", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </time>
+              </>
+            )}
           </p>
 
           {ingress && ingress.type === "avsnitt" && (
@@ -231,7 +251,7 @@ export default async function BloggInnlegg({ params }: Props) {
                     <a
                       href={b.url}
                       target="_blank"
-                      rel="noopener"
+                      rel={b.nofollow ? "noopener nofollow" : "noopener"}
                       className="inline-flex min-h-6 items-center underline underline-offset-2 hover:text-aksent-tekst"
                     >
                       Kilde
@@ -249,29 +269,114 @@ export default async function BloggInnlegg({ params }: Props) {
                 );
               }
               if (b.type === "tabell") {
+                /*
+                  EN TABELL MED PROSA I CELLENE MÅ STABLES PÅ TELEFON.
+
+                  Målt 30.09.2026: pristabellen for 2026 har celler på over
+                  200 tegn, og ble 548 px bred i en spalte på 342 px. To av
+                  fire kolonner lå utenfor skjermen, og raden med Reflektors
+                  egen pris var 289 px høy. De ni andre tabellene på bloggen
+                  har ingen celle over 48 tegn og blir 342–414 px brede — de
+                  trenger ingenting.
+
+                  Terskelen leses derfor av innholdet, ikke av antall
+                  kolonner: 60 tegn skiller de to gruppene med god margin, og
+                  en ny tabell med prosa treffer regelen av seg selv.
+
+                  PÅ TELEFON BLIR HVER RAD ET KORT, med kolonnenavnet som
+                  etikett over hver verdi — hentet fra `data-etikett`, ikke
+                  skrevet to ganger i DOM-en. Fra `sm` er det den samme
+                  vanlige tabellen som før, uendret.
+                */
+                const prosa = b.rader.some((r) =>
+                  r.some((celle) => celle.length > 60),
+                );
                 return (
-                  <div key={i} className="mt-7 overflow-x-auto">
-                    <table className="w-full border-collapse text-left text-[0.9375rem]">
-                      <thead>
+                  /*
+                    EN TABELL SOM KAN RULLE SIDEVEIS MÅ KUNNE FÅ TASTATURFOKUS.
+                    Uten `tabIndex` kommer den som bare bruker tastatur seg
+                    aldri til kolonnene utenfor skjermen. Meldt av axe-core
+                    30.09.2026 (`scrollable-region-focusable`).
+
+                    Bare på tabellene som faktisk kan rulle: en prosatabell er
+                    stablet på telefon og full bredde på skjerm, og ville ellers
+                    blitt et tomt tabbstopp.
+                  */
+                  <div
+                    key={i}
+                    className="mt-7 overflow-x-auto"
+                    tabIndex={prosa ? undefined : 0}
+                  >
+                    <table
+                      className={`w-full border-collapse text-left text-[0.9375rem] ${
+                        prosa ? "block sm:table" : ""
+                      }`}
+                    >
+                      <thead
+                        className={
+                          prosa ? "sr-only sm:table-header-group" : undefined
+                        }
+                      >
                         <tr className="border-b border-blekk-svak">
-                          {b.kolonner.map((k) => (
-                            <th
-                              key={k}
-                              scope="col"
-                              className="py-3 pr-4 font-sans text-xs font-medium tracking-[0.06em] text-blekk-dempet uppercase last:pr-0"
-                            >
-                              {k}
-                            </th>
-                          ))}
+                          {/*
+                            HJØRNECELLEN ER TOM I FLERE AV TABELLENE — første
+                            kolonne er radetiketter, ikke en kategori med navn.
+                            En tom `<th>` er en overskrift uten innhold, og axe
+                            melder den (`empty-table-header`). En `<td>` er
+                            riktig element for et tomt hjørne.
+                          */}
+                          {b.kolonner.map((k, j) =>
+                            k ? (
+                              <th
+                                key={k}
+                                scope="col"
+                                className="py-3 pr-4 font-sans text-xs font-medium tracking-[0.06em] text-blekk-dempet uppercase last:pr-0"
+                              >
+                                {k}
+                              </th>
+                            ) : (
+                              <td key={j} className="py-3 pr-4 last:pr-0" />
+                            ),
+                          )}
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody
+                        className={
+                          prosa ? "block sm:table-row-group" : undefined
+                        }
+                      >
                         {b.rader.map((r) => (
-                          <tr key={r.join()} className="border-b border-kant">
+                          <tr
+                            key={r.join()}
+                            className={`border-b border-kant ${
+                              prosa ? "block py-4 sm:table-row sm:py-0" : ""
+                            }`}
+                          >
                             {r.map((celle, j) => (
                               <td
                                 key={j}
-                                className={`py-3 pr-4 leading-relaxed last:pr-0 ${j === 0 ? "text-blekk" : "tabular-nums text-blekk-dempet"}`}
+                                data-etikett={prosa ? b.kolonner[j] : undefined}
+                                /*
+                                  KORTE CELLER SKAL IKKE KNEKKES I EN
+                                  PROSATABELL. Med automatisk tabellayout tar
+                                  prosakolonnene all bredden, og «3 000–5 000
+                                  kr» ble brutt over fire linjer mens
+                                  setningene ved siden av lå på tre. Prisen er
+                                  det leseren kom for; den skal stå på én
+                                  linje. Målt i nettleseren 30.09.2026.
+
+                                  Bare fra `sm`: på telefon er raden stablet,
+                                  og der finnes ikke problemet.
+                                */
+                                className={`py-3 pr-4 leading-relaxed last:pr-0 ${
+                                  j === 0
+                                    ? "text-blekk"
+                                    : "tabular-nums text-blekk-dempet"
+                                } ${
+                                  prosa
+                                    ? `${celle.length <= 22 ? "sm:whitespace-nowrap " : ""}block py-0 pt-3 first:pt-0 first:text-base first:font-medium before:mb-1 before:block before:font-sans before:text-xs before:font-medium before:tracking-[0.06em] before:text-blekk-dempet before:uppercase before:content-[attr(data-etikett)] first:before:hidden sm:table-cell sm:py-3 sm:align-top sm:text-[0.9375rem] sm:font-normal sm:before:hidden`
+                                    : ""
+                                }`}
                               >
                                 {celle}
                               </td>

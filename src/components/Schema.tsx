@@ -424,11 +424,14 @@ export function ArtikkelSchema({
   beskrivelse,
   sti,
   publisert,
+  oppdatert,
 }: {
   tittel: string;
   beskrivelse: string;
   sti: string;
   publisert: string;
+  /** Settes bare når artikkelen faktisk er innholdsoppdatert. */
+  oppdatert?: string;
 }) {
   const data = {
     "@context": "https://schema.org",
@@ -436,6 +439,14 @@ export function ArtikkelSchema({
     headline: tittel,
     description: beskrivelse,
     datePublished: publisert,
+    /*
+      `dateModified` BARE NÅR DEN FINNES. Google bruker den til å vise
+      hvor fersk en side er, og en `dateModified` som settes til i dag
+      hver gang noe bygges ville vært en usann opplysning på tjue sider
+      samtidig. Feltet kommer fra `oppdatert` i artikler.ts, og det settes
+      manuelt når innholdet faktisk er endret.
+    */
+    ...(oppdatert ? { dateModified: oppdatert } : {}),
     inLanguage: "nb-NO",
     mainEntityOfPage: { "@type": "WebPage", "@id": `${basisUrl()}${sti}` },
     author: { "@id": ORG_ID },
