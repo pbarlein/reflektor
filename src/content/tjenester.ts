@@ -687,9 +687,18 @@ export const event: Tjenesteside = {
        * Setningen om produksjonsdagen står også begge steder nå. Den er
        * poenget for kunder med noen arrangementer i året: da bestiller de
        * ikke eventdekning per gang.
+       *
+       * KVELDSARBEID ER IKKE LENGER OPPGITT SOM DEN VANLIGSTE ÅRSAKEN til
+       * at prisen stiger. Rettet 30.09.2026 etter Påls korreksjon: «vi kan
+       * også si 50K for et event der vi ikke jobber kveld, så bastant
+       * påstand om at det er den vanligste årsaken til prisøkning må vekk.»
+       *
+       * Setningen står nå med de tre faktorene som faktisk avgjør, uten å
+       * rangere dem. Å peke ut én driver som den vanligste er dessuten et
+       * tall vi ikke har.
        */
       sporsmal: "Hva koster eventfotograf?",
-      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nEn typisk leveranse er en eventvideo på 30–60 sekunder, én eller flere kortere versjoner til sosiale medier, 50 bilder eller flere ferdig redigert, og redigering og korrigeringer til dere er fornøyde.\n\nHar dere noen arrangementer i året, kan produksjonsdagen i det løpende samarbeidet legges til et arrangement. Da får dere bilder og video derfra som en del av månedens innhold, uten ekstra kostnad.\n\nFor arrangementer er kveldsarbeid den vanligste fordyrende faktoren, sammen med hvor mange som må være til stede samtidig.`,
+      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nEn typisk leveranse er en eventvideo på 30–60 sekunder, én eller flere kortere versjoner til sosiale medier, 50 bilder eller flere ferdig redigert, og redigering og korrigeringer til dere er fornøyde.\n\nHar dere noen arrangementer i året, kan produksjonsdagen i det løpende samarbeidet legges til et arrangement. Da får dere bilder og video derfra som en del av månedens innhold, uten ekstra kostnad.\n\nDet som flytter prisen på et arrangement er hvor lenge vi er der, hvor mange som må være til stede samtidig, og hvor mye som skal klippes etterpå.`,
     },
     {
       sporsmal: "Når får vi materialet?",

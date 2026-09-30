@@ -59,6 +59,34 @@ Kommer det nye oppgaver mens noe pågår, skal **ikke** det pågående krympes f
 Rekker du ikke alt: si det rett ut og oppgi hva som gjenstår. Ikke lever en
 redusert versjon og kall den ferdig.
 
+## Tekst på siden skal tenke Reflektor først (bestilt av Pål 30.09.2026)
+
+Alt som publiseres skal være nyttig og sant — men det skal **ikke være
+direkte negativt for oss**. Sjekk hver påstand mot hvordan Reflektor
+faktisk jobber og hva vi faktisk leverer, før den skrives.
+
+To feil ble fanget i eventprisguiden 30.09.2026, begge skrevet av meg:
+
+- **«Én person kan ikke gjøre begge deler godt samtidig.»** Pål sender
+  veldig ofte én produsent som dekker både foto og film, og de får det til.
+  Setningen gjorde vårt vanligste oppsett til en svakhet.
+- **«Kveldsarbeid er den vanligste grunnen til at prisen stiger.»** Vi kan
+  ta 50 000 kr for et arrangement uten kveldsarbeid. Bastante påstander om
+  hva som «vanligvis» driver prisen er dessuten tall vi ikke har.
+
+Regelen i praksis:
+
+- **Beskriv aldri Reflektors måte å jobbe på som et kompromiss.** Færre
+  folk på stedet er en pris­forskjell, ikke en kvalitetsforskjell.
+- **Ingen bastante «den vanligste»-påstander om egen prising** uten tall å
+  vise til.
+- Forbehold som Pål selv har formulert står — «8–10 er et produksjonsmål og
+  ikke en garanti» er hans egen setning og skal ikke mykes opp eller
+  fjernes.
+- Dette gjelder også copy som kommer ferdig fra Claude Chat. Chat kjenner
+  ikke arbeidsmåten vår. Finner du en slik påstand i levert copy: rett den,
+  og si fra hva som ble endret.
+
 ## Slik skal svar skrives (bestilt av Pål 27.09.2026)
 
 Pål er ikke teknisk og bruker for lang tid på å lese. **Kort, konkret, og kun

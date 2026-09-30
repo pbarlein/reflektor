@@ -3726,7 +3726,7 @@ export const artikler: Artikkel[] = [
           "Timer på stedet. Den største posten. Få fotografer tar under én time, og mange priser i halve og hele dager.",
           "Antall ferdige bilder. 40 bilder og 300 bilder fra samme kveld er ikke samme jobb. Hvert bilde skal velges ut og redigeres.",
           "Leveringstid. Bilder samme kveld eller dagen etter krever at noen redigerer mens arrangementet pågår, eller rett etter. Det koster.",
-          "Kveld og helg. Konferanser skjer på dagtid, men firmafester og lanseringer skjer ofte om kvelden. Kveldsarbeid er den vanligste grunnen til at prisen stiger.",
+          "Tidspunkt. Konferanser går på dagtid, mens firmafester og lanseringer ofte går om kvelden. Noen oppgir priser som gjelder hverdager — Sørensen Foto gjør det — så spør om kveld og helg er med i prisen dere får.",
         ],
       },
       { type: "overskrift", niva: 2, tekst: "Foto, film eller begge deler?" },
@@ -3736,9 +3736,23 @@ export const artikler: Artikkel[] = [
           "Bilder er raskest ut og enklest å bruke i mange kanaler. Film fanger stemningen og det taleren sa. Mange arrangementer trenger begge.",
       },
       {
+        /*
+         * OMSKREVET 30.09.2026 ETTER PÅLS KORREKSJON. Chats setning var:
+         * «Én person kan ikke gjøre begge deler godt samtidig. Da går man
+         * glipp av enten talen eller bildet.»
+         *
+         * Den beskriver Reflektors vanligste oppsett som en svakhet. Pål,
+         * ordrett: «veldig ofte sender jeg én produsent til å gjøre begge
+         * deler ... får de det til, og det burde ikke fremstå som om
+         * kvaliteten da synker i våre tekster.»
+         *
+         * Setningen sier nå det samme om PRIS — flere folk koster mer —
+         * uten å si noe om kvalitet. Det er prisdrivere artikkelen handler
+         * om, og det er den ene av de to tingene som faktisk stemmer.
+         */
         type: "avsnitt",
         tekst:
-          "Én person kan ikke gjøre begge deler godt samtidig. Da går man glipp av enten talen eller bildet. På større arrangementer trengs derfor som regel to personer: én fotograf og én som filmer.",
+          "Hos oss dekker som regel én produsent begge deler på samme arrangement. Skal flere ting skje samtidig — scene, mingling og intervjuer i parallell — setter vi på flere folk. Det er antallet på stedet som flytter prisen, ikke om leveransen er foto, film eller begge.",
       },
       {
         type: "avsnitt",
