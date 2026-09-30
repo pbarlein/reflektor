@@ -44,10 +44,16 @@ er skrevet for den nye siden i september 2026:
 
 ## 2 · De fire tiltakene, sett fra koden
 
-**Status 30.09.2026, etter at copyen kom:** tiltak 1 og 2 er implementert.
+**Status 30.09.2026, etter at copyen kom:** tiltak 1, 2 og 3a er implementert.
 `/reels-produksjon` er bygget og lenket, og pristabellen for 2026 står i
 «Hva koster et SoMe-byrå?» med seks kilder og `dateModified`. Tiltak 3 og 4
-står som beskrevet under.
+står som beskrevet under, minus eventfotoguiden, som nå er skrevet.
+
+Prisguiden for eventfoto ligger på `/blogg/hva-koster-eventfotograf` med
+tabell over fire Oslo-fotografer, alle fire kontrollert mot kildesidene
+samme dag uten avvik, og med video og galleri fra Retail24 i Sandefjord.
+`/eventfotograf-eventvideo` har fått samme leveranseliste, så de to sidene
+svarer likt.
 
 ### Tiltak 1 — Reels- og TikTok-side. Utført 30.09.2026.
 

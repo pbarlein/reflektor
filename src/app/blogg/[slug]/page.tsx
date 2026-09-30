@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { Bloggalleri } from "@/components/blogg/Bloggalleri";
 import { Bloggmedier } from "@/components/blogg/Bloggmedier";
 import { Container } from "@/components/Container";
 import { Eyebrow, Merkelapp } from "@/components/Eyebrow";
@@ -262,6 +263,15 @@ export default async function BloggInnlegg({ params }: Props) {
               if (b.type === "medier") {
                 return (
                   <Bloggmedier
+                    key={i}
+                    elementer={b.elementer}
+                    bildetekst={b.bildetekst}
+                  />
+                );
+              }
+              if (b.type === "galleri") {
+                return (
+                  <Bloggalleri
                     key={i}
                     elementer={b.elementer}
                     bildetekst={b.bildetekst}

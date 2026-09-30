@@ -677,8 +677,19 @@ export const event: Tjenesteside = {
       svar: "Materiale som lever lenger enn dagen. Bildene og klippene fra en konferanse er det som selger neste års konferanse, og de fyller kanalene i ukene etterpå. Et arrangement uten dekning er en investering som forsvinner samme kveld.",
     },
     {
+      /*
+       * LEVERANSELISTA ER LAGT TIL 30.09.2026, bestilt i copyen til
+       * prisguiden for eventfoto. De to sidene svarte på det samme
+       * spørsmålet med ulik presisjon: bloggen listet hva som faktisk
+       * kommer ut av dagen, mens denne siden bare oppga prisen. En leser
+       * som sammenligner dem skulle ikke lure på om det er to tilbud.
+       *
+       * Setningen om produksjonsdagen står også begge steder nå. Den er
+       * poenget for kunder med noen arrangementer i året: da bestiller de
+       * ikke eventdekning per gang.
+       */
       sporsmal: "Hva koster eventfotograf?",
-      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nFor arrangementer er kveldsarbeid den vanligste fordyrende faktoren, sammen med hvor mange som må være til stede samtidig.`,
+      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nEn typisk leveranse er en eventvideo på 30–60 sekunder, én eller flere kortere versjoner til sosiale medier, 50 bilder eller flere ferdig redigert, og redigering og korrigeringer til dere er fornøyde.\n\nHar dere noen arrangementer i året, kan produksjonsdagen i det løpende samarbeidet legges til et arrangement. Da får dere bilder og video derfra som en del av månedens innhold, uten ekstra kostnad.\n\nFor arrangementer er kveldsarbeid den vanligste fordyrende faktoren, sammen med hvor mange som må være til stede samtidig.`,
     },
     {
       sporsmal: "Når får vi materialet?",

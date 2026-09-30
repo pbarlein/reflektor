@@ -152,7 +152,25 @@ export type Blokk =
    *
    * `kontroller()` under håndhever begge deler i byggetid.
    */
-  | { type: "medier"; elementer: Bloggmedie[]; bildetekst?: string };
+  | { type: "medier"; elementer: Bloggmedie[]; bildetekst?: string }
+  /**
+   * GALLERI: ett hovedbilde og tre til fem miniatyrer under.
+   *
+   * HVORFOR EN EGEN BLOKK og ikke bare flere `medier`. `medier` krever at
+   * alle elementene har samme sideforhold, fordi to rammer med ulik høyde
+   * ved siden av hverandre gir skjev underkant. Et ekte galleri fra et
+   * oppdrag har blandet format — fire liggende og ett stående i Retail24-
+   * serien — og da må reglene være andre.
+   *
+   * MINIATYRENE BESKJÆRES KVADRATISK. Det er den eneste rammen som tar
+   * både liggende og stående uten å skjære bort motivet i det ene eller
+   * strekke det andre. Hovedbildet beholder sitt eget format og står i
+   * full bredde over dem.
+   *
+   * ALT-TEKST PÅ HVERT BILDE, som ellers. `bildetekst` gjelder galleriet
+   * som helhet.
+   */
+  | { type: "galleri"; elementer: Bloggmedie[]; bildetekst?: string };
 
 export type Bilde = { fil: string; alt: string; fokus?: string };
 
@@ -257,7 +275,7 @@ export function lesetid(a: Artikkel): number {
      * bare støyet i anslaget. Å la den falle gjennom til `b.tekst` under
      * ville dessuten kastet — blokken har ikke feltet.
      */
-    if (b.type === "medier") return sum;
+    if (b.type === "medier" || b.type === "galleri") return sum;
     return sum + b.tekst.split(/\s+/).length;
   }, 0);
   return Math.max(1, Math.round(ord / 200));
@@ -3561,6 +3579,327 @@ export const artikler: Artikkel[] = [
       },
     ],
   },
+  /*
+   * «HVA KOSTER EN EVENTFOTOGRAF?» — tiltak 3a, lagt inn 30.09.2026.
+   * Copyen er levert ferdig av Claude Chat og følger samme mal som
+   * videoprisguiden: kort svar, kildetabell, hva som driver prisen,
+   * spørsmål å stille, Reflektors egen pris og FAQ.
+   *
+   * ALLE FIRE PRISENE ER KONTROLLERT MOT FOTOGRAFENES EGNE SIDER samme
+   * dag, før tabellen ble skrevet inn:
+   *
+   *   Sørensen Foto   «Eventfotografering 1 time, kr 3.450 + mva» og
+   *                   «Eventfotografering 3 timer kr 6.300 + mva».
+   *   Malin Westermann «Half day 6000 (eks MVA) and full day 10.000 ,-
+   *                   (eks MVA)» og «a package between 40-70 high
+   *                   resolution photos».
+   *   Say Cheeze      Halvdagspakke «Inntil 4 timer», «100 beste ...
+   *                   bilder», levering «i løpet av 3 virkedager»
+   *                   (utvalg innen 24 timer), «Pris: 15 200,- (Ekskl.
+   *                   MVA)».
+   *   Tolustudio      Fire nivåer: 2 500–4 500 (1 t, 20–40 bilder),
+   *                   5 000–9 000 (2–3 t, 60–120), 10 000–16 000
+   *                   (4–5 t, 150–300), 18 000–35 000+ (6–10 t,
+   *                   300–600).
+   *
+   * Hvert tall i copyen stemte med kilden. Ingen korrigeringer.
+   *
+   * ALLE FIRE LENKENE HAR `nofollow`. Det er konkurrenter, og regelen er
+   * den samme som i SoMe-prisartikkelen. Byråmatch der er unntaket fordi
+   * Reflektor selv står oppført; ingen av disse fire har en tilsvarende
+   * gjensidighet.
+   *
+   * OVERLAPP MED VIDEOPRISGUIDEN er holdt unna med vilje: artikkelen tar
+   * ikke priser på reklamefilm eller planlagt videoproduksjon, men lenker
+   * dit. Det samme gjelder andre veien.
+   */
+  {
+    slug: "hva-koster-eventfotograf",
+    /*
+     * TOPPBILDET ER FRA OPPDRAGET ARTIKKELEN SELV OMTALER. Retail24 i
+     * Sandefjord, august 2026 — samme kveld som videoen og galleriet
+     * lenger nede. Et ekte fotografi, ikke et uttrekk fra filmen; se
+     * regelen øverst i fila.
+     */
+    bilde: {
+      fil: "retail24-sandefjord-topp",
+      alt: "Gjester i kø ved buffeten utenfor en murvilla under et firmaarrangement",
+    },
+    tittel: "Hva koster en eventfotograf i Oslo?",
+    metaTittel: "Hva koster en eventfotograf i Oslo? Priser 2026",
+    beskrivelse:
+      "Fire Oslo-fotografer oppgir åpne priser på eventfoto. Her er tallene, hva som driver prisen, når video er verdt det, og hva vi selv tar.",
+    publisert: "2026-09-30",
+    blokker: [
+      {
+        type: "avsnitt",
+        tekst:
+          "En eventfotograf i Oslo koster som regel 2 500–9 000 kr for én til tre timer, 6 000–16 000 kr for en halv dag og 10 000–35 000 kr for en hel dag. Skal dere ha både foto og film fra arrangementet, blir det flere folk og mer etterarbeid, og prisen stiger deretter.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hva Oslo-fotografene faktisk oppgir",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "De fleste fotografer oppgir ikke pris før de vet hva arrangementet er. Disse fire gjør det, og tallene er hentet fra nettsidene deres 30. september 2026:",
+      },
+      {
+        type: "tabell",
+        kolonner: [
+          "Fotograf",
+          "Kort dekning",
+          "Halv dag",
+          "Hel dag",
+          "Merknad",
+        ],
+        rader: [
+          [
+            "Sørensen Foto",
+            "3 450 kr (1 time)",
+            "6 300 kr (3 timer)",
+            "–",
+            "Eks. mva",
+          ],
+          [
+            "Malin Westermann",
+            "–",
+            "6 000 kr",
+            "10 000 kr",
+            "Eks. mva, 40–70 bilder",
+          ],
+          [
+            "Say Cheeze",
+            "–",
+            "15 200 kr (inntil 4 timer)",
+            "–",
+            "Eks. mva, 100 bilder, levering på 3 virkedager",
+          ],
+          [
+            "Tolustudio",
+            "2 500–4 500 kr (1 time)",
+            "10 000–16 000 kr (4–5 timer)",
+            "18 000–35 000 kr+ (6–10 timer)",
+            "150–600 bilder etter omfang",
+          ],
+        ],
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Sørensen Foto oppgir 3 450 kr for én time og 6 300 kr for tre timer, begge eksklusive merverdiavgift.",
+        url: "https://sorensenfoto.no/portrettfotograf-oslo/pressebilder-headshot/eventfotograf/",
+        nofollow: true,
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Malin Westermann oppgir 6 000 kr for en halv dag og 10 000 kr for en hel dag, eksklusive merverdiavgift, og 40–70 ferdige bilder.",
+        url: "https://www.malinwestermann.com/shop/p/events",
+        nofollow: true,
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Say Cheeze oppgir en halvdagspakke på inntil fire timer til 15 200 kr eksklusive merverdiavgift, med 100 ferdige bilder levert innen tre virkedager og et utvalg innen 24 timer.",
+        url: "https://www.saycheeze.no/eventfotograf/",
+        nofollow: true,
+      },
+      {
+        type: "kilde",
+        tekst:
+          "Tolustudio oppgir fire nivåer: 2 500–4 500 kr for én time med 20–40 bilder, 5 000–9 000 kr for to–tre timer med 60–120 bilder, 10 000–16 000 kr for fire–fem timer med 150–300 bilder, og 18 000–35 000 kr og oppover for seks–ti timer med 300–600 bilder.",
+        url: "https://tolustudio.no/eventfotograf",
+        nofollow: true,
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Legg merke til at en halv dag koster 6 000 kr hos én og 15 200 kr hos en annen. Forskjellen ligger nesten alltid i tre ting: hvor mange bilder som leveres ferdig redigert, hvor raskt de leveres, og hvilken bruksrett dere får.",
+      },
+      { type: "overskrift", niva: 2, tekst: "Fire ting som flytter prisen" },
+      {
+        type: "liste",
+        punkter: [
+          "Timer på stedet. Den største posten. Få fotografer tar under én time, og mange priser i halve og hele dager.",
+          "Antall ferdige bilder. 40 bilder og 300 bilder fra samme kveld er ikke samme jobb. Hvert bilde skal velges ut og redigeres.",
+          "Leveringstid. Bilder samme kveld eller dagen etter krever at noen redigerer mens arrangementet pågår, eller rett etter. Det koster.",
+          "Kveld og helg. Konferanser skjer på dagtid, men firmafester og lanseringer skjer ofte om kvelden. Kveldsarbeid er den vanligste grunnen til at prisen stiger.",
+        ],
+      },
+      { type: "overskrift", niva: 2, tekst: "Foto, film eller begge deler?" },
+      {
+        type: "avsnitt",
+        tekst:
+          "Bilder er raskest ut og enklest å bruke i mange kanaler. Film fanger stemningen og det taleren sa. Mange arrangementer trenger begge.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Én person kan ikke gjøre begge deler godt samtidig. Da går man glipp av enten talen eller bildet. På større arrangementer trengs derfor som regel to personer: én fotograf og én som filmer.",
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Få norske aktører oppgir faste priser på eventvideo. Årsaken er at prisen avhenger mer av etterarbeidet enn av tiden på stedet. Et klipp på 60 sekunder til sosiale medier og en full opptaksfilm av alle foredragene er to helt ulike jobber.",
+      },
+      { type: "overskrift", niva: 2, tekst: "Fem spørsmål før dere bestiller" },
+      {
+        type: "liste",
+        punkter: [
+          "Hvor mange timer er fotografen på stedet?",
+          "Hvor mange ferdig redigerte bilder får vi?",
+          "Når får vi bildene, og kan vi få et utvalg samme kveld?",
+          "Hva kan vi bruke bildene til: sosiale medier, annonser, pressemeldinger?",
+          "Hva koster det hvis arrangementet drar ut i tid?",
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Spørsmål fire glemmes oftest. Noen fotografer gir bare bruksrett til sosiale medier og intern bruk. Skal bildene i annonser, bør det stå skriftlig.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hva tar Reflektor for eventdekning?",
+      },
+      {
+        type: "avsnitt",
+        tekst: `Eventdekning hos oss starter på ${kr(tilbud.fraPrisProsjekt)} kr. Da filmer vi og tar bilder på samme arrangement. En typisk leveranse er:`,
+      },
+      {
+        type: "liste",
+        punkter: [
+          "en eventvideo på 30–60 sekunder",
+          "én eller flere kortere versjoner til sosiale medier",
+          "50 bilder eller flere, ferdig redigert",
+          "redigering og korrigeringer til dere er fornøyde",
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Prisen dekker altså både fotografen og filmen i tabellen over, og etterarbeidet på begge. Se eventfoto og eventvideo fra Reflektor.",
+        lenker: [
+          {
+            frase: "eventfoto og eventvideo fra Reflektor",
+            sti: "/eventfotograf-eventvideo",
+          },
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst: `Hvor stor jobben blir, avhenger av arrangementet. Skal foredrag, seminarer eller debatter filmes i sin helhet i tillegg til eventvideo og bilder, blir jobben større, og prisen deretter. Enkeltoppdrag tar vi fra ${kr(tilbud.fraPrisProsjekt)} kr.`,
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Materialet leveres som regel innen to uker. Trenger dere noe ut samme kveld eller dagen etter, legger vi opp dagen etter det. Alt er deres, med fri bruk, også i annonser.",
+      },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Arrangement som en del av abonnementet",
+      },
+      {
+        type: "avsnitt",
+        tekst: `Har dere noen arrangementer i året, trenger dere ikke bestille eventdekning for hvert av dem. I det løpende samarbeidet til ${kr(tilbud.prisPerManed)} kr/mnd kan produksjonsdagen legges til et arrangement. Da får dere bilder og video fra arrangementet som en del av månedens innhold, uten ekstra kostnad.`,
+        lenker: [{ frase: "løpende samarbeidet", sti: "/" }],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Eksempel: Retail24 i Sandefjord. Retail24 er abonnementskunde hos oss. I august 2026 brukte de månedens produksjonsdag på et arrangement i Sandefjord, og vi filmet og fotograferte hele kvelden. Leveransen ble én eventvideo, åtte intervjuer og rundt 190 ferdig redigerte bilder.",
+      },
+      {
+        /*
+         * EKTE AVSPILLER, IKKE DEMPET LØKKE. Filmen er 1 minutt og 43
+         * sekunder med musikk og tale, og da er det lyden som bærer den.
+         * Dempet autospill ville vist en fest uten stemning. Samme regel
+         * som profilfilmene på employer branding-siden.
+         *
+         * Originalen er 3840×2160 og 630 MB. Her ligger den i 1280×720,
+         * som er mer enn spalten på 42rem trenger, og på 17 MB. Den lastes
+         * ikke før noen trykker play — `preload="none"` i komponenten.
+         */
+        type: "medier",
+        elementer: [
+          {
+            slag: "film",
+            sti: "/arbeid/retail24-sandefjord",
+            format: "16/9",
+            alt: "Eventvideo fra et firmaarrangement i Sandefjord",
+            lyd: true,
+          },
+        ],
+        bildetekst:
+          "Eventvideoen fra kvelden. 1 minutt og 43 sekunder, filmet og klippet av Reflektor.",
+      },
+      {
+        type: "galleri",
+        elementer: [
+          {
+            slag: "foto",
+            sti: "/arbeid/retail24-sandefjord-1",
+            format: "16/9",
+            alt: "Gjester samlet rundt buffeten i hagen under et firmaarrangement",
+          },
+          {
+            slag: "foto",
+            sti: "/arbeid/retail24-sandefjord-2",
+            format: "16/9",
+            alt: "Smilende gjester rundt et bord under arrangementet",
+          },
+          {
+            slag: "foto",
+            sti: "/arbeid/retail24-sandefjord-3",
+            format: "16/9",
+            alt: "Murbygning med rød løper og veteranbil foran inngangen",
+          },
+          {
+            slag: "foto",
+            sti: "/arbeid/retail24-sandefjord-4",
+            format: "16/9",
+            alt: "Servitør i et mørkt, panelkledd rom med tente lysestaker",
+          },
+          {
+            slag: "foto",
+            sti: "/arbeid/retail24-sandefjord-5",
+            format: "9/16",
+            alt: "Champagnetårn av glass på en antikk kommode",
+          },
+        ],
+        bildetekst: "Fem av rundt 190 ferdig redigerte bilder fra samme kveld.",
+      },
+    ],
+    lesVidere: [
+      {
+        sti: "/eventfotograf-eventvideo",
+        tekst: "eventfoto og eventvideo fra Reflektor",
+      },
+      {
+        sti: "/blogg/hva-koster-videoproduksjon",
+        tekst: "hva en planlagt videoproduksjon koster",
+      },
+    ],
+    tilleggsfaq: [
+      {
+        sporsmal: "Hva er vanlig timepris for en eventfotograf i Oslo?",
+        svar: "Blant Oslo-fotografer som oppgir åpne priser, koster én time mellom 2 500 og 4 500 kr. Timeprisen synker når oppdraget blir lengre. Tre timer koster for eksempel 6 300 kr hos én av dem.",
+      },
+      {
+        sporsmal: "Hvor mange bilder får vi fra et arrangement?",
+        svar: "Det avhenger av tiden på stedet. Hos Tolustudio får du for eksempel 20–40 bilder fra én time, 60–120 fra to–tre timer og 150–300 fra en halv dag. Spør alltid hvor mange ferdig redigerte bilder som er inkludert i prisen.",
+      },
+      {
+        sporsmal: "Kan vi få bildene samme kveld?",
+        svar: "Ofte, men det ligger gjerne i de dyreste pakkene. Say Cheeze leverer for eksempel et utvalg innen 24 timer. Det krever at noen redigerer under eller rett etter arrangementet. Si fra i planleggingen, så dagen kan legges opp etter det.",
+      },
+    ],
+  },
 ];
 
 /**
@@ -3576,6 +3915,19 @@ export const artikler: Artikkel[] = [
  */
 for (const a of artikler) {
   for (const b of a.blokker) {
+    if (b.type === "galleri") {
+      if (b.elementer.length < 4 || b.elementer.length > 6) {
+        throw new Error(
+          `${a.slug}: et galleri må ha fire til seks bilder, ikke ${b.elementer.length}`,
+        );
+      }
+      if (b.elementer.some((m) => m.slag !== "foto")) {
+        throw new Error(
+          `${a.slug}: et galleri tar bare foto. Film hører hjemme i en medieblokk, der den får riktig avspiller.`,
+        );
+      }
+      continue;
+    }
     if (b.type !== "medier") continue;
     if (b.elementer.length < 1 || b.elementer.length > 2) {
       throw new Error(

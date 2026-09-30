@@ -769,3 +769,47 @@ så tre klipp står tre i bredden i alle bredder. Målt: 357×635 px på 1440, o
 
 Eiendom mister sin flate der, men bransjen står nevnt med navn i seksjonen
 rett over — Selvaag Eiendom, godkjent av Pål samme dag.
+
+
+## Retail24 i Sandefjord — event, august 2026 (lagt inn 30.09.2026)
+
+Mediene til `/blogg/hva-koster-eventfotograf` er hentet fra
+`Kundemappe/Retail24/August/Sandefjord/Bilder/` i Dropbox. Chats
+medieinstruks pekte på en lokal sti på Påls Mac; jeg hentet de samme filene
+gjennom Dropbox-tilkoblingen i stedet, samme mappe.
+
+**Video.** `Videoer/Event video.mov` er 3840×2160, 1 minutt og 43 sekunder,
+630 MB, med lyd i 24-bits PCM. Konvertert til 1280×720 H.264, AAC 96 kbit/s,
+`+faststart` — 17 MB. To forsøk: CRF 25 ga 30 MB, CRF 28 med tak på
+1600 kbit/s ga 17 MB. Sammenlignet på 672 px, som er spaltebredden, er
+forskjellen ikke synlig, og 720p er allerede mer enn spalten trenger.
+
+Den får **ekte avspiller med lyd**, ikke dempet løkke. Filmen bærer på musikk
+og tale; dempet autospill ville vist en fest uten stemning. Samme regel som
+profilfilmene på employer branding-siden.
+
+Plakatbildet er hentet på 70 sekunder, valgt blant syv kandidater. Det er et
+uttrekk fra filmen, som et plakatbilde skal være — se regelen over.
+
+**De åtte `Short 1–8.mov` er ikke brukt.** Instruksen sier eksplisitt at det
+er intervjuer med enkeltpersoner.
+
+**Galleri.** Fem bilder fra `Event bilder/`, i rekkefølgen instruksen oppgir:
+34, 23, 4, 10 og 1. Originalene er 5875×3917 (og 2476×3714 for det stående),
+skalert til 2400 px på lengste side og komprimert til 0,3–0,9 MB. Ingenting
+fra `Alle bilder/Portretter/` eller `Gruppebilder/`.
+
+Instruksen ba om WebP/AVIF med JPG i reserve. Filene ligger som JPG, fordi
+Next.js' bildeoptimalisering serverer AVIF og WebP av seg selv ut fra hva
+nettleseren ber om — å legge inn begge manuelt ville gitt tre kopier av hvert
+bilde i repoet uten at brukeren fikk noe mer.
+
+**Toppbildet** er `Bilder 41.jpg` fra samme mappe, valgt blant seks
+kandidater fordi det er det bredeste motivet og derfor tåler 21:9-stripen.
+Det er et ekte fotografi, ikke et uttrekk fra filmen.
+
+**Galleriblokken er ny.** `medier` krever samme sideforhold på alle
+elementene, og denne serien har fire liggende og ett stående. `galleri`
+viser hovedbildet i sitt eget format og resten som kvadratiske
+miniatyrer — to i bredden på telefon, fire fra `sm`. Byggetidsvakten krever
+fire til seks bilder og godtar ikke film.
