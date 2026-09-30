@@ -354,7 +354,7 @@ export const artikler: Artikkel[] = [
             "3. Drift med enkel produksjon",
             "10 000–20 000 kr",
             "Flere innlegg i uka, laget innhold, ofte svar på meldinger. Fotografering og video er begrenset eller kommer i tillegg.",
-            "Elevera fra 7 900 kr. Nettpakke Pluss fra 13 999 kr. Ramora har faste pakker fra 14 500 kr.",
+            "Elevera fra 7 900 kr (tre innlegg i uka, laget innhold og svar på meldinger). Nettpakke Pluss fra 13 999 kr. Ramora har faste pakker fra 14 500 kr.",
           ],
           [
             "4. Fast produksjon med video",
