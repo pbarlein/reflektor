@@ -814,6 +814,23 @@ export const innholdsproduksjon: Tjenesteside = {
         `Prosjekt: én leveranse, avtalt omfang, fra ${kr(tilbud.fraPrisProsjekt)} kr`,
         `Abonnement: ${site.kontakt.firma} produserer og publiserer løpende, ${kr(tilbud.prisPerManed)} kr/mnd`,
       ],
+      /*
+       * LENKENE ER LAGT TIL 30.09.2026. Naven rutet bare til de fire
+       * prosjekttjenestene — se `eiker` nederst i fila. Den andre halvdelen
+       * av svaret, det løpende, hadde ingen vei videre i det hele tatt, og
+       * /kjeder og /reels-produksjon var dermed usynlige fra naven.
+       *
+       * De ligger her og ikke i `eiker` med vilje. Eikene er sortert etter
+       * FLATE — betalt, egen, rekruttering, dokumentasjon — og det er en
+       * taksonomi de to løpende tjenestene ikke hører hjemme i. Å presse dem
+       * inn ville gjort seks kort av fire og ødelagt logikken som gjør
+       * eikene lesbare.
+       */
+      lenker: [
+        { sti: "/", tekst: "SoMe-abonnementet, med pris og leveranse" },
+        { sti: "/reels-produksjon", tekst: "Reels-produksjon til fast pris" },
+        { sti: "/kjeder", tekst: "Løpende produksjon for kjeder og retail" },
+      ],
     },
     /*
      * LAGT TIL 27.09.2026. Bakgrunnen er målt, ikke antatt: «innholdsproduksjon»
@@ -924,11 +941,20 @@ export const innholdsproduksjon: Tjenesteside = {
  * within the first 3 seconds» og «Shorter videos (6–15 seconds) are more
  * effective».
  *
- * `avgrensning` ER `null` OG DET ER ET HULL. Siden overlapper med forsiden:
- * begge beskriver 30 000 kr/mnd, én produksjonsdag og 8–10 videoer. Alle
- * andre tjenestesider har en avgrensningssetning nettopp for å hindre at to
- * sider konkurrerer om samme signal. Den setningen er ikke levert, og den
- * skal skrives — ikke av meg. Meldt til Pål 30.09.2026.
+ * AVGRENSNINGEN ER SKREVET 30.09.2026, på Påls beskjed: «strukturer slik du
+ * mener er best mtp instrukser om hva som ikke dekkes. sørg for at ingen
+ * sider konkurrerer med hverandre.»
+ *
+ * Den var det eneste som manglet da siden ble bygget, og den er ikke
+ * pynt: dette er siden med størst overlapp på hele nettstedet. Forsiden
+ * selger det samme abonnementet til den samme prisen. Forskjellen er hvilket
+ * spørsmål de svarer på — «hvem lager Reels til fast pris» mot «hva koster et
+ * SoMe-byrå» — og uten en setning som sier det, konkurrerer de to om det
+ * samme signalet.
+ *
+ * Avgrensningen peker derfor OPPOVER til forsiden, ikke sidelengs til
+ * søsterssidene: leseren som vil ha hele leveransen beskrevet, skal dit.
+ * De to andre lenkene skiller mot de to nærmeste formene for film.
  */
 export const reelsproduksjon: Tjenesteside = {
   sti: "/reels-produksjon",
@@ -949,7 +975,15 @@ export const reelsproduksjon: Tjenesteside = {
     fil: "produksjonsdag-rigg-1600",
     alt: "Kamera montert på rigg over et bord under en produksjonsdag",
   },
-  avgrensning: null,
+  avgrensning: [
+    "Denne siden handler om formatet: kort, stående video produsert løpende. Vil dere se hele leveransen med strategi, publisering og vilkår beskrevet samlet, står den på ",
+    { sti: "/", tekst: "siden om SoMe-abonnementet" },
+    ". Skal dere ha én film til én kampanje i stedet for innhold hver måned, er det ",
+    { sti: "/reklamefilm", tekst: "reklamefilm" },
+    ". Og skal filmen ligge på nettsiden eller på en skjerm framfor i feeden, er det ",
+    { sti: "/videoproduksjon-i-oslo", tekst: "video til egne flater" },
+    ".",
+  ],
   seksjoner: [
     {
       sporsmal: "Kort video er der kundene dine ser deg først",
@@ -1078,14 +1112,21 @@ export const reelsproduksjon: Tjenesteside = {
     {
       sporsmal: "Se hva vi har laget",
       /*
-       * BRANSJELISTA MANGLER BELEGG FOR TO AV FIRE. Mat og retail er dekket
-       * av den bekreftede kundelista i site.ts — Soul Cake, Baker Brun,
-       * Peppes, Egon, Anton Sport. Eiendom og teknologi står ikke noe sted i
-       * dette repoet, og AGENTS.md er utvetydig: ikke finn på kundenavn.
-       * Derfor står de som en BEKREFT-plassholder, som stopper byggen til
-       * Pål har svart.
+       * BRANSJELISTA ER BEKREFTET AV PÅL 30.09.2026. Den sto som en
+       * BEKREFT-plassholder i under ett døgn: mat og retail var dekket av
+       * kundelista i site.ts, mens eiendom og teknologi ikke var belagt noe
+       * sted i repoet.
+       *
+       * Påls svar, ordrett: «ja, vi kan si eiendom og teknologi. vi har
+       * blant annet Selvaag Eiendom på abonnementet.» Bildet nederst i
+       * `arbeid` er hentet fra nettopp den kundemappen.
+       *
+       * NAVNET STÅR IKKE PÅ SIDEN. Selvaag er ikke ført opp i `kundelogoer`,
+       * og den lista er det eneste grunnlaget for å navngi noen. Å nevne en
+       * bransje krever ikke et navn; å skrive navnet krever at Pål godkjenner
+       * nettopp det navnet. Spørsmålet er stilt.
        */
-      svar: "Vi har produsert foto og video for bedrifter innen mat, retail [BEKREFT: kan vi også si eiendom og teknologi? Chats copy oppgir fire bransjer, men eiendom og teknologi er ikke belagt noe sted i repoet] og flere andre bransjer.",
+      svar: "Vi har produsert foto og video for bedrifter innen mat, eiendom, retail og teknologi.",
       lenker: [{ sti: "/vart-arbeid", tekst: "Se kundecasene våre" }],
     },
   ],
@@ -1139,7 +1180,27 @@ export const reelsproduksjon: Tjenesteside = {
       sti: "/reels/soulcake",
       alt: "Vertikalt klipp fra bakeri",
     },
-    { type: "video", sti: "/reels/gekko", alt: "Vertikalt klipp av elsykkel" },
+    /*
+     * EIENDOMSBILDET ER LAGT TIL 30.09.2026, etter at Pål bekreftet bransjen
+     * og ba meg finne et eksempel i kundemappen. Det erstattet et klipp av
+     * en elsykkel: de tre andre dekket sportsbutikk, spa og bakeri, og
+     * ingenting på siden viste eiendom — som er bransjen setningen over
+     * nettopp hadde fått lov til å nevne.
+     *
+     * VALGT AV TI KANDIDATER, ikke tatt i blinde. Mappa er mest fasader,
+     * interiører og dronebilder. Dette er det eneste med mennesker i arbeid
+     * og bevegelse i bildet, og det eneste som leser som produksjon og ikke
+     * som et eiendomsprospekt. To kandidater ble valgt bort fordi kundens
+     * navn står på fasaden.
+     *
+     * Beskåret til 9:16 fra et liggende originalbilde, sentrert på personen
+     * i midten. Alt-teksten navngir ingen, som i resten av rutenettet.
+     */
+    {
+      type: "foto",
+      sti: "/arbeid/eiendom-byggeplass.jpg",
+      alt: "Håndverkere i arbeidstøy på en byggeplass under rehabilitering",
+    },
   ],
 };
 
@@ -1481,6 +1542,7 @@ export const kjeder: Tjenesteside = {
 export const tjenestesider: Tjenesteside[] = [
   innholdsproduksjon,
   kjeder,
+  reelsproduksjon,
   reklamefilm,
   videoproduksjon,
   employerBranding,

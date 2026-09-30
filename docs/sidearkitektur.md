@@ -200,3 +200,89 @@ tjenestesidene slutter å selge.
 prosjektproduksjon uten abonnement, og hva koster det? Uten et svar
 lander den i samme kategori som `/sosiale-medier-byra` — en omskrivning
 av forsiden — og da er 301 riktig dom, selv om det koster 450 i volum.
+
+---
+
+# Runde 2 — 30.09.2026: to nye sider inn i kartet
+
+Bestilt av Pål samme dag: «strukturer slik du mener er best mtp instrukser om
+hva som ikke dekkes. sørg for at ingen sider konkurrerer med hverandre i
+forhold til kanibalisme.»
+
+Siden tabellen over ble skrevet, har nettstedet fått to sider til: `/kjeder`
+(29.09) og `/reels-produksjon` (30.09). Ingen av dem sto i kartet.
+
+## Den nye skillelinjen: flate, og så form
+
+De fem opprinnelige sidene skiller på **hvor filmen vises**. Det skillet
+består, og det er fortsatt det bærende. De to nye skiller på noe annet, og
+det er verdt å si rett ut, fordi to skillelinjer i samme kart er nettopp det
+som skaper rot hvis ingen skriver dem ned:
+
+| Side | Skiller seg på | Eier spørsmålet |
+|---|---|---|
+| `/kjeder` | hvem kunden er | «kan de levere til en kjede med femti utsalg» |
+| `/reels-produksjon` | hvilket format som lages | «hvem lager Reels til fast pris» |
+
+Begge selger i praksis det samme løpende arbeidet som forsiden. Det er ikke
+en feil, men det er den skarpeste kannibaliseringsrisikoen på hele
+nettstedet, og den måtte håndteres eksplisitt.
+
+## Slik er den håndtert
+
+**Forsiden eier prisen og leveransen.** Begge de nye sidene peker oppover dit
+i avgrensningen sin, ikke sidelengs til hverandre. Leseren som vil ha hele
+abonnementet beskrevet — strategi, publisering, vilkår — sendes til `/`.
+
+**De nye sidene eier hvert sitt søk.** `/reels-produksjon` er bygget på ordet
+Reels (1 300 søk i måneden i Norge mot 0 på «tiktok byrå»), `/kjeder` på
+kjede- og retailordene. Forsiden er bygget på «SoMe-byrå». Tre ulike
+inngangsord til samme tjeneste er bredde, ikke duplikat — så lenge ingen av
+dem prøver å svare på de to andres spørsmål.
+
+**Naven ruter nå til begge.** `/innholdsproduksjon` hadde bare veier videre
+til de fire prosjekttjenestene. Halvparten av nettstedets eget svar — det
+løpende — hadde ingen vei ut i det hele tatt, og de to nye sidene var derfor
+usynlige fra naven. Seksjonen «Prosjekt eller abonnement» har nå lenker til
+`/`, `/reels-produksjon` og `/kjeder`.
+
+De ligger der og ikke i `eiker`. Eikene er sortert etter FLATE, og de to
+løpende tjenestene hører ikke hjemme i den taksonomien. Å presse dem inn
+ville gjort seks kort av fire og ødelagt logikken som gjør eikene lesbare.
+
+## Kartet slik det står nå
+
+| Side | Avgrensningen peker til |
+|---|---|
+| `/reklamefilm` | videoproduksjon, employer branding |
+| `/videoproduksjon-i-oslo` | reklamefilm, employer branding |
+| `/employer-branding-video-oslo` | videoproduksjon, bloggartikkelen om fagfeltet |
+| `/eventfotograf-eventvideo` | videoproduksjon, reklamefilm |
+| `/kjeder` | reklamefilm, forsiden |
+| `/reels-produksjon` | forsiden, reklamefilm, videoproduksjon |
+| `/innholdsproduksjon` | ingen — den er navet, og et nav konkurrerer ikke med sine egne eiker |
+
+Ingen side er foreldreløs. `/eventfotograf-eventvideo` og
+`/innholdsproduksjon` har ingen innkommende lenker fra de andre
+tjenestesidene, men begge ligger i eikekortene og i bunnteksten.
+
+## Det nærmeste paret som står igjen
+
+`/kjeder` og bloggartikkelen «Sosiale medier for kjeder med flere
+lokasjoner» ligger nærmest hverandre av alt på nettstedet. Arbeidsdelingen er
+den samme som ellers mellom blogg og tjenesteside: artikkelen svarer på
+hvordan en kjede løser innhold i det hele tatt, siden svarer på hva Reflektor
+gjør for kjeder. Artikkelen lenker til siden to steder; siden lenker ikke
+tilbake. Det er med vilje — lenkekraften skal gå én vei, mot den
+kommersielle siden.
+
+## To felt som ikke leses av noe
+
+Funnet under gjennomgangen, ikke rettet:
+
+- `pris` på `Tjenesteside` settes til `null` på alle sju sidene, og ingen
+  komponent leser feltet.
+- `tjenestesider`-arrayet eksporteres, men ingenting importerer det.
+
+Begge er ufarlige i dag. De står oppført her slik at neste tekniske
+gjennomgang slipper å finne dem på nytt.
