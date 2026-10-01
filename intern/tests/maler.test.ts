@@ -476,3 +476,81 @@ test("hver instruks krever at et kutt blir sagt fra om", () => {
     );
   }
 });
+
+/**
+ * ── INGEN MAL SKAL HA ÉN BRANSJE SOM FASIT ────────────────────────────────
+ *
+ * Produksjonsplanen ble 01.10.2026 lagt om etter en plan som faktisk var
+ * sendt — til en hudpleieklinikk. Oppsettet ble riktig, men vokabularet
+ * fulgte med: «Hver [enhet]» hadde «en behandling» først i eksempelrekka,
+ * presisjonskravet var illustrert med «talking head, b-roll, 1–3 bilder»,
+ * og nøkkelpunktet med «Klinikken: bilder uten folk».
+ *
+ * Bestilt samme dag: «kunder har helt andre tjenester og produkter enn
+ * behandlinger, så det må tilpasses i henhold til some-strategi og annen
+ * input.»
+ *
+ * Det er ikke et kosmetisk problem. Eksemplene i en instruks er det
+ * sterkeste signalet en språkmodell har om hva som er normalt, og en modell
+ * som har lest «behandling» tre ganger skriver «behandling» i en plan for
+ * en kafé. Researchen sier allerede at en plan for et B2B-selskap ikke ser
+ * ut som en plan for en butikk — en mal med ett bransjeeksempel overstyrer
+ * den beskjeden.
+ *
+ * Regelen: nevner en mal en bransje i det hele tatt, skal den nevne minst
+ * tre. Da er eksemplene en FORM å gjenkjenne, ikke et ordforråd å kopiere.
+ */
+const BRANSJEORD: Record<string, readonly string[]> = {
+  servering: ["spisested", "spisestad", "kafé", "kafe", "meny", "kokk"],
+  helse: ["behandling", "behandlinger", "klinikk", "behandler"],
+  butikk: ["varegruppe", "varegrupper"],
+  handverk: ["verksted", "entreprenør", "håndverker"],
+  kjede: ["avdeling", "avdelinger", "kjede"],
+};
+
+test("ingen mal bruker én enkelt bransje som eneste eksempel", () => {
+  for (const m of MALER) {
+    const tekst = [m.oppdrag, ...m.struktur, ...(m.regler ?? [])]
+      .join(" ")
+      .toLowerCase();
+    const familier = Object.entries(BRANSJEORD)
+      .filter(([, ord]) =>
+        ord.some((o) => new RegExp(`\\b${o}\\b`).test(tekst)),
+      )
+      .map(([navn]) => navn);
+
+    if (familier.length === 0) continue;
+    assert.ok(
+      familier.length >= 3,
+      `${m.slug}: nevner bare ${familier.join(" og ")}. ` +
+        `Nevner en mal én bransje, skal den nevne minst tre — ellers leser ` +
+        `modellen den ene som normalen. Se kommentaren over denne testen.`,
+    );
+  }
+});
+
+/**
+ * Oppskriften i produksjonsplanen skal hentes fra kunden, ikke fra malen.
+ * Uten disse to setningene står en liste med bransjeeksempler alene, og da
+ * er den en meny å velge fra i stedet for en form å fylle.
+ */
+test("produksjonsplanen utleder enheten og henter stegene fra kunden", () => {
+  const m = MALER.find((x) => x.slug === "produksjonsplan")!;
+  const tekst = [m.oppdrag, ...m.struktur, ...(m.regler ?? [])].join(" ");
+
+  assert.match(
+    tekst,
+    /ikke fra denne listen/i,
+    "eksemplene må si fra om at de ikke er valgene",
+  );
+  assert.match(
+    tekst,
+    /SoMe-strategien/,
+    "stegene skal følge av hva kunden faktisk publiserer",
+  );
+  assert.match(
+    tekst,
+    /Ordene i dokumentet er kundens egne/,
+    "vokabularet skal hentes fra kunden",
+  );
+});
