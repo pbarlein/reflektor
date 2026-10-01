@@ -1,3 +1,4 @@
+import type { Bloggmedie } from "./artikler";
 import { kr, site, tilbud } from "./site";
 
 /**
@@ -95,6 +96,43 @@ export type Seksjon = {
    * fasonger ved siden av hverandre.
    */
   filmer?: Referansefilm[];
+  /**
+   * Punkter med egen overskrift, og eventuelt en lenke videre.
+   *
+   * LAGT TIL 01.10.2026. `punkter` er flate strenger, og det holdt så lenge
+   * hvert punkt var én setning. «Hva slags video trenger dere?» på
+   * videosiden er fem typer film med hver sin forklaring, og to av dem har
+   * sin egen side å peke til. Som flate punkter ville de blitt fem lange
+   * setninger uten struktur, og lenkene ville måttet samles i en haug
+   * nederst der ingen kan se hvilken som hører til hva.
+   */
+  delblokker?: {
+    tittel: string;
+    tekst: string;
+    lenke?: { sti: string; tekst: string };
+  }[];
+  /**
+   * Nummerer `delblokker` som en ordnet liste.
+   *
+   * «Slik jobber vi» er seks steg i rekkefølge. En punktliste sier at
+   * rekkefølgen er likegyldig; det er den ikke, og `<ol>` sier det både til
+   * leseren og til en språkmodell.
+   */
+  nummerert?: boolean;
+  /**
+   * Omtalevideoen fra en kunde, vist i seksjonen.
+   *
+   * Henter innholdet fra kundecasen, slik at sitatet og filmen står ett
+   * sted. Verdien er slugen til caset.
+   */
+  kundeord?: string;
+  /**
+   * Et bildegalleri fra ett oppdrag: hovedbilde og tre til fem miniatyrer.
+   *
+   * SAMME KOMPONENT SOM BLOGGEN BRUKER. Eventsiden og prisguiden viser de
+   * samme fem bildene fra den samme kvelden, og da skal de se like ut.
+   */
+  galleri?: Bloggmedie[];
 };
 
 /**
@@ -403,41 +441,152 @@ export const reklamefilm: Tjenesteside = {
 
 export const videoproduksjon: Tjenesteside = {
   sti: "/videoproduksjon-i-oslo",
-  tittel: "Videoproduksjon i Oslo – film til egne flater",
+  /*
+   * UTVIDET TIL HOVEDSIDEN FOR VIDEO 01.10.2026.
+   *
+   * BAKGRUNNEN ER SØKETALL OG KONKURRENTENE. «Videoproduksjon» og
+   * «videoproduksjon oslo» har 150 søk i måneden hver, «bedriftsvideo» og
+   * «bedriftsfilm» 70 og 50, «film produksjon» og «filmproduksjon oslo» 100
+   * hver. Alle sidene på side 1 — Noblewolf, M51, Epic Media — dekker alle
+   * typer film på én side, med eksempler, prosess, bevis og FAQ.
+   *
+   * Siden avgrenset seg tidligere til «film til egne flater» og brukte
+   * verken ordet «bedriftsfilm» eller «bedriftsvideo». Den hadde ingen
+   * prosess og ingen tall. Nå er den hovedsiden; reklamefilm, employer
+   * branding og event beholder sine egne sider og lenkes herfra.
+   */
+  tittel: "Videoproduksjon i Oslo – bedriftsfilm, video og reklamefilm",
   beskrivelse:
-    "Videoproduksjon for bedrifter: bannervideo, film til tjenestesider, innhold til skjermer og brand video. Produsert i Oslo, for hele Norge.",
+    "Videoproduksjon for bedrifter i Oslo og hele Norge: bedriftsfilm, video til nettside og sosiale medier, reklamefilm og eventvideo. Fra 40 000 kr per prosjekt.",
   h1: "Videoproduksjon i Oslo",
   merkelapp: "Produksjon",
-  tjenestetype: "Videoproduksjon for bedriftens egne flater",
-  svar: "Videoproduksjon er film til flater dere selv eier: forsiden av nettsiden, en tjenesteside som trenger forklaring, skjermer i butikk eller resepsjon, og egne kanaler. Reflektor står for idé, opptak, klipp, teksting og fargekorrigering. Filmen koster ingenting å vise, fordi flaten er deres.",
+  tjenestetype: "Videoproduksjon for bedrifter",
+  svar: `Reflektor er et produksjonshus i Oslo som lager video for bedrifter i hele Norge: bedriftsfilm, video til nettsiden, innhold til sosiale medier, reklamefilm og eventvideo. Vi står for idé, opptak, klipp, teksting og fargekorrigering. Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr.`,
   avgrensning: [
-    "Skal dere betale for å få filmen vist, på TV eller som annonse, er det ",
-    { sti: "/reklamefilm", tekst: "reklamefilm" },
-    ". Skal den snakke til framtidige ansatte i stedet for til kunder, er det ",
+    "Skal filmen rekruttere og ikke selge, er det ",
     {
       sti: "/employer-branding-video-oslo",
-      tekst: "film for rekruttering",
+      tekst: "employer branding-video",
     },
-    " — et annet publikum, og derfor en annen film.",
+    " — et annet publikum, og derfor en annen film. Trenger dere nytt innhold hver måned i stedet for ett prosjekt, er det ",
+    { sti: "/", tekst: "SoMe-abonnementet" },
+    ".",
   ],
   seksjoner: [
     {
-      sporsmal: "Hva slags video lager dere til egne flater?",
-      svar: "Film som skal forklare noe, ikke fange oppmerksomhet i en feed. Den vanligste jobben er en kort bannervideo øverst på forsiden, film som viser hva en tjeneste faktisk innebærer, innhold til skjermer i lokalet, og brand video som forteller hvem selskapet er.",
-      punkter: [
-        "Bannervideo til forside og landingssider",
-        "Film til tjenestesider — det som er vanskelig å forklare i tekst",
-        "Innhold til skjermer i butikk, resepsjon og på messe",
-        "Brand video om selskapet",
+      sporsmal: "Hva slags video trenger dere?",
+      svar: "Vi skiller filmene på hvor de skal vises. Det avgjør lengde, tone og hva filmen må få til.",
+      delblokker: [
+        {
+          tittel: "Bedriftsfilm og bedriftsvideo",
+          tekst:
+            "Filmen som viser hvem dere er: folkene, arbeidsmåten og det dere faktisk leverer. Den brukes på forsiden av nettsiden, i salgsmøter, på messer og i rekruttering. Den lages som en hovedfilm med kortere versjoner til sosiale medier og LinkedIn.",
+        },
+        {
+          tittel: "Video til nettsiden",
+          tekst:
+            "Bannervideo øverst på forsiden, film til tjenestesider og det som er vanskelig å forklare i tekst. Et rom, et håndverk eller en maskin i bevegelse er raskere å vise enn å beskrive.",
+        },
+        {
+          tittel: "Innhold til sosiale medier og skjermer",
+          tekst:
+            "Korte, tekstede klipp i 9:16 og 4:5, laget for å bli sett uten lyd. Vi lager også innhold til skjermer i butikk, i resepsjonen og på messe. Trenger dere dette hver måned, er abonnementet eller Reels-produksjon riktigere enn et prosjekt.",
+          lenke: { sti: "/reels-produksjon", tekst: "Reels-produksjon" },
+        },
+        {
+          tittel: "Reklamefilm",
+          tekst:
+            "Filmen dere betaler for å få vist. Vi har laget TV-reklame for Peppes Pizza og Vitusapotek.",
+          lenke: { sti: "/reklamefilm", tekst: "Reklamefilm for TV og nett" },
+        },
+        {
+          tittel: "Eventvideo",
+          tekst:
+            "Film og foto fra konferanser, lanseringer og firmaarrangementer.",
+          lenke: {
+            sti: "/eventfotograf-eventvideo",
+            tekst: "Eventfoto og eventvideo",
+          },
+        },
+      ],
+      etterord: "Skal filmen rekruttere, er det employer branding-video.",
+      lenker: [
+        {
+          sti: "/employer-branding-video-oslo",
+          tekst: "Employer branding-video i Oslo",
+        },
       ],
     },
     {
-      sporsmal: "Hvorfor video på nettsiden i det hele tatt?",
-      svar: "Fordi noen ting ikke lar seg skrive. Et rom, et håndverk, en maskin i bevegelse eller stemningen på et sted er raskere å vise enn å beskrive. Det som kan forklares i en setning, bør forklares i en setning — video på nettsider blir dyrt og dårlig når det brukes på noe tekst ville løst bedre.",
+      /*
+       * SEKS STEG, NUMMERERT. Konkurrentene på side 1 har alle en prosess;
+       * denne siden hadde ingen. Den som vurderer et prosjekt til 40 000 kr
+       * og oppover vil vite hva som skjer mellom bestilling og levering —
+       * og rekkefølgen er en del av svaret, derfor <ol> og ikke <ul>.
+       */
+      sporsmal: "Slik jobber vi",
+      svar: "",
+      nummerert: true,
+      delblokker: [
+        {
+          tittel: "Introduksjonsmøte",
+          tekst:
+            "Hva skal filmen få til, for hvem, og hvor skal den vises? Dere trenger ikke manus. Et mål holder.",
+        },
+        {
+          tittel: "Forslag med pris",
+          tekst:
+            "Dere får et løsningsforslag med fast pris innen tre virkedager. Vi bruker ikke timepriser.",
+        },
+        {
+          tittel: "Planlegging",
+          tekst:
+            "Vi lager kjøreplan og avtaler lokasjon, medvirkende og hvilke formater dere trenger, før opptaksdagen.",
+        },
+        {
+          tittel: "Opptak",
+          tekst:
+            "Som regel hos dere, der folkene og produktene er. Vi har med kamera, lys og lyd.",
+        },
+        {
+          tittel: "Klipp og korrigering",
+          tekst:
+            "Dere ser et utkast og gir tilbakemelding før vi ferdigstiller. Teksting og fargekorrigering er inkludert.",
+        },
+        {
+          tittel: "Levering",
+          tekst:
+            "Ferdige filer i alle formatene dere trenger, som regel innen to uker etter opptaksdagen. Alt er deres, med fri bruk.",
+        },
+      ],
     },
     {
-      sporsmal: "Hva koster videoproduksjon for bedrift?",
-      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nHolder dere lokasjon og eventuelle medvirkende selv, går prisen ned.`,
+      /*
+       * BEVISET, OG DET ER TO TYPER. Videoen er kunden i egne ord; tallene
+       * under er målt. Axel Hauges sitat sto tidligere på «Hvem produserer
+       * Reflektor for?» — det er flyttet hit, der de andre kundeordene står.
+       */
+      sporsmal: "Kunden om oss",
+      svar: "Soul Cake har brukt oss til foto og video siden 2022. Over 80 prosent av foto og video på @soulcake.oslo kommer fra Reflektor, og reelsene har hatt 6,8 millioner visninger fra april 2022 til september 2026.",
+      kundeord: "soulcake",
+      lenker: [{ sti: "/vart-arbeid/soulcake", tekst: "Les Soul Cake-casen" }],
+      sitat: {
+        tekst:
+          "Vi liker spesielt godt hvordan de får alle til å føle seg avslappet, naturlig og finne seg til rette foran kamera, selv med lite modell-erfaring fra tidligere. De ser aldri begrensninger og heller muligheter uansett årstid eller lokasjon.",
+        navn: "Axel Hauge",
+        rolle: "Anton Sport",
+      },
+    },
+    {
+      sporsmal: "Hva koster videoproduksjon?",
+      svar: `Enkeltprosjekter hos oss starter på ${kr(tilbud.fraPrisProsjekt)} kr. Hvor prosjektet lander, avhenger av tre ting: antall opptaksdager, hvor mange som må være på settet, og hvor mye etterarbeid filmen krever. Holder dere lokasjon og medvirkende selv, går prisen ned.\n\nTrenger dere video hver måned og ikke én gang, er løpende produksjon ${kr(tilbud.prisPerManed)} kr/mnd for én produksjonsdag og ${tilbud.videoerPerManed} ferdige videoer.`,
+      lenker: [
+        {
+          sti: "/blogg/hva-koster-videoproduksjon",
+          tekst:
+            "Hva koster videoproduksjon? Vi har sammenlignet norske prisguider",
+        },
+      ],
     },
     {
       sporsmal: "Hvor mange filmer får vi ut av én dag?",
@@ -445,13 +594,7 @@ export const videoproduksjon: Tjenesteside = {
     },
     {
       sporsmal: "Hvem produserer Reflektor for?",
-      svar: "Anton Sport, The Well, Peppes Pizza, Egon, Baker Brun, Idun Industri, Selvaag, Retail24, Centropa, Happis og Soul Cake — innen retail, restaurant og mat, eiendom, finans og industri.",
-      sitat: {
-        tekst:
-          "Vi liker spesielt godt hvordan de får alle til å føle seg avslappet, naturlig og finne seg til rette foran kamera, selv med lite modell-erfaring fra tidligere. De ser aldri begrensninger og heller muligheter uansett årstid eller lokasjon.",
-        navn: "Axel Hauge",
-        rolle: "Anton Sport",
-      },
+      svar: "Anton Sport, The Well, Peppes Pizza, Egon, Baker Brun, Idun Industri, Selvaag, Retail24, Centropa, Happis og Soul Cake — innen retail, restaurant og mat, eiendom, finans og industri. Ikke alle er abonnementskunder.",
     },
   ],
   faq: [
@@ -470,6 +613,25 @@ export const videoproduksjon: Tjenesteside = {
     {
       sporsmal: "Hvor lang tid tar det?",
       svar: "Vi leverer som regel innen to uker etter opptaksdagen. Haster det, sier dere fra i planleggingen — ved spesielle behov tilrettelegger vi for raskere leveranse.",
+    },
+    {
+      sporsmal: "Hvor mange versjoner av filmen får vi?",
+      svar: "Det avtaler vi før opptak. Som regel får dere en hovedfilm og kortere versjoner i formatene dere trenger, for eksempel 16:9 til nettsiden og 9:16 og 4:5 til sosiale medier. Det er billigere å planlegge versjonene før opptaksdagen enn å klippe om etterpå.",
+    },
+    {
+      sporsmal: "Hvor lang bør en bedriftsfilm være?",
+      svar: "Kortere enn de fleste tror. En hovedfilm til nettsiden fungerer ofte best på ett til to minutter, med kortere klipp på 15–60 sekunder til sosiale medier. Vi klipper som regel flere lengder fra samme opptak.",
+    },
+    {
+      sporsmal: "Lager dere video utenfor Oslo?",
+      /*
+        GATEADRESSEN LESES FRA `site.kontakt`, ikke skrevet inn. NAP-
+        konsistens er ett av de fire punktene AGENTS.md sier synligheten
+        faktisk krever, og en adresse skrevet to steder er en adresse som
+        før eller siden står ulikt. Postnummeret kuttes fordi setningen
+        allerede sier «i Oslo».
+      */
+      svar: `Ja. Reflektor holder til i ${site.kontakt.adresse.split(",")[0]} i Oslo og produserer for bedrifter i hele Norge, blant annet for Retail24 i Sandefjord.`,
     },
   ],
   pris: null,
@@ -657,9 +819,9 @@ export const event: Tjenesteside = {
     fokus: "center 40%",
   },
   sti: "/eventfotograf-eventvideo",
-  tittel: "Eventfotograf og eventvideo for bedrifter",
+  tittel: "Eventfotograf og eventvideo i Oslo – konferanse og firmaarrangement",
   beskrivelse:
-    "Eventfotograf og eventvideo: foto og film fra konferanser, lanseringer, messer og firmaarrangementer. Materiale dere kan bruke i ettertid.",
+    "Eventfotograf og eventvideo for konferanser, lanseringer og firmaarrangementer. Eventvideo, klipp til sosiale medier og 50+ bilder. Fra 40 000 kr.",
   h1: "Eventfotograf og eventvideo",
   merkelapp: "Produksjon",
   tjenestetype: "Foto- og videodekning av arrangementer",
@@ -672,6 +834,79 @@ export const event: Tjenesteside = {
     ".",
   ],
   seksjoner: [
+    {
+      /*
+       * LEVERANSEN FØRST. Konkurrentene på side 1 viser pris, leveranse og
+       * eksempler; denne siden hadde pris, men ingen konkret leveranse og
+       * ingen eksempler. Den som søker «eventfotograf» vil vite hva som
+       * kommer ut av dagen, og det svaret skal ikke ligge nede i en FAQ.
+       */
+      sporsmal: "Dette får dere fra et arrangement",
+      svar: "Vi filmer og tar bilder på samme arrangement. En typisk leveranse er:",
+      punkter: [
+        "en eventvideo på 30–60 sekunder",
+        "én eller flere kortere versjoner til sosiale medier",
+        "50 bilder eller flere, ferdig redigert",
+        "redigering og korrigeringer til dere er fornøyde",
+      ],
+      etterord: `Enkeltoppdrag starter på ${kr(tilbud.fraPrisProsjekt)} kr. Skal foredrag, seminarer eller debatter filmes i sin helhet, blir jobben større, og prisen deretter.`,
+    },
+    {
+      /*
+       * EKSEMPELET ER DET SAMME SOM I PRISGUIDEN, med vilje: samme kveld,
+       * samme film, samme fem bilder, samme komprimerte filer. To ulike
+       * eksempler på to sider om samme tjeneste ville sagt mindre, ikke mer
+       * — og den som kommer fra bloggen til tjenestesiden skal kjenne seg
+       * igjen.
+       */
+      sporsmal: "Eksempel: Retail24 i Sandefjord",
+      svar: "Retail24 er abonnementskunde hos oss. I august 2026 brukte de månedens produksjonsdag på et arrangement i Sandefjord. Leveransen ble én eventvideo, åtte intervjuer og rundt 190 ferdig redigerte bilder.",
+      filmer: [
+        {
+          sti: "/arbeid/retail24-sandefjord",
+          format: "16/9",
+          alt: "Eventvideo fra et firmaarrangement i Sandefjord",
+          bildetekst:
+            "Eventvideoen fra kvelden. 1 minutt og 43 sekunder, filmet og klippet av Reflektor.",
+          sekunder: 103,
+          lyd: true,
+        },
+      ],
+      galleri: [
+        {
+          slag: "foto",
+          sti: "/arbeid/retail24-sandefjord-1",
+          format: "16/9",
+          alt: "Gjester samlet rundt buffeten i hagen under et firmaarrangement",
+        },
+        {
+          slag: "foto",
+          sti: "/arbeid/retail24-sandefjord-2",
+          format: "16/9",
+          alt: "Smilende gjester rundt et bord under arrangementet",
+        },
+        {
+          slag: "foto",
+          sti: "/arbeid/retail24-sandefjord-3",
+          format: "16/9",
+          alt: "Murbygning med rød løper og veteranbil foran inngangen",
+        },
+        {
+          slag: "foto",
+          sti: "/arbeid/retail24-sandefjord-4",
+          format: "16/9",
+          alt: "Servitør i et mørkt, panelkledd rom med tente lysestaker",
+        },
+        {
+          slag: "foto",
+          sti: "/arbeid/retail24-sandefjord-5",
+          format: "9/16",
+          alt: "Champagnetårn av glass på en antikk kommode",
+        },
+      ],
+      etterord: `Har dere flere arrangementer i året, kan produksjonsdagen i abonnementet til ${kr(tilbud.prisPerManed)} kr/mnd legges til et arrangement.`,
+      lenker: [{ sti: "/", tekst: "Les om abonnementet" }],
+    },
     {
       sporsmal: "Hva får dere igjen for å dokumentere et arrangement?",
       svar: "Materiale som lever lenger enn dagen. Bildene og klippene fra en konferanse er det som selger neste års konferanse, og de fyller kanalene i ukene etterpå. Et arrangement uten dekning er en investering som forsvinner samme kveld.",
@@ -698,21 +933,56 @@ export const event: Tjenesteside = {
        * tall vi ikke har.
        */
       sporsmal: "Hva koster eventfotograf?",
-      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nEn typisk leveranse er en eventvideo på 30–60 sekunder, én eller flere kortere versjoner til sosiale medier, 50 bilder eller flere ferdig redigert, og redigering og korrigeringer til dere er fornøyde.\n\nHar dere noen arrangementer i året, kan produksjonsdagen i det løpende samarbeidet legges til et arrangement. Da får dere bilder og video derfra som en del av månedens innhold, uten ekstra kostnad.\n\nDet som flytter prisen på et arrangement er hvor lenge vi er der, hvor mange som må være til stede samtidig, og hvor mye som skal klippes etterpå.`,
+      svar: `Eventdekning hos oss starter på ${kr(tilbud.fraPrisProsjekt)} kr. Da filmer vi og tar bilder på samme arrangement: eventvideo, kortere klipp til sosiale medier og 50+ ferdig redigerte bilder. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden, og produksjonsdagen kan legges til et arrangement.\n\nDet som flytter prisen er hvor lenge vi er der, hvor mange som må være til stede samtidig, og hvor mye som skal klippes etterpå.`,
+      lenker: [
+        {
+          sti: "/blogg/hva-koster-eventfotograf",
+          tekst: "Hva koster en eventfotograf i Oslo? Se prisene i markedet",
+        },
+      ],
     },
     {
       sporsmal: "Når får vi materialet?",
       svar: "Som regel innen to uker. Men der det er essensielt å få deler av leveransen ut samme kveld eller dagen etter, imøtekommer vi som regel det — si fra i planleggingen, så legger vi opp dagen etter det.",
     },
     {
+      /*
+       * SISTE SETNING OMSKREVET 01.10.2026. Her sto «På større arrangementer
+       * er det som regel to personer, fordi én ikke kan gjøre begge deler
+       * samtidig uten å gå glipp av noe.»
+       *
+       * Det er den samme feilen Pål fanget i eventprisguiden 30.09.2026, og
+       * jeg overså den her i gjennomgangen samme dag. Én produsent dekker
+       * som regel begge deler hos oss, og de får det til. Setningen sier nå
+       * det samme om PRIS, uten å si noe om kvalitet. Se AGENTS.md.
+       */
       sporsmal: "Foto, film, eller begge deler?",
-      svar: "De fleste arrangementer trenger begge. Bilder er raskest ut og enklest å bruke i mange kanaler; film fanger stemningen og taleren. På større arrangementer er det som regel to personer, fordi én ikke kan gjøre begge deler samtidig uten å gå glipp av noe.",
+      svar: "De fleste arrangementer trenger begge. Bilder er raskest ut og enklest å bruke i mange kanaler; film fanger stemningen og taleren. Hos oss dekker som regel én produsent begge deler. Skal flere ting skje samtidig — scene, mingling og intervjuer i parallell — setter vi på flere folk, og da blir jobben større.",
+    },
+    {
+      sporsmal: "Arrangementer vi dekker",
+      svar: "",
+      punkter: [
+        "Konferanser og seminarer",
+        "Kick-off og firmafester",
+        "Produktlanseringer og åpninger",
+        "Messer og stands",
+        "Prisutdelinger og jubileer",
+      ],
     },
   ],
   faq: [
     {
       sporsmal: "Dekker dere arrangementer utenfor Oslo?",
       svar: "Ja. Reflektor holder til i Oslo og jobber i hele Norge.",
+    },
+    {
+      sporsmal: "Hva er en eventvideo?",
+      svar: "En kort film på 30–60 sekunder som fanger stemningen på et arrangement: folkene, høydepunktene og det som ble sagt. Den brukes til å oppsummere arrangementet i sosiale medier og til å invitere til neste.",
+    },
+    {
+      sporsmal: "Kan dere filme hele foredrag i tillegg til eventvideo?",
+      svar: "Ja. Skal foredrag, seminarer eller debatter filmes i sin helhet, planlegger vi med flere kameraer og egen lyd. Det gjør jobben større, så si fra tidlig i planleggingen.",
     },
     {
       sporsmal: "Trenger dere en kjøreplan på forhånd?",

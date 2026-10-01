@@ -5,6 +5,11 @@ import type { Bloggmedie } from "@/content/artikler";
 /**
  * Et galleri fra ett oppdrag: ett hovedbilde og tre til fem miniatyrer.
  *
+ * FLYTTET UT AV blogg/ 01.10.2026. Den lå som `Bloggalleri` og ble brukt ett
+ * sted. Eventsiden trenger nøyaktig det samme — samme fem bilder fra samme
+ * kveld — og to kopier av et galleri er to steder å rette neste gang
+ * beskjæringen er feil.
+ *
  * SERVERKOMPONENT, i motsetning til `Bloggmedier`. Den måtte være klient
  * fordi filmene trenger en IntersectionObserver for å starte selv. Her er
  * alt stillbilder, og da er det ingenting å holde styr på i nettleseren.
@@ -29,7 +34,7 @@ const RAMME: Record<Bloggmedie["format"], string> = {
   "9/16": "aspect-[9/16]",
 };
 
-export function Bloggalleri({
+export function Galleri({
   elementer,
   bildetekst,
 }: {

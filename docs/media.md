@@ -813,3 +813,29 @@ elementene, og denne serien har fire liggende og ett stående. `galleri`
 viser hovedbildet i sitt eget format og resten som kvadratiske
 miniatyrer — to i bredden på telefon, fire fra `sm`. Byggetidsvakten krever
 fire til seks bilder og godtar ikke film.
+
+
+## Omtalevideo fra Soul Cake (01.10.2026)
+
+Filene kom fra Pål som vedlegg, ikke fra Dropbox: MP4 (H.264/AAC,
+1080×1350, 22 sek, 8,3 MB), WebM (VP9/Opus, 5,5 MB) og en norsk VTT. De
+ligger i `public/arbeid/soulcake/`. Plakatbildet er en ramme fra filmen —
+som et plakatbilde skal være; regelen over gjelder bilder som opptrer som
+fotografi.
+
+**Tekstingen er brent inn i bildet.** Det avgjorde avspilleren. VTT-sporet
+ligger der for søk, skjermlesere og den som vil slå det på selv, men
+**ikke som `default`**: med `default` la nettleseren sin egen tekstboks oppå
+den innbrente teksten, målt i nettleseren samme dag.
+
+Videoen går dempet i løkke med en synlig lydknapp. Løkken stopper og filmen
+spoles til start når lyden slås på — en omtale som begynner på nytt midt i
+setningen er irriterende å høre på. Knappen står øverst til høyre; nederst
+dekket den den innbrente teksten.
+
+WebM først i `<source>`, MP4 som reserve. Kildene legges først inn i DOM-en
+når videoen nærmer seg synsfeltet, så den koster ingenting i LCP.
+
+Videoen står tre steder: forsiden, `/vart-arbeid/soulcake` og
+`/videoproduksjon-i-oslo`. Innholdet — sitat, navn, filsti — ligger ett sted,
+i `kundeord` på kundecasen, så de tre ikke kan komme i utakt.

@@ -17,7 +17,73 @@ import {
 } from "@/components/Schema";
 import { eiker, type Tjenesteside } from "@/content/tjenester";
 
+import { Galleri } from "@/components/Galleri";
+import { Omtalevideo } from "@/components/Omtalevideo";
+import { hentCase } from "@/content/caser";
+
 import { Tekst } from "./Tekst";
+
+/**
+ * Én delblokk: overskrift, tekst og eventuelt en lenke videre.
+ *
+ * Skilt ut fordi den brukes både i den nummererte og den unummererte
+ * varianten, og de to skiller seg bare i hva som står foran.
+ */
+function Delblokk({
+  d,
+}: {
+  d: { tittel: string; tekst: string; lenke?: { sti: string; tekst: string } };
+}) {
+  return (
+    <div>
+      <p className="font-medium">{d.tittel}</p>
+      <p className="mt-1.5 leading-relaxed text-pretty text-blekk-dempet">
+        <Tekst>{d.tekst}</Tekst>
+      </p>
+      {d.lenke && (
+        <Link
+          href={d.lenke.sti}
+          className="group mt-2 inline-flex items-center gap-2 text-[0.9375rem] text-blekk underline decoration-aksent decoration-1 underline-offset-[0.3em]"
+        >
+          {d.lenke.tekst}
+          <span
+            aria-hidden
+            className="inline-block text-aksent transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
+          >
+            →
+          </span>
+        </Link>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Omtalevideoen fra en kunde, inne i en seksjon på en tjenesteside.
+ *
+ * INNHOLDET HENTES FRA KUNDECASET. Sitatet, navnet og filmen står ett sted,
+ * og de tre sidene som viser omtalen kan ikke komme i utakt.
+ */
+function Kundeord({ slug }: { slug: string }) {
+  const ord = hentCase(slug)?.kundeord;
+  if (!ord) return null;
+
+  return (
+    <div className="mt-8 grid gap-6 sm:grid-cols-[14rem_1fr] sm:items-center sm:gap-8">
+      <Omtalevideo
+        sti={ord.video.sti}
+        alt={ord.video.alt}
+        undertekster={ord.video.undertekster}
+      />
+      <blockquote className="border-l-2 border-aksent pl-5">
+        <p className="text-lg leading-relaxed text-pretty">«{ord.sitat}»</p>
+        <footer className="mt-3 text-sm text-blekk-dempet">
+          — {ord.sagtAv}
+        </footer>
+      </blockquote>
+    </div>
+  );
+}
 
 /**
  * Felles layout for tjenestesidene.
@@ -312,6 +378,43 @@ export function Tjenestelayout({
                     </ul>
                   )}
 
+                  {/*
+                    DELBLOKKER: punkter med egen overskrift. Som <ol> når
+                    rekkefølgen betyr noe, ellers som <ul>. Tallet står i
+                    aksentfargen og i display-serif, slik at det leses som
+                    et steg og ikke som en kulepunktprikk med siffer.
+                  */}
+                  {s.delblokker &&
+                    (s.nummerert ? (
+                      <ol className="mt-8 grid gap-6">
+                        {s.delblokker.map((d, n) => (
+                          <li key={d.tittel} className="flex gap-4">
+                            <span
+                              aria-hidden
+                              className="display mt-0.5 w-6 shrink-0 text-lg text-aksent"
+                            >
+                              {n + 1}
+                            </span>
+                            <Delblokk d={d} />
+                          </li>
+                        ))}
+                      </ol>
+                    ) : (
+                      <ul className="mt-8 grid gap-6">
+                        {s.delblokker.map((d) => (
+                          <li key={d.tittel} className="flex gap-3">
+                            <span
+                              aria-hidden
+                              className="mt-2.5 size-1 shrink-0 rounded-full bg-aksent"
+                            />
+                            <Delblokk d={d} />
+                          </li>
+                        ))}
+                      </ul>
+                    ))}
+
+                  {s.kundeord && <Kundeord slug={s.kundeord} />}
+
                   {s.etterord && (
                     <p className="mt-6 leading-relaxed text-pretty text-blekk-dempet">
                       <Tekst>{s.etterord}</Tekst>
@@ -358,6 +461,15 @@ export function Tjenestelayout({
                       />
                     </div>
                   )}
+
+                  {/*
+                    GALLERIET STÅR UNDER FILMEN, ikke over. Rekkefølgen er
+                    bestilt — «VIDEO + GALLERI» — og den er riktig: filmen
+                    er oppsummeringen av kvelden, bildene er utvalget. Lagt
+                    etter `filmer` i koden fordi layouten rendrer i
+                    felt­rekkefølge, ikke etter en liste.
+                  */}
+                  {s.galleri && <Galleri elementer={s.galleri} />}
 
                   {s.lenker && (
                     <ul className="mt-6 flex flex-wrap gap-x-7 gap-y-2">
