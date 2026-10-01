@@ -94,6 +94,42 @@ export type Ark = {
   overskrift: string;
   /** Én linje under overskriften. Hvem, hvor, når. */
   undertittel: string;
+  /**
+   * Nøkkelopplysningene, høyrestilt i det mørke hodet.
+   *
+   * ── HVORFOR DE FLYTTET INN I HODET (01.10.2026) ────────────────────────
+   *
+   * De lå som en egen `fakta`-rad rett under hodet: fire etiketter med
+   * hver sin verdi, på tvers av arket. Det fungerte, men det kostet en
+   * blokk og en horisontal strek i et dokument som skulle bli luftigere.
+   *
+   * I hodet gjør de samme jobb på null ekstra høyde: tittelen står til
+   * venstre, dagen og klokkeslettet til høyre, og leseren vet når og hvor
+   * før hen har lest en eneste setning.
+   *
+   * ── FRIE LINJER, IKKE ETIKETT OG VERDI ────────────────────────────────
+   *
+   * «Sted: bekreftes» og «Fra Reflektor: 2 personer» bærer etiketten sin
+   * selv. Et eget etikettfelt ville tvunget fram «STED / bekreftes» i to
+   * høyder, og på fire linjer blir det en liten tabell i et hjørne som
+   * ikke har plass til en.
+   *
+   * Første linje står lysere og tyngre enn resten. Det er dagen, og den
+   * er den ene opplysningen alt annet henger på.
+   */
+  hode?: string[];
+  /**
+   * Det som står i den lille linjen øverst, ved siden av streken.
+   *
+   * Uten den står dokumenttypen der — «PRODUKSJONSPLAN» — og en mal som
+   * også heter «Produksjonsplan» i overskriften, sier da det samme to
+   * ganger med fire millimeters mellomrom.
+   *
+   * Med den bærer kickeren forholdet («REFLEKTOR × EGER SKIN CLINIC») og
+   * overskriften dokumentet. Kunden vet hvem de er; de vet ikke
+   * nødvendigvis hva slags ark de har fått.
+   */
+  merke?: string;
   deler: Del[];
 };
 
@@ -108,6 +144,10 @@ export type Ark = {
 export const TAK = {
   overskrift: 64,
   undertittel: 170,
+  /** Linjer i hodet, og lengden på hver. Se `Ark.hode`. */
+  hode: 4,
+  hodelinje: 42,
+  merke: 46,
   delTittel: 48,
   tekst: 600,
   poster: 4,
@@ -219,6 +259,15 @@ export function arkSkjema(mal: Mal): Record<string, unknown> {
       undertittel: {
         type: "string",
         description: `Én linje under tittelen: hvem, hvor, når. Maks ${TAK.undertittel} tegn.`,
+      },
+      merke: {
+        type: "string",
+        description: `Den lille linjen helt øverst, ved siden av streken. Forholdet, ikke dokumenttypen: «Reflektor × Eger Skin Clinic». Maks ${TAK.merke} tegn. Utelat den hvis malen ikke ber om den.`,
+      },
+      hode: {
+        type: "array",
+        items: { type: "string" },
+        description: `Inntil ${TAK.hode} korte linjer høyrestilt i det mørke hodet, maks ${TAK.hodelinje} tegn hver. Hver linje bærer sin egen etikett: «Mandag 28. september 2026», «Kl. 09.00–15.00», «Sted: bekreftes», «Fra Reflektor: 2 personer». Første linje er dagen. Ikke gjenta noe herfra i delene under.`,
       },
       deler: {
         type: "array",
@@ -427,6 +476,12 @@ export function lesArk(rått: unknown, mal: Mal): Ark | null {
   return {
     overskrift,
     undertittel: tekst(o.undertittel, TAK.undertittel),
+    merke: tekst(o.merke, TAK.merke) || undefined,
+    hode: liste<string>(o.hode, TAK.hode, (h) =>
+      typeof h === "string" && h.trim()
+        ? h.trim().slice(0, TAK.hodelinje)
+        : null,
+    ),
     deler,
   };
 }

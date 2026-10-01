@@ -36,6 +36,29 @@ function Overskrift({ barn }: { barn: string }) {
   );
 }
 
+/**
+ * Deler «Klinikken: bilder uten folk» i en uthevet nøkkel og resten.
+ *
+ * ── HVORFOR DETTE ER EN TEGNEREGEL OG IKKE ET FELT ────────────────────────
+ *
+ * Alternativet var å be modellen om `{nøkkel, tekst}` per punkt. Da må den
+ * huske å dele hver eneste gang, og den som glemmer det får et punkt som
+ * ser annerledes ut enn nabopunktet. Her er delingen vår: står det et
+ * kolon tidlig i punktet, er ordene foran nøkkelen.
+ *
+ * Grensen på 28 tegn er det som skiller en nøkkel fra en setning med kolon
+ * i. «Tidspunkt for kurset:» er en nøkkel. «Vi gjør det slik: først rigger
+ * vi» er det ikke, og den skal ikke få halve setningen i halvfet.
+ */
+const NØKKELTAK = 28;
+
+function delt(punkt: string): [string, string] | null {
+  const i = punkt.indexOf(":");
+  if (i < 2 || i > NØKKELTAK) return null;
+  const rest = punkt.slice(i + 1).trim();
+  return rest ? [punkt.slice(0, i + 1), rest] : null;
+}
+
 function Punkter({
   punkter,
   lys = false,
@@ -45,16 +68,33 @@ function Punkter({
 }) {
   return (
     <ul className="mt-[2mm] flex flex-col gap-[1.6mm]">
-      {punkter.map((p, i) => (
-        <li key={i} className="flex gap-[2mm] text-[8pt] leading-[1.35]">
-          <span
-            aria-hidden
-            className="mt-[1.1mm] h-[1.1mm] w-[1.1mm] shrink-0 rounded-full"
-            style={{ background: lys ? AKSENT : AKSENT }}
-          />
-          <span style={{ color: lys ? "#E8E2DC" : "#3A302B" }}>{p}</span>
-        </li>
-      ))}
+      {punkter.map((p, i) => {
+        const deling = delt(p);
+        return (
+          <li key={i} className="flex gap-[2mm] text-[8pt] leading-[1.35]">
+            <span
+              aria-hidden
+              className="mt-[1.1mm] h-[1.1mm] w-[1.1mm] shrink-0 rounded-full"
+              style={{ background: AKSENT }}
+            />
+            <span style={{ color: lys ? "#E8E2DC" : "#3A302B" }}>
+              {deling ? (
+                <>
+                  <strong
+                    className="font-semibold"
+                    style={{ color: lys ? "#FFFFFF" : MØRK }}
+                  >
+                    {deling[0]}
+                  </strong>{" "}
+                  {deling[1]}
+                </>
+              ) : (
+                p
+              )}
+            </span>
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -269,6 +309,8 @@ export function Ark({
   type: string;
   dato: string;
 }) {
+  const harHode = Boolean(ark.hode?.length);
+
   return (
     <div
       className="ark flex flex-col overflow-hidden bg-white"
@@ -287,23 +329,58 @@ export function Ark({
             className="font-sans text-[6pt] font-semibold tracking-[0.18em] uppercase"
             style={{ color: "#B8AFA8" }}
           >
-            {type}
+            {ark.merke || type}
           </span>
         </div>
-        <h1
-          className="display mt-[4mm] text-[21pt] leading-[1.1] tracking-[-0.015em]"
-          style={{ color: "#FFFFFF" }}
-        >
-          {ark.overskrift}
-        </h1>
-        {ark.undertittel && (
-          <p
-            className="mt-[2.5mm] max-w-[150mm] text-[8.5pt] leading-[1.4]"
-            style={{ color: "#C4BBB4" }}
-          >
-            {ark.undertittel}
-          </p>
-        )}
+
+        {/*
+          Tittelen til venstre, nøkkelopplysningene til høyre, bunnstilt mot
+          samme grunnlinje. `items-end` er det som gjør at siste hodelinje
+          og undertittelen ligger på linje uansett hvor lang tittelen ble.
+        */}
+        <div className="mt-[4mm] flex items-end justify-between gap-[10mm]">
+          <div className="min-w-0">
+            <h1
+              className="display text-[21pt] leading-[1.1] tracking-[-0.015em]"
+              style={{ color: "#FFFFFF" }}
+            >
+              {ark.overskrift}
+            </h1>
+            {ark.undertittel && (
+              <p
+                /*
+                  Bredden følger hodet: uten nøkkelopplysninger til høyre
+                  er hele arket ledig, og da skal undertittelen ikke brekke
+                  tidligere enn den gjorde før hodet fantes.
+                */
+                className={`mt-[2.5mm] text-[8.5pt] leading-[1.4] ${
+                  harHode ? "max-w-[115mm]" : "max-w-[150mm]"
+                }`}
+                style={{ color: "#C4BBB4" }}
+              >
+                {ark.undertittel}
+              </p>
+            )}
+          </div>
+
+          {harHode && (
+            <div className="shrink-0 text-right">
+              {ark.hode!.map((h, i) => (
+                <p
+                  key={i}
+                  className={
+                    i === 0
+                      ? "font-sans text-[8pt] leading-[1.45] font-semibold"
+                      : "font-sans text-[8pt] leading-[1.45]"
+                  }
+                  style={{ color: i === 0 ? "#FFFFFF" : "#C4BBB4" }}
+                >
+                  {h}
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
       </header>
 
       {/*

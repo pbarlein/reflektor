@@ -71,40 +71,45 @@ const GRUNNLAGSFELT: readonly Felt[] = [
 
 export const MALER: readonly Mal[] = [
   /*
-   * ── OPPTAKSLISTEN BLE EN DEL AV PRODUKSJONSPLANEN ─────────────────────
+   * ── ÉN PLAN, ÉN LESER ─────────────────────────────────────────────────
    *
    * Bestilt 28.09.2026: «jeg er ikke enig i at vi trenger produksjonsplan
    * og opptaksliste. så lenge den er såpass konkret, strippet for
    * unødvendigheter og enkel å forstå, kan disse være ett dokument.»
-   *
-   * Navnet består. Produksjonsplan er det de to var kjent som til sammen,
-   * og det er ordet som sitter i fingrene — malen het kort «Produksjonsdagen»
-   * en time 28.09.2026, og det navnet er nå bare et kallenavn i søket.
+   * Opptakslisten ble da en del av produksjonsplanen, og navnet består —
+   * «Opptaksliste» og «Shotliste» er kallenavn i søket.
    *
    * De to var allerede det samme arbeidet gjort to ganger. Opptakslisten
-   * hadde et eget opplastingsfelt som het «Last opp produksjonsplanen»,
-   * fordi den ble bygget bakover fra den: oppsettene var planens oppsett,
-   * og «Hva som skal leveres» var planens 8–10 leveranser skrevet av. Å be
-   * produsenten skrive dem inn på nytt var ikke bare tidsbruk — det var en
-   * anledning til at de to dokumentene sa forskjellige ting om samme dag.
+   * ble bygget bakover fra planen: oppsettene var planens oppsett, og
+   * «Hva som skal leveres» var planens 8–10 leveranser skrevet av. Å be
+   * produsenten skrive dem inn på nytt var en anledning til at de to
+   * dokumentene sa forskjellige ting om samme dag.
    *
-   * Nå avledes begge fra det samme skjemaet. Oppsettene lages én gang og
-   * brukes i både tidsplanen og opptakslisten, så de kan ikke komme i
-   * utakt. To felt forsvant helt fra skjemaet.
+   * ── OG SÅ BLE SAMMENSLÅINGEN FOR TUNG (01.10.2026) ────────────────────
    *
-   * ── DOKUMENTET HAR TO LESERE, OG DET ER MED VILJE SYNLIG ──────────────
+   * Sammenslåingen tok med seg formen. Dokumentet fikk sju deler og to
+   * lesere: først kundens plan, så en åttekolonners opptaksliste merket
+   * «intern». Taket måtte heves til 12 rader og 8 kolonner, og dermed var
+   * det ikke lenger en ensider.
    *
-   * Første del er kundens: hva som skjer, hva vi trenger fra dem, hva de
-   * får. Andre del er listen den som filmer holder på dagen, og den er
-   * intern — «det som kan droppes hvis dagen blir kort» er ikke noe kunden
-   * skal lese. Delene står i den rekkefølgen, og den interne er merket.
+   * Produksjonsplanen for Eger Skin Clinic ble satt opp for hånd med fem
+   * deler og én leser, og bestillingen var å gjøre malen lik den: «mer
+   * oversiktlig og presis, uten så mye greier».
    *
-   * ── DERFOR ER DEN IKKE LENGER EN ENSIDER ──────────────────────────────
+   * ── HVA SOM ERSTATTER RADENE ──────────────────────────────────────────
    *
-   * `tak` hever rader og kolonner. Det er ikke en oppmykning av
-   * plassregelen — det er erkjennelsen av at et opptak har åtte
-   * opplysninger og at en dag har 8–10 opptak. Med standardtaket ble fire
-   * av åtte kolonner og tre av ti opptak kastet i stillhet. Se `Maltak`.
+   * Ikke ingenting. Opptakslisten er byttet mot en OPPSKRIFT: «Hver
+   * behandling, 30 minutter — 1. talking head, 2. b-roll, 3. bilder,
+   * liggende til nettsiden og stående til sosiale medier.»
+   *
+   * For en dag som består av noe som gjentar seg — seks behandlinger, ti
+   * retter, fire avdelinger — sier fire linjer det samme som atten rader,
+   * og de kan leses på dagen uten å bla. Består dagen av engangsoppsett,
+   * sier regelen at spalten skal hete «Slik jobber vi» og beskrive dem.
+   *
+   * DET SOM FAKTISK ER TAPT, og som skal sies høyt: sekunder per opptak,
+   * kamerabevegelse per opptak og avkryssingsrutene. Den som vil ha en
+   * liste å hake av på settet, har den ikke lenger her.
    */
   {
     slug: "produksjonsplan",
@@ -113,16 +118,34 @@ export const MALER: readonly Mal[] = [
     kort: "Planen kunden får, og listen du filmer etter. Ett skjema, ett dokument.",
     ansvarlig: "Produsent",
     naar: "Etter oppstartsmøtet, senest en uke før produksjonsdagen",
-    skisse: [
-      "topp",
-      "fakta",
-      "tabellOgBoks",
-      "toKolonner",
-      "kort3",
-      "tabell",
-      "liste",
-    ],
-    tak: { rader: 12, kolonner: 8 },
+    /*
+     * ── OMLAGT 01.10.2026, ETTER EN PLAN SOM FAKTISK BLE SENDT ──────────
+     *
+     * Forrige oppsett hadde sju blokker: fakta, tidsplan med boks, to
+     * spalter, tre kort, en åttekolonners opptaksliste og en liste til.
+     * Alle andre maler i huset har fire eller fem.
+     *
+     * Produksjonsplanen for Eger Skin Clinic ble satt opp for hånd med
+     * fem, og bestillingen var å gjøre malen lik den: «mer oversiktlig og
+     * presis, uten så mye greier».
+     *
+     * Rekkefølgen svarer på spørsmålene i den rekkefølgen kunden stiller
+     * dem: hva får vi, hva må vi stille med, når skjer det, hvordan gjør
+     * dere det, og hva skjer etterpå.
+     *
+     * Nøkkelopplysningene ligger nå i `hode` og ikke i en `fakta`-rad —
+     * se `Ark.hode` for hvorfor det både sparer en blokk og svarer «når og
+     * hvor» før første setning.
+     */
+    skisse: ["topp", "toKolonner", "tabell", "toKolonner", "liste"],
+    /*
+     * Tidsplanen er tre kolonner og opptil ni rader — én rad per blokk i
+     * dagen, pluss rigg og pause. Standarden på sju holdt ikke for en dag
+     * fra 09 til 15.
+     *
+     * Taket var 12×8 for opptakslisten, som ikke lenger står her.
+     */
+    tak: { rader: 9, kolonner: 3 },
     kallenavn: ["Opptaksliste", "Kjøreplan", "Shotliste", "Produksjonsdagen"],
     rubrikker: [
       "produksjonsdag-som-gir-8-10",
@@ -321,30 +344,28 @@ export const MALER: readonly Mal[] = [
       ...GRUNNLAGSFELT,
     ],
     oppdrag:
-      "Dokumentet for én produksjonsdag, i to deler med hver sin leser. Del én er kundens: hva som skjer, hva vi trenger fra dem, hva de får. Del to er intern: listen den som filmer har i hånda på dagen. Overskriften er «Reflektor × [Kunde] [Lokasjon]». Undertittelen er én setning med produksjonsdagen, stedet og Når materiellet publiseres." +
-      "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det. Overskriften er sakens navn, ikke dokumentets.",
+      "Ensideren kunden får før produksjonsdagen. Én leser: kunden. Den skal kunne leses på tretti sekunder og svare på hva de får, hva de må stille med, og når det skjer. Merket øverst er «Reflektor × [Kunde]». Overskriften er «Produksjonsplan». Undertittelen er én setning om hva dagen skal gi — «Bilder og video til ny nettside. Første produksjonsdag.»" +
+      "Arket har allerede dokumenttypen, Reflektor-merket, dagens dato og Reflektors kontaktopplysninger i hodet og bunnen. Ikke gjenta noe av det." +
+      "HODE: inntil fire korte linjer høyrestilt i det mørke feltet. Første linje er produksjonsdagen skrevet ut, «Mandag 28. september 2026». Deretter klokkeslettene fra Når vi er på plass til dagen er ferdig, så Lokasjon, så Fra Reflektor. Hver linje bærer sin egen etikett: «Kl. 09.00–15.00», «Sted: Storo», «Fra Reflektor: 2 personer». Står stedet ikke fast, skriv «Sted: bekreftes». Disse opplysningene skal ikke gjentas i delene under.",
     struktur: [
-      "FAKTA — fire nøkkelopplysninger: Lokasjon, Produksjonsdag (med Når vi er på plass), Kontaktperson på stedet, Fra Reflektor.",
-      "TABELLOGBOKS — tabellen er tidsplanen, med kolonnene Oppsett, Hva vi filmer, Hvem. Hver rad er ett oppsett, ikke én video, og tre til fem rader i alt. Bygg radene av Hva som skal i fokus. Boksen ved siden av er «Hva vi trenger fra dere»: én kule per rolle fra Hvem vi trenger fra kunden, med tidsbruk, og til slutt tilgang og samtykke.",
-      "TOKOLONNER — leveransen. Venstre spalte er det som har lyd og tale. Høyre spalte er det som skal skytes rent, uten lyd og tekst, og skal bare finnes hvis Hvor materiellet skal brukes inkluderer skjermer i lokalet. Har vi ingen skjermleveranse, er høyre spalte stillbilder eller nærbilder i stedet.",
-      "KORT3 — tre kort: «Formater» (Formater, Stillbilder i tillegg til video, Logo på materiellet), «Uttrykk» (Uttrykk og målgruppe), og «Rytmen videre» (Rytmen videre).",
-      "TABELL — opptakslisten, og herfra er dokumentet internt. Tittelen skal si det: «Opptaksliste — intern». Kolonnene er ✓, Nr, Oppsett, Utsnitt, Kamera, Motiv, Lyd, Sek. Radene bygges bakover fra leveransene i TOKOLONNER og sorteres etter de samme oppsettene som står i tidsplanen — ikke nye oppsett.",
-      "LISTE — «Før lokalet åpner, og det som kan vike». Det som må filmes før dørene åpner, og det som kan droppes hvis dagen blir kort. Bygg den av Noe som gjelder spesielt. Denne delen er intern og skal aldri formuleres som et løfte til kunden.",
+      "TOKOLONNER — venstre spalte «Dette lager vi»: hva kunden sitter igjen med, bygget av Hva som skal i fokus og Hvor materiellet skal brukes. Én kule per type leveranse, ikke én per video. Er Uttrykk og målgruppe oppgitt, står det som siste kule, slik at kunden kan si fra før vi filmer og ikke etterpå. Høyre spalte «Dette trenger vi fra [kunden]»: hva de må stille med, bygget av Hvem vi trenger fra kunden. Siste kule er alltid samtykke.",
+      "TABELL — tidsplanen, med kolonnene Når, Hva og Hvem. Én rad per blokk i dagen, i klokkerekkefølge. Første rad er rigging, siste rad er nedrigg, og pausen står som sin egen rad. Kolonnen Hvem er hvem eller hva som må være på plass akkurat da — «Behandler og modell», «Ryddige rom» — ikke en gjentakelse av Hva.",
+      "TOKOLONNER — venstre spalte er oppskriften som gjentar seg: «Hver [enhet], [antall] minutter», der enheten er det dagen består av: en behandling, en rett, en avdeling. Nummererte steg med hva vi tar opp hver gang — Stillbilder i tillegg til video avgjør om bilder er ett av stegene. Siste kule er leveransespesifikasjonen: Formater, og Logo på materiellet hvis det er avklart. Høyre spalte «Praktisk»: hva som må være i orden i lokalet, Noe som gjelder spesielt, hvem som slipper oss inn fra Kontaktperson på stedet, og til slutt Når materiellet publiseres som en leveranselinje, pluss eventuell godkjenning.",
+      "LISTE — «Neste produksjonsdager». Hva som er planlagt etter denne dagen, bygget av Rytmen videre. Utelat hele delen hvis det ikke er avklart.",
     ],
     regler: [
       "Antall leveranser skal lande på 8–10 til sammen. Det er produksjonsmålet for en dag, og planen skal ikke love mer enn dagen kan holde.",
-      "Tidsplanen har tre til fem oppsett — steder eller lyssituasjoner — ikke én rad per video. Flere enn fem betyr at dagen er for spredt. Siste rad er alltid en åpen blokk: «Vi filmer det som dukker opp».",
-      "Oppsettene er de samme i tidsplanen og i opptakslisten. Ett sett navn, brukt to steder. Finner du på et nytt oppsett nederst, står de to delene og sier ulike ting om samme dag.",
-      "Hvert opptak i opptakslisten skal ha alle seks opplysningene: oppsett, bildeutsnitt, kamerabevegelse, motiv, lyd og lengde. Mangler ett, er listen ikke ferdig. Kutt heller et helt opptak enn å la alle stå halve.",
-      "«Er det tale på dagen» styrer Lyd-kolonnen i opptakslisten, og den skal også synes i planen: filmes noen mens de snakker, skal mikrofon og et stille lokale stå i boksen «Hva vi trenger fra dere». Lyd kan ikke reddes i etterkant.",
-      "Bildeutsnitt skrives med ett av fire ord: totalt, halvnært, nært, detalj. Ikke «fint utsnitt av maten».",
-      "Lengde skrives i sekunder. «Kort» og «litt» er ikke lengder.",
-      "Første kolonne i opptakslisten er en tom avkryssingsrute. Listen skal krysses av underveis, ikke leses ferdig etterpå.",
-      "Sorter opptakene etter oppsett, ikke etter historien. Den som filmer flytter rigg, ikke fortelling.",
-      "Skal materiellet på skjermer i lokalet, må de klippene skytes rene fra start. Skriv det eksplisitt i planen, og merk de opptakene i selve tabellen. Den som filmer leser linjen, ikke innledningen.",
-      "Er det oppgitt noe under «Hva som IKKE skal med», skal det stå i boksen som en tydelig setning — ikke bare utelates.",
-      "«Hvor godt kjenner vi stedet» styrer hvor mye planen forklarer, ikke hva den inneholder. Et sted vi filmer jevnlig trenger ingen omvisning; første gang tar boksen med tilgang og fremmøte i klartekst.",
+      "Tidsplanen er dagens eneste tabell, og den går i klokkerekkefølge fra rigg til nedrigg. Tre til ni rader. Flere enn ni betyr at dagen er delt opp finere enn noen kommer til å følge.",
+      "Oppskriften i tredje del er det som erstatter en opptaksliste rad for rad. Den skal derfor være presis nok til å filme etter: hva som tas opp, i hvilken rekkefølge, og hvilket format det leveres i. «Talking head, b-roll, 1–3 bilder» er presist. «Vi filmer behandlingen» er det ikke.",
+      "Består ikke dagen av noe som gjentar seg, skal venstre spalte i tredje del hete «Slik jobber vi» i stedet, og si hvordan hvert opptak settes opp. Samme presisjonskrav.",
+      "Bildeutsnitt skrives med ett av fire ord når det nevnes: totalt, halvnært, nært, detalj. Ikke «fint utsnitt av maten».",
+      "«Er det tale på dagen» styrer Praktisk-spalten: filmes noen mens de snakker, skal det stå at rommet må være stille under opptak. Lyd kan ikke reddes i etterkant.",
+      "Skal materiellet på skjermer i lokalet, står det i «Dette lager vi» at de klippene skytes rene — uten lyd og tekst.",
+      "Er det oppgitt noe under «Hva som IKKE skal med», skal det stå som en tydelig setning i «Dette lager vi» — ikke bare utelates.",
+      "Et punkt som har en nøkkel, skriver nøkkelen først med kolon: «Klinikken: bilder uten folk». Arket setter det foran kolonet i halvfet, og da kan spalten skannes uten å leses.",
+      "«Hvor godt kjenner vi stedet» styrer hvor mye planen forklarer, ikke hva den inneholder. Et sted vi filmer jevnlig trenger ingen omvisning; første gang tar Praktisk-spalten med tilgang og fremmøte i klartekst.",
       "Ikke skriv klippebeskrivelser eller musikkforslag. Det hører hjemme i redigeringen.",
+      "Dette dokumentet går til kunden. Ingenting i det skal være formulert som en intern notis, et forbehold eller en arbeidsinstruks til oss selv.",
     ],
   },
 

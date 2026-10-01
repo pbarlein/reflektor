@@ -57,7 +57,7 @@ test("en deltype malen ikke har, kastes", () => {
       overskrift: "Tittel",
       undertittel: "Under",
       deler: [
-        { type: "fakta", poster: [{ etikett: "Sted", verdi: "Storo" }] },
+        { type: "liste", punkter: ["Oktober: to dager."] },
         /* Produksjonsplanen har ingen signaturdel. */
         { type: "signatur", felter: [{ navn: "X", rolle: "Y" }] },
       ],
@@ -67,7 +67,7 @@ test("en deltype malen ikke har, kastes", () => {
   assert.ok(ark);
   assert.deepEqual(
     ark.deler.map((d) => d.type),
-    ["fakta"],
+    ["liste"],
   );
 });
 
@@ -110,25 +110,38 @@ test("for lange verdier kappes, de kastes ikke", () => {
  * av seks opplysninger per opptak ble kastet uten et ord, i en mal som selv
  * sier «mangler ett, er listen ikke ferdig». Se `Maltak`.
  */
+/**
+ * Taket var 12×8 for opptakslisten fram til 01.10.2026. Den står ikke
+ * lenger i planen — se kommentaren over malen. Tidsplanen trenger ni rader
+ * for en dag fra 09 til 15, og standarden på sju holder ikke.
+ *
+ * Poenget med testen er uendret: det malen ber om, skal komme helt gjennom
+ * valideringen. Det var her fire av åtte kolonner ble kastet i stillhet.
+ */
 test("en mal med eget tak beholder det den faktisk trenger", () => {
   const mal = malFraSlug("produksjonsplan")!;
   const t = takFor(mal);
-  assert.equal(t.kolonner, 8, "åtte kolonner per opptak");
-  assert.equal(t.rader, 12, "plass til 8–10 opptak");
+  assert.equal(t.kolonner, 3, "Når, Hva, Hvem");
+  assert.equal(t.rader, 9, "rigg, blokkene, pause og nedrigg");
+  assert.ok(
+    t.rader > TAK.rader,
+    "malen hever standarden, ellers er taket dødt",
+  );
 
   const ark = stortAark(mal);
   assert.ok(ark);
-  const d = ark.deler[0];
-  assert.equal(d.kolonner?.length, 8);
-  assert.equal(d.rader?.length, 12);
-  assert.equal(d.rader?.[0].length, 8, "hele raden overlever, ikke halve");
+  const d = ark.deler.find((x) => x.type === "tabell");
+  assert.ok(d, "fant ingen tabell i det store arket");
+  assert.equal(d.kolonner?.length, 3);
+  assert.equal(d.rader?.length, 9);
+  assert.equal(d.rader?.[0].length, 3, "hele raden overlever, ikke halve");
 });
 
 /** Det modellen får vite, må være det samme som valideringen håndhever. */
 test("instruksen oppgir malens eget tak, ikke standarden", () => {
   const ut = delforklaring(malFraSlug("produksjonsplan")!);
-  assert.match(ut, /«kolonner» \(8 maks\)/);
-  assert.match(ut, /«rader» \(12 maks\)/);
+  assert.match(ut, /«kolonner» \(3 maks\)/);
+  assert.match(ut, /«rader» \(9 maks\)/);
 
   const vanlig = delforklaring(malFraSlug("publiseringsplan")!);
   assert.match(vanlig, new RegExp(`«kolonner» \\(${TAK.kolonner} maks\\)`));
@@ -161,7 +174,14 @@ test("rettelsen bærer både dokumentet og endringen", () => {
     {
       overskrift: "Reflektor × Jordbærpikene",
       undertittel: "Torsdag",
-      deler: [{ type: "fakta", poster: [{ etikett: "Sted", verdi: "Storo" }] }],
+      hode: ["Torsdag 8. oktober 2026", "Sted: Storo"],
+      deler: [
+        {
+          type: "tabell",
+          kolonner: ["Når", "Hva", "Hvem"],
+          rader: [["09.00", "Vi rigger", ""]],
+        },
+      ],
     },
     plan,
   );
