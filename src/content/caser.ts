@@ -72,7 +72,7 @@ export type Kundecase = {
   /**
    * Kunden i egne ord, på film.
    *
-   * LAGT TIL 01.10.2026. Soul Cake er den første og foreløpig eneste med
+   * LAGT TIL 01.10.2026. Soulcake er den første og foreløpig eneste med
    * en slik video. Feltet er valgfritt, slik at casene uten står uendret.
    *
    * HVORFOR DEN STÅR MELLOM «MÅLT» OG «BEHOVET». Tallene over er våre, og
@@ -230,19 +230,19 @@ export const kundecaser: Kundecase[] = [
       overskrift: "«Men vi er veldig, veldig, veldig fornøyde.»",
       video: {
         sti: "/arbeid/soulcake/soulcake-omtale-ragnhild",
-        alt: "Ragnhild Gaarde Bucataru i Soul Cake forteller om samarbeidet med Reflektor",
+        alt: "Ragnhild Gaarde Bucataru i Soulcake forteller om samarbeidet med Reflektor",
         undertekster: "/arbeid/soulcake/soulcake-omtale-ragnhild.no.vtt",
         sekunder: 22,
-        navn: "Soul Cake om fem år med Reflektor",
+        navn: "Soulcake om fem år med Reflektor",
         beskrivelse:
-          "Ragnhild Gaarde Bucataru i Soul Cake forteller om samarbeidet med Reflektor, som har produsert foto og video for bakeriet siden 2022.",
+          "Ragnhild Gaarde Bucataru i Soulcake forteller om samarbeidet med Reflektor, som har produsert foto og video for bakeriet siden 2022.",
         publisert: "2026-10-01",
       },
       innledning:
-        "Ragnhild Gaarde Bucataru i Soul Cake har jobbet med Reflektor siden 2022. Samarbeidet er inne i sitt femte år. Da vi spurte om hun ville si noen ord på kamera, svarte hun ærlig:",
+        "Ragnhild Gaarde Bucataru i Soulcake har jobbet med Reflektor siden 2022. Samarbeidet er inne i sitt femte år. Da vi spurte om hun ville si noen ord på kamera, svarte hun ærlig:",
       sitat:
         "Vi prøver egentlig å booke dem opp, så det ikke er plass til dere andre. Så jeg blir veldig dårlig reklame … Men vi er veldig, veldig, veldig fornøyde.",
-      sagtAv: "Ragnhild Gaarde Bucataru, Soul Cake",
+      sagtAv: "Ragnhild Gaarde Bucataru, Soulcake",
       transkripsjon: [
         "«Dette her sier jeg helt frivillig.»",
         "– Hvor lenge har dere jobbet med Reflektor?",

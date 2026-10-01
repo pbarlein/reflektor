@@ -91,6 +91,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: a.metaTittel ?? a.tittel,
     description: a.beskrivelse,
     alternates: { canonical: `${basisUrl()}/blogg/${a.slug}` },
+    /*
+      EGET DELINGSBILDE. Merkevarebildet i `layout.tsx` gjelder fortsatt
+      resten av nettstedet — begrunnelsen der står. Artiklene er unntaket:
+      de er det som faktisk limes inn i en e-post eller en Slack-tråd, og
+      da er motivet poenget. Bildet er toppbildet beskåret til 1200×630 av
+      `scripts/og-bilder.ts`, så det koster ingen nye motiver.
+
+      `images` settes KUN her og arves ikke bakover: Next slår sammen
+      `openGraph` fra layouten med denne, og et felt som settes vinner.
+      Resten — type, locale, siteName — kommer fortsatt fra layouten.
+    */
+    openGraph: {
+      images: [
+        {
+          url: `/bilder/og/blogg-${a.slug}.jpg`,
+          width: 1200,
+          height: 630,
+          alt: a.bilde.alt,
+        },
+      ],
+    },
   };
 }
 

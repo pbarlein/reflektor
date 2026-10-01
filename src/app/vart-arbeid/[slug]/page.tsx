@@ -59,6 +59,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: k.metaTittel,
     description: k.metaBeskrivelse,
     alternates: { canonical: `${basisUrl()}/vart-arbeid/${k.slug}` },
+    /*
+      EGET DELINGSBILDE, samme begrunnelse som for artiklene. En case er
+      det man sender til en som lurer på om vi har gjort noe liknende før,
+      og da skal kortet vise kundens arbeid og ikke vårt merkevarebilde.
+      Laget av `scripts/og-bilder.ts` fra casets første kortbilde.
+    */
+    openGraph: {
+      images: [
+        {
+          url: `/bilder/og/case-${k.slug}.jpg`,
+          width: 1200,
+          height: 630,
+          alt: k.kortbilder[0]?.alt ?? k.metaTittel,
+        },
+      ],
+    },
   };
 }
 

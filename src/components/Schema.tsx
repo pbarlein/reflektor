@@ -650,7 +650,7 @@ export function KontaktSchema() {
 /**
  * En kundeomtale som Review.
  *
- * LAGT TIL 01.10.2026, sammen med omtalevideoen fra Soul Cake.
+ * LAGT TIL 01.10.2026, sammen med omtalevideoen fra Soulcake.
  *
  * INGEN `reviewRating`. Ragnhild har ikke gitt en karakter, og et tall vi
  * finner på ville vært nettopp det markeringen er ment å hindre. Google

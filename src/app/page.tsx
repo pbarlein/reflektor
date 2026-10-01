@@ -112,9 +112,25 @@ export default function Forside() {
       <Arbeidet />
       <SlikFungererDet />
       <Arbeidsrutenett />
-      <Pris />
-      <UtenomAbonnementet />
+      {/*
+        ANMELDELSENE ER FLYTTET OPP FORBI PRISEN, 01.10.2026, bestilt av Pål
+        («burde kundeanmeldelsene med soulcakereferansen være høyere oppe?»).
+
+        Prisen er 30 000 kr/mnd og står åpent. Et tall i den størrelsen leses
+        som dyrt eller rimelig ut fra hva leseren alt tror om avsenderen, og
+        den troen bygges av andre enn oss. Sto anmeldelsene under prisen,
+        kom belegget etter at tallet var vurdert. Nå kommer omtalen fra Soul
+        Cake — på film, med ansikt og navn — rett før.
+
+        UTENOM ABONNEMENTET BLIR STÅENDE MELLOM DE TO, og det er ikke
+        tilfeldig: anmeldelsesseksjonen er `bg-dyp` i full bredde og
+        priskortet er `glassflate` på mørk bunn. Side om side ville de blitt
+        to mørke flater etter hverandre uten pust imellom. Den grå blokken
+        skiller dem.
+      */}
       <Anmeldelsesseksjon />
+      <UtenomAbonnementet />
+      <Pris />
       <Vegg />
       <Faq />
       <Kontakt />

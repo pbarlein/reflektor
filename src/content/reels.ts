@@ -80,7 +80,7 @@ export const reels: Reel[] = [
 
   {
     fil: "soulcake",
-    kunde: "Soul Cake",
+    kunde: "Soulcake",
     kontekst: "Bakeri",
     alt: "Vertikalt klipp fra bakeri",
   },

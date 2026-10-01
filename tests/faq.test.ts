@@ -6,13 +6,7 @@ import {
   forsidensSporsmal,
   forsidensSporsmalForMarkup,
 } from "@/content/faq";
-import {
-  innholdsproduksjon,
-  reklamefilm,
-  videoproduksjon,
-  employerBranding,
-  event,
-} from "@/content/tjenester";
+import { seksjonerSomFaq, tjenestesider } from "@/content/tjenester";
 import { artikler, somFaq } from "@/content/artikler";
 
 /**
@@ -37,15 +31,24 @@ function alleKilder(): { side: string; sporsmal: string[] }[] {
   return [
     { side: "/", sporsmal: forsidensSporsmalForMarkup.map((p) => p.sporsmal) },
     { side: "/faq", sporsmal: faqSporsmal.map((p) => p.sporsmal) },
-    ...[
-      ["/innholdsproduksjon", innholdsproduksjon],
-      ["/reklamefilm", reklamefilm],
-      ["/videoproduksjon-i-oslo", videoproduksjon],
-      ["/employer-branding-video-oslo", employerBranding],
-      ["/eventfotograf-eventvideo", event],
-    ].map(([sti, t]) => ({
-      side: sti as string,
-      sporsmal: (t as typeof reklamefilm).faq.map((p) => p.sporsmal),
+    /*
+     * ALLE TJENESTESIDER, OG BEGGE KILDENE PÅ HVER.
+     *
+     * UTVIDET 01.10.2026. Lista her var skrevet for hånd og hadde fem av
+     * sju sider — /kjeder og /reels-produksjon manglet, altså kunne de
+     * innføre et duplikat uten at testen merket det. Nå leses den fra
+     * `tjenestesider`, så en ny side er dekket i det den legges til.
+     *
+     * Samtidig tok markeringen bare `faq`-lista. Seksjonsoverskrifter som
+     * er spørsmål går nå også inn, og da må testen lese den samme
+     * funksjonen malen rendrer — samme lærdom som for bloggen 21.09.2026.
+     */
+    ...tjenestesider.map((t) => ({
+      side: t.sti,
+      sporsmal: [
+        ...seksjonerSomFaq(t).map((p) => p.sporsmal),
+        ...t.faq.map((p) => p.sporsmal),
+      ],
     })),
     ...artikler.map((a) => ({
       side: `/blogg/${a.slug}`,

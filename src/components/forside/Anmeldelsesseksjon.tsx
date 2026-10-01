@@ -14,7 +14,7 @@ import { front } from "@/content/sider/front";
  * står i kommentarene under — de fulgte med flyttingen og er ikke endret.
  */
 /**
- * Omtalevideoen fra Soul Cake, øverst i seksjonen.
+ * Omtalevideoen fra Soulcake, øverst i seksjonen.
  *
  * HVORFOR DEN STÅR FØRST OG IKKE SIST. De elleve Google-anmeldelsene er
  * tekst noen har skrevet; dette er en kunde som sier det på kamera, med
@@ -41,7 +41,7 @@ function Kundeord() {
       />
       <div className="max-w-xl">
         <p className="leading-relaxed text-pretty text-pa-dyp-dempet">
-          Ragnhild Gaarde Bucataru i Soul Cake om fem år med foto og video fra
+          Ragnhild Gaarde Bucataru i Soulcake om fem år med foto og video fra
           Reflektor.
         </p>
         <blockquote className="mt-5 border-l-2 border-aksent-pa-dyp pl-5 text-xl leading-relaxed text-pretty sm:text-2xl">
@@ -52,7 +52,7 @@ function Kundeord() {
           href="/vart-arbeid/soulcake"
           className="group mt-6 inline-flex items-center gap-2 text-sm tracking-[0.02em] text-pa-dyp underline decoration-aksent-pa-dyp decoration-1 underline-offset-[0.35em]"
         >
-          Se hele Soul Cake-casen
+          Se hele Soulcake-casen
           <span
             aria-hidden
             className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transition-none"

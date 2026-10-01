@@ -99,7 +99,7 @@ export const front: Side = {
           maksTegn: 60,
         }),
         "front.work.sub": tekst(
-          "Fire klipp fra produksjonsdager hos Anton Sport, The Well og Soul Cake. Samme folk og samme tempo som i abonnementet.",
+          "Fire klipp fra produksjonsdager hos Anton Sport, The Well og Soulcake. Samme folk og samme tempo som i abonnementet.",
           {
             maksTegn: 120,
             jobb: "Slå fast at alt er egenprodusert. Ingen stock.",
@@ -174,7 +174,7 @@ export const front: Side = {
       jobb: "Navngitt sosialt bevis. Den best støttede formen som finnes.",
       slots: {
         "front.reviews.eyebrow": tekst("Det kundene sier", { maksTegn: 30 }),
-        // Byttet 01.10.2026: omtalevideoen fra Soul Cake står nå øverst i
+        // Byttet 01.10.2026: omtalevideoen fra Soulcake står nå øverst i
         // seksjonen, og overskriften skal dekke både den og anmeldelsene.
         // «Google-anmeldelser fra dem som har hatt oss på besøk» sto her før.
         "front.reviews.h2": tekst(

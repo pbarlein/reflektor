@@ -514,7 +514,7 @@ fra kundemappene i Dropbox:
 
 | Logo | Kilde |
 |---|---|
-| Anton Sport, The Well, Egon, Selvaag, Soul Cake | reflektor.no, Squarespace-CDN |
+| Anton Sport, The Well, Egon, Selvaag, Soulcake | reflektor.no, Squarespace-CDN |
 | Peppes Pizza | `/Reflektor/Assets/Peppes/Lang logo sort.png` |
 | Baker Brun | `/Reflektor/Assets/Baker Brun/logo-baker-brun-png.png` |
 | Idun Industri | `/Reflektor/Assets/Idun/Logo/Logo_rod_flat.svg` |
@@ -540,7 +540,7 @@ har det problemet — Idun-merket dominerer raden.
 
 Hver logo er derfor skalert til samme **blekkareal**: antall ugjennomsiktige
 piksler normalisert til 40×40 visningspiksler, med tak på 42 px høyde og
-gulv på 16 px. Tre treffer taket (The Well, Egon, Soul Cake) — alle tre er
+gulv på 16 px. Tre treffer taket (The Well, Egon, Soulcake) — alle tre er
 nesten kvadratiske merker.
 
 Filene ligger på 2x visningsstørrelse. Til sammen 180 kB PNG, som
@@ -762,7 +762,7 @@ Rutenettet hadde tre klipp og ett stillbilde fra en byggeplass. Pål: «dette
 er et elendig bilde å bruke her», og «eksempelet over burde være tre stående
 ved siden av hverandre og autoplay».
 
-Nå står tre stående klipp med autospill: Anton Sport, Egon og Soul Cake —
+Nå står tre stående klipp med autospill: Anton Sport, Egon og Soulcake —
 Påls egne forslag. `Arbeidsrutenett` regner antall spalter av antall medier,
 så tre klipp står tre i bredden i alle bredder. Målt: 357×635 px på 1440, og
 106×188 px på 390, alle tre med `paused === false`.
@@ -815,7 +815,7 @@ miniatyrer — to i bredden på telefon, fire fra `sm`. Byggetidsvakten krever
 fire til seks bilder og godtar ikke film.
 
 
-## Omtalevideo fra Soul Cake (01.10.2026)
+## Omtalevideo fra Soulcake (01.10.2026)
 
 Filene kom fra Pål som vedlegg, ikke fra Dropbox: MP4 (H.264/AAC,
 1080×1350, 22 sek, 8,3 MB), WebM (VP9/Opus, 5,5 MB) og en norsk VTT. De
@@ -839,3 +839,32 @@ når videoen nærmer seg synsfeltet, så den koster ingenting i LCP.
 Videoen står tre steder: forsiden, `/vart-arbeid/soulcake` og
 `/videoproduksjon-i-oslo`. Innholdet — sitat, navn, filsti — ligger ett sted,
 i `kundeord` på kundecasen, så de tre ikke kan komme i utakt.
+
+
+## Delingsbilder (og:image) — 01.10.2026
+
+De 15 bloggartiklene og de to kundecasene har hvert sitt delingsbilde i
+`public/bilder/og/`. De øvrige sidene deler fortsatt `reflektor-og.jpg`, og
+det er med vilje: landingssidene nås via annonser og søk og deles nesten
+aldri, så der skal kortet si hvem avsenderen er. Artiklene og casene er det
+som limes inn i en e-post eller en Slack-tråd, og da er motivet poenget.
+
+**Ingen nye motiver er hentet.** `scripts/og-bilder.ts` beskjærer sidens eget
+toppbilde til 1200×630 med ffmpeg, og bruker `fokus`-verdien fra innholdet —
+den samme nettleseren bruker som `object-position`. Uten den ville
+midtbeskjæring kuttet hodet av kokken på produksjonsdag-artikkelen, som er
+nøyaktig den feilen vi alt har rettet én gang på det bildet.
+
+Skriptet kjøres for hånd, ikke i bygget: ffmpeg er ikke en avhengighet i
+prosjektet, og et bygg som trengte den ville feilet på Vercel. Filene er
+sjekket inn.
+
+    FFMPEG=<sti til ffmpeg> node --experimental-strip-types \
+      --import ./tests/alias.mjs scripts/og-bilder.ts
+
+**Vakten ligger i `tests/og-bilder.test.ts`** og dekker tre ting: at filen
+finnes, at den er 1200×630, og at den er laget fra det motivet siden faktisk
+bruker nå. Det siste leses av `kilder.json`, som skriptet skriver ved siden
+av bildene. Datostempler duger ikke — et git-utsjekk gir alle filer samme
+tid, så en test på «nyere enn kilden» ville vært grønn uansett. Alle 17 er
+sett igjennom i kontaktark før de ble sjekket inn; ingen hoder er kuttet.

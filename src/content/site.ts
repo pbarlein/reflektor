@@ -489,7 +489,7 @@ export const kundelogoer = [
   "The Well",
   "Peppes Pizza",
   "Egon",
-  "Soul Cake",
+  "Soulcake",
   "Baker Brun",
   "Premium PT",
 ] as const;

@@ -7,8 +7,11 @@ er det målt.
 ## Kort oppsummert
 
 Fundamentet er i orden. Ruting, markering, lenkegraf, ytelse og
-tilgjengelighet måler rent på alle 33 sider. Det som gjenstår er seks
-avgjørelser om tekst og to oppgaver som bare Pål kan gjøre.
+tilgjengelighet måler rent på alle 33 sider.
+
+De seks avgjørelsene gjennomgangen fant er utført 01.10.2026, sammen med
+flyttingen av anmeldelsene på forsiden. Det som gjenstår er to oppgaver som
+bare Pål kan gjøre, nederst.
 
 ## Det som måler rent
 
@@ -47,94 +50,119 @@ avgjørelser om tekst og to oppgaver som bare Pål kan gjøre.
   Forsiden og kundecasen hadde markeringen; tjenestesiden ikke. Layouten
   legger den nå på automatisk der en seksjon viser videoen.
 
-## Avgjørelser som ligger hos Pål
+## Seks avgjørelser — alle utført 01.10.2026
 
-### 1. Heter kunden Soulcake eller Soul Cake?
+Pål ga klarsignal på alle seks, og på rekkefølgen på forsiden: «du har rett
+angående soulcake navnet. resten gjør du som du mener er best på alle
+punkter, inkludert flytting av anmeldelsene.» Under står hva som faktisk ble
+gjort, og hvorfor der valget ikke var åpenbart.
 
-Nettstedet skriver begge deler: 13 ganger «Soulcake», 18 ganger «Soul Cake».
-Kundecasen bruker det første, logolista og den nye omtalevideoen det andre.
+### 1. Kundenavnet ✓ Soulcake, i ett ord
 
-Kundens egen nettside har tittelen **«Soulcake – Cupcakes, Cakes & Cookies»**,
-og Tripadvisor og Scan Magazine skriver det på samme måte. Det taler for
-«Soulcake» i ett ord overalt.
+Nettstedet skrev begge deler: 13 ganger «Soulcake», 18 ganger «Soul Cake».
+Kundens egen nettside har tittelen «Soulcake – Cupcakes, Cakes & Cookies», og
+Tripadvisor og Scan Magazine skriver det på samme måte.
 
-Dette er et kundenavn, så jeg endrer det ikke uten beskjed. Men det bør være
-én skrivemåte før lansering: en navngitt kunde skrevet to måter svekker
-nettopp det entitetssignalet casen er der for å gi.
+Normalisert til «Soulcake» 24 steder i `src/`. En navngitt kunde skrevet to
+måter svekker nettopp det entitetssignalet kundecasen er der for å gi.
 
-### 2. To titler blir kuttet i Google
+### 2. To titler og én beskrivelse ✓ kortet
 
-| Side | Tegn | Kuttes ved |
+| Side | Før | Nå |
 |---|---|---|
-| `/eventfotograf-eventvideo` | 79 | ~60 |
-| `/videoproduksjon-i-oslo` | 71 | ~60 |
+| `/eventfotograf-eventvideo` | 79 tegn | 46 |
+| `/videoproduksjon-i-oslo` | 71 tegn | 58 |
+| `/reels-produksjon`, beskrivelse | 177 tegn | 155 |
 
-Begge kom ferdig fra Claude Chat. Forslag som beholder søkeordene og kommer
-under grensen:
+Søkeordene står igjen i alle tre. Begge titlene kom ferdig fra Claude Chat.
 
-- «Eventfotograf og eventvideo i Oslo | Reflektor» (46)
-- «Videoproduksjon i Oslo – bedriftsfilm og video | Reflektor» (58)
+### 3. Spørsmålsseksjonene på tjenestesidene ✓ inn i FAQ-markeringen
 
-Meta description på `/reels-produksjon` er 177 tegn og kuttes ved rundt 160.
+Bloggen gjorde det allerede: en H2 som er et spørsmål blir automatisk et
+FAQ-par. `seksjonerSomFaq()` i `src/content/tjenester.ts` gjør nå det samme
+for tjenestesidene, og `Tjenestelayout` slår de utledede sammen med de
+håndskrevne til én FAQPage-node per URL.
 
-### 3. Skal spørsmålsseksjonene på tjenestesidene inn i FAQ-markeringen?
+**Duplikatvakten fanget én kollisjon med en gang**, og det var hele grunnen
+til å kjøre den: «Hvem produserer Reflektor for?» sto som seksjon på både
+`/innholdsproduksjon` og `/videoproduksjon-i-oslo`. Google sier eksplisitt
+at samme spørsmål ikke skal merkes opp som FAQPage på to URL-er. Navet
+beholdt spørsmålet; videosiden fikk «Hvem lager Reflektor video for?», som
+uansett er det en leser på en videoside spør om. Testen i
+`tests/faq.test.ts` dekker nå alle syv tjenestesidene, ikke fem
+håndskrevne.
 
-Bloggen gjør det allerede: en H2 som er et spørsmål, blir automatisk et
-FAQ-par i markeringen. Tjenestesidene gjør det ikke, og derfor står disse
-utenfor:
+### 4. Delingsbilder ✓ egne på artiklene og casene — ikke på landingssidene
 
-- «Hva koster videoproduksjon?»
-- «Hva koster eventfotograf?»
-- «Hva får dere igjen for å dokumentere et arrangement?»
-- «Hvorfor video på nettsiden i det hele tatt?»
+Alle 33 sidene delte `reflektor-og.jpg`. De 17 som nå har sitt eget er
+bloggartiklene og kundecasene; de øvrige beholder merkevarebildet.
 
-Det er prisspørsmålene som siteres i AI-svar. Arbeidet er lite, men det må
-kjøres mot duplikattesten — flere av dem ligner på spørsmål som allerede er
-i bruk.
+**Grensen er et valg, ikke latskap.** Begrunnelsen i `src/app/layout.tsx`
+for ett bilde til alt var at et bilde per side betyr tjuefem bilder å holde
+i live. Den står for landingssidene: de nås via annonser og søk, deles
+nesten aldri, og der skal kortet si hvem avsenderen er. Artiklene og casene
+er det motsatte — de er det som limes inn i en e-post eller en Slack-tråd
+for å vise noen noe, og da er motivet poenget.
 
-### 4. Ett OG-bilde på alle 33 sidene
+Det kostet ingen nye motiver: `scripts/og-bilder.ts` beskjærer sidens eget
+toppbilde til 1200×630 og bruker `fokus`-verdien siden selv bruker, så
+kokken på produksjonsdag-artikkelen beholder hodet. Alle 17 er sett
+igjennom. `tests/og-bilder.test.ts` feiler hvis en fil mangler, har feil
+mål, eller er laget fra et motiv som siden ikke bruker lenger — det siste
+via `kilder.json`, fordi datostempler ikke duger som vakt når et git-utsjekk
+gir alle filer samme tid.
 
-Alle sider deler `reflektor-og.jpg`. Bloggartiklene og kundecasene har egne
-toppbilder som kunne vært brukt i stedet. Det betyr noe når noen deler en
-lenke i Slack, LinkedIn eller en AI-flate: i dag ser alle 33 like ut.
+### 5. Innlenker til prisguidene ✓ fem nye
 
-### 5. Prisguidene har få innlenker
+`/blogg/hva-koster-et-some-byra` hadde **null** innlenker fra andre sider
+(ikke én, som det sto her før — den ene jeg talte var oversikten på
+`/blogg`). Det er artikkelen som svarer på det dyreste søket vi har.
 
-`/blogg/hva-koster-et-some-byra` har én innlenke. Det er den artikkelen som
-svarer på det dyreste søket vi har. Videoguiden har fire, eventguiden to.
-Forsiden lenker ikke til noen av dem.
+Den har nå fem: fire fra «Fra Reflektor»-boksen i artiklene om markedsføring
+i sosiale medier, SoMe-ansvarlig eller byrå, frilanser eller ansatt og
+strategi, pluss én i brødteksten på ordene «de fleste byråer ikke oppgir
+pris» — en setning som allerede sto der. Eventguiden fikk en gjensidig
+lenke fra videoguiden.
 
-### 6. Bunnteksten bruker H2 på 33 sider
+Ingen copy er skrevet for dette. Regelen i `src/content/artikler.ts` står:
+`frase` må stå ordrett i avsnittet fra før, og det legges bare en `<a>`
+rundt ord som allerede er der.
 
-«Tjenester» og «Selskap» er `<h2>` i bunnteksten, altså 66 overskrifter på
-nettstedet som ikke handler om innhold. Det skader ikke rangeringen, men det
-gjør dokumentstrukturen støyete for en språkmodell som leser siden som en
-disposisjon.
+### 6. Bunntekstens H2-er ✓ erstattet med navngitte landemerker
 
-## Rekkefølgen på forsiden
+«Tjenester» og «Selskap» var `<h2>` på alle 33 sidene — 66 overskrifter som
+ikke handler om innhold. På en prisartikkel med syv h2-er var to av dem
+bunntekst.
 
-Målt plassering av anmeldelsesseksjonen med omtalevideoen:
+Hver spalte er nå sitt eget `<nav>` med spaltetittelen som navn via
+`aria-labelledby`. Skjermleseren mister ingenting: listene nås med
+landemerkenavigasjon i stedet for overskriftsnavigasjon, som er den vanlige
+måten å gruppere lenkelister i en bunntekst på. Utseendet er uendret, og
+axe melder null avvik på 1440 og 390 px.
 
-- **58 % ned på skjerm**, y = 5 811 av 9 987 px
-- **62 % ned på telefon**, y = 8 962 av 14 357 px
+## Rekkefølgen på forsiden ✓ anmeldelsene flyttet opp
 
-Rekkefølgen er i dag: løfte → arbeid → slik fungerer det → **pris** →
-utenom abonnementet → **beviset** → FAQ → kontakt.
+Rekkefølgen var: løfte → arbeid → slik fungerer det → **pris** → utenom
+abonnementet → **beviset** → FAQ → kontakt. Beviset kom altså etter prisen.
+Innvendingen mot 30 000 kr/mnd ble møtt med en priskalkyle, ikke med en
+kunde som har vært der i fem år.
 
-Beviset kommer altså etter prisen. Innvendingen mot 30 000 kr/mnd møtes med
-en priskalkyle, ikke med en kunde som har vært der i fem år.
+Den er nå: løfte → arbeid → slik fungerer det → **beviset** → utenom
+abonnementet → **pris** → FAQ → kontakt.
 
-**Anbefaling: flytt anmeldelsesseksjonen opp, til rett etter «Dere setter av
-én dag».** Da blir rekkefølgen løfte → arbeid → slik fungerer det → bevis →
-pris → alternativ → FAQ → kontakt, og den tyngste referansen vi har står
-over den største innvendingen.
+Målt plassering av anmeldelsesseksjonen med omtalevideoen, samme sidehøyde
+før og etter:
 
-**Én hake:** anmeldelsesseksjonen er den eneste mørke flaten på forsiden, og
-priskortet rett under er også mørkt. To mørke blokker etter hverandre er
-nøyaktig rytmeproblemet kortseksjonen ble bygget for å løse i september.
-Løsningen er å la «Utenom abonnementet» ligge mellom dem: bevis (mørk) →
-alternativ (lys) → pris (mørkt kort). Da er prisen fortsatt siste ord før
-FAQ-en, og ingen to mørke flater møtes.
+| | Før | Nå |
+|---|---|---|
+| Skjerm (1440 px) | 58 % ned, y = 5 811 | **35 % ned, y = 3 474** |
+| Telefon (390 px) | 62 % ned, y = 8 962 | **28 % ned, y = 3 956** |
+
+**«Utenom abonnementet» ligger mellom de to, og det er ikke tilfeldig.**
+Anmeldelsesseksjonen er `bg-dyp` i full bredde og priskortet er `glassflate`
+på mørk bunn. Side om side ville de blitt to mørke flater etter hverandre —
+nøyaktig rytmeproblemet kortseksjonen ble bygget for å løse i september. Med
+den grå blokken imellom er prisen fortsatt siste ord før FAQ-en.
 
 ## Det som ikke er en feil
 

@@ -881,7 +881,13 @@ export const artikler: Artikkel[] = [
         lenker: [{ frase: "Les mer om abonnementet", sti: "/#pris" }],
       },
     ],
-    lesVidere: [{ sti: "/", tekst: "sosiale medier til fast månedspris" }],
+    lesVidere: [
+      { sti: "/", tekst: "sosiale medier til fast månedspris" },
+      {
+        sti: "/blogg/hva-koster-et-some-byra",
+        tekst: "hva et SoMe-byrå koster i markedet",
+      },
+    ],
   },
   {
     slug: "hva-er-innholdsproduksjon",
@@ -2365,7 +2371,13 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Det er et vanskeligere spørsmål å besvare, fordi de fleste byråer ikke oppgir pris. Reflektor gjør det: 30 000 kroner i måneden, altså 360 000 i året, for én produksjonsdag i måneden, 8–10 ferdige videoer og publisering to ganger i uken.",
-        lenker: [{ frase: "30 000 kroner i måneden", sti: "/#pris" }],
+        lenker: [
+          {
+            frase: "de fleste byråer ikke oppgir pris",
+            sti: "/blogg/hva-koster-et-some-byra",
+          },
+          { frase: "30 000 kroner i måneden", sti: "/#pris" },
+        ],
       },
       {
         type: "avsnitt",
@@ -2442,6 +2454,10 @@ export const artikler: Artikkel[] = [
     lesVidere: [
       { sti: "/", tekst: "Reflektors pris og leveranse, oppgitt åpent" },
       { sti: "/innholdsproduksjon", tekst: "hva Reflektor produserer" },
+      {
+        sti: "/blogg/hva-koster-et-some-byra",
+        tekst: "hva et SoMe-byrå koster i markedet",
+      },
     ],
   },
   /*
@@ -2687,6 +2703,10 @@ export const artikler: Artikkel[] = [
       {
         sti: "/videoproduksjon-i-oslo",
         tekst: "videoproduksjon i Oslo, med priser og leveranse",
+      },
+      {
+        sti: "/blogg/hva-koster-eventfotograf",
+        tekst: "hva en eventfotograf koster i markedet",
       },
     ],
     tilleggsfaq: [
@@ -3143,6 +3163,10 @@ export const artikler: Artikkel[] = [
     lesVidere: [
       { sti: "/", tekst: "Reflektors pris og leveranse, oppgitt åpent" },
       { sti: "/innholdsproduksjon", tekst: "hva Reflektor produserer" },
+      {
+        sti: "/blogg/hva-koster-et-some-byra",
+        tekst: "hva et SoMe-byrå koster i markedet",
+      },
     ],
     tilleggsfaq: [
       {
@@ -3567,6 +3591,10 @@ export const artikler: Artikkel[] = [
     lesVidere: [
       { sti: "/", tekst: "Reflektors leveranse og pris, oppgitt åpent" },
       { sti: "/innholdsproduksjon", tekst: "hva Reflektor produserer" },
+      {
+        sti: "/blogg/hva-koster-et-some-byra",
+        tekst: "hva et SoMe-byrå koster i markedet",
+      },
     ],
     tilleggsfaq: [
       {

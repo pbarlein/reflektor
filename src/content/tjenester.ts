@@ -455,7 +455,14 @@ export const videoproduksjon: Tjenesteside = {
    * prosess og ingen tall. Nå er den hovedsiden; reklamefilm, employer
    * branding og event beholder sine egne sider og lenkes herfra.
    */
-  tittel: "Videoproduksjon i Oslo – bedriftsfilm, video og reklamefilm",
+  /*
+   * TITTELEN ER KORTET 01.10.2026. Levert copy var «Videoproduksjon i Oslo
+   * – bedriftsfilm, video og reklamefilm», som med « | Reflektor» ble 71
+   * tegn og dermed kuttet i Google rundt 60. «Reklamefilm» er tatt ut: den
+   * har sin egen side som rangerer for ordet, og her kostet den plassen til
+   * de to ordene som faktisk er nye for denne siden.
+   */
+  tittel: "Videoproduksjon i Oslo – bedriftsfilm og video",
   beskrivelse:
     "Videoproduksjon for bedrifter i Oslo og hele Norge: bedriftsfilm, video til nettside og sosiale medier, reklamefilm og eventvideo. Fra 40 000 kr per prosjekt.",
   h1: "Videoproduksjon i Oslo",
@@ -567,9 +574,9 @@ export const videoproduksjon: Tjenesteside = {
        * Reflektor for?» — det er flyttet hit, der de andre kundeordene står.
        */
       sporsmal: "Kunden om oss",
-      svar: "Soul Cake har brukt oss til foto og video siden 2022. Over 80 prosent av foto og video på @soulcake.oslo kommer fra Reflektor, og reelsene har hatt 6,8 millioner visninger fra april 2022 til september 2026.",
+      svar: "Soulcake har brukt oss til foto og video siden 2022. Over 80 prosent av foto og video på @soulcake.oslo kommer fra Reflektor, og reelsene har hatt 6,8 millioner visninger fra april 2022 til september 2026.",
       kundeord: "soulcake",
-      lenker: [{ sti: "/vart-arbeid/soulcake", tekst: "Les Soul Cake-casen" }],
+      lenker: [{ sti: "/vart-arbeid/soulcake", tekst: "Les Soulcake-casen" }],
       sitat: {
         tekst:
           "Vi liker spesielt godt hvordan de får alle til å føle seg avslappet, naturlig og finne seg til rette foran kamera, selv med lite modell-erfaring fra tidligere. De ser aldri begrensninger og heller muligheter uansett årstid eller lokasjon.",
@@ -593,8 +600,8 @@ export const videoproduksjon: Tjenesteside = {
       svar: "Det kommer an på kompleksitet og omfang, og vi tilpasser til det hver enkelt kunde faktisk trenger. Er volum viktigere enn produksjonsverdi, er det planleggingen som avgjør — da legger vi dagen opp for å nå et bestemt antall. Til sammenligning er abonnementet bygget på at én produksjonsdag gir 8–10 ferdige videoer, men da filmer vi løpende innhold og rigger ikke om mellom hvert oppsett. Si hva tallet skal være, så planlegger vi mot det.",
     },
     {
-      sporsmal: "Hvem produserer Reflektor for?",
-      svar: "Anton Sport, The Well, Peppes Pizza, Egon, Baker Brun, Idun Industri, Selvaag, Retail24, Centropa, Happis og Soul Cake — innen retail, restaurant og mat, eiendom, finans og industri. Ikke alle er abonnementskunder.",
+      sporsmal: "Hvem lager Reflektor video for?",
+      svar: "Anton Sport, The Well, Peppes Pizza, Egon, Baker Brun, Idun Industri, Selvaag, Retail24, Centropa, Happis og Soulcake — innen retail, restaurant og mat, eiendom, finans og industri. Ikke alle er abonnementskunder.",
     },
   ],
   faq: [
@@ -635,7 +642,7 @@ export const videoproduksjon: Tjenesteside = {
     },
   ],
   pris: null,
-  /* VIDEO TIL EGNE FLATER. The Well og Soul Cake sto her fra før og passer.
+  /* VIDEO TIL EGNE FLATER. The Well og Soulcake sto her fra før og passer.
      Lagt til elsykkelen og dronebildet: begge er typiske bannervideoer og
      forsidebilder, altså nettopp egne flater. */
   arbeid: [
@@ -819,7 +826,13 @@ export const event: Tjenesteside = {
     fokus: "center 40%",
   },
   sti: "/eventfotograf-eventvideo",
-  tittel: "Eventfotograf og eventvideo i Oslo – konferanse og firmaarrangement",
+  /*
+   * KORTET 01.10.2026. Levert copy ble 79 tegn med « | Reflektor» og ble
+   * kuttet midt i «firmaarrangement». Begge søkeordene — eventfotograf og
+   * eventvideo — og stedet står igjen; «konferanse og firmaarrangement»
+   * står i meta description i stedet, der det er plass.
+   */
+  tittel: "Eventfotograf og eventvideo i Oslo",
   beskrivelse:
     "Eventfotograf og eventvideo for konferanser, lanseringer og firmaarrangementer. Eventvideo, klipp til sosiale medier og 50+ bilder. Fra 40 000 kr.",
   h1: "Eventfotograf og eventvideo",
@@ -1145,7 +1158,7 @@ export const innholdsproduksjon: Tjenesteside = {
     },
     {
       sporsmal: "Hvem produserer Reflektor for?",
-      svar: "Anton Sport, The Well, Peppes Pizza, Egon, Baker Brun, Idun Industri, Selvaag, Retail24, Centropa, Happis og Soul Cake — innen retail, restaurant og mat, eiendom, finans, industri og teknologi.",
+      svar: "Anton Sport, The Well, Peppes Pizza, Egon, Baker Brun, Idun Industri, Selvaag, Retail24, Centropa, Happis og Soulcake — innen retail, restaurant og mat, eiendom, finans, industri og teknologi.",
       sitat: {
         tekst:
           "Teamet i Reflektor jobber lynraskt, presist og leverer høy kvalitet hver gang. Jeg har jobbet med dem mange ganger med merkevarer for Orkla Foods Norge og har aldri vært skuffet.",
@@ -1249,8 +1262,13 @@ export const innholdsproduksjon: Tjenesteside = {
 export const reelsproduksjon: Tjenesteside = {
   sti: "/reels-produksjon",
   tittel: "Reels-produksjon for bedrifter – fast pris",
+  /*
+   * KORTET FRA 177 TIL 155 TEGN 01.10.2026. Google kutter rundt 160. «Én
+   * produksjonsdag i måneden» er tatt ut — prisen og videotallet sier det
+   * samme til den som skanner et søkeresultat.
+   */
   beskrivelse:
-    "Merkevarebyggende Reels til Instagram og Facebook, levert stående i 9:16 og klare for TikTok og YouTube Shorts. Én produksjonsdag i måneden, 8–10 ferdige videoer, 30 000 kr/mnd.",
+    "Merkevarebyggende Reels til Instagram og Facebook, levert stående i 9:16 og klare for TikTok og YouTube Shorts. 8–10 ferdige videoer, 30 000 kr/mnd.",
   h1: "Reels som bygger merkevaren din, ikke bare følgertallet",
   merkelapp: "Reels-produksjon",
   tjenestetype: "Produksjon av Reels og kort stående video til fast pris",
@@ -1471,7 +1489,7 @@ export const reelsproduksjon: Tjenesteside = {
    * om kort video, og motivet lignet et eiendomsprospekt mer enn innhold
    * til en feed. Påls dom: «dette er et elendig bilde å bruke her.»
    *
-   * DE TRE ER PÅLS EGNE FORSLAG — Anton Sport, Egon og Soul Cake. De
+   * DE TRE ER PÅLS EGNE FORSLAG — Anton Sport, Egon og Soulcake. De
    * dekker sportsbutikk, restaurantkjede og bakeri, alle tre er ferdige
    * eksporter fra kundemappen, og alle tre er 9:16 med autospill. Ingen
    * kunde navngis i alt-teksten, som i resten av rutenettene.
@@ -1832,6 +1850,47 @@ export const kjeder: Tjenesteside = {
   ],
   pris: null,
 };
+
+/**
+ * Seksjonsoverskrifter som ER spørsmål, som FAQ-par.
+ *
+ * LAGT TIL 01.10.2026 i SEO-gjennomgangen før lansering. Tjenestesidene
+ * hadde bare `faq`-lista i markeringen, mens fire av de mest siterbare
+ * spørsmålene på nettstedet sto som vanlige seksjoner uten markering:
+ * «Hva koster videoproduksjon?», «Hva koster eventfotograf?», «Hvorfor
+ * video på nettsiden i det hele tatt?» og «Hva får dere igjen for å
+ * dokumentere et arrangement?». Det er prisspørsmålene som siteres i
+ * AI-svar, og de lå utenfor.
+ *
+ * SAMME TRE FILTRE SOM BLOGGEN BRUKER, og det er ikke tilfeldig: en
+ * seksjonsoverskrift er bare et FAQ-spørsmål hvis den kan siteres alene.
+ *
+ *   1. Må ende på spørsmålstegn.
+ *   2. Må begynne med et spørreord — «Slik jobber vi» og «Dette får dere»
+ *      er seksjoner, ikke spørsmål.
+ *   3. Må ha et svar. En seksjon med tom `svar` er en ren liste, og et
+ *      FAQ-par uten svar er verdiløst.
+ *
+ * SVARET KUTTES VED FØRSTE AVSNITT. Flere av svarene er tre avsnitt lange,
+ * og et FAQ-svar skal være det korte svaret. Første avsnitt er front-loaded
+ * i denne malen — det er regelen `svar`-feltet er skrevet etter.
+ */
+const SPØRREORD =
+  /^(hva|hvorfor|hvordan|hvem|når|hvor|kan|bør|må|trenger|er|skal|finnes|går|koster|lønner)\b/i;
+
+export function seksjonerSomFaq(side: Tjenesteside) {
+  return side.seksjoner
+    .filter(
+      (s) =>
+        s.sporsmal.trim().endsWith("?") &&
+        SPØRREORD.test(s.sporsmal.trim()) &&
+        s.svar.trim().length > 0,
+    )
+    .map((s) => ({
+      sporsmal: s.sporsmal,
+      svar: s.svar.split("\n\n")[0].trim(),
+    }));
+}
 
 export const tjenestesider: Tjenesteside[] = [
   innholdsproduksjon,

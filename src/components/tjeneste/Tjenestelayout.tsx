@@ -15,7 +15,7 @@ import {
   FilmSchema,
   TjenesteSchema,
 } from "@/components/Schema";
-import { eiker, type Tjenesteside } from "@/content/tjenester";
+import { eiker, seksjonerSomFaq, type Tjenesteside } from "@/content/tjenester";
 
 import { Galleri } from "@/components/Galleri";
 import { Omtalevideo } from "@/components/Omtalevideo";
@@ -126,8 +126,16 @@ export function Tjenestelayout({
         fraPris={side.prismodell !== "abonnement"}
         abonnementspris={side.prismodell === "abonnement"}
       />
+      {/*
+        FAQ-MARKERINGEN TAR BÅDE `faq`-LISTA OG SPØRSMÅLSSEKSJONENE.
+        Se `seksjonerSomFaq` i tjenester.ts for hvorfor og hvilke tre filtre
+        som avgjør. Duplikattesten dekker begge kildene.
+      */}
       <FaqSchema
-        qa={side.faq.map((f) => ({ sporsmal: f.sporsmal, svar: f.svar }))}
+        qa={[
+          ...seksjonerSomFaq(side),
+          ...side.faq.map((f) => ({ sporsmal: f.sporsmal, svar: f.svar })),
+        ]}
       />
       {/*
         Hovedfilmen som VideoObject. Bare denne — klippene i «Fra arbeidet»

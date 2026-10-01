@@ -27,7 +27,7 @@
  * piksler er normalisert til 40 x 40 visningspiksler, med tak på 42 px høyde
  * og gulv på 16 px. Det er den nærmeste tilnærmingen til «like tung i
  * blikket» som lar seg regne ut. Tre logoer treffer taket (The Well, Egon,
- * Soul Cake) — alle tre er nesten kvadratiske merker.
+ * Soulcake) — alle tre er nesten kvadratiske merker.
  *
  * Bredde og høyde står her fordi de må inn i <Image> for å unngå layout
  * shift. Endrer du en logofil, må tallene regnes om.
@@ -55,5 +55,5 @@ export const kundelogoer: Kundelogo[] = [
   { id: "retail24", navn: "Retail24", bredde: 142, hoyde: 24 },
   { id: "centropa", navn: "Centropa", bredde: 158, hoyde: 23 },
   { id: "happis", navn: "Happis", bredde: 92, hoyde: 36 },
-  { id: "soul-cake", navn: "Soul Cake", bredde: 72, hoyde: 42 },
+  { id: "soul-cake", navn: "Soulcake", bredde: 72, hoyde: 42 },
 ];

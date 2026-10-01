@@ -78,7 +78,7 @@ export function Logorad({ dekorativ = false }: { dekorativ?: boolean } = {}) {
             height={l.hoyde}
             /*
               EAGER, IKKE LAZY. Målt på deployet lastet ni av elleve: Happis
-              og Soul Cake ligger utenfor skjermen til høyre, og lat lasting
+              og Soulcake ligger utenfor skjermen til høyre, og lat lasting
               utsatte dem. Med drift betyr det at de to hadde poppet inn
               mens raden beveget seg — og en IntersectionObserver på et
               element som flyttes av en CSS-animasjon inne i en

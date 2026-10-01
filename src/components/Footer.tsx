@@ -20,9 +20,10 @@ import { bunnmeny } from "@/content/navigasjon";
  *
  * NAVIGASJONEN ER NY. Headeren har fire punkter og bærer ikke tjenestesidene
  * — begrunnelsen står i src/content/navigasjon.ts. Da må de ligge her, ellers
- * har fem live sider null sidevise interne lenker. To `<nav>` på samme side
- * må ha hver sin `aria-label`, ellers er de to navigasjonslandemerkene
- * umulige å skille for en skjermleser.
+ * har fem live sider null sidevise interne lenker. Hver spalte er sitt eget
+ * `<nav>`, navngitt etter spaltetittelen — flere navigasjonslandemerker på
+ * samme side må ha hvert sitt navn, ellers er de umulige å skille for en
+ * skjermleser.
  */
 export function Footer() {
   return (
@@ -56,13 +57,33 @@ export function Footer() {
             </address>
           </div>
 
-          <nav
-            aria-label="Bunntekst"
-            className="grid grid-cols-2 gap-10 sm:gap-16"
-          >
+          {/*
+            SPALTETITLENE ER IKKE OVERSKRIFTER, 01.10.2026.
+
+            De sto som <h2>. Det ga «Tjenester» og «Selskap» som to ekstra
+            h2-er på hver eneste av de 33 sidene — to generiske ledd nederst
+            i enhver overskriftsdisposisjon, uten noe med sidens emne å
+            gjøre. På en artikkel med fem egne h2-er ble to av syv bunntekst.
+
+            Skjermleseren mister ingenting. Hver spalte er nå sitt eget
+            navigasjonslandemerke med spaltetittelen som navn, via
+            `aria-labelledby`, og listene nås med landemerkenavigasjon i
+            stedet for overskriftsnavigasjon. Det er den vanlige måten å
+            gruppere lenkelister i en bunntekst på.
+
+            Utseendet er uendret — `Merkelapp` rendrer som <p> uten `som`.
+          */}
+          <div className="grid grid-cols-2 gap-10 sm:gap-16">
             {bunnmeny.map((spalte) => (
-              <div key={spalte.tittel}>
-                <Merkelapp som="h2">{spalte.tittel}</Merkelapp>
+              <nav
+                key={spalte.tittel}
+                aria-labelledby={`bunnmeny-${spalte.tittel.toLowerCase()}`}
+              >
+                <Merkelapp>
+                  <span id={`bunnmeny-${spalte.tittel.toLowerCase()}`}>
+                    {spalte.tittel}
+                  </span>
+                </Merkelapp>
                 <ul className="mt-4 flex flex-col gap-2.5 text-sm">
                   {spalte.lenker.map((l) => (
                     <li key={l.sti}>
@@ -83,9 +104,9 @@ export function Footer() {
                     </li>
                   )}
                 </ul>
-              </div>
+              </nav>
             ))}
-          </nav>
+          </div>
         </div>
       </Container>
     </footer>
