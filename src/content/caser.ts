@@ -69,6 +69,43 @@ export type Kundecase = {
   /** Kilde, dato og hva tallene ikke måler. Skal alltid stå. */
   kilde: string;
 
+  /**
+   * Kunden i egne ord, på film.
+   *
+   * LAGT TIL 01.10.2026. Soul Cake er den første og foreløpig eneste med
+   * en slik video. Feltet er valgfritt, slik at casene uten står uendret.
+   *
+   * HVORFOR DEN STÅR MELLOM «MÅLT» OG «BEHOVET». Tallene over er våre, og
+   * de er etterprøvbare. Setningen etterpå er kundens, og den er ikke
+   * etterprøvbar i det hele tatt — den er bare sann fordi hun sier den.
+   * De to typene bevis gjør hver sin jobb, og de gjør den best etter
+   * hverandre: først hva som er målt, så hva det føltes som.
+   *
+   * `transkripsjon` står i et lukket felt. Den gjentar det som allerede er
+   * brent inn i bildet, og er der for søk, skjermlesere og den som ikke kan
+   * spille av lyd — ikke for å leses av alle.
+   */
+  kundeord?: {
+    merkelapp: string;
+    overskrift: string;
+    video: {
+      /** Sti uten filendelse, under /arbeid/. */
+      sti: string;
+      alt: string;
+      undertekster: string;
+      /** Målt med ffmpeg på fila. Til VideoObject. */
+      sekunder: number;
+      navn: string;
+      beskrivelse: string;
+      publisert: string;
+    };
+    innledning: string;
+    sitat: string;
+    /** Navn og selskap under sitatet, og `author` i Review-markeringen. */
+    sagtAv: string;
+    transkripsjon: string[];
+  };
+
   behov: { tittel: string; avsnitt: string[] };
   arbeid: { tittel: string; steg: Steg[] };
 
@@ -164,6 +201,7 @@ export const kundecaser: Kundecase[] = [
       "58 792 følgere på Instagram",
       "5 butikker og kafé",
       "Fast produksjonsdag hver måned",
+      "Samarbeid i 5 år (2022–2026)",
     ],
 
     tall: [
@@ -186,6 +224,31 @@ export const kundecaser: Kundecase[] = [
     ],
     kilde:
       "Offentlige Instagram-data via Supermetrics per 4. september 2026. Tallene gjelder hele kontoen i samarbeidsperioden. Likes og visninger måler engasjement, ikke salg.",
+
+    kundeord: {
+      merkelapp: "Kunden om samarbeidet",
+      overskrift: "«Men vi er veldig, veldig, veldig fornøyde.»",
+      video: {
+        sti: "/arbeid/soulcake/soulcake-omtale-ragnhild",
+        alt: "Ragnhild Gaarde Bucataru i Soul Cake forteller om samarbeidet med Reflektor",
+        undertekster: "/arbeid/soulcake/soulcake-omtale-ragnhild.no.vtt",
+        sekunder: 22,
+        navn: "Soul Cake om fem år med Reflektor",
+        beskrivelse:
+          "Ragnhild Gaarde Bucataru i Soul Cake forteller om samarbeidet med Reflektor, som har produsert foto og video for bakeriet siden 2022.",
+        publisert: "2026-10-01",
+      },
+      innledning:
+        "Ragnhild Gaarde Bucataru i Soul Cake har jobbet med Reflektor siden 2022. Samarbeidet er inne i sitt femte år. Da vi spurte om hun ville si noen ord på kamera, svarte hun ærlig:",
+      sitat:
+        "Vi prøver egentlig å booke dem opp, så det ikke er plass til dere andre. Så jeg blir veldig dårlig reklame … Men vi er veldig, veldig, veldig fornøyde.",
+      sagtAv: "Ragnhild Gaarde Bucataru, Soul Cake",
+      transkripsjon: [
+        "«Dette her sier jeg helt frivillig.»",
+        "– Hvor lenge har dere jobbet med Reflektor?",
+        "«Fem år? Fem, ja. Vi prøver egentlig å booke dem opp, så det ikke er plass til dere andre, så jeg blir veldig dårlig reklame … Men vi er veldig, veldig, veldig fornøyde. Så lykke til med å booke dem inn. Førstemann til mølla!»",
+      ],
+    },
 
     behov: {
       tittel:

@@ -21,6 +21,7 @@ import { omoss } from "@/content/omoss";
 const ORG_ID = `${basisUrl()}/#organisasjon`;
 
 export function OrganisasjonSchema() {
+  const base = basisUrl();
   const data = {
     "@context": "https://schema.org",
     // LocalBusiness fordi det er et fysisk kontor med besøksadresse i Oslo,
@@ -47,6 +48,73 @@ export function OrganisasjonSchema() {
       value: site.kontakt.orgnr.replace(/\s/g, ""),
     },
     areaServed: "NO",
+    /*
+     * HVA REFLEKTOR KAN, som maskinlesbare emner.
+     *
+     * LAGT TIL 01.10.2026. Nettstedet har egne sider for hver av disse, men
+     * `knowsAbout` knytter dem til ORGANISASJONEN og ikke bare til hver sin
+     * URL. Det er forskjellen på at en språkmodell vet at Reflektor HAR en
+     * side om reklamefilm, og at Reflektor LAGER reklamefilm.
+     */
+    knowsAbout: [
+      "videoproduksjon",
+      "reklamefilm",
+      "eventfotografering",
+      "eventvideo",
+      "innholdsproduksjon",
+      "sosiale medier",
+    ],
+    /*
+     * TJENESTEKATALOGEN MED PRIS.
+     *
+     * LAGT TIL 01.10.2026. Kjøpsfaktaene — 30 000 kr/mnd for abonnementet,
+     * fra 40 000 kr for et prosjekt — sto i brødtekst på fem sider og i
+     * llms.txt, men ingen steder som struktur. En språkmodell som blir
+     * spurt «hva koster videoproduksjon hos Reflektor» måtte lete dem opp
+     * i prosa og gjette hvilken pris som hørte til hva.
+     *
+     * ABONNEMENTET BRUKER `UnitPriceSpecification` med `unitText: "MON"`,
+     * fordi det ER en månedspris. Prosjektene bruker `minPrice` uten
+     * `price`, fordi «fra 40 000» er et gulv og ikke en pris. Å skrive
+     * 40 000 som `price` ville gjort et minstebeløp til et pristilbud.
+     *
+     * PRISENE LESES FRA `tilbud`, ikke skrevet inn her. Da kan de ikke komme
+     * i utakt med det sidene selv viser.
+     */
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Tjenester fra Reflektor",
+      itemListElement: [
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "SoMe-abonnement",
+            url: `${base}/`,
+          },
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price: tilbud.prisPerManed,
+            priceCurrency: "NOK",
+            unitText: "MON",
+          },
+        },
+        ...[
+          ["Videoproduksjon i Oslo", "/videoproduksjon-i-oslo"],
+          ["Reklamefilm", "/reklamefilm"],
+          ["Eventfotograf og eventvideo", "/eventfotograf-eventvideo"],
+          ["Employer branding-video", "/employer-branding-video-oslo"],
+        ].map(([navn, sti]) => ({
+          "@type": "Offer",
+          itemOffered: { "@type": "Service", name: navn, url: `${base}${sti}` },
+          priceSpecification: {
+            "@type": "PriceSpecification",
+            minPrice: tilbud.fraPrisProsjekt,
+            priceCurrency: "NOK",
+          },
+        })),
+      ],
+    },
     // Verifisert 15.09.2026 mot dagens reflektor.no, ikke mot cache.
     // Legg aldri til en profil som ikke er bekreftet – en død sameAs-lenke
     // svekker entitetssignalet i stedet for å styrke det.
@@ -496,6 +564,9 @@ export function FilmSchema({
   sti,
   sekunder,
   sidesti,
+  plakat,
+  publisert,
+  transkripsjon,
 }: {
   navn: string;
   beskrivelse: string;
@@ -504,6 +575,20 @@ export function FilmSchema({
   sekunder: number;
   /** Siden filmen står på. Gir språkmodellen veien tilbake til kontekst. */
   sidesti: string;
+  /**
+   * Plakatbildets sti, når det ikke heter det samme som filmen.
+   * Omtalevideoen bruker `-poster.jpg`, resten bruker `.jpg`.
+   */
+  plakat?: string;
+  /**
+   * ISO-dato. UNNTAKET FRA REGELEN I KOMMENTAREN OVER, og det er et ekte
+   * unntak: for omtalevideoen VET vi når den ble lagt ut, fordi vi la den
+   * ut. For klippene i kundecasene gjør vi ikke det, og da står feltet
+   * tomt som før.
+   */
+  publisert?: string;
+  /** Hele det som blir sagt. Gjør filmen søkbar som tekst. */
+  transkripsjon?: string;
 }) {
   const base = basisUrl();
   const data = {
@@ -511,14 +596,55 @@ export function FilmSchema({
     "@type": "VideoObject",
     name: navn,
     description: beskrivelse,
-    thumbnailUrl: `${base}${sti}.jpg`,
+    thumbnailUrl: `${base}${plakat ?? `${sti}.jpg`}`,
     contentUrl: `${base}${sti}.mp4`,
     duration: `PT${sekunder}S`,
     inLanguage: "nb-NO",
     isFamilyFriendly: true,
+    ...(publisert ? { uploadDate: publisert } : {}),
+    ...(transkripsjon ? { transcript: transkripsjon } : {}),
     creator: { "@id": ORG_ID },
     productionCompany: { "@id": ORG_ID },
     mainEntityOfPage: { "@type": "WebPage", "@id": `${base}${sidesti}` },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+/**
+ * En kundeomtale som Review.
+ *
+ * LAGT TIL 01.10.2026, sammen med omtalevideoen fra Soul Cake.
+ *
+ * INGEN `reviewRating`. Ragnhild har ikke gitt en karakter, og et tall vi
+ * finner på ville vært nettopp det markeringen er ment å hindre. Google
+ * viser ikke stjerner uten rating — det er greit. Verdien her er at en
+ * språkmodell som blir spurt «hva sier kundene om Reflektor» finner et
+ * sitat med navn på, og ikke bare brødtekst.
+ *
+ * STÅR LØST, IKKE INNE I ORGANIZATION. Organisasjonsmarkeringen har ett
+ * `@id` som gjelder hele nettstedet; omtalen hører til én side. `itemReviewed`
+ * peker på organisasjonen med samme `@id`, så grafen henger sammen likevel.
+ */
+export function OmtaleSchema({
+  tekst,
+  forfatter,
+}: {
+  tekst: string;
+  forfatter: string;
+}) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    itemReviewed: { "@id": ORG_ID },
+    author: { "@type": "Person", name: forfatter },
+    reviewBody: tekst,
+    inLanguage: "nb-NO",
   };
 
   return (

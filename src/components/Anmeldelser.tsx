@@ -82,10 +82,21 @@ export function Anmeldelsesrad({
   anmeldelser,
   overskrift,
   eyebrow,
+  innslag,
 }: {
   anmeldelser: Anmeldelse[];
   overskrift: React.ReactNode;
   eyebrow: React.ReactNode;
+  /**
+   * Noe som står mellom overskriften og anmeldelsesraden.
+   *
+   * LAGT TIL 01.10.2026 for omtalevideoen fra Soul Cake. Den kunne ikke
+   * vært en egen seksjon over: da hadde den fått sin egen overskrift, og
+   * siden ville sagt «det kundene sier» to ganger på rad. Her hører den
+   * under den overskriften som allerede står der — videoen er det sterkeste
+   * kunden sier, og anmeldelsene er de elleve andre.
+   */
+  innslag?: React.ReactNode;
 }) {
   return (
     <div className="py-20 sm:py-28">
@@ -124,6 +135,7 @@ export function Anmeldelsesrad({
             </span>
           </p>
         </div>
+        {innslag}
       </Container>
 
       {/*

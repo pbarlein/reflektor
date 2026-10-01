@@ -5,11 +5,13 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
 import { Eyebrow, Merkelapp } from "@/components/Eyebrow";
 import { Klipp } from "@/components/Klipp";
+import { Omtalevideo } from "@/components/Omtalevideo";
 import { Knappelenke } from "@/components/Knapp";
 import {
   BrodsmuleSchema,
   FilmSchema,
   KundecaseSchema,
+  OmtaleSchema,
 } from "@/components/Schema";
 import { hentCase, kundecaser, nesteCase } from "@/content/caser";
 import { basisUrl } from "@/lib/miljo";
@@ -95,6 +97,34 @@ export default async function CaseSide({ params }: Props) {
         sekunder={k.klipp.sekunder}
         sidesti={`/vart-arbeid/${k.slug}`}
       />
+      {/*
+        OMTALEVIDEOEN ER EN EGEN ENTITET, ikke en del av klippet over. Den
+        har sin egen varighet, sitt eget motiv og en dato vi faktisk kjenner.
+        Transkripsjonen følger med: det er den som gjør det som BLIR SAGT
+        søkbart, og det er hele grunnen til at videoen ligger her.
+      */}
+      {k.kundeord && (
+        <>
+          <FilmSchema
+            navn={k.kundeord.video.navn}
+            beskrivelse={k.kundeord.video.beskrivelse}
+            sti={k.kundeord.video.sti}
+            plakat={`${k.kundeord.video.sti}-poster.jpg`}
+            sekunder={k.kundeord.video.sekunder}
+            publisert={k.kundeord.video.publisert}
+            transkripsjon={k.kundeord.transkripsjon
+              .join(" ")
+              .replace(/[«»]/g, "")
+              .replace(/\s+/g, " ")
+              .trim()}
+            sidesti={`/vart-arbeid/${k.slug}`}
+          />
+          <OmtaleSchema
+            tekst={k.kundeord.sitat}
+            forfatter={k.kundeord.sagtAv.split(",")[0]}
+          />
+        </>
+      )}
 
       <article>
         {/* ── Identitet og løfte ─────────────────────────────────── */}
@@ -212,6 +242,67 @@ export default async function CaseSide({ params }: Props) {
             </div>
           </Container>
         </section>
+
+        {/* ── Kunden i egne ord ──────────────────────────────────── */}
+        {k.kundeord && (
+          /*
+            STÅR MELLOM TALLENE OG BEHOVET. Over ligger fire målte tall med
+            kilde og forbehold; her står én setning som ikke kan etterprøves
+            i det hele tatt. De to typene bevis gjør hver sin jobb, og de
+            gjør den best i den rekkefølgen: først hva som er målt, så hva
+            det føltes som.
+
+            VIDEOEN TIL VENSTRE, TEKSTEN TIL HØYRE på skjerm, stablet på
+            telefon. Videoen er 4:5 og får en smal spalte — 22 rem — fordi
+            en stående film i full halvbredde ville blitt 600 px høy og
+            dominert en side der tallene er hovedsaken.
+          */
+          <section className="pb-20">
+            <Container>
+              <div className="grid gap-10 lg:grid-cols-[22rem_1fr] lg:items-center lg:gap-16">
+                <Omtalevideo
+                  sti={k.kundeord.video.sti}
+                  alt={k.kundeord.video.alt}
+                  undertekster={k.kundeord.video.undertekster}
+                />
+                <div className="max-w-2xl">
+                  <Eyebrow>{k.kundeord.merkelapp}</Eyebrow>
+                  <h2 className="mt-4 text-3xl text-balance sm:text-4xl">
+                    {k.kundeord.overskrift}
+                  </h2>
+                  <p className="mt-5 leading-relaxed text-pretty text-blekk-dempet">
+                    {k.kundeord.innledning}
+                  </p>
+                  <figure className="mt-6 border-l-2 border-aksent pl-5">
+                    <blockquote className="text-lg leading-relaxed text-pretty sm:text-xl">
+                      «{k.kundeord.sitat}»
+                    </blockquote>
+                    <figcaption className="mt-3 text-sm text-blekk-dempet">
+                      — {k.kundeord.sagtAv}
+                    </figcaption>
+                  </figure>
+                  {/*
+                    TRANSKRIPSJONEN ER LUKKET SOM STANDARD. Den gjentar det
+                    som allerede er brent inn i bildet, og er der for søk,
+                    skjermlesere og den som ikke kan spille av lyd. <details>
+                    gjør den tilgjengelig uten JavaScript og uten at den
+                    tar plass fra sitatet.
+                  */}
+                  <details className="group mt-6">
+                    <summary className="cursor-pointer text-sm text-blekk-dempet underline decoration-transparent decoration-1 underline-offset-4 transition-colors hover:decoration-blekk-svak motion-reduce:transition-none">
+                      Les hele transkripsjonen
+                    </summary>
+                    <div className="mt-4 space-y-3 text-sm leading-relaxed text-pretty text-blekk-dempet">
+                      {k.kundeord.transkripsjon.map((linje) => (
+                        <p key={linje}>{linje}</p>
+                      ))}
+                    </div>
+                  </details>
+                </div>
+              </div>
+            </Container>
+          </section>
+        )}
 
         {/* ── Behovet, med klippet ved siden av ──────────────────── */}
         <section className="pb-20">

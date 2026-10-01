@@ -45,64 +45,86 @@ export const site = {
 } as const;
 
 /**
- * De to setningene som peker ut av abonnementet, på forsiden.
+ * «Utenom abonnementet» på forsiden: fire kort ut til tjenestesidene.
  *
- * BAKGRUNN, MÅLT 29.09.2026. Pål spurte Google AI Mode som markedssjef i en
- * norsk interiørkjede. Reflektor kom ikke med i svaret. AI-en begrunnet det
- * med forsidens egen tekst og konkluderte med at vi er for små for en kjede.
- * Vurderingen snudde da Pål nevnte Anton Sport, Egon, Peppes og
- * TV-reklamene — fakta som fantes i repoet, men ikke på forsiden.
+ * ERSTATTET «OGSÅ FRA REFLEKTOR» 01.10.2026. Den seksjonen var to kort —
+ * kjeder og reklamefilm — og den løste problemet den ble bygget for: Google
+ * AI Mode mente vi var for små for en kjede, fordi forsiden ikke nevnte
+ * reklamefilm eller kjedearbeid i det hele tatt.
  *
- * Disse to setningene er broen. De flytter ingen låst slot og endrer ingen
- * setning AI-en siterer i dag; de legger til det som manglet.
+ * HVORFOR DEN LIKEVEL BYTTES. Google rangerer tjenestesider for «videoproduksjon
+ * oslo» og «eventfotograf», ikke forsider. Forsiden skal ikke prøve å rangere
+ * selv; den skal sende både autoritet og besøkende videre. To kort pekte to
+ * steder. Fire peker dit folk faktisk søker.
  *
- * Formuleringene er Påls, bekreftet 29.09.2026.
+ * LENKETEKSTENE ER SØKEORDENE, og de står ordrett slik Chat leverte dem:
+ * «Videoproduksjon i Oslo», «Reklamefilm», «Eventfoto og eventvideo»,
+ * «Innholdsproduksjon». Ikke skriv dem om til noe som leser bedre — de er
+ * valgt etter søkevolum, og lenketeksten er signalet.
+ *
+ * TRE AV FIRE FLATER ER FILM, IKKE STILLBILDE. Chats medieinstruks ba om
+ * stillbilder fra klippene. Det bryter regelen Pål satte 30.09.2026 om at
+ * stillbilder ikke skal hentes fra video, og det var nettopp et slikt bilde
+ * som sto på det gamle reklamefilm-kortet. Klippene selv løser begge deler:
+ * de er riktig medium på en side som selger film, og ingen ramme utgir seg
+ * for å være et fotografi. Eventkortet er et ekte fotografi, fra samme
+ * kveld som eventprisguiden bruker.
+ *
+ * KVADRATISKE FLATER. Kildene er 9:16, 16:9 og 3:2. Kvadratet er den eneste
+ * rammen som tar alle tre uten å skjære bort motivet i den ene eller
+ * strekke den andre.
  */
-/*
- * BILDENE ER LAGT TIL 29.09.2026, etter at Pål så seksjonen på forsiden:
- * «denne seksjonen ser litt random plassert ut og ikke så bra designet.»
- *
- * Han hadde rett, og feilen var ikke plasseringen. Seksjonen sto mellom to
- * tunge, mørke blokker — priskortet over og anmeldelsene under — som to løse
- * avsnitt i venstre halvdel av en 1440 px bred side. Den hadde ingen ramme,
- * ingen flate og ingen bilde, mens alt rundt den har det. Da leser den som
- * noe som ble til overs, ikke som noe som ble plassert.
- *
- * INGEN NY COPY. Setningene og lenketekstene er de samme som før; de er bare
- * satt inn i kortmalen resten av nettstedet bruker (se /vart-arbeid).
- * Lenketeksten er nå kortets overskrift, og hele kortet er klikkbart.
- *
- * Bildene er plakatbildene til to filmer som allerede ligger på nettstedet,
- * og alt-tekstene er de samme som i tjenester.ts. Ingen kunde navngis i en
- * alt-tekst.
- */
-export const ogsaFraReflektor = [
-  {
-    tekst:
-      "Jobber du i en kjede? Vi lager foto, video og reklamefilm for blant " +
-      "andre Anton Sport, Egon og Peppes Pizza.",
+export const utenomAbonnementet = {
+  merkelapp: "Utenom abonnementet",
+  overskrift: "Trenger dere én film, ikke en hel kalender?",
+  ingress:
+    "Vi tar også enkeltprosjekter: film til nettsiden, reklamefilm og " +
+    "dekning av arrangementer. Samme folk og samme utstyr som i " +
+    "abonnementet. Prosjekter starter på 40 000 kr.",
+  kort: [
+    {
+      tittel: "Videoproduksjon i Oslo",
+      tekst:
+        "Bedriftsfilm, video til nettsiden og innhold til skjermer, fra idé til ferdig klipp.",
+      pris: "Fra 40 000 kr",
+      sti: "/videoproduksjon-i-oslo",
+      medie: { slag: "film", sti: "/arbeid/bekkestua" },
+      alt: "Vertikalt klipp fra et treningslokale",
+    },
+    {
+      tittel: "Reklamefilm",
+      tekst:
+        "Film til TV, nett og sosiale medier. Vi har laget TV-reklame for Peppes Pizza og Vitusapotek.",
+      pris: "Fra 40 000 kr",
+      sti: "/reklamefilm",
+      medie: { slag: "film", sti: "/reels/peppes-reklamefilm" },
+      alt: "Klipp fra en reklamefilm",
+    },
+    {
+      tittel: "Eventfoto og eventvideo",
+      tekst:
+        "Foto og film fra konferanser, lanseringer og firmaarrangementer. Eventvideo, klipp til sosiale medier og 50+ bilder.",
+      pris: "Fra 40 000 kr",
+      sti: "/eventfotograf-eventvideo",
+      medie: { slag: "foto", sti: "/arbeid/retail24-sandefjord-1.jpg" },
+      alt: "Gjester samlet rundt buffeten i hagen under et firmaarrangement",
+    },
+    {
+      tittel: "Innholdsproduksjon",
+      tekst:
+        "Oversikt over alt vi lager, og hvordan du velger mellom prosjekt og abonnement.",
+      pris: "Prosjekt eller fast månedspris",
+      sti: "/innholdsproduksjon",
+      medie: { slag: "film", sti: "/reels/soulcake" },
+      alt: "Vertikalt klipp fra et bakeri",
+    },
+  ],
+  kjedelinje: {
+    foran: "Jobber du i en kjede?",
     sti: "/kjeder",
-    lenketekst: "Innhold for kjeder og retail",
-    bilde: "/arbeid/kjeder-anton-sport.jpg",
-    alt: "Stillbilde fra en film: to syklister på en grusvei i skogen",
+    tekst: "Foto, video og reklamefilm for kjeder",
   },
-  {
-    tekst:
-      "Vi lager også reklamefilm for TV og nett, blant annet for " +
-      "Vitusapotek og Peppes Pizza.",
-    sti: "/reklamefilm",
-    lenketekst: "Reklamefilm for TV og nett",
-    /*
-     * EGET STILLBILDE, ikke plakatbildet til filmen på /kjeder. Det bildet
-     * er mørkt og tett beskåret, og i et kort på forsiden ble det en svart
-     * flate ved siden av et lyst. Dette er en annen ramme fra den samme
-     * ferdige filmen, valgt fordi den leser som reklamefilm på et blikk.
-     * /kjeder beholder sitt eget plakatbilde uendret.
-     */
-    bilde: "/arbeid/ogsa-reklamefilm-1280.jpg",
-    alt: "Stillbilde fra en reklamefilm: fire ungdommer deler pizza i en sofa",
-  },
-] as const;
+} as const;
 
 /**
  * Tall med mellomrom som tusenskille, slik prisen skrives ellers på

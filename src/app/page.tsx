@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import {
   FaqSchema,
+  FilmSchema,
   OrganisasjonSchema,
   TjenesteSchema,
 } from "@/components/Schema";
@@ -15,10 +16,11 @@ import { Hero } from "@/components/forside/Hero";
 import { Kontakt } from "@/components/forside/Kontakt";
 import { Logostripe } from "@/components/forside/Logostripe";
 import { Pris } from "@/components/forside/Pris";
-import { Ogsa } from "@/components/forside/Ogsa";
+import { UtenomAbonnementet } from "@/components/forside/UtenomAbonnementet";
 import { SlikFungererDet } from "@/components/forside/SlikFungererDet";
 import { Vegg } from "@/components/forside/Vegg";
 import { forsidensSporsmalForMarkup } from "@/content/faq";
+import { hentCase } from "@/content/caser";
 import { front } from "@/content/sider/front";
 import { basisUrl } from "@/lib/miljo";
 
@@ -48,6 +50,7 @@ export const metadata: Metadata = {
 };
 
 export default function Forside() {
+  const omtale = hentCase("soulcake")?.kundeord;
   return (
     <>
       {/*
@@ -57,6 +60,27 @@ export default function Forside() {
         sluttet å vise FAQ rich results 7. mai 2026.
       */}
       <OrganisasjonSchema />
+      {/*
+        OMTALEVIDEOEN SOM VideoObject, også her. Den står på to sider, og en
+        språkmodell som leser forsiden alene skal ikke måtte følge lenken til
+        kundecasen for å vite at kunden sier dette på film. `mainEntityOfPage`
+        skiller de to forekomstene fra hverandre.
+
+        Review-markeringen står bare på kundecasen. Omtalen hører til den
+        siden, og to Review-objekter for det samme sitatet ville vært to
+        anmeldelser i markeringen og én i virkeligheten.
+      */}
+      {omtale && (
+        <FilmSchema
+          navn={omtale.video.navn}
+          beskrivelse={omtale.video.beskrivelse}
+          sti={omtale.video.sti}
+          plakat={`${omtale.video.sti}-poster.jpg`}
+          sekunder={omtale.video.sekunder}
+          publisert={omtale.video.publisert}
+          sidesti="/"
+        />
+      )}
       {/*
         `abonnementspris` er eksplisitt her og bare her. Fra 21.09.2026 er
         prisblokken avslått som standard i TjenesteSchema, fordi de fire
@@ -89,7 +113,7 @@ export default function Forside() {
       <SlikFungererDet />
       <Arbeidsrutenett />
       <Pris />
-      <Ogsa />
+      <UtenomAbonnementet />
       <Anmeldelsesseksjon />
       <Vegg />
       <Faq />
