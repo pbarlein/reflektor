@@ -617,6 +617,37 @@ export function FilmSchema({
 }
 
 /**
+ * Kontaktsiden som ContactPage.
+ *
+ * LAGT TIL 01.10.2026 i SEO-gjennomgangen før lansering. Siden hadde bare
+ * BreadcrumbList — altså visste en maskin hvor den lå, men ikke hva den er.
+ *
+ * `mainEntity` PEKER PÅ ORGANISASJONEN med samme `@id` som forsiden bruker.
+ * Da er telefonnummeret og adressen på denne siden det samme ENTITETEN har,
+ * og ikke en ny organisasjon med samme navn. NAP-konsistens er ett av de
+ * fire punktene AGENTS.md sier synligheten faktisk krever, og dette er den
+ * siden Google viser for «reflektor kontakt».
+ */
+export function KontaktSchema() {
+  const base = basisUrl();
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "@id": `${base}/kontaktoss`,
+    name: "Kontakt Reflektor",
+    inLanguage: "nb-NO",
+    mainEntity: { "@id": ORG_ID },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+/**
  * En kundeomtale som Review.
  *
  * LAGT TIL 01.10.2026, sammen med omtalevideoen fra Soul Cake.

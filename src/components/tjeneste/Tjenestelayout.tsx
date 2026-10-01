@@ -161,6 +161,29 @@ export function Tjenestelayout({
         />
       ))}
 
+      {/*
+        OMTALEVIDEOEN SOM VideoObject, der en seksjon viser den.
+        LAGT TIL 01.10.2026 i SEO-gjennomgangen: /videoproduksjon-i-oslo
+        viste videoen uten markering, mens forsiden og kundecasen hadde den.
+        Samme film, tre sider, tre like markeringer — det eneste som skiller
+        dem er `mainEntityOfPage`.
+      */}
+      {side.seksjoner
+        .map((s) => (s.kundeord ? hentCase(s.kundeord)?.kundeord : null))
+        .filter((o) => o != null)
+        .map((o) => (
+          <FilmSchema
+            key={o.video.sti}
+            navn={o.video.navn}
+            beskrivelse={o.video.beskrivelse}
+            sti={o.video.sti}
+            plakat={`${o.video.sti}-poster.jpg`}
+            sekunder={o.video.sekunder}
+            publisert={o.video.publisert}
+            sidesti={side.sti}
+          />
+        ))}
+
       {/* ── Svaret, før alt annet ─────────────────────────────────── */}
       <section className="pt-16 pb-14 sm:pt-24 sm:pb-20">
         <Container>

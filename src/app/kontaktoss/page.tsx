@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Container } from "@/components/Container";
 import { Eyebrow, Merkelapp } from "@/components/Eyebrow";
 import { Kontaktskjema } from "@/components/Kontaktskjema";
-import { BrodsmuleSchema } from "@/components/Schema";
+import { BrodsmuleSchema, KontaktSchema } from "@/components/Schema";
 import { site, tilbud } from "@/content/site";
 import { basisUrl } from "@/lib/miljo";
 
@@ -38,6 +38,7 @@ export const metadata: Metadata = {
 export default function KontaktOss() {
   return (
     <>
+      <KontaktSchema />
       <BrodsmuleSchema
         ledd={[{ navn: "Hjem", sti: "/" }, { navn: "Kontakt oss" }]}
       />
