@@ -183,7 +183,8 @@ Kontrollert mot Vercel i dag, uendret siden 29.09.2026:
 - **Ingen egne domener er koblet til prosjektet.** Bare
   `reflektor-ny.vercel.app`. Både `reflektor.no` og `www.reflektor.no` må
   legges til før DNS flyttes.
-- **Bare `RESEND_API_KEY` er satt.** `LEAD_MOTTAKER` og `LEAD_AVSENDER`
-  mangler fortsatt.
+- ~~`LEAD_MOTTAKER` og `LEAD_AVSENDER` mangler.~~ **Avklart 01.10.2026 og
+  ingen oppgave.** Pål er eneste mottaker, og da er standardene i koden
+  riktige. Se `docs/leads.md`.
 - `NEXT_PUBLIC_TILLAT_INDEKSERING` er ikke satt, og skal ikke settes før
   DNS peker hit. Se `docs/cutover.md`.

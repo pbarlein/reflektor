@@ -21,8 +21,17 @@ Settes i Vercel, aldri i repoet (brief 8.1.2).
 | `LEAD_MOTTAKER` | nei | `pal@reflektor.no` |
 | `LEAD_AVSENDER` | nei | `Reflektor <onboarding@resend.dev>` |
 
-Mangler nøkkelen, logges leadet i klartekst i Vercel-loggen og redirecten skjer
-som normalt. Ingenting går tapt i stillhet, men det er ikke en driftsform.
+**DE TO SISTE SKAL IKKE SETTES.** Avklart med Pål 01.10.2026: leads går til
+ham alene. Da er standardene riktige som de er, og to variabler som ikke er
+satt er to færre å holde i synk med virkeligheten. De står i tabellen fordi
+de finnes i koden, ikke fordi de er en oppgave.
+
+Mangler nøkkelen, skrives det en feilmelding i Vercel-loggen og redirecten
+skjer som normalt. **Selve leadet logges ikke** — her sto det tidligere at
+det logges i klartekst, og det var sant fram til navn, e-post og telefon ble
+tatt ut av loggen. Loggen er tilgangsstyrt, men personopplysninger skal ikke
+ligge der uansett, og personvernerklæringen nevner det ikke. Feilen er
+fortsatt umulig å overse: mangler nøkkelen, kommer ingen leads fram.
 
 ## Oppsett
 
@@ -33,10 +42,13 @@ som normalt. Ingenting går tapt i stillhet, men det er ikke en driftsform.
 4. Redeploy
 
 Standardavsenderen `onboarding@resend.dev` fungerer **uten å røre DNS**, men
-kan kun sende til adressen kontoen er registrert på. Det holder så lenge leads
-går til Pål alene.
+kan kun sende til adressen kontoen er registrert på. Det holder, og er det
+som gjelder: Pål bekreftet 01.10.2026 at han er eneste mottaker. Forutsetningen
+er at Resend-kontoen er registrert på `pal@reflektor.no`, slik steg 1 over
+sier.
 
-Skal flere motta dem, må reflektor.no verifiseres som avsenderdomene i Resend.
+Skulle flere motta dem senere, må reflektor.no verifiseres som avsenderdomene
+i Resend.
 Det krever DNS-oppføringer for e-post – ikke for nettstedet – og flytter altså
 ikke reflektor.no. Men det er DNS, så det skal avklares eksplisitt først.
 

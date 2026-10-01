@@ -63,13 +63,15 @@ Kontrollert 29.09.2026:
   `reflektor-ny.vercel.app`. Både `reflektor.no` og `www.reflektor.no` må
   legges til før DNS flyttes, ellers svarer Vercel med feil sertifikat i det
   øyeblikket DNS peker hit. Å legge dem til rører ikke DNS i seg selv.
-- **Bare `RESEND_API_KEY` er satt.** `LEAD_MOTTAKER` og `LEAD_AVSENDER` er
-  ikke satt, og faller derfor tilbake på standardene i `src/lib/lead.ts`:
-  leads går til `pal@reflektor.no`, sendt fra Resends `onboarding@resend.dev`.
-  Det virker, men **bare til den adressen Resend-kontoen er registrert på**.
-  Skal leads gå til flere mottakere, må et eget domene verifiseres i Resend
-  først. Det krever DNS-oppføringer for e-post, ikke for nettstedet, og
-  flytter altså ikke reflektor.no.
+- **Bare `RESEND_API_KEY` er satt, og det er riktig.** `LEAD_MOTTAKER` og
+  `LEAD_AVSENDER` står tomme og faller tilbake på standardene i
+  `src/lib/lead.ts`: leads går til `pal@reflektor.no`, sendt fra Resends
+  `onboarding@resend.dev`. Den avsenderen kan bare levere til adressen
+  Resend-kontoen er registrert på — og Pål bekreftet 01.10.2026 at han er
+  eneste mottaker. **Dette er altså ikke en mangel, og de to variablene skal
+  ikke settes.** Skulle flere motta leads senere, må reflektor.no verifiseres
+  som avsenderdomene i Resend. Det krever DNS-oppføringer for e-post, ikke
+  for nettstedet, og flytter altså ikke reflektor.no.
 
 ## Det som IKKE lenger er en stopper
 
