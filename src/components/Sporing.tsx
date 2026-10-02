@@ -47,9 +47,17 @@ import { standardSkript } from "@/lib/samtykke";
  *    banneret (lib/samtykke.ts). Uten samtykke kjører den i «no-consent
  *    mode» uten cookies, uansett hva GTM gjør.
  *
- * DET SOM GJENSTÅR er trinnet som faktisk stopper taggene: sett «Require
- * additional consent» på de tre taggene inne i GTM. Framgangsmåten står i
- * docs/gtm-samtykke.md. Containeren kan fortsatt lastes for alle.
+ * TRINN TRE BLIR IKKE GJORT. Avklart av Pål 02.10.2026: samtykkekravet
+ * settes IKKE på de tre taggene inne i GTM. Her sto «det som gjenstår», og
+ * det var feil — det er ikke en oppgave som venter, det er et valg som er
+ * tatt. Framgangsmåten står fortsatt i docs/gtm-samtykke.md, hvis valget en
+ * gang gjøres om.
+ *
+ * FORBEHOLDET OVER ER DERMED EN VARIG TILSTAND, ikke et mellomstadium:
+ * Apollo kjører før samtykke, og det er i strid med ekomlovens krav om
+ * aktivt samtykke fra 01.01.2025. Clarity og HubSpot er dempet av de to
+ * grepene over — Apollo har ingen annen bryter enn GTM. Valget er Påls, og
+ * det er tatt med dette kjent.
  */
 export const GTM_ID = "GTM-N4KGSS93";
 

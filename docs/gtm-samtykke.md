@@ -7,6 +7,32 @@ dagens reflektor.no, og fasiten står under «Hva som faktisk kjører». Kort
 fortalt: det er **tre** tagger å sikre, Microsoft Ads finnes ikke noe sted, og
 Meta-pikselen lastes av Squarespace — ikke av GTM.
 
+> ## AVKLART 02.10.2026: DENNE JOBBEN GJØRES IKKE
+>
+> Pål har besluttet at samtykkekravet **ikke** settes på de tre taggene
+> inne i GTM. Oppskriften under er dermed ikke en oppgave som venter — den
+> står igjen som framgangsmåten **hvis** valget en gang gjøres om.
+>
+> **Det som faktisk ble gjort i stedet, samme dag**, og som gjør to av de
+> tre taggene mindre kritiske:
+>
+> - **HubSpot:** CRM-et avhenger ikke lenger av sporingsskriptet. Leads går
+>   rett fra serveren til HubSpots Forms API (`src/lib/hubspot.ts`), og
+>   kommer fram enten besøkende sier ja, sier nei eller blokkerer sporing.
+> - **Clarity:** får samtykket direkte gjennom sin egen `consentv2`-API
+>   (`src/lib/samtykke.ts`). Uten samtykke kjører den i «no-consent mode»:
+>   ingen cookies, én ID per sidevisning.
+>
+> **Apollo har ingen annen bryter enn GTM.** Den kjører derfor før samtykke,
+> og det er i strid med ekomlovens krav om aktivt samtykke fra 01.01.2025.
+> Det står her fordi det er sant, ikke som en innvending: valget er tatt
+> med dette kjent, og det er Påls.
+>
+> Avsnittet «Det som gjenstår etterpå» nederst gjelder fortsatt — forslaget
+> til punkt 8 i personvernerklæringen bygger på at de tre kun lastes med
+> samtykke, og **det er ikke tilfellet**. Settes teksten inn nå, står det en
+> påstand i erklæringen som ikke stemmer.
+
 Skrevet 21.09.2026. Denne oppskriften utføres **av Pål**, i
 tagmanager.google.com. Claude Code har ingen GTM-tilgang — sesjonen kjører
 i en isolert container i skyen, uten Google-profil.

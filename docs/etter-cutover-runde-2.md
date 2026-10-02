@@ -225,12 +225,30 @@ Deploy `dpl_HHMJ9EkN2n6fNfN2QEMy8CqB6PL9`, commit `e299311`.
 `analytics_Storage`. Målt i nettleseren: etter at «Godta alle» ble klikket
 finnes både `_clck` (Clarity) og `hubspotutk`.
 
-## Det som gjenstår, og som ikke er vårt
+## Avklart etterpå, samme dag
 
-- **Samtykkekontroll på de tre taggene i GTM.** Framgangsmåten står i
-  `docs/gtm-samtykke.md`. Forutsetningen — at CRM-et ikke avhenger av
-  sporingsskriptet — er nå på plass.
+**Samtykkekontroll i GTM gjøres ikke.** Her sto den som «gjenstår». Pål har
+besluttet at samtykkekravet ikke settes på de tre taggene inne i GTM. Det er
+ikke en oppgave som venter — det er et valg. Rettet i
+`docs/gtm-samtykke.md` og i `src/components/Sporing.tsx`, slik at ingen ny
+sesjon plukker det opp som ugjort arbeid.
+
+Konsekvensen er at **Apollo kjører før samtykke**, i strid med ekomlovens
+krav fra 01.01.2025. Clarity og HubSpot er dempet av de to grepene i denne
+runden; Apollo har ingen annen bryter enn GTM. Valget er tatt med dette
+kjent.
+
+**Search Console er ferdig** — Continue er trykket, sitemapet er lest.
+
+**Ryddet etter testinnsendingen** (av Cowork): testdealen er slettet, og
+navn og bedrift på Påls egen kontakt er satt tilbake til Pål Barlein /
+Reflektor AS. **Det var ventet oppførsel, ikke en feil:** et skjema som
+sendes inn med navn og bedrift skriver dem på kontakten, både fra HubSpots
+eget skjema og herfra. Feltene som IKKE var fylt ut — telefon — ble stående
+urørt, som designet.
+
+## Det som gjenstår, og som er Påls valg
+
 - **Slå av «Non-HubSpot form»-avlesningen** (`.grid, .gap-5`) i HubSpot, nå
   som serverveien er verifisert.
-- **Search Console:** Pål må trykke Continue selv.
-- **Squarespace** kan sies opp.
+- **Squarespace** kan sies opp. Ingenting avhenger av den gamle siden.
