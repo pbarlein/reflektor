@@ -40,21 +40,23 @@
 > svarer riktig, robots.txt sier `Allow: /`, `/takk` er fortsatt `noindex`,
 > og gtm.js lastes uten at banneret er besvart, med Consent Mode «denied».
 >
-> **BULK REDIRECTS I VERCEL VINNER OVER KODEN.** Seks av de åtte reglene der
-> finnes nå også i `next.config.ts`, og de to settene gir identisk svar —
-> også for spørrestrengen, kontrollert med `?gclid=`. Så lenge begge finnes,
-> er det Vercel-regelen som faktisk svarer. **En endring i `next.config.ts`
-> på en av disse seks adressene vil altså ikke virke** før Vercel-regelen er
-> fjernet. Det er en felle for neste sesjon.
+> **OPPRYDDET 02.10.2026.** Bulk Redirects i Vercel vinner over koden, så
+> seks regler som fantes begge steder var en felle: en endring i
+> `next.config.ts` på en av dem ville ikke virket. De seks er nå fjernet fra
+> Vercel og styres av koden alene.
 >
-> En opprydding er forberedt: en staget redirect-versjon med bare `/book` og
-> `/mote` ligger i Vercel («Kun booking …»). Den er IKKE publisert — live er
-> fortsatt versjonen med åtte regler. Publisering må gjøres i Vercels
-> grensesnitt; API-et her kunne stage, men ikke promotere. Å publisere den nå
-> er trygt, siden de seks ligger i koden og er verifisert.
+> Rekkefølgen var: legg de seks i koden, deploy, kontroller at begge settene
+> svarer identisk — også for spørrestrengen, målt med `?gclid=` — og fjern
+> så Vercel-reglene. Etterpå er alle åtte adressene kontrollert på nytt, og
+> `?gclid=` og `?utm_source=` følger fortsatt med videre.
 >
-> `/book` og `/mote` finnes KUN som Bulk Redirects. De peker på HubSpot
-> Meetings og skal ikke inn i `next.config.ts`.
+> Vercel har nå to regler igjen, `/book` og `/mote`. De peker på HubSpot
+> Meetings og skal **ikke** inn i `next.config.ts`.
+>
+> Verktøyveien: API-et kan `stage_redirects`, men ikke promotere. Publisering
+> skjer i Vercel under **CDN → Redirects → Staging → Publish**.
+>
+
 
 Ingenting i denne filen er utført. Alt her er bestilt, begrunnet og skal
 gjøres **på cutover-dagen**, ikke før.
