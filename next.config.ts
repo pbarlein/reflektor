@@ -46,7 +46,7 @@ const redirects: NextConfig["redirects"] = async () => [
   // --- Døde tjeneste-URL-er til nærmeste levende landingsside ---
   {
     source: "/tjenester/sosiale-medier",
-    destination: "/sosiale-medier-byra",
+    destination: "/",
     statusCode: 301,
   },
   /*
@@ -58,7 +58,7 @@ const redirects: NextConfig["redirects"] = async () => [
    */
   {
     source: "/tjenester/some-annonsering",
-    destination: "/sosiale-medier-byra",
+    destination: "/",
     statusCode: 301,
   },
   {
@@ -151,6 +151,16 @@ const redirects: NextConfig["redirects"] = async () => [
    * treff. Den er trygg her fordi den nye siden ikke har noen /tjenester/-rute
    * å skygge for.
    */
+  /*
+   * FLYTTET OPP 02.10.2026. Sto etter jokeren under, og ble derfor aldri
+   * brukt: Next tar første treff, så /tjenester/eventfotograf-eventvideo
+   * havnet på /vart-arbeid. Oppdaget på live-siden etter cutover.
+   */
+  {
+    source: "/tjenester/eventfotograf-eventvideo",
+    destination: "/eventfotograf-eventvideo",
+    statusCode: 301,
+  },
   { source: "/tjenester/:rest+", destination: "/vart-arbeid", statusCode: 301 },
 
   /*
@@ -162,7 +172,7 @@ const redirects: NextConfig["redirects"] = async () => [
    */
   {
     source: "/some-byra",
-    destination: "/sosiale-medier-byra",
+    destination: "/",
     statusCode: 301,
   },
   {
@@ -190,11 +200,6 @@ const redirects: NextConfig["redirects"] = async () => [
    */
 
   /* 1 466 visninger, 43 søkeord. Live etterfølger med samme navn. */
-  {
-    source: "/tjenester/eventfotograf-eventvideo",
-    destination: "/eventfotograf-eventvideo",
-    statusCode: 301,
-  },
 
   /*
    * ADRESSER MED LENKER SOM IKKE STOD I KARTET. Lagt inn 27.09.2026.
@@ -344,12 +349,42 @@ const redirects: NextConfig["redirects"] = async () => [
   },
 
   /*
+   * CUTOVER 02.10.2026 — speiler Bulk Redirects i Vercel.
+   *
+   * /sosiale-medier-byra → / er unntaket fra regel 1 i AGENTS.md, bestilt
+   * 15.09.2026 og utført på cutover-dagen etter at Google Ads hadde byttet
+   * endelig URL til /. Plassholdersiden (UnderArbeid) er fjernet samtidig.
+   * Det som utløste det: Google AI-oversikt siterte fortsatt adressen, og den
+   * viste «Under arbeid». Se docs/cutover.md.
+   *
+   * /privacypolicy → /personvern: personvernerklæringen ble migrert til
+   * /personvern uten redirect, mens kommentaren under feilaktig sa at
+   * /privacypolicy var «live». Den ga 404 etter cutover. Meta Lead Ads-
+   * skjemaene lenker trolig hit (docs/kontekst.md).
+   *
+   * Begge ligger også som Bulk Redirects i Vercel-prosjektet, lagt inn
+   * 02.10.2026 før denne koden fantes. Vercel-reglene vinner. De kan fjernes
+   * der når dette er deployet.
+   */
+  {
+    source: "/sosiale-medier-byra",
+    destination: "/",
+    statusCode: 301,
+  },
+  {
+    source: "/privacypolicy",
+    destination: "/personvern",
+    statusCode: 301,
+  },
+
+  /*
    * IKKE LAGT INN, med vilje:
    *
    * /cart   – Squarespace-rest. Forsvinner av seg selv ved plattformbytte.
-   * /privacypolicy, /videoproduksjon-i-oslo,
-   * /employer-branding-video-oslo, /eventfotograf-eventvideo
+   * /videoproduksjon-i-oslo, /employer-branding-video-oslo,
+   * /eventfotograf-eventvideo
    *         – alle live (HTTP 200). Beholdes som de er.
+   *         (/privacypolicy sto her også. Det var feil — se over.)
    *
    * /blogg?format=rss
    *         – fire dofollow, men alle fra vårt eget Squarespace-preview,

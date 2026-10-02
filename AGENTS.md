@@ -31,7 +31,7 @@ mot om den gir flere utfylte skjemaer.
 
    **Unntak, bestilt 15.09.2026:** `/sosiale-medier-byra` skal 301-es til `/`
    — men først på cutover, og først etter at Google Ads har byttet endelig
-   URL. Ikke utført. Se `docs/cutover.md`, som også forklarer hvorfor unntaket
+   URL. **Utført 02.10.2026** (cutover). Se `docs/cutover.md`, som også forklarer hvorfor unntaket
    ikke opphever regelen for de tre andre.
 2. **`/takk` er hellig.** URL-en og GA4-hendelsen bærer 107+ historiske
    konverteringer. Endrer du dem, mister Reflektor målingen av sin eneste KPI.
@@ -119,6 +119,11 @@ det som betyr noe.**
   deler bort igjen.
 
 ## Ingenting skal gå live
+
+> **CUTOVER ER UTFØRT 02.10.2026.** reflektor.no peker på Vercel, og
+> indekseringssperren er åpnet. Denne branchen er nå den levende siden:
+> **hver push går rett til reflektor.no.** Punktene under er historikk fra
+> tiden før lansering. Se `docs/cutover.md` for hva som ble gjort den dagen.
 
 Den nye siden bygges parallelt med at reflektor.no kjører videre på
 Squarespace. Se `docs/forhandsvisning.md`.

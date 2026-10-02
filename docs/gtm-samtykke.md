@@ -19,9 +19,12 @@ i en isolert container i skyen, uten Google-profil.
 
 ## Hvorfor dette haster for dagens side, ikke for den nye
 
-Den nye siden laster ikke containeren før den besøkende har svart
-(`Sporing.tsx` leser `data-samtykke === "svart"`). Der kan taggene ikke
-fyre før samtykke uansett.
+**ENDRET 02.10.2026:** Den nye siden laster nå containeren for alle, fra
+første sidevisning, etter Påls eksplisitte valg (se `Sporing.tsx`). Det
+betyr at de tre taggene under nå kjører før samtykke også på den nye siden.
+Oppskriften i denne fila er derfor fortsatt aktuell — og den må kombineres
+med at /api/skjema sender leads direkte til HubSpot, ellers mister CRM-en
+leads fra dem som sier nei.
 
 **Dagens Squarespace-side laster containeren umiddelbart.** Det er der de
 tre taggene kjører på folk som ikke har tatt stilling til noe, akkurat nå.

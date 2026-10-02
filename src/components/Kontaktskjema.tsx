@@ -3,6 +3,7 @@
 import { Knapp } from "./Knapp";
 import { useEffect, useRef } from "react";
 import { site, tilbud } from "@/content/site";
+import { KILDE_NOKKEL, byggKilde } from "@/lib/kilde";
 
 /**
  * Kontaktskjema — designet fra evidensen, ikke fra briefens fire felt.
@@ -36,14 +37,27 @@ export function Kontaktskjema({ side }: { side: string }) {
   // Tidsstempel settes på DOM-noden. Verdien leses kun ved innsending, så en
   // render for å lagre den ville vært bortkastet.
   const lastet = useRef<HTMLInputElement>(null);
+  const kilde = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (lastet.current) lastet.current.value = String(Date.now());
+    // Kilden fra første (eller siste merkede) besøk, se lib/kilde.ts.
+    // Mangler den, brukes dette besøket.
+    if (kilde.current) {
+      let verdi: string | null = null;
+      try {
+        verdi = localStorage.getItem(KILDE_NOKKEL);
+      } catch {}
+      kilde.current.value =
+        verdi ??
+        byggKilde(location.search, document.referrer, location.hostname, location.pathname);
+    }
   }, []);
 
   return (
     <form method="post" action="/api/skjema" className="grid gap-5">
       <input type="hidden" name="lastet" ref={lastet} defaultValue="0" />
       <input type="hidden" name="side" value={side} />
+      <input type="hidden" name="kilde" ref={kilde} defaultValue="" />
 
       {/* Honningkrukke: skjult for mennesker, ikke for boter. Ingen CAPTCHA. */}
       <div className="absolute left-[-9999px]" aria-hidden="true">

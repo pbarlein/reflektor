@@ -8,9 +8,8 @@ import { basisUrl } from "@/lib/miljo";
  * SLUGS SITEMAPET IKKE SKAL INNEHOLDE.
  *
  * `/sosiale-medier-byra` har `status: "live"` i site.ts, og fikk derfor
- * prioritet 0,9 — nest høyest på hele nettstedet. Men ruten er en
- * plassholder (`UnderArbeid`), og ved cutover skal den 301-es til `/`
- * (AGENTS.md, bestilt 15.09.2026). Et sitemap er listen over sider vi ber
+ * prioritet 0,9 — nest høyest på hele nettstedet. Ruten er 301-et til `/`
+ * siden cutover 02.10.2026 (AGENTS.md, bestilt 15.09.2026). Et sitemap er listen over sider vi ber
  * Google indeksere, og dette er en side vi allerede har bestemt skal
  * forsvinne. Samme selvmotsigelse som de ni bloggslugene under.
  *

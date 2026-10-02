@@ -75,6 +75,7 @@ export async function POST(req: NextRequest) {
       telefon: rens(data.get("telefon"), "telefon"),
       melding: rens(data.get("melding"), "melding"),
       side: rens(data.get("side"), "side") || "ukjent",
+      kilde: rens(data.get("kilde"), "kilde"),
     };
 
     /*

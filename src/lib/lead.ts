@@ -22,6 +22,8 @@ export type Lead = {
   telefon: string;
   melding: string;
   side: string;
+  /** Hvor besøkende kom fra. Se lib/kilde.ts. Tom hvis ukjent. */
+  kilde: string;
 };
 
 const MOTTAKER = process.env.LEAD_MOTTAKER ?? "pal@reflektor.no";
@@ -59,6 +61,7 @@ export async function sendLeadPaEpost(lead: Lead): Promise<void> {
     `Bedrift: ${lead.bedrift || "—"}`,
     `Telefon: ${lead.telefon || "—"}`,
     `Side:    ${lead.side}`,
+    `Kilde:   ${lead.kilde || "ukjent"}`,
     "",
     lead.melding || "(ingen melding)",
   ].join("\n");

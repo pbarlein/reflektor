@@ -15,6 +15,26 @@
 > ikke finnes betalt trafikk gjaldt Google Ads alene. Det rører likevel ikke
 > punkt 1: ingen av Meta-annonsene peker på reflektor.no. Se punkt 5.
 
+> **UTFØRT 02.10.2026.** DNS ble flyttet til Vercel. Steg 3 (Ads-URL), 4 (301),
+> 5 (DNS), 6 (indeksering) og 8 (Search Console, sitemap sendt inn på nytt)
+> er gjort. Logg over alle endringer den dagen, også de som ble gjort utenfor
+> koden (DNS-oppføringer, Bulk Redirects i Vercel, miljøvariabler, Resend),
+> står i Claude-prosjektet «Reflektor Marketing»:
+> `claude/dns-bytte-vercel-2026-10-02.md`.
+>
+> Det som ikke stod på lista, men ble funnet og rettet samme dag:
+> - /privacypolicy ga 404 → 301 til /personvern
+> - /tjenester/eventfotograf-eventvideo havnet på /vart-arbeid (rekkefølge)
+> - /book og /mote (Squarespace URL-mappinger) ga 404 → 302 til HubSpot
+>   Meetings (kun i Vercel Bulk Redirects)
+> - GTM lastes nå for alle med Consent Mode «nektet» som standard (Påls
+>   valg, se Sporing.tsx)
+> - Skjemaet sender med kilde (UTM/gclid/fbclid), se lib/kilde.ts
+> - LEAD_AVSENDER = «Reflektor <skjema@reflektor.no>», reflektor.no er
+>   verifisert i Resend
+>
+> Teksten under er beholdt som den var, som dokumentasjon av planen.
+
 Ingenting i denne filen er utført. Alt her er bestilt, begrunnet og skal
 gjøres **på cutover-dagen**, ikke før.
 
@@ -120,7 +140,7 @@ cutover-dagen og skadelig i dag.
 
 ## 1. `/sosiale-medier-byra` → `/` som 301
 
-**Status: IKKE UTFØRT. Skal ikke utføres før cutover.**
+**Status: UTFØRT 02.10.2026.** I koden (next.config.ts) og som Bulk Redirect i Vercel.
 
 Bestilt av Marketing 15.09.2026. Begrunnelse derfra: Google AI Mode siterer
 vekselvis forsiden og `/sosiale-medier-byra` for samme prompt, fordi begge

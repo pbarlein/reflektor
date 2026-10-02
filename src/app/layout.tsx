@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { Samtykkebanner } from "@/components/Samtykke";
 import { Samtykkestandard, Sporing } from "@/components/Sporing";
 import { Ankerhopp } from "@/components/Ankerhopp";
+import { Kildefanger } from "@/components/Kildefanger";
 import { kortBeskrivelse, site } from "@/content/site";
 import { basisUrl, tillatIndeksering } from "@/lib/miljo";
 
@@ -145,8 +146,8 @@ export default function RootLayout({
 
           1. Samtykkestandard setter Consent Mode til «nektet» med et
              synkront skript i <head>. Det kjører før alt annet.
-          2. GTM lastes FØRST NÅR besøkende har svart — se Sporing.tsx for
-             hvorfor, og hva containeren faktisk inneholder.
+          2. GTM lastes for alle, etter punkt 1 (endret 02.10.2026, Påls
+             valg) — se Sporing.tsx for hvorfor og hva det koster.
           3. Banneret rendres til slutt. Det leser bare hva skriptet i punkt
              1 allerede fant ut.
 
@@ -155,6 +156,7 @@ export default function RootLayout({
         */}
         <Samtykkestandard />
         <Sporing />
+        <Kildefanger />
         <Ankerhopp />
         {/*
           Hoppelenke. WCAG 2.4.1 Bypass Blocks (nivå A) krever en mekanisme

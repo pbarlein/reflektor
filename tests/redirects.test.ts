@@ -28,7 +28,8 @@ import nextConfig from "../next.config.ts";
 
 /** Sidene det annonseres mot. Flyttes aldri. AGENTS.md, «Fire ting». */
 const LIVE_ANNONSESIDER = [
-  "/sosiale-medier-byra",
+  // /sosiale-medier-byra er tatt ut 02.10.2026: unntaket ble utført ved
+  // cutover, og adressen 301-es nå til /. Se docs/cutover.md.
   "/innholdsproduksjon",
   "/reklamefilm",
   "/kontaktoss",

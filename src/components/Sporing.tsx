@@ -2,7 +2,6 @@
 
 import Script from "next/script";
 import { tillatSporing } from "@/lib/miljo";
-import { useSyncExternalStore } from "react";
 
 import { standardSkript } from "@/lib/samtykke";
 
@@ -16,34 +15,31 @@ import { standardSkript } from "@/lib/samtykke";
  * ID-en står i klartekst her fordi den allerede er offentlig i sidekildekoden
  * på reflektor.no. Alle andre nøkler hører hjemme i Vercel-miljøvariabler.
  *
- * CONTAINEREN LASTES IKKE FØR BESØKENDE HAR SVART. Det er en bevisst og
- * kostbar beslutning, og den er tatt på grunnlag av hva containeren faktisk
- * inneholder — målt 17.09.2026, ikke antatt:
+ * CONTAINEREN LASTES FOR ALLE, FRA FØRSTE SIDEVISNING. Endret 02.10.2026,
+ * etter Påls eksplisitte valg. Det er samme oppførsel som Squarespace-siden
+ * hadde fram til cutover.
  *
- *   GA4 ................. retter seg etter Consent Mode
- *   Google Ads .......... retter seg etter Consent Mode
- *   Meta-piksel ......... gjør det IKKE
- *   Apollo.io ........... gjør det IKKE (B2B-besøksidentifisering)
- *   HubSpot ............. gjør det IKKE — satte fire cookies før samtykke
- *   Microsoft Clarity ... gjør det IKKE (sesjonsopptak)
- *   Microsoft Ads ....... gjør det IKKE
+ * HVORFOR: Før dette ble containeren lastet først når besøkende hadde svart
+ * på banneret. Den som ignorerte banneret og sendte skjema, ble da ikke talt
+ * i GA4 eller Google Ads, heller ikke som modellert konvertering. Det er den
+ * eneste KPI-en siden har.
  *
- * Consent Mode styrer bare Googles egne tagger. Fire av de seks bryr seg
- * ikke, og de kan bare stanses inne i containeren — som koden her ikke kan
- * røre. Å laste GTM før samtykke ville altså latt sesjonsopptak og
- * besøksidentifisering kjøre på folk som ikke har sagt ja til noe.
+ * Consent Mode settes fortsatt til «nektet» FØR containeren laster
+ * (Samtykkestandard under). Googles tagger sender da cookieløse signaler
+ * som Google modellerer konverteringer fra, til noen sier ja.
  *
- * DET KOSTER MÅLING, og det skal sies rett ut: en besøkende som ignorerer
- * banneret og fyller ut skjemaet, blir ikke talt. Den som SVARER — også den
- * som svarer nei — blir det, fordi GA4 da sender cookieløse signaler som
- * Google modellerer konverteringer fra.
+ * KONSEKVENSEN, som Pål ble forelagt og godtok 02.10.2026: tredjepartene i
+ * containeren som ikke leser Consent Mode, kjører nå også før samtykke. Det
+ * gjelder Apollo (bedriftsidentifisering), Microsoft Clarity (sesjonsopptak)
+ * og HubSpot (CRM-sporing og «collected forms», som er det som legger
+ * skjemaleads inn i HubSpot). Det er i strid med ekomlovens krav om aktivt
+ * samtykke fra 01.01.2025, og banneret stopper dem ikke. Valget er Påls.
  *
- * SLIK SNUS DET TILBAKE når containeren er ryddet: sett utløsere på de fire
- * taggene som krever `samtykke_oppdatert` med riktig verdi, verifiser at
- * ingen tredjepart fyrer før valg, og la så GTM laste alltid. Da får vi
- * modellerte konverteringer også fra dem som ikke svarer. Kroken finnes
- * allerede — hendelsen `samtykke_oppdatert` med `samtykke_analyse` og
- * `samtykke_markedsforing`. Se A42 for oppskriften.
+ * SLIK GJØRES DET RYDDIG senere, uten å miste noe: sett «Require additional
+ * consent» på de tre taggene i GTM (docs/gtm-samtykke.md), og la
+ * /api/skjema sende hvert lead direkte til HubSpot, slik at CRM-oppføringen
+ * ikke lenger avhenger av sporingskoden. Da kan containeren fortsatt lastes
+ * for alle.
  */
 export const GTM_ID = "GTM-N4KGSS93";
 
@@ -78,34 +74,10 @@ export function Samtykkestandard() {
   );
 }
 
-/**
- * Har besøkende svart? Leses fra attributtet samtykkeskriptet satte i <head>,
- * av samme grunn som i Samtykke.tsx: det er kjent før React starter, og et
- * MutationObserver-abonnement gjør at GTM lastes i samme øyeblikk brukeren
- * trykker, uten at noe må sendes gjennom React-treet.
- */
-function abonner(varsle: () => void) {
-  const iakt = new MutationObserver(varsle);
-  iakt.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["data-samtykke"],
-  });
-  return () => iakt.disconnect();
-}
-
 export function Sporing() {
-  const svart = useSyncExternalStore(
-    abonner,
-    () => document.documentElement.getAttribute("data-samtykke") === "svart",
-    // Serveren rendrer aldri containeren. Den skal uansett bare lastes etter
-    // et valg, og et valg kan bare tas i nettleseren.
-    () => false,
-  );
-
   // Ingen container utenfor produksjon. Se tillatSporing() i miljo.ts —
   // forhåndsvisningene har målt forurenset GA4-eiendommen.
   if (!tillatSporing()) return null;
-  if (!svart) return null;
 
   return (
     <Script id="gtm" strategy="afterInteractive">
