@@ -885,7 +885,8 @@ og leverer ingenting.
 `/kontaktoss` er også ført som live og annonsert mot i AGENTS.md.
 
 `/blogg` er dessuten den kjente lanseringssperren: bloggtekstene er ikke
-migrert fra Squarespace, og bloggen bærer rundt 481 refererende domener.
+migrert fra Squarespace. (Her sto at bloggen bærer rundt 481 refererende
+domener. Rettet 02.10.2026: den bærer 3. Tallet var domenets.)
 
 ### To som er løst i denne økta
 
@@ -1535,7 +1536,8 @@ miste strukturen i det som finnes.
 ### Ikke rettet, og hvorfor
 
 Regel 3 i AGENTS.md sier rett ut at bloggsluggene ikke skal endres. Den
-regelen finnes for å verne ~481 refererende domener, og den er riktig —
+regelen finnes for å verne søkesynligheten — ikke 481 refererende domener,
+som det sto her før 02.10.2026 — og den er riktig —
 men den forutsetter at lista er korrekt, og det er den ikke. Å endre den
 er Påls beslutning, ikke min.
 

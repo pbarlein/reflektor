@@ -139,9 +139,12 @@ Posisjon 1 på "digital historiefortelling", "holdningskampanjer",
 "reklame virkemidler" er ordbok- og skoleoppgaveinnhold. Det konverterer ikke.
 Studenttrafikk er eksplisitt ikke en KPI.
 
-Bloggen skal beholdes for lenkeverdien — ~481 refererende domener er ekte
-autoritet. Men den skal ikke være utgangspunktet for hvordan ny side bygges,
-og det skal ikke lages mer innhold av den typen.
+~~Bloggen skal beholdes for lenkeverdien — ~481 refererende domener er ekte
+autoritet.~~ **RETTET 02.10.2026:** tallet 481 var domenets refererende domener, ikke bloggens. Målt i Ahrefs har hele `/blogg`-stien 3 levende refererende domener; domenet har 589, og nesten alle peker på forsiden. Grunnen til å beholde URL-ene er søkesynlighet, ikke lenkeverdi. Se `docs/sprakvask.md`.
+
+Bloggen skal beholdes for søkesynligheten. Men den skal ikke være
+utgangspunktet for hvordan ny side bygges, og det skal ikke lages mer innhold
+av den typen.
 
 ### Det som er gjort i 2026 finnes ikke i tallene ennå
 Følgende er bygget eller fikset de siste ukene og har ikke rukket å gi utslag:
@@ -200,7 +203,8 @@ Konkret:
   omvendt, slik første utkast gjorde.
 - `/takk` er konverteringssiden GA4 måler `takk_page_view` på. Den må finnes,
   og den skal ikke indekseres.
-- Bloggen beholdes uendret for lenkeverdien (~481 refererende domener), men
+- Bloggen beholdes uendret for søkesynligheten (ikke for lenkeverdien — se
+  rettelsen over), men
   styrer ikke lenger arkitekturen og skal ikke utvides med mer av samme type.
 
 **Åpent spørsmål:** hva `/` faktisk serverer etter at forsidens slug ble endret

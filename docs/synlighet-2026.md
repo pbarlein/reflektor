@@ -97,7 +97,8 @@ Fra researchen, med kilder:
 kannibaliseres. AGENTS.md sa allerede at innholdet ikke konverterer;
 researchen legger til at det heller ikke vil bli sitert framover.
 
-Samtidig: bloggen bærer ~481 refererende domener, og den rangerer på
+Samtidig — og her er tallet rettet 02.10.2026; bloggen bærer 3 refererende
+domener, ikke 481, men den rangerer på
 posisjon 1–3 for flere ord. Den skal ikke slettes. Den skal slutte å være
 strategien.
 

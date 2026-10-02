@@ -94,10 +94,10 @@ uten trafikktall.
 
 Disse er gjort og implementert. De kan diskuteres, men de er ikke tilfeldige.
 
-**Bloggen beholdes, men utvides ikke.** 17 artikler med til sammen rundt 481
-refererende domener. Innholdet er ordbok- og skoleoppgavestoff som ikke
-konverterer, men lenkene er ekte autoritet. URL-ene bevares tegn for tegn,
-innholdet migreres, og det lages ikke mer av den typen.
+**Bloggen beholdes, men utvides ikke.** 17 artikler. **RETTET 02.10.2026:** tallet 481 var domenets refererende domener, ikke bloggens. Målt i Ahrefs har hele `/blogg`-stien 3 levende refererende domener; domenet har 589, og nesten alle peker på forsiden. Grunnen til å beholde URL-ene er søkesynlighet, ikke lenkeverdi. Se `docs/sprakvask.md`.
+Innholdet er ordbok- og skoleoppgavestoff som ikke konverterer, men
+synligheten er ekte. URL-ene bevares tegn for tegn, innholdet migreres, og
+det lages ikke mer av den typen.
 
 **Kunder omtales som produksjonskunder.** Idun, Orkla, Anton Sport, Egon, Soul
 Cake, Selvaag, The Well, ASKO og Vitusapotek vises som bedrifter Reflektor har

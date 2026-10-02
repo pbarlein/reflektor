@@ -114,7 +114,7 @@ export const omoss = {
     tittel:
       "Vi lager komplett strategiforslag til SoMe i løpet av 3 virkedager",
     tekst:
-      "Lyst til å møte oss? Book en uforpliktende prat – vi holder til i Oslo og jobber med bedrifter i hele Norge. Fortell oss om din bedrift, og vi lager et komplett strategiforslag til SoMe i løpet av 3 virkedager. Sammen planlegger vi første shoot og kommer i gang på kort tid!",
+      "Lyst til å møte oss? Book en uforpliktende prat – vi holder til i Oslo og jobber med bedrifter i hele Norge. Fortell oss om bedriften din, og vi lager et komplett strategiforslag til SoMe i løpet av 3 virkedager. Sammen planlegger vi første shoot og kommer i gang på kort tid!",
     knapp: "Få et strategiforslag",
   },
 };

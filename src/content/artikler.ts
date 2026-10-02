@@ -573,7 +573,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Markedsføring i sosiale medier er avgjørende for å engasjere målgruppen din og skape oppmerksomhet rundt et nytt produkt eller en tjeneste som du tilbyr. Når du gjør SoMe-markedsføring, handler det om å produsere godt innhold, som er skreddersydd etter din målgruppe og som gir en underholdningsverdi eller leverer en informativ gevinst. Da oppleves det genuint. I denne artikkelen utforsker vi hvilke hensyn du bør ta når du gjør markedsføring på sosiale medier.",
+          "Markedsføring i sosiale medier er avgjørende for å engasjere målgruppen din og skape oppmerksomhet rundt et nytt produkt eller en tjeneste som du tilbyr. Når du gjør SoMe-markedsføring, handler det om å produsere godt innhold, som er skreddersydd etter målgruppen din og som gir en underholdningsverdi eller leverer en informativ gevinst. Da oppleves det genuint. I denne artikkelen utforsker vi hvilke hensyn du bør ta når du gjør markedsføring på sosiale medier.",
       },
       {
         type: "overskrift",
@@ -657,13 +657,13 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Samtidig er det avgjørende å velge de riktige SoMe-kanalene for ditt produkt eller din tjeneste, og anerkjenne hvilke fordeler og begrensninger disse har. Sist, men ikke minst, gjelder det å ha et øye på hva konkurrentene gjør og hvordan du kan skille deg ut i mengden.",
+          "Samtidig er det avgjørende å velge de riktige SoMe-kanalene for produktet eller tjenesten din, og anerkjenne hvilke fordeler og begrensninger disse har. Sist, men ikke minst, gjelder det å ha et øye på hva konkurrentene gjør og hvordan du kan skille deg ut i mengden.",
       },
       { type: "overskrift", niva: 3, tekst: "Din målgruppe" },
       {
         type: "avsnitt",
         tekst:
-          "Hvem er din målgruppe og hvilke behov har du? Og hvordan kan du innfri disse behovene? Svarene på disse spørsmålene har stor betydning for hvilket innhold du produserer. Du bør for eksempel tenke over alder, kjønn, bosted og ikke minst hvilken plattform de er tilbøyelige til å bruke.",
+          "Hvem er målgruppen din, og hvilke behov har du? Og hvordan kan du innfri disse behovene? Svarene på disse spørsmålene har stor betydning for hvilket innhold du produserer. Du bør for eksempel tenke over alder, kjønn, bosted og ikke minst hvilken plattform de er tilbøyelige til å bruke.",
       },
       {
         type: "avsnitt",
@@ -684,7 +684,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Sørg også for å lage og bruke en plan for hvor, når og hvordan du publiserer innhold. Jo mer konsekvent du er i publiseringen, desto mer forutsigelig blir det for algoritmene i søkemotoren eller appen å registrere og lese innholdet ditt. Dette betyr at innholdet blir anerkjent som verdifullt eller viktig av algoritmene, og dermed blir det spredt til de rette mottakerne, nemlig din målgruppe som du har skreddersydd innholdet etter.",
+          "Sørg også for å lage og bruke en plan for hvor, når og hvordan du publiserer innhold. Jo mer konsekvent du er i publiseringen, desto mer forutsigelig blir det for algoritmene i søkemotoren eller appen å registrere og lese innholdet ditt. Dette betyr at innholdet blir anerkjent som verdifullt eller viktig av algoritmene, og dermed blir det spredt til de rette mottakerne, nemlig målgruppen din, som du har skreddersydd innholdet etter.",
       },
       { type: "overskrift", niva: 3, tekst: "Konkurransen" },
       {
@@ -786,7 +786,7 @@ export const artikler: Artikkel[] = [
       {
         type: "overskrift",
         niva: 3,
-        tekst: "Produsere innhold som fenger din målgruppe",
+        tekst: "Produsere innhold som fenger målgruppen din",
       },
       {
         type: "avsnitt",
@@ -812,7 +812,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Push videoen i en betalt annonse på nettsiden din, spre den på LinkedIn og andre sosiale medier, og publiser den på dine viktigste landingssider. Å bruke SoMe-innhold på nettsiden din er kjempeviktig for å skape et oppdatert digitalt butikkvindu, der potensielle kunder kan oppdage din bedrift og dine produkter. Og ikke minst som du kan lenke til og fra dine sosiale medier. Da bygger du samtidig din organiske synlighet og åpner opp for å få høyere plasseringer i søkemotoren. Dermed får du hentet ut all verdi du kan få fra et stykke innhold.",
+          "Push videoen i en betalt annonse på nettsiden din, spre den på LinkedIn og andre sosiale medier, og publiser den på dine viktigste landingssider. Å bruke SoMe-innhold på nettsiden din er kjempeviktig for å skape et oppdatert digitalt butikkvindu, der potensielle kunder kan oppdage bedriften din og produktene dine. Og ikke minst som du kan lenke til og fra dine sosiale medier. Da bygger du samtidig din organiske synlighet og åpner opp for å få høyere plasseringer i søkemotoren. Dermed får du hentet ut all verdi du kan få fra et stykke innhold.",
       },
       {
         type: "avsnitt",
@@ -871,7 +871,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Hos Reflektor kan du hente uvurderlig hjelp fra innholdsprodusenter med lang erfaring innen foto og video. Våre fotografer fanger de riktige salgsutløsende øyeblikkene, mens våre videografer produserer videoer som fanger hva bilder ikke gjør, nemlig det levende elementet ved din bedrift eller ditt produkt og tjeneste. Tilgangen på godt innhold er bare et klikk unna!",
+          "Hos Reflektor kan du hente uvurderlig hjelp fra innholdsprodusenter med lang erfaring innen foto og video. Våre fotografer fanger de riktige salgsutløsende øyeblikkene, mens våre videografer produserer videoer som fanger hva bilder ikke gjør, nemlig det levende elementet ved bedriften din eller produktet og tjenesten din. Tilgangen på godt innhold er bare et klikk unna!",
       },
       {
         type: "avsnitt",
@@ -1071,13 +1071,13 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Lykkes du med innholdsproduksjon, engasjerer du målgruppen din samtidig som du tiltrekker nye, potensielle kunder til nettsiden din. Du opplever mer trafikk og bedriften din får flere henvendelser. Engasjementet på sosiale medier øker eller forsterkes, og du opplever generelt en større tillit til hvilke produkter, tjenester eller innsikter din bedrift tilbyr.",
+          "Lykkes du med innholdsproduksjon, engasjerer du målgruppen din samtidig som du tiltrekker nye, potensielle kunder til nettsiden din. Du opplever mer trafikk og bedriften din får flere henvendelser. Engasjementet på sosiale medier øker eller forsterkes, og du opplever generelt en større tillit til hvilke produkter, tjenester eller innsikter bedriften din tilbyr.",
       },
       { type: "overskrift", niva: 3, tekst: "Det øker engasjementet" },
       {
         type: "avsnitt",
         tekst:
-          "Målrettet innhold som er tilpasset målgruppen din gir deg mulighet til å interagere med dem på et dypere nivå. Innhold som treffer deres behov kommer til å engasjere dem og automatisk knytte deres interesser sammen med din bedrift. Når du appellerer til dem, dannes det tillit mellom dere og potensialet for at du får lojale kunder, øker.",
+          "Målrettet innhold som er tilpasset målgruppen din gir deg mulighet til å interagere med dem på et dypere nivå. Innhold som treffer deres behov kommer til å engasjere dem og automatisk knytte deres interesser sammen med bedriften din. Når du appellerer til dem, dannes det tillit mellom dere og potensialet for at du får lojale kunder, øker.",
       },
       { type: "overskrift", niva: 3, tekst: "Det gjør deg mer synlig" },
       {
@@ -1089,7 +1089,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Innhold gir deg muligheten til å dele den fagkunnskapen eller bransjeinnsikten du sitter på, som ikke alle har tilgang på heller. Ved at du deler denne innsikten på din nettside eller sosiale medier, bygger du en sterk faglig profil som gir deg økt troverdighet. Dette gjør deg til en autoritativ aktør på markedet, som atskiller deg fra konkurrenter og øker sannsynligheten for at kunder velger deg framfor andre. De vil stole på deg!",
+          "Innhold gir deg muligheten til å dele den fagkunnskapen eller bransjeinnsikten du sitter på, som ikke alle har tilgang på heller. Ved at du deler denne innsikten på nettsiden din eller i sosiale medier, bygger du en sterk faglig profil som gir deg økt troverdighet. Dette gjør deg til en autoritativ aktør på markedet, som atskiller deg fra konkurrenter og øker sannsynligheten for at kunder velger deg framfor andre. De vil stole på deg!",
       },
       { type: "overskrift", niva: 3, tekst: "Kunder forblir lojale" },
       {
@@ -1100,7 +1100,7 @@ export const artikler: Artikkel[] = [
       {
         type: "overskrift",
         niva: 3,
-        tekst: "Det legger grunnlaget for din markedsføring",
+        tekst: "Det legger grunnlaget for markedsføringen din",
       },
       {
         type: "avsnitt",
@@ -1130,12 +1130,12 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Hos Reflektor kan du hente uvurderlig hjelp fra innholdsprodusenter med lang erfaring innen foto og video. Våre fotografer fanger de riktige salgsutløsende øyeblikkene og tar bilder som vekker følelser hos din målgruppe. Våre videografer produserer videoer som fanger hva bilder ikke gjør, nemlig det levende elementet ved din bedrift eller ditt produkt og tjeneste. Vi tilbyr faglig tyngde innen bilde- og videoproduksjon og har en helhetlig tilnærming til innholdsproduksjon som kombinerer kreativitet med strategisk forretningsforståelse. Tilgangen på godt innhold er bare et klikk unna!",
+          "Hos Reflektor kan du hente uvurderlig hjelp fra innholdsprodusenter med lang erfaring innen foto og video. Våre fotografer fanger de riktige salgsutløsende øyeblikkene og tar bilder som vekker følelser hos målgruppen din. Våre videografer produserer videoer som fanger hva bilder ikke gjør, nemlig det levende elementet ved bedriften din eller produktet og tjenesten din. Vi tilbyr faglig tyngde innen bilde- og videoproduksjon og har en helhetlig tilnærming til innholdsproduksjon som kombinerer kreativitet med strategisk forretningsforståelse. Tilgangen på godt innhold er bare et klikk unna!",
       },
       {
         type: "overskrift",
         niva: 2,
-        tekst: "Trenger din bedrift en fotograf eller videograf?",
+        tekst: "Trenger bedriften din en fotograf eller videograf?",
       },
       {
         type: "avsnitt",
@@ -1277,7 +1277,7 @@ export const artikler: Artikkel[] = [
         punkter: [
           "I toppen: Innholdet skal fange oppmerksomheten til potensielle kunder og tiltrekke folk som besøker nettsiden din for første gang.",
           "I midten: Innholdet skal være verdifullt og hjelpsomt for eksisterende og potensielle kunder, og gjøre engangsbesøkende til faste besøkende som kommer tilbake gang etter gang.",
-          "I bunnen: Innholdet skal tilpasses alle typer kunder i din målgruppe og oppfordre dem til å kjøpe tjenesten eller produktet ditt eller foreta en annen handling som du definerer som en konvertering. En konvertering kan for eksempel være at de melder seg til et nyhetsbrev eller undertegner en underskriftskampanje.",
+          "I bunnen: Innholdet skal tilpasses alle typer kunder i målgruppen din og oppfordre dem til å kjøpe tjenesten eller produktet ditt eller foreta en annen handling som du definerer som en konvertering. En konvertering kan for eksempel være at de melder seg til et nyhetsbrev eller undertegner en underskriftskampanje.",
         ],
       },
       {
@@ -1441,7 +1441,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Hos Reflektor kan du hente uvurderlig hjelp fra dyktige fotografer og videografer som fanger salgsutløsende øyeblikk. Våre fotografer har et øye for detaljer og tar bilder som vekker følelser hos din målgruppe. Våre videografer produserer videoer som fanger hva bilder ikke gjør, nemlig det levende elementet ved din bedrift eller ditt produkt og tjeneste. Vi tilbyr faglig tyngde innen bilde- og videoproduksjon og har en helhetlig tilnærming til innholdsproduksjon som kombinerer kreativitet med strategisk forretningsforståelse. Dermed vil vi hjelpe deg med å legge grunnlaget for en vellykket innholdsmarkedsføring.",
+          "Hos Reflektor kan du hente uvurderlig hjelp fra dyktige fotografer og videografer som fanger salgsutløsende øyeblikk. Våre fotografer har et øye for detaljer og tar bilder som vekker følelser hos målgruppen din. Våre videografer produserer videoer som fanger hva bilder ikke gjør, nemlig det levende elementet ved bedriften din eller produktet og tjenesten din. Vi tilbyr faglig tyngde innen bilde- og videoproduksjon og har en helhetlig tilnærming til innholdsproduksjon som kombinerer kreativitet med strategisk forretningsforståelse. Dermed vil vi hjelpe deg med å legge grunnlaget for en vellykket innholdsmarkedsføring.",
         lenker: [
           {
             frase: "bilde- og videoproduksjon",
@@ -1453,7 +1453,7 @@ export const artikler: Artikkel[] = [
       {
         type: "overskrift",
         niva: 2,
-        tekst: "Trenger din bedrift en fotograf eller videograf?",
+        tekst: "Trenger bedriften din en fotograf eller videograf?",
       },
       {
         type: "avsnitt",
@@ -1645,7 +1645,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "For å utnytte videomarkedsførings store potensial til det fulle, er det viktig at man har en klar strategi og profesjonell produksjon. I Reflektor består vi av et team av dyktige produsenter som mestrer både foto- og videoproduksjon, og kan hjelpe deg med å integrere video sømløst i din markedsføringsstrategi. Her er noen av våre tips for deg som ønsker å begynne med videomarkedsføring.",
+          "For å utnytte videomarkedsførings store potensial til det fulle, er det viktig at man har en klar strategi og profesjonell produksjon. I Reflektor består vi av et team av dyktige produsenter som mestrer både foto- og videoproduksjon, og kan hjelpe deg med å integrere video sømløst i markedsføringsstrategien din. Her er noen av våre tips for deg som ønsker å begynne med videomarkedsføring.",
         lenker: [
           { frase: "foto- og videoproduksjon", sti: "/videoproduksjon-i-oslo" },
         ],
@@ -1656,7 +1656,7 @@ export const artikler: Artikkel[] = [
         tekst:
           "Første steg er å forstå hva du ønsker å oppnå med videomarkedsføringen. Dette kan være alt fra økt merkevarebevissthet og generering av leads, til engasjement på sosiale medier eller økt omsetning.",
       },
-      { type: "overskrift", niva: 3, tekst: "2. Kjenn ditt publikum" },
+      { type: "overskrift", niva: 3, tekst: "2. Kjenn publikummet ditt" },
       {
         type: "avsnitt",
         tekst:
@@ -1683,12 +1683,12 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "For best utnyttelse av et tett samarbeid med oss, anbefaler vi en rammeavtale med månedlig produksjon. Dette gir deg en fast produsent som kontinuerlig optimaliserer og tilpasser produksjonen etter dine behov.",
+          "For best utnyttelse av et tett samarbeid med oss, anbefaler vi en rammeavtale med månedlig produksjon. Dette gir deg en fast produsent som kontinuerlig optimaliserer og tilpasser produksjonen etter behovene dine.",
       },
       {
         type: "avsnitt",
         tekst:
-          "En slik avtale sikrer jevnlig og høy kvalitetsinnhold som holder din markedsføringsstrategi både dynamisk og effektiv. I Reflektor tar vi selvsagt også enkeltstående oppdrag, slik at du kan få profesjonell hjelp uansett omfang!",
+          "En slik avtale sikrer jevnlig og høy kvalitetsinnhold som holder markedsføringsstrategien din både dynamisk og effektiv. I Reflektor tar vi selvsagt også enkeltstående oppdrag, slik at du kan få profesjonell hjelp uansett omfang!",
       },
       {
         type: "overskrift",
@@ -1720,7 +1720,7 @@ export const artikler: Artikkel[] = [
       {
         type: "overskrift",
         niva: 2,
-        tekst: "Trenger din bedrift en fotograf eller videograf?",
+        tekst: "Trenger bedriften din en fotograf eller videograf?",
       },
       {
         type: "avsnitt",
@@ -1770,7 +1770,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Employer branding, også kalt arbeidsgivermerkevarebygging på norsk, handler om å skape et godt bilde av din bedrift slik at du som arbeidsgiver blir ettertraktet hos dyktige kandidater. Dette gjør du ved å kommunisere hva som gjør din bedrift til et lukrativt og spennende sted å jobbe. Oppfattes bedriften som en god arbeidsplass hvor det er lett å trives, vil du også trekke til deg og holde på de beste talentene. En god employer branding strategi er likevel mer enn bare markedsføring. Nøkkelen er å bidra til å skape en autentisk bedriftskultur der de ansatte både trives og føler seg verdsatt. Dette fører nemlig med seg en rekke fordeler, blant annet lavere rekrutteringskostnader, høyere produktivitet, et bedre omdømme og økt lojalitet hos kundegruppen.",
+          "Employer branding, også kalt arbeidsgivermerkevarebygging på norsk, handler om å skape et godt bilde av bedriften din slik at du som arbeidsgiver blir ettertraktet hos dyktige kandidater. Dette gjør du ved å kommunisere hva som gjør bedriften din til et lukrativt og spennende sted å jobbe. Oppfattes bedriften som en god arbeidsplass hvor det er lett å trives, vil du også trekke til deg og holde på de beste talentene. En god employer branding strategi er likevel mer enn bare markedsføring. Nøkkelen er å bidra til å skape en autentisk bedriftskultur der de ansatte både trives og føler seg verdsatt. Dette fører nemlig med seg en rekke fordeler, blant annet lavere rekrutteringskostnader, høyere produktivitet, et bedre omdømme og økt lojalitet hos kundegruppen.",
       },
       {
         type: "overskrift",
@@ -1852,7 +1852,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Troverdighet er et nøkkelord når det kommer til merkevarebygging, også som arbeidsgiver. Og hvem er vel mer troverdige ambassadører for deg som arbeidsgiver enn dine egne ansatte? Bruk gjerne videosnutter til å vise fram dem som allerede jobber hos deg. For eksempel kan du produsere innhold som viser hvordan en typisk arbeidsdag i din bedrift ser ut. Her er dine ansatte de aller beste til å formidle arbeidskulturen. La dem gjerne dele sine erfaringer, kollegiale forhold og hva de liker best med jobben.",
+          "Troverdighet er et nøkkelord når det kommer til merkevarebygging, også som arbeidsgiver. Og hvem er vel mer troverdige ambassadører for deg som arbeidsgiver enn dine egne ansatte? Bruk gjerne videosnutter til å vise fram dem som allerede jobber hos deg. For eksempel kan du produsere innhold som viser hvordan en typisk arbeidsdag i bedriften din ser ut. Her er dine ansatte de aller beste til å formidle arbeidskulturen. La dem gjerne dele sine erfaringer, kollegiale forhold og hva de liker best med jobben.",
       },
       {
         type: "overskrift",
@@ -1873,7 +1873,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Som en utfordrer i bransjen av etablerte produksjonsselskaper, tilbyr Reflektor unike løsninger for deg som ønsker å jobbe med employer branding. Vi setter en ny standard for hva du kan forvente av pris og kvalitet, og hjelper deg med å skape engasjerende innhold som gjør det lettere å finne talentfulle ansatte til ditt team.",
+          "Som en utfordrer i bransjen av etablerte produksjonsselskaper, tilbyr Reflektor unike løsninger for deg som ønsker å jobbe med employer branding. Vi setter en ny standard for hva du kan forvente av pris og kvalitet, og hjelper deg med å skape engasjerende innhold som gjør det lettere å finne talentfulle ansatte til teamet ditt.",
       },
       {
         type: "avsnitt",
@@ -1883,7 +1883,7 @@ export const artikler: Artikkel[] = [
       {
         type: "overskrift",
         niva: 2,
-        tekst: "Trenger din bedrift en fotograf eller videograf?",
+        tekst: "Trenger bedriften din en fotograf eller videograf?",
       },
       {
         type: "avsnitt",
@@ -2049,12 +2049,12 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Reflektor kan bistå din bedrift med omfattende og skreddersydd innholdsproduksjon som ikke bare fanger oppmerksomhet hos publikum, men også engasjerer og konverterer den målgruppen du har satt deg. Våre innholdsprodusenter har et bredt spekter av kompetanse og faglig tyngde innen både bilde- og videoproduksjon, og tilbyr en helhetlig tilnærming til innholdsproduksjon som kombinerer kreativitet med strategisk forretningsforståelse. Gjennom et tett og smidig samarbeid, sikrer vi i Reflektor at produksjonen er i tråd med bedriftens mål fra A til Å. Samtidig kan du være trygg på at leveransen alltid er av høy kvalitet!",
+          "Reflektor kan bistå bedriften din med omfattende og skreddersydd innholdsproduksjon som ikke bare fanger oppmerksomhet hos publikum, men også engasjerer og konverterer den målgruppen du har satt deg. Våre innholdsprodusenter har et bredt spekter av kompetanse og faglig tyngde innen både bilde- og videoproduksjon, og tilbyr en helhetlig tilnærming til innholdsproduksjon som kombinerer kreativitet med strategisk forretningsforståelse. Gjennom et tett og smidig samarbeid, sikrer vi i Reflektor at produksjonen er i tråd med bedriftens mål fra A til Å. Samtidig kan du være trygg på at leveransen alltid er av høy kvalitet!",
       },
       {
         type: "overskrift",
         niva: 2,
-        tekst: "Trenger din bedrift en fotograf eller videograf?",
+        tekst: "Trenger bedriften din en fotograf eller videograf?",
       },
       {
         type: "avsnitt",
@@ -2195,7 +2195,7 @@ export const artikler: Artikkel[] = [
       {
         type: "liste",
         punkter: [
-          "Valg av plattform Velg de riktige plattformene for å nå ditt publikum. Hver plattform har sine unike fordeler og brukermønstre.",
+          "Valg av plattform Velg de riktige plattformene for å nå publikummet ditt. Hver plattform har sine unike fordeler og brukermønstre.",
           "Innholdsplanlegging Planlegg innholdet ditt nøye. Bestem hvilke historier som skal fortelles, og hvordan de skal distribueres.",
           "Engasjement Oppfordre til interaksjon og engasjement ved bruk av gode CTA’s (handlingsoppfordringer). Dette bidrar til å bygge en lojal følgerbase og øker rekkevidden av historien, altså innholdet ditt.",
         ],
@@ -2264,7 +2264,7 @@ export const artikler: Artikkel[] = [
       {
         type: "overskrift",
         niva: 2,
-        tekst: "Trenger din bedrift en fotograf eller videograf?",
+        tekst: "Trenger bedriften din en fotograf eller videograf?",
       },
       {
         type: "avsnitt",
@@ -4064,7 +4064,7 @@ export function delOppAvsnitt(
  * Lista er eksplisitt og ikke en heuristikk, fordi den skal være lett å
  * lese for den neste som lurer på hvorfor et spørsmål mangler.
  */
-export const IKKE_FAQ = ["Trenger din bedrift en fotograf eller videograf?"];
+export const IKKE_FAQ = ["Trenger bedriften din en fotograf eller videograf?"];
 
 /** Ord en ekte FAQ-overskrift begynner med. */
 const SPØRREORD =

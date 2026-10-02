@@ -35,10 +35,19 @@ mot om den gir flere utfylte skjemaer.
    ikke opphever regelen for de tre andre.
 2. **`/takk` er hellig.** URL-en og GA4-hendelsen bærer 107+ historiske
    konverteringer. Endrer du dem, mister Reflektor målingen av sin eneste KPI.
-3. **Bloggslugs i `src/content/site.ts` må ikke endres.** Bloggen beholdes for
-   lenkeverdien – ~481 refererende domener. Men innholdet er ordbok- og
-   skoleoppgavestoff som ikke konverterer: det skal ikke styre arkitekturen, og
-   det skal ikke lages mer av den typen.
+3. **Bloggslugs i `src/content/site.ts` må ikke endres.** Regelen står, men
+   **begrunnelsen var feil og er rettet 02.10.2026.** Her sto at bloggen
+   beholdes for lenkeverdien, «~481 refererende domener». Målt i Ahrefs:
+   hele `/blogg`-stien har **3** levende refererende domener. De 589 domenet
+   faktisk har, peker nesten alle på forsiden. Tallet 481 var domenets, ikke
+   bloggens — nøyaktig den sammenblandingen punktet om `next.config.ts`
+   lenger nede advarer mot, gjort en tredje gang.
+
+   **Grunnen til å beholde URL-ene er søkesynlighet, ikke lenker.** Artiklene
+   rangerer på ord folk søker på, og aliaset `/blogg/hvordan-markedsfore-bedrift`
+   har alene 41 279 visninger. Det er reelt, og det er nok. Innholdet er
+   fortsatt ordbok- og skoleoppgavestoff som ikke konverterer: det skal ikke
+   styre arkitekturen, og det skal ikke lages mer av den typen.
 4. ~~**Bloggtekstene er ikke migrert fra Squarespace.** Siden kan ikke lanseres
    før de er det.~~ **Utført.** De ni artiklene ble migrert ordrett 21.09.2026,
    og bloggen har i tillegg fem artikler skrevet for den nye siden. Punktet

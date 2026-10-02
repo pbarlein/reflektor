@@ -105,3 +105,81 @@ De migrerte artiklene har «din bedrift» og «din målgruppe» 30 ganger. Det e
 den mest typiske anglisismen som finnes på norsk — naturlig norsk sier
 «bedriften din». Teksten er Reflektors egen og er låst, så jeg har ikke rørt
 den. Skal den vaskes, er det en egen beslutning.
+
+---
+
+# Runde 2: de åtte migrerte artiklene (02.10.2026)
+
+Pål ga klarsignal, og spurte samtidig det riktige spørsmålet: **hvilken
+påvirkning har dette på migreringen?**
+
+## Svaret: ingen — og underveis falt premisset
+
+**Lenker ligger i URL-en, ikke i teksten.** En lenke fra et annet nettsted
+peker på `reflektor.no/blogg/hva-er-employer-branding`. Den adressen er
+uendret. Hadde hvert eneste ord i artikkelen blitt byttet, ville lenken vært
+like intakt.
+
+**Søkesynlighet følger emne og søkeord, ikke ordstilling.** «din bedrift» og
+«bedriften din» inneholder nøyaktig de samme ordene. Ingen overskrift, ingen
+slug, ingen title og ingen beskrivelse er rørt.
+
+**Så målte jeg hva bloggen faktisk bærer, og tallet i dokumentasjonen var
+feil.** AGENTS.md, kontekst.md, status-til-marketing.md, synlighet-2026.md og
+vedlegg-a.md sa alle at bloggen bærer «~481 refererende domener», og at det er
+grunnen til at den beholdes.
+
+Ahrefs, målt 02.10.2026:
+
+| | Levende refererende domener |
+|---|---|
+| reflektor.no, hele domenet | 589 |
+| `www.reflektor.no/blogg` og alt under | **3** |
+| Beste enkeltartikkel | 3 |
+
+De 589 ligger nesten alle på forsiden: 726 på `reflektor.no/` og 500 på
+`www.reflektor.no/`. Tallet 481 var domenets, ikke bloggens.
+
+**Dette er tredje gang samme sammenblanding er gjort i dette prosjektet.**
+`next.config.ts`-punktet i AGENTS.md advarer eksplisitt mot å blande
+søkevisninger med lenkeverdi, og sier at det har kostet to feilvurderinger.
+Dette var den tredje, og den sto i selve begrunnelsen for å beholde bloggen.
+
+**Regelen om å beholde URL-ene står likevel.** Grunnen er bare en annen enn
+dokumentasjonen sa: søkesynlighet. Aliaset `/blogg/hvordan-markedsfore-bedrift`
+har alene 41 279 visninger. Det er reelt, det er verdt å verne, og det er nok.
+Rettet alle fem stedene.
+
+## Hva som ble endret i teksten
+
+31 forekomster i de åtte artiklene, pluss én på /om-oss. Alle er samme grep:
+foranstilt eiendomspronomen flyttet bak substantivet.
+
+- «skreddersydd etter **din målgruppe**» → «etter **målgruppen din**»
+- «oppdage **din bedrift** og **dine produkter**» → «**bedriften din** og
+  **produktene dine**»
+- «Trenger **din bedrift** en fotograf?» → «Trenger **bedriften din** …»
+- «nå **ditt publikum**» → «nå **publikummet ditt**»
+
+**Foranstilling er ikke en feil.** Det er grammatisk korrekt norsk, brukt til
+ettertrykk. Men etterstilt er den nøytrale ordstillingen, og tung bruk av
+foranstilling er den mest siterte markøren for engelskpåvirket norsk. Dette er
+altså en stilrettelse, ikke en feilretting.
+
+**Der foranstilling er riktig, står den.** Med adjektiv («din organiske
+synlighet», «dine unike salgsargumenter»), med «egen» («din egen nettside»),
+i genitiv («din bedrifts kjernevirksomhet») og som predikativ («da er det din
+jobb»). Å etterstille disse ville gjort språket dårligere, ikke bedre.
+
+## En felle som ble fanget av testene
+
+Overskriften «Trenger din bedrift en fotograf eller videograf?» står i seks
+artikler, og den er **eksplisitt unntatt fra FAQ-markering** gjennom lista
+`IKKE_FAQ` — fordi seks sider som alle påstår å svare på det samme spørsmålet
+er kannibalisering i markeringen.
+
+Lista matcher på ordrett tekst. Da overskriften ble endret, sluttet den å
+matche, og overskriften ville blitt til FAQPage-markup på seks artikler
+samtidig — nøyaktig feilen lista ble skrevet for å hindre. Lista er oppdatert,
+og det er verifisert i den bygde HTML-en at `/blogg/hva-er-innholdsproduksjon`
+fortsatt har fem FAQ-spørsmål og ikke seks.
