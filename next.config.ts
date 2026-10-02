@@ -337,6 +337,13 @@ const redirects: NextConfig["redirects"] = async () => [
    * trafikk, og en ubetinget redirect herfra ville vært nøyaktig det regel 1
    * i AGENTS.md forbyr.
    *
+   * NEXT SENDER SPØRRINGEN VIDERE TIL MÅLET, så svaret er
+   * `/blogg/rss.xml?format=rss`. Verifisert på live: den svarer 200 med
+   * riktig content-type — feeden ignorerer parameteren, og
+   * `atom:link rel="self"` peker på den rene adressen. Det finnes ingen
+   * dokumentert måte å droppe den på, og den er harmløs. Ikke «rett» dette
+   * ved å fjerne `has`.
+   *
    * Feeden ligger i src/app/blogg/rss.xml/route.ts.
    */
   {

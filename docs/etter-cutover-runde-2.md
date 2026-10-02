@@ -170,6 +170,67 @@ Microsoft Ads finnes ikke i containeren i det hele tatt. Rettet
 
 ## Verifisert på live etter push
 
-Se avsnittet nederst for målingene. Én testinnsending ble sendt fra en ekte
-nettleser med `?utm_source=test&utm_medium=grunnmur`, for å se hele kjeden:
-skjema → e-post → HubSpot → `/takk`.
+Deploy `dpl_HHMJ9EkN2n6fNfN2QEMy8CqB6PL9`, commit `e299311`.
+
+**Redirects, hentet mot www.reflektor.no:**
+
+| Adresse | Svar |
+|---|---|
+| `/produktfoto` | 301 → `/innholdsproduksjon` |
+| `/gratis-strategimote-kontaktskjema` | 301 → `/kontaktoss` |
+| `/tjenester/produktfoto` | 301 → `/innholdsproduksjon` (uendret) |
+| `/gratis-strategimote` | 301 → `/kontaktoss` (uendret) |
+| `/innholdsproduksjon`, `/kontaktoss` | 200 |
+
+**Canonical og feed:**
+
+- `/personvern` serverer
+  `<link rel="canonical" href="https://www.reflektor.no/personvern"/>`
+- `/blogg/rss.xml` svarer 200 med
+  `content-type: application/rss+xml; charset=utf-8`, 15 poster, alle URL-er
+  absolutte
+- `/blogg?format=rss` → 301 → `/blogg/rss.xml?format=rss`, som svarer 200
+  med riktig content-type. **Den etterhengende parameteren er ventet og
+  harmløs:** Next sender spørringen videre til målet, og det finnes ingen
+  dokumentert måte å droppe den på. Feeden ignorerer den, og
+  `atom:link rel="self"` peker på den rene adressen, så lesere lander der.
+  Ikke «rett» dette ved å fjerne `has` — da flyttes hele bloggoversikten.
+- `/blogg` uten parametere: 200, uendret
+- `/blogg` har `<link rel="alternate" type="application/rss+xml">`
+
+**Kontaktskjemaet, én innsending fra en ekte nettleser** (Chromium,
+`?utm_source=test&utm_medium=grunnmur` på forsiden, deretter `/kontaktoss`):
+
+- Skjult kildefelt ved innsending:
+  `source=test | medium=grunnmur || ref: direkte || landet paa: /`
+- `POST /api/skjema` → **303**, `/takk` lastet som et ekte dokument,
+  `document.referrer` = `https://www.reflektor.no/kontaktoss`.
+  Det er betingelsen både GA4-nøkkelhendelsen og Ads-konverteringen leser.
+- **E-posten kom** 18:37:44Z fra `skjema@reflektor.no`, med linjen
+  `Kilde: source=test | medium=grunnmur || ref: direkte || landet paa: /`
+- **HubSpot fikk leadet.** Kontakten er oppdatert 18:38:00Z med `message`,
+  `company` = «Reflektor (TEST)» og `nettside_kilde` lik kildestrengen over.
+  `recent_conversion_event_name` navngir
+  «/kontaktoss: reflektor.no – kontaktskjema (API)», og
+  `recent_conversion_date` = 18:37:44Z — altså startbetingelsen
+  arbeidsflyten «Nytt lead – inbound» lytter på.
+- **Ingen dobbeltregistrering:** én kontakt, én ny konvertering.
+  `data-hs-do-not-collect` gjør sitt.
+- **Telefonfeltet beviste at tomme felt utelates:** innsendingen hadde ikke
+  telefon, og den som sto på kontakten fra før ble stående urørt.
+- **Ingen HubSpot-feil i Vercel-loggen.** Søk på «hubspot» i
+  kjøretidsloggen gir null treff, og den eneste POST-en i vinduet er 303.
+
+**Clarity:** `consentv2` ligger i `<head>` på live, med `ad_Storage` og
+`analytics_Storage`. Målt i nettleseren: etter at «Godta alle» ble klikket
+finnes både `_clck` (Clarity) og `hubspotutk`.
+
+## Det som gjenstår, og som ikke er vårt
+
+- **Samtykkekontroll på de tre taggene i GTM.** Framgangsmåten står i
+  `docs/gtm-samtykke.md`. Forutsetningen — at CRM-et ikke avhenger av
+  sporingsskriptet — er nå på plass.
+- **Slå av «Non-HubSpot form»-avlesningen** (`.grid, .gap-5`) i HubSpot, nå
+  som serverveien er verifisert.
+- **Search Console:** Pål må trykke Continue selv.
+- **Squarespace** kan sies opp.
