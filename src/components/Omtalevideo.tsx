@@ -20,12 +20,17 @@ import { useEffect, useRef, useState } from "react";
  * setningen er irriterende å høre på; som stum bakgrunn er løkken riktig.
  * Da spoles den også til start, slik at man hører hele.
  *
- * TRE KILDER I PRIORITERT REKKEFØLGE. WebM først: VP9 er 34 % mindre enn
- * H.264 her (5,5 mot 8,3 MB) og dekker Chrome, Edge, Firefox og Safari fra
- * 16. MP4 er reserven, og den er det Safari på eldre iOS velger.
+ * TO KILDER I PRIORITERT REKKEFØLGE: MP4 først, WebM som reserve. Her sto
+ * «WebM først: VP9 er 34 % mindre». Snudd 02.10.2026 — se kommentaren ved
+ * <source>. Kort fortalt: VP9 dekodes i programvare på de fleste iPhoner,
+ * H.264 har maskinvaredekoder på alle, og noen sparte megabyte er ikke verdt
+ * et bilde som fryser.
  *
- * `preload="none"` til den kommer i synsfeltet. Videoen ligger langt nede
- * på begge sidene den brukes, og skal ikke koste noe i LCP.
+ * `preload="metadata"`. Videoen ligger langt nede på alle sidene den brukes
+ * og skal ikke koste noe i LCP, men metadata er noen få kilobyte — ikke
+ * filmen. Her sto `preload="none"` med kildene satt inn av en
+ * IntersectionObserver; se kommentaren over effekten for hvorfor den veien
+ * er forlatt.
  */
 export function Omtalevideo({
   sti,
@@ -49,13 +54,23 @@ export function Omtalevideo({
 }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [lyd, settLyd] = useState(false);
-  const [lastet, settLastet] = useState(false);
-
   /*
-    LASTES FØRST NÅR DEN ER I NÆRHETEN. `preload="none"` alene er ikke nok:
-    uten kilder i DOM-en laster ingenting, men med dem laster Safari likevel
-    metadata. Her legges <source> først inn når observeren sier fra, og da
-    er ventetiden uansett borte før noen ser flaten.
+    KILDENE RENDRES ALLTID, OG `preload="metadata"`. Forenklet 02.10.2026,
+    tredje forsøk på «bildet henger mens lyden går» fra iPhone.
+
+    FØR DETTE ble <source>-elementene satt inn først når en
+    IntersectionObserver sa at flaten var i nærheten, med `preload="none"`.
+    Hensikten var god — videoen ligger langt nede og skulle ikke koste noe i
+    LCP — men den veien har en hel klasse feil i seg som ikke finnes i den
+    vanlige: et element som rekker å ende i `NETWORK_NO_SOURCE` før kildene
+    kommer, en `load()` som må rydde opp etterpå, og en `play()` som kan
+    komme før elementet har noe å spille. Jeg lagde og målte bort én slik
+    feil i dag alene — betingelsen som avbrøt MP4-nedlastingen midtveis.
+
+    `preload="metadata"` henter noen få kilobyte, ikke filmen. Kostnaden er
+    borte, og hele klassen med feil er borte med den. Det som er igjen er
+    den kjedelige, vanlige veien: kilder i markeringen, nettleseren velger
+    selv, observeren styrer bare play og pause.
   */
   useEffect(() => {
     const v = ref.current;
@@ -66,14 +81,6 @@ export function Omtalevideo({
           v.pause();
           return;
         }
-        settLastet(true);
-        /*
-          `play()` BLIR STÅENDE HER, og ikke bare i effekten under. Den som
-          ruller forbi og tilbake igjen skal få filmen i gang på nytt, og
-          `lastet` er allerede `true` da — effekten kjører ikke flere
-          ganger. Kallet er ufarlig før kildene finnes: løftet avvises, og
-          avvisningen fanges.
-        */
         if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
           void v.play().catch(() => {});
         }
@@ -85,38 +92,19 @@ export function Omtalevideo({
   }, []);
 
   /*
-    REDNINGSPLANKE NÅR KILDENE KOM FOR SENT. Lagt til 02.10.2026.
+    `muted` og `loop` STYRES AV TILSTAND, ikke av DOM-skriving.
 
-    Et <video> uten <source> kan rekke å ende i `NETWORK_NO_SOURCE` — «jeg
-    har prøvd alt jeg har, og fant ingenting». Dukker kildene opp etterpå,
-    starter ikke nettleseren utvelgelsen på nytt av seg selv.
-
-    BARE DEN TILSTANDEN SKAL UTLØSE `load()`. Første forsøk hadde også
-    `readyState === 0` i betingelsen, og det var feil på en måte som er
-    verdt å huske: `readyState` ER 0 mens den første kilden holder på å
-    lastes. Effekten rakk dermed å kalle `load()` midt i en normal
-    innlasting, og målt i nettleseren ga det `ERR_ABORTED` på MP4-fila og
-    fall videre til WebM — altså presis motsatt av det rekkefølgen over
-    skal oppnå.
+    De sto som faste attributter i markeringen mens `vekslLyd` satte dem
+    direkte på noden. Det virker helt til React av en eller annen grunn
+    skriver attributtet på nytt — og da står lyden plutselig av igjen uten
+    at knappen vet om det. En avspiller som kan komme i utakt med sin egen
+    knapp er ikke verdt de to linjene det sparer.
   */
-  useEffect(() => {
-    if (!lastet) return;
-    const v = ref.current;
-    if (!v) return;
-    if (v.networkState !== v.NETWORK_NO_SOURCE) return;
-    v.load();
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      void v.play().catch(() => {});
-    }
-  }, [lastet]);
-
   function vekslLyd() {
     const v = ref.current;
     if (!v) return;
     const pa = !lyd;
     settLyd(pa);
-    v.muted = !pa;
-    v.loop = !pa;
     if (pa) v.currentTime = 0;
     void v.play().catch(() => {});
   }
@@ -152,62 +140,44 @@ export function Omtalevideo({
       */}
       <video
         ref={ref}
-        /*
-          `transform-gpu` gir videoen sitt eget komposisjonslag.
-
-          Lagt til 02.10.2026 sammen med fryse-rettelsene over. Omtalen
-          ligger nå inne i et panel med `overflow-hidden` og avrundede
-          hjørner, og noen piksler unna kort med `backdrop-filter`. Den
-          kombinasjonen er en kjent kilde til at WebKit slutter å tegne
-          videoflaten mens avspillingen fortsetter — altså «bildet henger
-          mens lyden går». Et eget lag tar videoen ut av den delte
-          malingen.
-        */
-        className="absolute inset-0 size-full transform-gpu object-cover"
+        className="absolute inset-0 size-full object-cover"
         poster={`${sti}-poster.jpg`}
-        preload="none"
-        muted
-        loop
+        preload="metadata"
+        muted={!lyd}
+        loop={!lyd}
         playsInline
         disablePictureInPicture
         controlsList="nodownload noremoteplayback"
         aria-label={alt}
       >
-        {lastet && (
-          <>
-            {/*
-              MP4 FØRST. Snudd 02.10.2026, etter at Pål meldte fra fra en
-              ekte iPhone: «bildet henger mens lyden går.»
+        {/*
+          MP4 FØRST. Snudd 02.10.2026, etter at Pål meldte fra fra en ekte
+          iPhone: «bildet henger mens lyden går.»
 
-              WebM lå først, med den begrunnelsen at VP9 er 34 % mindre enn
-              H.264 her. Den gevinsten er ikke verdt det den koster: VP9
-              dekodes i programvare på de fleste iPhoner, mens H.264 har
-              maskinvaredekoder på alle. Et bilde som fryser mens lyden
-              løper videre er nøyaktig det en programvaredekoder som ikke
-              rekker over sanntid ser ut som — og denne videoen er det
-              sterkeste beviset på forsiden.
+          WebM lå først, med den begrunnelsen at VP9 er 34 % mindre enn
+          H.264 her. Den gevinsten er ikke verdt det den koster: VP9
+          dekodes i programvare på de fleste iPhoner, mens H.264 har
+          maskinvaredekoder på alle.
 
-              Nettlesere velger den FØRSTE kilden de sier de støtter, så
-              dette gir H.264 til alle. WebM blir stående som reserve.
-              Rekkefølgen er det eneste verktøyet <source> gir — den kan
-              ikke velges per nettleser uten å gjette på brukeragenten.
+          Nettlesere velger den FØRSTE kilden de sier de støtter, så dette
+          gir H.264 til alle. WebM blir stående som reserve. Rekkefølgen er
+          det eneste verktøyet <source> gir — den kan ikke velges per
+          nettleser uten å gjette på brukeragenten.
 
-              `type` ER BEVISST UPRESIST. En eksakt kodekstreng
-              (`avc1.64001f`) ville latt en nettleser uten H.264 hoppe over
-              MP4-fila uten å be om den først. Men de to filene komponenten
-              brukes med har ulikt nivå — `avc1.64001f` og `avc1.640028` —
-              så én streng her ville vært feil for den ene. Og i praksis
-              har hver eneste ekte nettleser H.264.
+          `type` ER BEVISST UPRESIST. En eksakt kodekstreng (`avc1.64001f`)
+          ville latt en nettleser uten H.264 hoppe over MP4-fila uten å be
+          om den først. Men de to filene komponenten brukes med har ulikt
+          nivå — `avc1.64001f` og `avc1.640028` — så én streng her ville
+          vært feil for den ene. Og i praksis har hver eneste ekte
+          nettleser H.264.
 
-              FALLBACKEN ER VERIFISERT, og det skjedde ved et uhell: den
-              Chromium testene kjører i er bygget uten H.264. Den ber om
-              MP4-fila, avbryter, og faller til WebM — som er nettopp slik
-              kjeden skal oppføre seg når den første kilden ikke går.
-            */}
-            <source src={`${sti}.mp4`} type="video/mp4" />
-            <source src={`${sti}.webm`} type="video/webm" />
-          </>
-        )}
+          FALLBACKEN ER VERIFISERT, og det skjedde ved et uhell: den
+          Chromium testene kjører i er bygget uten H.264. Den ber om
+          MP4-fila, avbryter, og faller til WebM — som er nettopp slik
+          kjeden skal oppføre seg når den første kilden ikke går.
+        */}
+        <source src={`${sti}.mp4`} type="video/mp4" />
+        <source src={`${sti}.webm`} type="video/webm" />
       </video>
       {/*
         KNAPPEN LIGGER ØVERST TIL HØYRE. Nederst sto den først, men der

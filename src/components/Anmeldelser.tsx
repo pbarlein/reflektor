@@ -119,8 +119,20 @@ export function Anmeldelsesrad({
       bloggside. Anmeldelsene var den ENESTE mørke flaten som gikk fra kant
       til kant, og skilte seg ut uten at noe valg lå bak.
 
-      `overflow-hidden` er ikke pynt: uten den ville anmeldelsesraden, som
-      med vilje er bredere enn panelet, malt seg forbi de avrundede hjørnene.
+      INGEN `overflow-hidden` HER, og det er en rettelse. Den sto her fra
+      02.10.2026 «fordi anmeldelsesraden ellers ville malt seg forbi de
+      avrundede hjørnene». Den påstanden var feil på to måter:
+
+      1. RADEN KLIPPER SEG SELV. `<ul>` har `overflow-x-auto`, så kortene
+         klippes av radens egen boks. Boksen slutter nøyaktig på panelets
+         kant, og den ligger midt på panelet i høyden — ikke i nærheten av
+         et hjørne.
+      2. DEN KOSTET MER ENN DEN GA. Omtalevideoen har allerede sin egen
+         `overflow-hidden` + `rounded-flate`. Med denne fikk den TO slike
+         forfedre over seg, og en video under nøstet avrundet klipping er
+         en kjent måte å få WebKit til å slutte å tegne videoflaten på —
+         altså «bildet henger mens lyden går», som Pål meldte fra om fra
+         iPhone.
 
       Luften over og under panelet ligger nå UTENFOR det, i seksjonen rundt
       (se forside/Anmeldelsesseksjon.tsx). Det er forskjellen fra før: i en
@@ -128,7 +140,7 @@ export function Anmeldelsesrad({
       naboene i det hele tatt.
     */
     <Container>
-      <div className="overflow-hidden rounded-flate bg-dyp px-6 py-12 text-pa-dyp sm:px-14 sm:py-14">
+      <div className="rounded-flate bg-dyp px-6 py-12 text-pa-dyp sm:px-14 sm:py-14">
         {/*
           VIDEOEN TIL VENSTRE, OVERSKRIFTEN TIL HØYRE. Endret 02.10.2026,
           bestilt av Pål: «gjør videoen i anmeldelsene 9x16 og noe større.
@@ -210,7 +222,8 @@ export function Anmeldelsesrad({
         behovet er borte.
 
         `-mr-6 sm:-mr-14` opphever panelets høyre luft, slik at raden når
-        helt ut til kanten og blir klippet av `overflow-hidden` og hjørnene.
+        helt ut til panelets kant. Klippingen gjør raden selv, med
+        `overflow-x-auto` — panelet trenger ingen.
         `pr-` med samme verdi gir det siste kortet luft når man har rullet
         helt ut — uten den ville det klistret seg til kanten.
 
