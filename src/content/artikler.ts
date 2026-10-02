@@ -2349,12 +2349,12 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Det ligger under medianen. SSB oppgir en medianlønn i Norge på 55 800 kroner i måneden og et gjennomsnitt på 62 070 — altså 669 600 og 744 840 kroner i året for alle ansatte sett under ett. Eksempelet på 600 000 er lavere enn begge, og regnestykket er dermed konservativt: setter dere inn et høyere og mer realistisk lønnsnivå, blir forskjellen større, ikke mindre.",
+          "Det ligger under medianen. SSB oppgir en medianlønn i Norge på 55 800 kroner i måneden og et gjennomsnitt på 62 070, altså 669 600 og 744 840 kroner i året for alle ansatte sett under ett. Eksempelet på 600 000 er lavere enn begge, og regnestykket er dermed konservativt: setter dere inn et høyere og mer realistisk lønnsnivå, blir forskjellen større, ikke mindre.",
       },
       {
         type: "kilde",
         tekst:
-          "Lønnstallene er fra Statistisk sentralbyrå. Vi oppgir bevisst ikke et lønnsnivå for SoMe-ansvarlige spesifikt — stillingstittelen finnes ikke som egen kategori i SSBs statistikk, og tallene som sirkulerer for den rollen kommer fra kilder uten samme etterprøvbarhet.",
+          "Lønnstallene er fra Statistisk sentralbyrå. Vi oppgir bevisst ikke et lønnsnivå for SoMe-ansvarlige spesifikt. Stillingstittelen finnes ikke som egen kategori i SSBs statistikk, og tallene som sirkulerer for den rollen kommer fra kilder uten samme etterprøvbarhet.",
         url: "https://www.ssb.no/arbeid-og-lonn/lonn-og-arbeidskraftkostnader/artikler/hva-er-vanlig-lonn-i-norge",
       },
       {
@@ -2387,7 +2387,7 @@ export const artikler: Artikkel[] = [
       {
         type: "overskrift",
         niva: 2,
-        tekst: "Hva får dere — og hva får dere ikke?",
+        tekst: "Hva får dere, og hva får dere ikke?",
       },
       {
         type: "tabell",
@@ -2410,7 +2410,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Men en ansatt SoMe-ansvarlig skal som regel beherske strategi, foto, video, klipping, fargekorrigering, tekst og publisering alene. Det er flere fagfelt, og de færreste er sterke i alle. Resultatet blir ofte mobilinnhold laget mellom andre oppgaver — og da er det ikke 764 410 kroner mot 360 000, men 764 410 kroner mot et bedre produkt til under halve prisen.",
+          "Men en ansatt SoMe-ansvarlig skal som regel beherske strategi, foto, video, klipping, fargekorrigering, tekst og publisering alene. Det er flere fagfelt, og de færreste er sterke i alle. Resultatet blir ofte mobilinnhold laget mellom andre oppgaver, og da er det ikke 764 410 kroner mot 360 000, men 764 410 kroner mot et bedre produkt til under halve prisen.",
       },
       {
         type: "overskrift",
@@ -2448,7 +2448,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Den vanligste løsningen er ikke enten–eller. En markedsansvarlig som allerede jobber der, håndterer dialogen, kjenner kundene og legger strategien — og produksjonen settes bort. Da betaler dere for det som faktisk er vanskelig å gjøre selv, og beholder det som krever å være innenfor.",
+          "Den vanligste løsningen er ikke enten–eller. En markedsansvarlig som allerede jobber der, håndterer dialogen, kjenner kundene og legger strategien, og produksjonen settes bort. Da betaler dere for det som faktisk er vanskelig å gjøre selv, og beholder det som krever å være innenfor.",
       },
     ],
     lesVidere: [
@@ -2507,7 +2507,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Det er det korte svaret. Det lange er mer nyttig, for tallene over er hentet fra prisguider som er uenige med hverandre — og uenigheten forteller deg mer om markedet enn noen av tallene gjør alene.",
+          "Det er det korte svaret. Det lange er mer nyttig, for tallene over er hentet fra prisguider som er uenige med hverandre, og uenigheten forteller dere mer om markedet enn noen av tallene gjør alene.",
       },
       {
         type: "overskrift",
@@ -2535,7 +2535,7 @@ export const artikler: Artikkel[] = [
             "50 000–200 000 kr",
             "fra 200 000 kr",
           ],
-          ["Byråmatch, mai 2026", "—", "50 000–150 000 kr", "flere millioner"],
+          ["Byråmatch, mai 2026", "–", "50 000–150 000 kr", "flere millioner"],
         ],
       },
       {
@@ -2561,12 +2561,12 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Legg merke til hvor lite de er enige om. Den ene kaller 50 000 kroner en enkel produktvideo. Den andre kaller det en standard reklamefilm. Den tredje legger hele det enkle nivået under 40 000. Det er ikke fordi noen tar feil — det er fordi «videoproduksjon» ikke er én tjeneste, og et tall uten en leveranse ved siden av betyr ingenting.",
+          "Legg merke til hvor lite de er enige om. Den ene kaller 50 000 kroner en enkel produktvideo. Den andre kaller det en standard reklamefilm. Den tredje legger hele det enkle nivået under 40 000. Det er ikke fordi noen tar feil. Det er fordi «videoproduksjon» ikke er én tjeneste, og et tall uten en leveranse ved siden av betyr ingenting.",
       },
       {
         type: "avsnitt",
         tekst:
-          "Den praktiske konsekvensen: to tilbud du har fått på samme film kan være riktig priset begge to, og likevel handle om helt forskjellig arbeid. Jobben din er ikke å finne den laveste prisen, men å finne ut hva de to tilbudene faktisk inneholder.",
+          "Den praktiske konsekvensen: to tilbud dere har fått på samme film kan være riktig priset begge to, og likevel handle om helt forskjellig arbeid. Jobben deres er ikke å finne den laveste prisen, men å finne ut hva de to tilbudene faktisk inneholder.",
       },
       {
         type: "overskrift",
@@ -2577,7 +2577,7 @@ export const artikler: Artikkel[] = [
         type: "liste",
         punkter: [
           "Antall produksjonsdager. Én dag på lokasjon er den største enkeltposten i de fleste tilbud. To dager er sjelden dobbelt så dyrt, men det er alltid dyrere.",
-          "Hvor mange som må være til stede. Én person med kamera koster én ting. Fotograf, lydtekniker, regissør og lyssetter koster noe annet — og noen filmer krever det.",
+          "Hvor mange som må være til stede. Én person med kamera koster én ting. Fotograf, lydtekniker, regissør og lyssetter koster noe annet, og noen filmer krever det.",
           "Lokasjon og medvirkende. Leid lokale, skuespillere og statister er poster som legges oppå produksjonen, og de kan fort bli de tyngste.",
           "Hvor mye etterarbeid filmen krever. Klipp og farge på en enkel film er timer. Animasjon, grafikk, voice-over og musikk som må klareres, er dager.",
         ],
@@ -2585,7 +2585,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Kompleksitet i etterarbeidet er den posten folk undervurderer oftest. Selve opptaket er en dag du kan se; etterarbeidet er en uke du ikke ser.",
+          "Kompleksitet i etterarbeidet er den posten folk undervurderer oftest. Selve opptaket er en dag dere kan se. Etterarbeidet er en uke dere ikke ser.",
       },
       {
         type: "medier",
@@ -2604,7 +2604,7 @@ export const artikler: Artikkel[] = [
           },
         ],
         bildetekst:
-          "To ferdige reklamefilmer, 15 og 4 sekunder. Lengden sier lite om prisen — antall opptaksdager og mengden etterarbeid gjør.",
+          "To ferdige reklamefilmer, 15 og 4 sekunder. Lengden sier lite om prisen. Antall opptaksdager og mengden etterarbeid gjør.",
       },
       {
         type: "overskrift",
@@ -2620,7 +2620,7 @@ export const artikler: Artikkel[] = [
         type: "liste",
         punkter: [
           "Hold lokasjonen selv. Egne lokaler, en butikk, et lager eller en kundes lokaler koster ingenting å leie.",
-          "Still med egne folk. Ansatte foran kamera i stedet for skuespillere gjør filmen billigere — og som regel mer troverdig.",
+          "Still med egne folk. Ansatte foran kamera i stedet for skuespillere gjør filmen billigere, og som regel mer troverdig.",
           "Samle flere leveranser på samme dag. Er teamet først rigget, koster den femte filmen langt mindre enn den første.",
           "Bestem formatene på forhånd. Skal filmen brukes både på nettsiden, i annonser og på Instagram, er det billigere å planlegge for det enn å klippe om i etterkant.",
         ],
@@ -2635,7 +2635,7 @@ export const artikler: Artikkel[] = [
         punkter: [
           "Hvor mange opptaksdager ligger inne i prisen?",
           "Hvor mange ferdige filmer får vi, og i hvilke formater?",
-          "Hvem står på settet — egne ansatte eller innleide frilansere?",
+          "Hvem står på settet: egne ansatte eller innleide frilansere?",
           "Hvor mange runder med endringer er inkludert før det koster ekstra?",
           "Hvem eier det ferdige materialet, og hva kan vi bruke det til?",
         ],
@@ -2652,7 +2652,7 @@ export const artikler: Artikkel[] = [
       },
       {
         type: "avsnitt",
-        tekst: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Hva et prosjekt faktisk lander på avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.`,
+        tekst: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Hva et prosjekt faktisk lander på, avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.`,
         lenker: [{ frase: "Enkeltprosjekter", sti: "/reklamefilm" }],
       },
       {
@@ -2695,7 +2695,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "En enkelt film dekker ett budskap på ett tidspunkt. Skal dere være synlige gjennom året, blir fire enkeltprosjekter dyrere enn tolv måneder med løpende produksjon — og det er som regel der regnestykket faktisk avgjøres.",
+          "En enkelt film dekker ett budskap på ett tidspunkt. Skal dere være synlige gjennom året, blir fire enkeltprosjekter dyrere enn tolv måneder med løpende produksjon, og det er som regel der regnestykket faktisk avgjøres.",
       },
     ],
     lesVidere: [
@@ -2712,11 +2712,11 @@ export const artikler: Artikkel[] = [
     tilleggsfaq: [
       {
         sporsmal: "Hvorfor spriker tilbudene så mye på den samme filmen?",
-        svar: "Fordi «en film» ikke er en definert leveranse. Det ene tilbudet kan være én person med kamera i tre timer og en enkel klipp. Det andre kan være et team på fire, to opptaksdager, manus, farge, lyd og fem ferdige formater. Begge er reklamefilm. Be om antall opptaksdager, antall folk på settet og antall ferdige leveranser skriftlig — da blir prisene sammenlignbare med én gang.",
+        svar: "Fordi «en film» ikke er en definert leveranse. Det ene tilbudet kan være én person med kamera i tre timer og en enkel klipp. Det andre kan være et team på fire, to opptaksdager, manus, farge, lyd og fem ferdige formater. Begge er reklamefilm. Be om antall opptaksdager, antall folk på settet og antall ferdige leveranser skriftlig. Da blir prisene sammenlignbare med én gang.",
       },
       {
         sporsmal: "Kommer annonsebudsjett i tillegg til produksjonsprisen?",
-        svar: "Ja, hos de aller fleste. Produksjonsprisen dekker å lage filmen. Skal den vises som annonse på Facebook, Instagram, YouTube eller TV, betaler dere visningene separat, og de pengene går til plattformen — ikke til produsenten. Regn det som en egen post når dere setter budsjettet, og avklar hvem som skal sette opp og følge annonsen.",
+        svar: "Ja, hos de aller fleste. Produksjonsprisen dekker å lage filmen. Skal den vises som annonse på Facebook, Instagram, YouTube eller TV, betaler dere visningene separat, og de pengene går til plattformen, ikke til produsenten. Regn det som en egen post når dere setter budsjettet, og avklar hvem som skal sette opp og følge annonsen.",
       },
     ],
   },
@@ -2756,12 +2756,12 @@ export const artikler: Artikkel[] = [
     },
     tittel: "Hva er en produksjonsdag?",
     beskrivelse:
-      "Én dag, ett team, en måned med innhold. Hva som skjer før, under og etter — og hva dere sitter igjen med når dagen er over.",
+      "Én dag, ett team, en måned med innhold. Hva som skjer før, under og etter, og hva dere sitter igjen med når dagen er over.",
     publisert: "2026-09-29",
     blokker: [
       {
         type: "avsnitt",
-        tekst: `En produksjonsdag er én dag der et filmteam kommer til dere og produserer innholdet for en hel måned. Hos oss er produksjonsmålet ${tilbud.videoerPerManed} ferdig redigerte videoer fra den ene dagen, og selve dagen tar som regel noen timer — ikke hele arbeidsdagen.`,
+        tekst: `En produksjonsdag er én dag der et filmteam kommer til dere og produserer innholdet for en hel måned. Hos oss er produksjonsmålet ${tilbud.videoerPerManed} ferdig redigerte videoer fra den ene dagen, og selve dagen tar som regel noen timer, ikke hele arbeidsdagen.`,
       },
       {
         type: "avsnitt",
@@ -2781,7 +2781,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Derfor er den femte filmen på en dag mye billigere enn den første. Og derfor er en dag den enheten som gir mest innhold per krone — forutsatt at dagen er planlagt for det.",
+          "Derfor er den femte filmen på en dag mye billigere enn den første. Og derfor er en dag den enheten som gir mest innhold per krone, forutsatt at dagen er planlagt for det.",
       },
       {
         type: "medier",
@@ -2810,12 +2810,12 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Dagen er planlagt før noen slår på et kamera. Vi går gjennom det dere allerede har publisert og måler hva som faktisk har fungert — hvilke formater, lengder og motiver som får rekkevidde. Et typisk grunnlag er rundt hundre publiseringer over fire måneder.",
+          "Dagen er planlagt før noen slår på et kamera. Vi går gjennom det dere allerede har publisert og måler hva som faktisk har fungert: hvilke formater, lengder og motiver som får rekkevidde. Et typisk grunnlag er rundt hundre publiseringer over fire måneder.",
       },
       {
         type: "avsnitt",
         tekst:
-          "Funnene blir til navngitte innholdsserier med konkrete filmer, og de blir til en kjøreplan dere får på forhånd. Kjøreplanen sier hvem som skal være med, hvor vi filmer, og hva som eventuelt må klargjøres før vi kommer.",
+          "Funnene blir til navngitte innholdsserier med konkrete filmer, og de blir til en kjøreplan dere får på forhånd. Kjøreplanen sier hvem som skal være med, hvor vi filmer og hva som eventuelt må klargjøres før vi kommer.",
         lenker: [
           { frase: "navngitte innholdsserier", sti: "/innholdsproduksjon" },
         ],
@@ -2830,7 +2830,7 @@ export const artikler: Artikkel[] = [
         punkter: [
           "Vi stiller med alt: kamera, objektiver, lys, lyd og stativ. Dere trenger ikke eget utstyr.",
           "Vi filmer som regel hos dere. Det er der folkene, produktene og lokalene er, og det er det som gjør innholdet gjenkjennelig.",
-          "Vi filmer de som faktisk jobber der, og helst ikke bare ledelsen. Vi bruker ikke skuespillere.",
+          "Vi filmer dem som faktisk jobber der, og helst ikke bare ledelsen. Vi bruker ikke skuespillere.",
           "Vi rigger om mellom oppsettene etter kjøreplanen, slik at én dag dekker flere serier og ikke bare én.",
           "Stillbilder tas ved behov, ikke som en fast leveranse. Kapasiteten deles med video, og derfor er videotallet et produksjonsmål og ikke en garanti.",
         ],
@@ -2872,7 +2872,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Videoene leveres stående i 9:16. Skal noe brukes på skjerm i butikk, i en annonse, på nettsiden eller på trykk, tilpasser vi det eller produserer for det — si fra i planleggingen, så er det med i kjøreplanen.",
+          "Videoene leveres stående i 9:16. Skal noe brukes på skjerm i butikk, i en annonse, på nettsiden eller på trykk, tilpasser vi det eller produserer for det. Si fra i planleggingen, så er det med i kjøreplanen.",
       },
       {
         type: "overskrift",
@@ -2915,11 +2915,11 @@ export const artikler: Artikkel[] = [
     tilleggsfaq: [
       {
         sporsmal: "Blir ikke alt likt når det filmes på samme dag?",
-        svar: "Det er den vanligste innvendingen, og den er berettiget hvis dagen ikke er planlagt. Derfor rigger vi om mellom oppsettene: ulike lokasjoner i bygget, ulike personer, ulike motiver og ulike lengder. Kjøreplanen er bygget rundt flere innholdsserier, ikke én. Klær, lys og bakgrunn varierer med oppsettet, og materialet publiseres over fire uker — ikke samme uke.",
+        svar: "Det er den vanligste innvendingen, og den er berettiget hvis dagen ikke er planlagt. Derfor rigger vi om mellom oppsettene: ulike lokasjoner i bygget, ulike personer, ulike motiver og ulike lengder. Kjøreplanen er bygget rundt flere innholdsserier, ikke én. Klær, lys og bakgrunn varierer med oppsettet, og materialet publiseres over fire uker, ikke samme uke.",
       },
       {
         sporsmal: "Må vi stenge mens dere filmer?",
-        svar: "Nei. Vi filmer som regel mens driften går som normalt, og det er ofte det som gjør innholdet troverdig. Er det et oppsett som krever ro eller et tomt lokale, legger vi det til et tidspunkt som passer — før åpning, etter stengetid eller i en rolig time. Det avklares i kjøreplanen dere får på forhånd, slik at ingen blir overrasket på dagen.",
+        svar: "Nei. Vi filmer som regel mens driften går som normalt, og det er ofte det som gjør innholdet troverdig. Er det et oppsett som krever ro eller et tomt lokale, legger vi det til et tidspunkt som passer: før åpning, etter stengetid eller i en rolig time. Det avklares i kjøreplanen dere får på forhånd, slik at ingen blir overrasket på dagen.",
       },
     ],
   },
@@ -2977,7 +2977,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Frilanser er det billigste alternativet på papiret, og det stemmer så lenge oppgaven er én film. Skal det produseres innhold hver måned, året rundt, blir de tre alternativene overraskende like i pris — og da er det ikke prisen som avgjør, men hvor mye av jobben dere selv må holde i.",
+          "Frilanser er det billigste alternativet på papiret, og det stemmer så lenge oppgaven er én film. Skal det produseres innhold hver måned, året rundt, blir de tre alternativene overraskende like i pris, og da er det ikke prisen som avgjør, men hvor mye av jobben dere selv må holde i.",
       },
       {
         type: "overskrift",
@@ -2995,7 +2995,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Regnestykket for en ansatt står i en egen artikkel, med tall fra Altinn og SSB. Den skal ikke gjentas her — under handler det om frilanseren, som er alternativet ingen har regnet på.",
+          "Regnestykket for en ansatt står i en egen artikkel, med tall fra Altinn og SSB. Den skal ikke gjentas her. Under handler det om frilanseren, som er alternativet ingen har regnet på.",
         lenker: [
           {
             frase: "Regnestykket for en ansatt",
@@ -3025,7 +3025,7 @@ export const artikler: Artikkel[] = [
       {
         type: "kilde",
         tekst:
-          "Satsene er Norsk Journalistlags minstesatser for frilansere, oppdatert 17.04.2026. De gjelder journalistisk arbeid og er minstesatser, ikke markedspris — kommersiell produksjon ligger som regel høyere. NJ oppgir samtidig at driftskostnadene de er beregnet ut fra er rundt 200 000 kroner i året for fotografer og 300 000 for videojournalister, siden utstyret er dyrt.",
+          "Satsene er Norsk Journalistlags minstesatser for frilansere, oppdatert 17.04.2026. De gjelder journalistisk arbeid og er minstesatser, ikke markedspris. Kommersiell produksjon ligger som regel høyere. NJ oppgir samtidig at driftskostnadene de er beregnet ut fra er rundt 200 000 kroner i året for fotografer og 300 000 for videojournalister, siden utstyret er dyrt.",
         url: "https://www.nj.no/nj-frilans/minstesatser-for-frilansere/",
       },
       {
@@ -3040,7 +3040,7 @@ export const artikler: Artikkel[] = [
           },
         ],
         bildetekst:
-          "Profilfilm for et rådgivningsselskap. 39 sekunder — filmet på én dag, klippet over flere.",
+          "Profilfilm for et rådgivningsselskap. 39 sekunder, filmet på én dag og klippet over flere.",
       },
       {
         type: "overskrift",
@@ -3054,7 +3054,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Med satsene over betyr det rundt 25 000 til 33 000 kroner for én måneds produksjon — før planlegging, før research på hva som faktisk har fungert i kanalene deres, og før noen har publisert noe.",
+          "Med satsene over betyr det rundt 25 000 til 33 000 kroner for én måneds produksjon, før planlegging, før research på hva som faktisk har fungert i kanalene deres, og før noen har publisert noe.",
       },
       {
         type: "avsnitt",
@@ -3079,7 +3079,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Fritaket gjelder bare når arbeidet er utført som ledd i selvstendig næringsvirksomhet. Får dere en faktura fra et registrert foretak, er dere trygge. Betaler dere et honorar til en privatperson, kommer avgiften i tillegg til honoraret — og da er ikke frilanseren så mye billigere som tilbudet så ut til.",
+          "Fritaket gjelder bare når arbeidet er utført som ledd i selvstendig næringsvirksomhet. Får dere en faktura fra et registrert foretak, er dere trygge. Betaler dere et honorar til en privatperson, kommer avgiften i tillegg til honoraret, og da er ikke frilanseren så mye billigere som tilbudet så ut til.",
       },
       {
         type: "kilde",
@@ -3130,7 +3130,7 @@ export const artikler: Artikkel[] = [
         punkter: [
           "Dere har én konkret leveranse, ikke et løpende behov.",
           "Noen hos dere har allerede ansvaret for plan, tekst og publisering, og mangler bare noen som filmer.",
-          "Dere trenger en spesifikk kompetanse for ett oppdrag — drone, animasjon, en bestemt stil.",
+          "Dere trenger en spesifikk kompetanse for ett oppdrag: drone, animasjon, en bestemt stil.",
           "Behovet svinger så mye at en fast avtale ville stått ubrukt halve året.",
         ],
       },
@@ -3171,11 +3171,11 @@ export const artikler: Artikkel[] = [
     tilleggsfaq: [
       {
         sporsmal: "Kan vi bruke frilanser og byrå om hverandre?",
-        svar: "Ja, og mange gjør det. Den vanligste kombinasjonen er en fast avtale for det løpende innholdet og en frilanser inn på enkeltoppdrag som krever noe spesielt — drone, animasjon, en fotograf med en bestemt stil. Det som skaper trøbbel er ikke kombinasjonen, men at ingen eier helheten: to leverandører som leverer i hver sin stil, i hver sine formater, uten en felles plan, gir et arkiv som ikke henger sammen. Bestem hvem som eier planen før dere bestiller noe.",
+        svar: "Ja, og mange gjør det. Den vanligste kombinasjonen er en fast avtale for det løpende innholdet og en frilanser inn på enkeltoppdrag som krever noe spesielt: drone, animasjon, en fotograf med en bestemt stil. Det som skaper trøbbel, er ikke kombinasjonen, men at ingen eier helheten: to leverandører som leverer i hver sin stil, i hver sine formater, uten en felles plan, gir et arkiv som ikke henger sammen. Bestem hvem som eier planen før dere bestiller noe.",
       },
       {
         sporsmal: "Hvem eier materialet en frilanser har laget for oss?",
-        svar: "Det avhenger av hva dere har avtalt, og det er verdt å avklare skriftlig før oppdraget starter. Åndsverkloven gir opphavsretten til den som har skapt verket, og en betaling for et oppdrag overfører ikke automatisk full bruksrett til alt, i alle kanaler, for all tid. Be om at avtalen sier konkret hva materialet kan brukes til: nettside, annonser, skjerm i butikk, trykk, og hvor lenge. Be også om råmaterialet hvis dere vil kunne klippe om senere — det følger sjelden med av seg selv.",
+        svar: "Det avhenger av hva dere har avtalt, og det er verdt å avklare skriftlig før oppdraget starter. Åndsverkloven gir opphavsretten til den som har skapt verket, og en betaling for et oppdrag overfører ikke automatisk full bruksrett til alt, i alle kanaler, for all tid. Be om at avtalen sier konkret hva materialet kan brukes til: nettside, annonser, skjerm i butikk, trykk og hvor lenge. Be også om råmaterialet hvis dere vil kunne klippe om senere. Det følger sjelden med av seg selv.",
       },
     ],
   },
@@ -3214,12 +3214,12 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "En kjede har ikke det samme problemet som en enkeltbutikk. Utfordringen er sjelden å lage innhold — den er å lage innhold som fungerer for femti lokasjoner og et halvt dusin flater, uten å sette i gang femti produksjoner.",
+          "En kjede har ikke det samme problemet som en enkeltbutikk. Utfordringen er sjelden å lage innhold. Den er å lage innhold som fungerer for femti lokasjoner og et halvt dusin flater, uten å sette i gang femti produksjoner.",
       },
       {
         type: "avsnitt",
         tekst:
-          "Løsningen de fleste kjeder lander på er den samme: produser sentralt, lever i mange formater, og la lokasjonene bruke materialet i stedet for å lage sitt eget.",
+          "Løsningen de fleste kjeder lander på, er den samme: produser sentralt, lever i mange formater og la lokasjonene bruke materialet i stedet for å lage sitt eget.",
       },
       {
         type: "overskrift",
@@ -3230,14 +3230,14 @@ export const artikler: Artikkel[] = [
         type: "liste",
         punkter: [
           "Volum. Det som holder for én butikk i en måned, er tomt etter en uke når femti skal dele på det.",
-          "Flater. Innholdet skal ikke bare i feeden. Det skal på skjerm i butikk, på skjerm i kjøpesenteret, i annonser, på nettsiden og i kampanjer — og hver flate har sitt format.",
-          "Samme uttrykk overalt. Femti lokasjoner som lager sitt eget blir femti ulike merkevarer, og den kostnaden dukker ikke opp i noe budsjett.",
+          "Flater. Innholdet skal ikke bare i feeden. Det skal på skjerm i butikk, på skjerm i kjøpesenteret, i annonser, på nettsiden og i kampanjer, og hver flate har sitt format.",
+          "Samme uttrykk overalt. Femti lokasjoner som lager sitt eget, blir femti ulike merkevarer, og den kostnaden dukker ikke opp i noe budsjett.",
         ],
       },
       {
         type: "avsnitt",
         tekst:
-          "Det tredje er det dyreste, og det som oppdages sist. Et bildespråk som sprekker opp er vanskelig å samle igjen.",
+          "Det tredje er det dyreste, og det som oppdages sist. Et bildespråk som sprekker opp, er vanskelig å samle igjen.",
       },
       {
         type: "medier",
@@ -3261,22 +3261,22 @@ export const artikler: Artikkel[] = [
       {
         type: "overskrift",
         niva: 2,
-        tekst: "Sentralt eller lokalt — hvem skal publisere?",
+        tekst: "Sentralt eller lokalt: hvem skal publisere?",
       },
       {
         type: "avsnitt",
         tekst:
-          "Dette er valget som avgjør resten. Lar dere hver lokasjon styre sin egen konto, får dere nærhet og lokal tilstedeværelse — og et uttrykk som spriker, en kvalitet som varierer med hvem som er på jobb, og ingen som kan svare på hva kjeden faktisk publiserte forrige måned.",
+          "Dette er valget som avgjør resten. Lar dere hver lokasjon styre sin egen konto, får dere nærhet og lokal tilstedeværelse, men også et uttrykk som spriker, en kvalitet som varierer med hvem som er på jobb, og ingen som kan svare på hva kjeden faktisk publiserte forrige måned.",
       },
       {
         type: "avsnitt",
         tekst:
-          "Styrer markedsavdelingen alt sentralt, får dere kontroll og konsistens — men innholdet mister det lokale, og butikksjefene mister et verktøy de faktisk har bruk for.",
+          "Styrer markedsavdelingen alt sentralt, får dere kontroll og konsistens, men innholdet mister det lokale, og butikksjefene mister et verktøy de faktisk har bruk for.",
       },
       {
         type: "avsnitt",
         tekst:
-          "Den vanligste mellomløsningen er at produksjonen er sentral og publiseringen lokal: ett arkiv alle henter fra, med føringer for hva som kan endres. Kjedene vi produserer for gjør det slik — markedsteamet hos kunden styrer kanalene selv, og vi leverer innholdet de bruker.",
+          "Den vanligste mellomløsningen er at produksjonen er sentral og publiseringen lokal: ett arkiv alle henter fra, med føringer for hva som kan endres. Kjedene vi produserer for gjør det slik: markedsteamet hos kunden styrer kanalene selv, og vi leverer innholdet de bruker.",
         lenker: [{ frase: "Kjedene vi produserer for", sti: "/kjeder" }],
       },
       {
@@ -3287,12 +3287,12 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Det som skiller kjedeproduksjon fra vanlig innholdsproduksjon er ikke motivet. Det er at hver film må ut i flere utsnitt fordi flatene er ulike — stående til sosiale medier, liggende til skjerm, kvadratisk til annonser, og egne oppløsninger til skjermene i butikk og kjøpesenter.",
+          "Det som skiller kjedeproduksjon fra vanlig innholdsproduksjon, er ikke motivet. Det er at hver film må ut i flere utsnitt fordi flatene er ulike: stående til sosiale medier, liggende til skjerm, kvadratisk til annonser og egne oppløsninger til skjermene i butikk og kjøpesenter.",
       },
       {
         type: "avsnitt",
         tekst:
-          "For Egon leverer vi seks formater per film. Det er ikke seks filmer, det er én film beskåret og tilpasset seks ganger — og det er en beslutning som må tas før opptaket, ikke etter. Filmes det uten at utsnittene er planlagt, finnes ikke bildet som skal til for det stående formatet.",
+          "For Egon leverer vi seks formater per film. Det er ikke seks filmer, det er én film beskåret og tilpasset seks ganger, og det er en beslutning som må tas før opptaket, ikke etter. Filmes det uten at utsnittene er planlagt, finnes ikke bildet som skal til for det stående formatet.",
       },
       {
         type: "avsnitt",
@@ -3332,7 +3332,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Ikke ved å filme i hver butikk. For Egon produserer vi til nærmere 50 restauranter fra sør til nord, fra én fast produksjonsdag i måneden. Det som gjør det mulig er at maten, menyen og uttrykket er felles — det lokale ligger i hvem som publiserer, ikke i hvor kameraet sto.",
+          "Ikke ved å filme i hver butikk. For Egon produserer vi til nærmere 50 restauranter fra sør til nord, fra én fast produksjonsdag i måneden. Det som gjør det mulig, er at maten, menyen og uttrykket er felles. Det lokale ligger i hvem som publiserer, ikke i hvor kameraet sto.",
       },
       {
         type: "avsnitt",
@@ -3341,7 +3341,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Det er den egentlige skalaen i modellen. Ikke flere leverandører, men flere dager med det samme teamet — slik at butikkinnhold og reklamefilm får samme bildespråk.",
+          "Det er den egentlige skalaen i modellen. Ikke flere leverandører, men flere dager med det samme teamet, slik at butikkinnhold og reklamefilm får samme bildespråk.",
       },
       {
         type: "overskrift",
@@ -3352,11 +3352,11 @@ export const artikler: Artikkel[] = [
         type: "liste",
         punkter: [
           "Hvilke flater skal innholdet ut på, og i hvilke formater og oppløsninger?",
-          "Hvem publiserer — markedsavdelingen, butikkene, eller begge?",
+          "Hvem publiserer: markedsavdelingen, butikkene eller begge?",
           "Hvor mange produksjonsdager i måneden trenger dere, og skal de ligge på samme sted?",
           "Skal reklamefilm og løpende innhold komme fra samme team?",
           "Hvem svarer på kommentarer og meldinger i kanalene?",
-          "Hva skal skje med materialet etterpå — hvem eier det, og hvor lagres det?",
+          "Hva skal skje med materialet etterpå, hvem eier det og hvor lagres det?",
         ],
       },
       {
@@ -3376,7 +3376,7 @@ export const artikler: Artikkel[] = [
       },
       {
         sporsmal: "Hva gjør vi med butikker som allerede har egen konto?",
-        svar: "La dem beholde den, men gi dem noe å publisere. Det vanligste problemet er ikke at butikkene har egne kontoer — det er at de ikke har materiale, og derfor lager sitt eget med mobilen. Et felles arkiv de kan hente fra løser mesteparten av det. Legg ved enkle føringer for hva som kan endres og hva som ikke kan det, så beholder dere uttrykket uten å ta fra butikkene verktøyet.",
+        svar: "La dem beholde den, men gi dem noe å publisere. Det vanligste problemet er ikke at butikkene har egne kontoer. Det er at de ikke har materiale, og derfor lager sitt eget med mobilen. Et felles arkiv de kan hente fra løser mesteparten av det. Legg ved enkle føringer for hva som kan endres og hva som ikke kan det, så beholder dere uttrykket uten å ta fra butikkene verktøyet.",
       },
     ],
   },
@@ -3409,13 +3409,13 @@ export const artikler: Artikkel[] = [
     tittel: "Sosiale medier-strategi: hva den faktisk må inneholde",
     metaTittel: "Sosiale medier-strategi: hva den må inneholde",
     beskrivelse:
-      "Seks steg, i den rekkefølgen de gjøres. Malen vi selv bruker når vi legger en produksjonsplan — ikke en lærebok i hva sosiale medier er.",
+      "Seks steg, i den rekkefølgen de gjøres. Malen vi selv bruker når vi legger en produksjonsplan, ikke en lærebok i hva sosiale medier er.",
     publisert: "2026-09-29",
     blokker: [
       {
         type: "avsnitt",
         tekst:
-          "En strategi som ikke ender i en produksjonsplan er et dokument. Den skal svare på hva som skal lages, av hvem, hvor ofte, i hvilke formater, og hvordan dere vet om det virker. Klarer den ikke det, er den ikke en strategi — den er en presentasjon.",
+          "En strategi som ikke ender i en produksjonsplan, er et dokument. Den skal svare på hva som skal lages, av hvem, hvor ofte, i hvilke formater og hvordan dere vet om det virker. Klarer den ikke det, er den ikke en strategi. Den er en presentasjon.",
       },
       {
         type: "avsnitt",
@@ -3435,12 +3435,12 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Et brukbart grunnlag er rundt hundre publiseringer over fire måneder. Sammenlign median mot median, ikke snitt mot snitt — én post som gikk viralt trekker snittet så mye at resten forsvinner, og da måler dere flaksen i stedet for mønsteret.",
+          "Et brukbart grunnlag er rundt hundre publiseringer over fire måneder. Sammenlign median mot median, ikke snitt mot snitt. Én post som gikk viralt trekker snittet så mye at resten forsvinner, og da måler dere flaksen i stedet for mønsteret.",
       },
       {
         type: "avsnitt",
         tekst:
-          "Se like mye på hva dere allerede kan. Fagartikler dere har skrevet, spørsmål kundene stiller igjen og igjen, ansatte som kan noe andre lurer på. Det sterkeste innholdet er som regel kunnskap dere allerede sitter på — filmet i stedet for skrevet.",
+          "Se like mye på hva dere allerede kan. Fagartikler dere har skrevet, spørsmål kundene stiller igjen og igjen, ansatte som kan noe andre lurer på. Det sterkeste innholdet er som regel kunnskap dere allerede sitter på, filmet i stedet for skrevet.",
       },
       {
         type: "overskrift",
@@ -3450,12 +3450,12 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Kanalvalget er en kapasitetsbeslutning, ikke en målgruppebeslutning. To kanaler gjort ordentlig slår fire gjort halvveis, hver eneste gang. Hver ny kanal krever egne formater, egen tone og egen redigering — og koster like mye som den forrige.",
+          "Kanalvalget er en kapasitetsbeslutning, ikke en målgruppebeslutning. To kanaler gjort ordentlig slår fire gjort halvveis, hver eneste gang. Hver ny kanal krever egne formater, egen tone og egen redigering, og den koster like mye som den forrige.",
       },
       {
         type: "avsnitt",
         tekst:
-          "Velg ut fra hvor publikummet er OG hvor ofte dere realistisk klarer å publisere. En kanal som står stille kommuniserer noe den ikke skulle kommunisert.",
+          "Velg ut fra hvor publikum er, og hvor ofte dere realistisk klarer å publisere. En kanal som står stille, kommuniserer noe den ikke skulle kommunisert.",
       },
       {
         type: "medier",
@@ -3504,7 +3504,7 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Skal en film både i feeden, på nettsiden og på en skjerm, må utsnittene planlegges før kameraet rigges. Filmes det bare liggende, finnes ikke bildet som skal til for det stående formatet — og motsatt.",
+          "Skal en film både i feeden, på nettsiden og på en skjerm, må utsnittene planlegges før kameraet rigges. Filmes det bare liggende, finnes ikke bildet som skal til for det stående formatet, og omvendt.",
       },
       {
         type: "avsnitt",
@@ -3543,17 +3543,17 @@ export const artikler: Artikkel[] = [
       },
       {
         type: "avsnitt",
-        tekst: `Frekvensen betyr mindre enn jevnheten. ${tilbud.posterPerUke} ganger i uka, 52 uker i året, slår fem ganger i uka i tre måneder og så stille. Algoritmene straffer opphold, og de fleste hull oppstår i ferier og i travle perioder — altså akkurat når ingen har tid til å lage noe nytt.`,
+        tekst: `Frekvensen betyr mindre enn jevnheten. ${tilbud.posterPerUke} ganger i uka, 52 uker i året, slår fem ganger i uka i tre måneder og så stille. Algoritmene straffer opphold, og de fleste hull oppstår i ferier og i travle perioder, altså akkurat når ingen har tid til å lage noe nytt.`,
       },
       {
         type: "avsnitt",
         tekst:
-          "Løsningen er å produsere i forkant, ikke å publisere oftere. Et arkiv som er fylt opp tåler en travel måned; en kalender som fylles fortløpende gjør det ikke.",
+          "Løsningen er å produsere i forkant, ikke å publisere oftere. Et arkiv som er fylt opp, tåler en travel måned. En kalender som fylles fortløpende, gjør det ikke.",
       },
       {
         type: "overskrift",
         niva: 2,
-        tekst: "Steg 6: Bestem hva dere skal måle — og hva dere ikke skal måle",
+        tekst: "Steg 6: Bestem hva dere skal måle, og hva dere ikke skal måle",
       },
       {
         type: "avsnitt",
@@ -3599,11 +3599,11 @@ export const artikler: Artikkel[] = [
     tilleggsfaq: [
       {
         sporsmal: "Hvor ofte bør strategien revideres?",
-        svar: "Selve retningen tåler et år. Det som bør gjennomgås oftere er hvilke serier som virker — et kvartal er en passende rytme, fordi tallene svinger for mye fra uke til uke til å si noe om en måned alene. En gjennomgang på tjue minutter der dere ser på hva som har fungert og hva som ikke har det, er som regel nok. Å skrive strategien om fra bunnen hvert halvår er et tegn på at den var for detaljert til å begynne med.",
+        svar: "Selve retningen tåler et år. Det som bør gjennomgås oftere, er hvilke serier som virker. Et kvartal er en passende rytme, fordi tallene svinger for mye fra uke til uke til å si noe om en måned alene. En gjennomgang på tjue minutter der dere ser på hva som har fungert og hva som ikke har det, er som regel nok. Å skrive strategien om fra bunnen hvert halvår er et tegn på at den var for detaljert til å begynne med.",
       },
       {
         sporsmal: "Trenger vi en strategi hvis vi bare skal publisere litt?",
-        svar: "Ja, men den blir kort. Skal dere publisere én gang i uka, trenger dere fortsatt å vite hvilke to eller tre serier det skal være, hvilket format de har, og hvem som lager dem. Det tar en halv side. Det som ikke fungerer er å publisere litt uten å ha bestemt noe — da blir innholdet det noen rekker den dagen, og det er den varianten som koster mest tid per publisering og gir minst igjen.",
+        svar: "Ja, men den blir kort. Skal dere publisere én gang i uka, trenger dere fortsatt å vite hvilke to eller tre serier det skal være, hvilket format de har, og hvem som lager dem. Det tar en halv side. Det som ikke fungerer, er å publisere litt uten å ha bestemt noe. Da blir innholdet det noen rekker den dagen, og det er den varianten som koster mest tid per publisering og gir minst igjen.",
       },
     ],
   },
@@ -3754,7 +3754,7 @@ export const artikler: Artikkel[] = [
           "Timer på stedet. Den største posten. Få fotografer tar under én time, og mange priser i halve og hele dager.",
           "Antall ferdige bilder. 40 bilder og 300 bilder fra samme kveld er ikke samme jobb. Hvert bilde skal velges ut og redigeres.",
           "Leveringstid. Bilder samme kveld eller dagen etter krever at noen redigerer mens arrangementet pågår, eller rett etter. Det koster.",
-          "Tidspunkt. Konferanser går på dagtid, mens firmafester og lanseringer ofte går om kvelden. Noen oppgir priser som gjelder hverdager — Sørensen Foto gjør det — så spør om kveld og helg er med i prisen dere får.",
+          "Tidspunkt. Konferanser går på dagtid, mens firmafester og lanseringer ofte går om kvelden. Noen oppgir priser som gjelder hverdager, slik Sørensen Foto gjør, så spør om kveld og helg er med i prisen dere får.",
         ],
       },
       { type: "overskrift", niva: 2, tekst: "Foto, film eller begge deler?" },
@@ -3780,7 +3780,7 @@ export const artikler: Artikkel[] = [
          */
         type: "avsnitt",
         tekst:
-          "Hos oss dekker som regel én produsent begge deler på samme arrangement. Skal flere ting skje samtidig — scene, mingling og intervjuer i parallell — setter vi på flere folk. Det er antallet på stedet som flytter prisen, ikke om leveransen er foto, film eller begge.",
+          "Hos oss dekker som regel én produsent begge deler på samme arrangement. Skal flere ting skje samtidig, som scene, mingling og intervjuer i parallell, setter vi på flere folk. Det er antallet på stedet som flytter prisen, ikke om leveransen er foto, film eller begge.",
       },
       {
         type: "avsnitt",
@@ -3947,7 +3947,7 @@ export const artikler: Artikkel[] = [
       },
       {
         sporsmal: "Hvor mange bilder får vi fra et arrangement?",
-        svar: "Det avhenger av tiden på stedet. Hos Tolustudio får du for eksempel 20–40 bilder fra én time, 60–120 fra to–tre timer og 150–300 fra en halv dag. Spør alltid hvor mange ferdig redigerte bilder som er inkludert i prisen.",
+        svar: "Det avhenger av tiden på stedet. Hos Tolustudio får dere for eksempel 20–40 bilder fra én time, 60–120 fra to–tre timer og 150–300 fra en halv dag. Spør alltid hvor mange ferdig redigerte bilder som er inkludert i prisen.",
       },
       {
         sporsmal: "Kan vi få bildene samme kveld?",

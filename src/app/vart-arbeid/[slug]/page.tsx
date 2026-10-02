@@ -294,7 +294,7 @@ export default async function CaseSide({ params }: Props) {
                       «{k.kundeord.sitat}»
                     </blockquote>
                     <figcaption className="mt-3 text-sm text-blekk-dempet">
-                      — {k.kundeord.sagtAv}
+                      – {k.kundeord.sagtAv}
                     </figcaption>
                   </figure>
                   {/*

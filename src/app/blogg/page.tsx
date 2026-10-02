@@ -94,7 +94,7 @@ export default function Blogg() {
             Om sosiale medier, video og innholdsproduksjon
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-pretty text-blekk-dempet">
-            {sortert.length} artikler om faget vi jobber med — skrevet for å
+            {sortert.length} artikler om faget vi jobber med, skrevet for å
             forklare noe, ikke for å fylle en kalender.
           </p>
         </Container>

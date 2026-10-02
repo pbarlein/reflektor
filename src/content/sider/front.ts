@@ -120,7 +120,7 @@ export const front: Side = {
           { maksTegn: 70 },
         ),
         "front.how.steps[0]": tekst(
-          "Vi planlegger | Før opptak avtaler vi hva måneden skal handle om: sesong, tilbud, folk og produkter. Dere trenger ikke levere manus eller idéer.",
+          "Vi planlegger | Før opptak avtaler vi hva måneden skal handle om: sesong, tilbud, folk og produkter. Dere trenger ikke levere manus eller ideer.",
           {
             maksTegn: 180,
             jobb: "Tittel og forklaring, skilt med |.",

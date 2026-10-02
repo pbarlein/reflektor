@@ -149,7 +149,7 @@ export function Pris() {
                   Kontinuitet
                 </p>
                 <p className="mt-3 text-[1.0625rem] text-pretty text-pa-dyp-dempet sm:mt-4 sm:text-xl">
-                  i sosiale medier — hver uke, hele året.
+                  i sosiale medier – hver uke, hele året.
                 </p>
 
                 {/*

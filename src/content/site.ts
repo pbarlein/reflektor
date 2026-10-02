@@ -112,7 +112,7 @@ export const utenomAbonnementet = {
     {
       tittel: "Innholdsproduksjon",
       tekst:
-        "Oversikt over alt vi lager, og hvordan du velger mellom prosjekt og abonnement.",
+        "Oversikt over alt vi lager, og hvordan dere velger mellom prosjekt og abonnement.",
       pris: "Prosjekt eller fast månedspris",
       sti: "/innholdsproduksjon",
       medie: { slag: "film", sti: "/reels/soulcake" },
@@ -120,7 +120,7 @@ export const utenomAbonnementet = {
     },
   ],
   kjedelinje: {
-    foran: "Jobber du i en kjede?",
+    foran: "Jobber dere i en kjede?",
     sti: "/kjeder",
     tekst: "Foto, video og reklamefilm for kjeder",
   },

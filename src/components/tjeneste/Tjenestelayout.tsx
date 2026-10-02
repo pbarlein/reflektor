@@ -78,7 +78,7 @@ function Kundeord({ slug }: { slug: string }) {
       <blockquote className="border-l-2 border-aksent pl-5">
         <p className="text-lg leading-relaxed text-pretty">«{ord.sitat}»</p>
         <footer className="mt-3 text-sm text-blekk-dempet">
-          — {ord.sagtAv}
+          – {ord.sagtAv}
         </footer>
       </blockquote>
     </div>
@@ -312,7 +312,7 @@ export function Tjenestelayout({
           <Container>
             <Merkelapp som="h2">Fire typer prosjekter</Merkelapp>
             <h3 className="display mt-4 max-w-2xl text-2xl text-balance sm:text-[1.75rem]">
-              Skilt på hvor innholdet skal vises — ikke på hvordan det ser ut
+              Skilt på hvor innholdet skal vises, ikke på hvordan det ser ut
             </h3>
             {/*
               INGEN AVGRENSNINGSTEKST HER LENGER, fjernet 27.09.2026. Navet

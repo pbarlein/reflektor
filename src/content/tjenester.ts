@@ -304,11 +304,11 @@ export const reklamefilm: Tjenesteside = {
   sti: "/reklamefilm",
   tittel: "Reklamefilm for TV, nett og sosiale medier",
   beskrivelse:
-    "Reflektor produserer reklamefilm for TV, nettannonser og sosiale medier. Vi lager filmen — vi kjøper ikke sendetid. Oslo, for hele Norge.",
+    "Reflektor produserer reklamefilm for TV, nettannonser og sosiale medier. Vi lager filmen. Vi kjøper ikke sendetid. Oslo, for hele Norge.",
   h1: "Reklamefilm",
   merkelapp: "Produksjon",
   tjenestetype: "Produksjon av reklamefilm for betalte flater",
-  svar: "En reklamefilm er laget for å vises mot betaling — på TV, som nettannonse eller i sosiale medier. Reflektor står for produksjonen: idé, manus, opptak, klipp, lyd og fargekorrigering. Vi produserer filmen. Vi kjøper ikke sendetid eller annonseplass.",
+  svar: "En reklamefilm er laget for å vises mot betaling: på TV, som nettannonse eller i sosiale medier. Reflektor står for produksjonen: idé, manus, opptak, klipp, lyd og fargekorrigering. Vi produserer filmen. Vi kjøper ikke sendetid eller annonseplass.",
   avgrensning: [
     "Reklamefilm er film dere betaler for å få vist. Skal den i stedet ligge på nettsiden deres eller på en skjerm i butikken, er det ",
     { sti: "/videoproduksjon-i-oslo", tekst: "video til egne flater" },
@@ -326,11 +326,11 @@ export const reklamefilm: Tjenesteside = {
     },
     {
       sporsmal: "Hva koster en reklamefilm?",
-      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nDere kan påvirke tallet selv. Holder dere lokasjon og eventuelle statister eller skuespillere, går prisen ned — og på en reklamefilm er det ofte de to postene som veier mest.`,
+      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster, avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nDere kan påvirke tallet selv. Holder dere lokasjon og eventuelle statister eller skuespillere, går prisen ned, og på en reklamefilm er det ofte de to postene som veier mest.`,
     },
     {
       sporsmal: "Hva skiller en reklamefilm fra en vanlig bedriftsvideo?",
-      svar: "Hvem som ser den, og hvorfor. En reklamefilm vises for folk som ikke lette etter dere — den må fange oppmerksomhet den ikke har fått på forhånd, og den betales per visning. En bedriftsvideo på deres egen nettside møter noen som allerede er der og allerede er interessert. Det første krever en idé som stopper skrollingen. Det andre krever klarhet.",
+      svar: "Hvem som ser den, og hvorfor. En reklamefilm vises for folk som ikke lette etter dere. Den må fange oppmerksomhet den ikke har fått på forhånd, og den betales per visning. En bedriftsvideo på deres egen nettside møter noen som allerede er der og allerede er interessert. Det første krever en idé som stopper skrollingen. Det andre krever klarhet.",
       punkter: [
         "Reklamefilm: betalt flate, kort, må bryte gjennom",
         "Video på egne flater: gratis flate, kan være lengre, skal forklare",
@@ -340,7 +340,7 @@ export const reklamefilm: Tjenesteside = {
       sporsmal: "Hvordan foregår en produksjon?",
       svar: "Sju steg, og dere er med på alle de avgjørende. Vi begynner med et introduksjonsmøte, og dere får et løsningsforslag med pris før noe settes i gang.",
       punkter: [
-        "Introduksjonsmøte — hva skal filmen gjøre?",
+        "Introduksjonsmøte: hva skal filmen gjøre?",
         "Løsningsforslag fra oss, med pris",
         "Gjennomgang og korrigeringer sammen med dere",
         "Koordinering av statister, skuespillere og lokasjon",
@@ -361,7 +361,7 @@ export const reklamefilm: Tjenesteside = {
      */
     {
       sporsmal: "Hvem har Reflektor produsert for?",
-      svar: "Reflektor har laget reklamefilm for Vitusapotek, Peppes Pizza og Samlerhuset. TV-reklamen for Vitusapotek i forbindelse med Skal vi danse, og for Peppes i forbindelse med Premier League, er begge laget av oss. Utover reklamefilm har vi produsert foto og video for blant andre Anton Sport, The Well, Egon og Baker Brun.",
+      svar: "Reflektor har laget reklamefilm for Vitusapotek, Peppes Pizza og Samlerhuset. Vi har laget TV-reklamen for Vitusapotek i forbindelse med Skal vi danse, og for Peppes i forbindelse med Premier League. Utover reklamefilm har vi produsert foto og video for blant andre Anton Sport, The Well, Egon og Baker Brun.",
       lenker: [
         { sti: "/kjeder", tekst: "Foto, video og reklamefilm for kjeder" },
       ],
@@ -378,7 +378,7 @@ export const reklamefilm: Tjenesteside = {
     },
     {
       sporsmal: "Trenger vi et manus før vi tar kontakt?",
-      svar: "Nei. De fleste kommer med et mål, ikke et manus — «vi skal lansere noe», «vi skal inn på TV til høsten». Idé og manus er en del av produksjonen.",
+      svar: "Nei. De fleste kommer med et mål, ikke et manus: «vi skal lansere noe», «vi skal inn på TV til høsten». Idé og manus er en del av produksjonen.",
     },
     {
       sporsmal: "Jobber dere utenfor Oslo?",
@@ -475,7 +475,7 @@ export const videoproduksjon: Tjenesteside = {
       sti: "/employer-branding-video-oslo",
       tekst: "employer branding-video",
     },
-    " — et annet publikum, og derfor en annen film. Trenger dere nytt innhold hver måned i stedet for ett prosjekt, er det ",
+    ". Det er et annet publikum, og derfor en annen film. Trenger dere nytt innhold hver måned i stedet for ett prosjekt, er det ",
     { sti: "/", tekst: "SoMe-abonnementet" },
     ".",
   ],
@@ -586,7 +586,7 @@ export const videoproduksjon: Tjenesteside = {
     },
     {
       sporsmal: "Hva koster videoproduksjon?",
-      svar: `Enkeltprosjekter hos oss starter på ${kr(tilbud.fraPrisProsjekt)} kr. Hvor prosjektet lander, avhenger av tre ting: antall opptaksdager, hvor mange som må være på settet, og hvor mye etterarbeid filmen krever. Holder dere lokasjon og medvirkende selv, går prisen ned.\n\nTrenger dere video hver måned og ikke én gang, er løpende produksjon ${kr(tilbud.prisPerManed)} kr/mnd for én produksjonsdag og ${tilbud.videoerPerManed} ferdige videoer.`,
+      svar: `Enkeltprosjekter hos oss starter på ${kr(tilbud.fraPrisProsjekt)} kr. Hvor prosjektet lander, avhenger av tre ting: antall opptaksdager, hvor mange som må være på settet og hvor mye etterarbeid filmen krever. Holder dere lokasjon og medvirkende selv, går prisen ned.\n\nTrenger dere video hver måned og ikke én gang, er løpende produksjon ${kr(tilbud.prisPerManed)} kr/mnd for én produksjonsdag og ${tilbud.videoerPerManed} ferdige videoer.`,
       lenker: [
         {
           sti: "/blogg/hva-koster-videoproduksjon",
@@ -597,11 +597,11 @@ export const videoproduksjon: Tjenesteside = {
     },
     {
       sporsmal: "Hvor mange filmer får vi ut av én dag?",
-      svar: "Det kommer an på kompleksitet og omfang, og vi tilpasser til det hver enkelt kunde faktisk trenger. Er volum viktigere enn produksjonsverdi, er det planleggingen som avgjør — da legger vi dagen opp for å nå et bestemt antall. Til sammenligning er abonnementet bygget på at én produksjonsdag gir 8–10 ferdige videoer, men da filmer vi løpende innhold og rigger ikke om mellom hvert oppsett. Si hva tallet skal være, så planlegger vi mot det.",
+      svar: "Det kommer an på kompleksitet og omfang, og vi tilpasser leveransen til det hver enkelt kunde faktisk trenger. Er volum viktigere enn produksjonsverdi, er det planleggingen som avgjør, og da legger vi dagen opp for å nå et bestemt antall. Til sammenligning er abonnementet bygget på at én produksjonsdag gir 8–10 ferdige videoer, men da filmer vi løpende innhold og rigger ikke om mellom hvert oppsett. Si hva tallet skal være, så planlegger vi mot det.",
     },
     {
       sporsmal: "Hvem lager Reflektor video for?",
-      svar: "Anton Sport, The Well, Peppes Pizza, Egon, Baker Brun, Idun Industri, Selvaag, Retail24, Centropa, Happis og Soulcake — innen retail, restaurant og mat, eiendom, finans og industri. Ikke alle er abonnementskunder.",
+      svar: "Anton Sport, The Well, Peppes Pizza, Egon, Baker Brun, Idun Industri, Selvaag, Retail24, Centropa, Happis og Soulcake. Bransjene er retail, restaurant og mat, eiendom, finans og industri. Ikke alle er abonnementskunder.",
     },
   ],
   faq: [
@@ -619,7 +619,7 @@ export const videoproduksjon: Tjenesteside = {
     },
     {
       sporsmal: "Hvor lang tid tar det?",
-      svar: "Vi leverer som regel innen to uker etter opptaksdagen. Haster det, sier dere fra i planleggingen — ved spesielle behov tilrettelegger vi for raskere leveranse.",
+      svar: "Vi leverer som regel innen to uker etter opptaksdagen. Haster det, sier dere fra i planleggingen. Ved spesielle behov kan vi levere raskere.",
     },
     {
       sporsmal: "Hvor mange versjoner av filmen får vi?",
@@ -698,7 +698,7 @@ export const employerBranding: Tjenesteside = {
   h1: "Employer branding-video",
   merkelapp: "Produksjon",
   tjenestetype: "Produksjon av film for arbeidsgivermerkevare og rekruttering",
-  svar: "Employer branding-video er film som skal få folk til å søke jobb hos dere. Den vises i stillingsannonser, på karrieresiden og i rekrutteringskanaler — ikke til kundene deres, men til dem dere vil ansette. Reflektor filmer hos dere, med de ansatte dere faktisk har.",
+  svar: "Employer branding-video er film som skal få folk til å søke jobb hos dere. Den vises i stillingsannonser, på karrieresiden og i rekrutteringskanaler, ikke til kundene deres, men til dem dere vil ansette. Reflektor filmer hos dere, med de ansatte dere faktisk har.",
   avgrensning: [
     "Her handler det om filmen. Vil dere heller lese om ",
     {
@@ -716,7 +716,7 @@ export const employerBranding: Tjenesteside = {
     },
     {
       sporsmal: "Hvem skal være med i filmen?",
-      svar: "De som faktisk jobber der, og helst ikke bare ledelsen. Vi bruker ikke skuespillere. En arbeidsplass som er satt i scene er lett å gjennomskue, og da mister filmen troverdighet. Vi filmer folk mens de gjør jobben sin.",
+      svar: "De som faktisk jobber der, og helst ikke bare ledelsen. Vi bruker ikke skuespillere. En arbeidsplass som er satt i scene, er lett å gjennomskue, og da mister filmen troverdighet. Vi filmer folk mens de gjør jobben sin.",
       sitat: {
         tekst:
           "Det som virkelig skiller dem ut, er hvor samarbeidsvillige og engasjerte de er. De stiller opp, byr på seg selv, og er rett og slett kjempefine folk man blir glad i.",
@@ -726,7 +726,7 @@ export const employerBranding: Tjenesteside = {
     },
     {
       sporsmal: "Hva koster en employer branding-video?",
-      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nÉn film dekker én stilling. Skal dere fremstå som en attraktiv arbeidsgiver over tid, må folk se dere også i periodene dere ikke lyser ut noe. Kontinuitet er nøkkelen her, og mange velger derfor et løpende samarbeid framfor en enkeltproduksjon.`,
+      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster, avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nÉn film dekker én stilling. Skal dere fremstå som en attraktiv arbeidsgiver over tid, må folk se dere også i periodene dere ikke lyser ut noe. Kontinuitet er nøkkelen her, og mange velger derfor et løpende samarbeid framfor en enkeltproduksjon.`,
     },
     {
       sporsmal: "Hvor skal filmen brukes?",
@@ -742,7 +742,7 @@ export const employerBranding: Tjenesteside = {
   faq: [
     {
       sporsmal: "Må de ansatte snakke til kamera?",
-      svar: "Nei. Mange av de beste rekrutteringsfilmene har ingen som snakker — bare folk som jobber, og tekst som forklarer. Vi avtaler formen på forhånd, og ingen blir satt foran et kamera uten å vite om det.",
+      svar: "Nei. Mange av de beste rekrutteringsfilmene har ingen som snakker, bare folk som jobber og tekst som forklarer. Vi avtaler formen på forhånd, og ingen blir satt foran et kamera uten å vite om det.",
     },
     {
       sporsmal: "Kan vi bruke filmen etter at stillingen er besatt?",
@@ -842,7 +842,7 @@ export const event: Tjenesteside = {
   avgrensning: [
     "Dette er dekning av noe som faktisk skjer. Skal filmen planlegges fra bunnen i stedet, er det ",
     { sti: "/videoproduksjon-i-oslo", tekst: "planlagt videoproduksjon" },
-    " — og skal den vises som betalt annonse, ",
+    ". Skal den vises som betalt annonse, er det ",
     { sti: "/reklamefilm", tekst: "reklamefilm" },
     ".",
   ],
@@ -946,7 +946,7 @@ export const event: Tjenesteside = {
        * tall vi ikke har.
        */
       sporsmal: "Hva koster eventfotograf?",
-      svar: `Eventdekning hos oss starter på ${kr(tilbud.fraPrisProsjekt)} kr. Da filmer vi og tar bilder på samme arrangement: eventvideo, kortere klipp til sosiale medier og 50+ ferdig redigerte bilder. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden, og produksjonsdagen kan legges til et arrangement.\n\nDet som flytter prisen er hvor lenge vi er der, hvor mange som må være til stede samtidig, og hvor mye som skal klippes etterpå.`,
+      svar: `Eventdekning hos oss starter på ${kr(tilbud.fraPrisProsjekt)} kr. Da filmer vi og tar bilder på samme arrangement: eventvideo, kortere klipp til sosiale medier og 50+ ferdig redigerte bilder. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden, og produksjonsdagen kan legges til et arrangement.\n\nDet som flytter prisen, er hvor lenge vi er der, hvor mange som må være til stede samtidig, og hvor mye som skal klippes etterpå.`,
       lenker: [
         {
           sti: "/blogg/hva-koster-eventfotograf",
@@ -956,7 +956,7 @@ export const event: Tjenesteside = {
     },
     {
       sporsmal: "Når får vi materialet?",
-      svar: "Som regel innen to uker. Men der det er essensielt å få deler av leveransen ut samme kveld eller dagen etter, imøtekommer vi som regel det — si fra i planleggingen, så legger vi opp dagen etter det.",
+      svar: "Som regel innen to uker. Må deler av leveransen ut samme kveld eller dagen etter, får vi som regel til det. Si fra i planleggingen, så legger vi opp dagen etter det.",
     },
     {
       /*
@@ -969,8 +969,8 @@ export const event: Tjenesteside = {
        * som regel begge deler hos oss, og de får det til. Setningen sier nå
        * det samme om PRIS, uten å si noe om kvalitet. Se AGENTS.md.
        */
-      sporsmal: "Foto, film, eller begge deler?",
-      svar: "De fleste arrangementer trenger begge. Bilder er raskest ut og enklest å bruke i mange kanaler; film fanger stemningen og taleren. Hos oss dekker som regel én produsent begge deler. Skal flere ting skje samtidig — scene, mingling og intervjuer i parallell — setter vi på flere folk, og da blir jobben større.",
+      sporsmal: "Foto, film eller begge deler?",
+      svar: "De fleste arrangementer trenger begge. Bilder er raskest ut og enklest å bruke i mange kanaler. Film fanger stemningen og taleren. Hos oss dekker som regel én produsent begge deler. Skal flere ting skje samtidig, som scene, mingling og intervjuer i parallell, setter vi på flere folk, og da blir jobben større.",
     },
     {
       sporsmal: "Arrangementer vi dekker",
@@ -999,11 +999,11 @@ export const event: Tjenesteside = {
     },
     {
       sporsmal: "Trenger dere en kjøreplan på forhånd?",
-      svar: "Ja, i grove trekk. Vi trenger å vite når det som må dekkes faktisk skjer — talen, avdukingen, prisutdelingen. Resten løser seg i rommet.",
+      svar: "Ja, i grove trekk. Vi trenger å vite når det som må dekkes faktisk skjer: talen, avdukingen, prisutdelingen. Resten løser seg i rommet.",
     },
     {
       sporsmal: "Kan vi bruke bildene i annonser?",
-      svar: "Ja. Innholdet er deres, med fri bruk. Husk at folk på bildene må ha samtykket til å bli fotografert — det er arrangørens ansvar, og vi hjelper gjerne med hvordan det løses i praksis.",
+      svar: "Ja. Innholdet er deres, med fri bruk. Husk at folk på bildene må ha samtykket til å bli fotografert. Det er arrangørens ansvar, og vi hjelper gjerne med hvordan det løses i praksis.",
     },
   ],
   pris: null,
@@ -1097,11 +1097,11 @@ export const innholdsproduksjon: Tjenesteside = {
   sti: "/innholdsproduksjon",
   tittel: "Innholdsproduksjon | Foto og video for bedrifter",
   beskrivelse:
-    "Innholdsproduksjon fra Reflektor: reklamefilm, video til egne flater, employer branding og eventdekning — som prosjekt eller fast månedspris.",
+    "Innholdsproduksjon fra Reflektor: reklamefilm, video til egne flater, employer branding og eventdekning, som prosjekt eller fast månedspris.",
   h1: "Innholdsproduksjon",
   merkelapp: "Oversikt",
   tjenestetype: "Produksjon av foto og video for bedrifter",
-  svar: "Innholdsproduksjon er arbeidet med å lage foto og video en bedrift kan bruke: til annonser, til nettsiden, til rekruttering og til sosiale medier. Reflektor gjør det på to måter — som enkeltprosjekter, eller som løpende produksjon til fast månedspris. Hvilken av dem som passer, avhenger av om behovet er en kampanje eller en kalender.",
+  svar: "Innholdsproduksjon er arbeidet med å lage foto og video en bedrift kan bruke: til annonser, til nettsiden, til rekruttering og til sosiale medier. Reflektor gjør det på to måter: som enkeltprosjekter, eller som løpende produksjon til fast månedspris. Hvilken av dem som passer, avhenger av om behovet er en kampanje eller en kalender.",
   /*
    * FJERNET 27.09.2026. Her sto «Denne siden er oversikten. Hver tjeneste
    * har sin egen side …». Rett under står eikene — fire kort som viser
@@ -1111,11 +1111,11 @@ export const innholdsproduksjon: Tjenesteside = {
   avgrensning: null,
   seksjoner: [
     {
-      sporsmal: "Prosjekt eller abonnement — hva trenger dere?",
+      sporsmal: "Prosjekt eller abonnement: hva trenger dere?",
       svar: "Et prosjekt har en start og en slutt: en lansering, en kampanje, en stilling som skal fylles. Et abonnement er for dere som trenger noe nytt å publisere hver uke, året rundt. Mange begynner med ett prosjekt. Viser det seg at dere trenger påfyll hver måned, blir abonnement som regel rimeligere enn å bestille ett prosjekt av gangen.",
       punkter: [
         `Prosjekt: én leveranse, avtalt omfang, fra ${kr(tilbud.fraPrisProsjekt)} kr`,
-        `Abonnement: ${site.kontakt.firma} produserer og publiserer løpende, ${kr(tilbud.prisPerManed)} kr/mnd`,
+        `Abonnement: ${site.navn} produserer og publiserer løpende, ${kr(tilbud.prisPerManed)} kr/mnd`,
       ],
       /*
        * LENKENE ER LAGT TIL 30.09.2026. Naven rutet bare til de fire
@@ -1153,12 +1153,12 @@ export const innholdsproduksjon: Tjenesteside = {
      */
     {
       sporsmal: "Hva avgjør prisen på et prosjekt?",
-      svar: `Et prosjekt starter på ${kr(tilbud.fraPrisProsjekt)} kr, og hvor det lander avgjøres av tre ting. Vi bruker ikke timepriser, så prisen avtales før vi begynner. Abonnementet har ingen slik variasjon: ${kr(tilbud.prisPerManed)} kr/mnd er prisen hver måned, for én produksjonsdag, ${tilbud.videoerPerManed} ferdig redigerte videoer som produksjonsmål og publisering ${tilbud.posterPerUke} ganger i uka.`,
+      svar: `Et prosjekt starter på ${kr(tilbud.fraPrisProsjekt)} kr, og hvor det lander, avgjøres av tre ting. Vi bruker ikke timepriser, så prisen avtales før vi begynner. Abonnementet har ingen slik variasjon: ${kr(tilbud.prisPerManed)} kr/mnd er prisen hver måned, for én produksjonsdag, ${tilbud.videoerPerManed} ferdig redigerte videoer som produksjonsmål og publisering ${tilbud.posterPerUke} ganger i uka.`,
       punkter: [...tilbud.prisdrivere],
     },
     {
       sporsmal: "Hvem produserer Reflektor for?",
-      svar: "Anton Sport, The Well, Peppes Pizza, Egon, Baker Brun, Idun Industri, Selvaag, Retail24, Centropa, Happis og Soulcake — innen retail, restaurant og mat, eiendom, finans, industri og teknologi.",
+      svar: "Anton Sport, The Well, Peppes Pizza, Egon, Baker Brun, Idun Industri, Selvaag, Retail24, Centropa, Happis og Soulcake. Bransjene er retail, restaurant og mat, eiendom, finans, industri og teknologi.",
       sitat: {
         tekst:
           "Teamet i Reflektor jobber lynraskt, presist og leverer høy kvalitet hver gang. Jeg har jobbet med dem mange ganger med merkevarer for Orkla Foods Norge og har aldri vært skuffet.",
@@ -1170,7 +1170,7 @@ export const innholdsproduksjon: Tjenesteside = {
   faq: [
     {
       sporsmal: "Hva er forskjellen på innholdsproduksjon og markedsføring?",
-      svar: "Innholdsproduksjon er å lage materialet. Markedsføring er å bestemme hvor det skal vises og betale for det. Reflektor produserer, og publiserer i sosiale medier for abonnementskundene — vi kjøper ikke annonseplass og styrer ikke annonsebudsjetter.",
+      svar: "Innholdsproduksjon er å lage materialet. Markedsføring er å bestemme hvor det skal vises og betale for det. Reflektor produserer, og for abonnementskundene publiserer vi også i sosiale medier. Vi kjøper ikke annonseplass og styrer ikke annonsebudsjetter.",
     },
     {
       sporsmal: "Kan vi begynne med ett prosjekt og gå over til abonnement?",
@@ -1269,7 +1269,7 @@ export const reelsproduksjon: Tjenesteside = {
    */
   beskrivelse:
     "Merkevarebyggende Reels til Instagram og Facebook, levert stående i 9:16 og klare for TikTok og YouTube Shorts. 8–10 ferdige videoer, 30 000 kr/mnd.",
-  h1: "Reels som bygger merkevaren din, ikke bare følgertallet",
+  h1: "Reels som bygger merkevaren deres, ikke bare følgertallet",
   merkelapp: "Reels-produksjon",
   tjenestetype: "Produksjon av Reels og kort stående video til fast pris",
   prismodell: "abonnement",
@@ -1295,13 +1295,13 @@ export const reelsproduksjon: Tjenesteside = {
     { sti: "/", tekst: "siden om SoMe-abonnementet" },
     ". Skal dere ha én film til én kampanje i stedet for innhold hver måned, er det ",
     { sti: "/reklamefilm", tekst: "reklamefilm" },
-    ". Og skal filmen ligge på nettsiden eller på en skjerm framfor i feeden, er det ",
+    ". Og skal filmen ligge på nettsiden eller på en skjerm i stedet for i feeden, er det ",
     { sti: "/videoproduksjon-i-oslo", tekst: "video til egne flater" },
     ".",
   ],
   seksjoner: [
     {
-      sporsmal: "Kort video er der kundene dine ser deg først",
+      sporsmal: "Kort video er der kundene deres ser dere først",
       svar: "For mindre bedriftskontoer er Reels det formatet som når flest. Socialinsider analyserte 140 000 Reels fra bedrifter i første halvår 2026. Blant kontoer med 1 000–5 000 følgere nådde Reels i snitt 9,8 % av følgerne, mot 8,8 % for karuseller og 7,0 % for bilder.\n\nProblemet er sjelden kanalen. Problemet er at video tar tid. Noen må finne ideene, filme, klippe, tekste og poste, og gjøre det uke etter uke. Hos de fleste bedrifter stopper det etter den tredje videoen.\n\nVi tar hele den jobben. Dere stiller opp én dag i måneden.",
       kilde: [
         {
@@ -1315,10 +1315,10 @@ export const reelsproduksjon: Tjenesteside = {
       sporsmal: "Merkevarebygging, ikke trendjag",
       svar: "En trendvideo kan få mange visninger, men blir fort glemt. Vi lager Reels som gjør at folk husker hvem de så:",
       punkter: [
-        "Faste formater som går igjen. Seerne kjenner deg igjen før de ser logoen.",
+        "Faste formater som går igjen. Seerne kjenner dere igjen før de ser logoen.",
         "Ekte folk og ekte arbeid. Ansatte, produkter og hverdagen hos dere. Ikke stockfilm og dansetrender.",
         "Tydelig uttrykk. Samme tone, farger og tekststil i hver video, slik at feeden henger sammen.",
-        "Laget for lyd av. Alle videoer har tekst på skjermen, fordi mange scroller uten lyd.",
+        "Laget for å ses uten lyd. Alle videoer har tekst på skjermen, fordi mange scroller forbi med lyden av.",
       ],
     },
     {
@@ -1391,7 +1391,7 @@ export const reelsproduksjon: Tjenesteside = {
         "Uansett lengde bruker vi mest tid på de første sekundene. På bedriftskontoer med 1 000–5 000 følgere sveiper rundt 65 % av seerne videre innen tre sekunder, ifølge den samme analysen. Det er der seeren bestemmer seg for å bli.",
       punkter: [
         "Produktvideo og annonser: 6–15 sekunder. Meta anbefaler selv korte videoer, der merkevaren og budskapet kommer i løpet av de første tre sekundene.",
-        "Bak kulissene eller en ansatt som forteller: 30–60 sekunder. Det gir rom for en start som fanger, en historie og en avslutning. I Socialinsiders analyse av 140 000 Reels fra bedrifter nådde Reels på 30–60 sekunder litt flere enn både kortere og lengre videoer. Over to minutter faller rekkevidden tydelig.",
+        "Bak kulissene eller en ansatt som forteller: 30–60 sekunder. Det gir rom for en start som fanger, en historie og en avslutning. I Socialinsiders analyse av 140 000 Reels fra bedrifter nådde Reels på 30–60 sekunder litt lenger ut enn både kortere og lengre videoer. Over to minutter faller rekkevidden tydelig.",
         "Forklaring eller tips: så lang som poenget krever, men ikke et sekund lenger.",
       ],
       kilde: [
@@ -1446,7 +1446,7 @@ export const reelsproduksjon: Tjenesteside = {
        * er en påstand: ett navn som kan etterprøves gjør mer for troverdig-
        * heten enn elleve som leseren må ta på tro.
        */
-      svar: "Vi har produsert foto og video for bedrifter innen mat, eiendom, retail og teknologi — blant annet Selvaag Eiendom.",
+      svar: "Vi har produsert foto og video for bedrifter innen mat, eiendom, retail og teknologi, blant annet Selvaag Eiendom.",
       lenker: [{ sti: "/vart-arbeid", tekst: "Se kundecasene våre" }],
     },
   ],
@@ -1570,7 +1570,7 @@ export const kjeder: Tjenesteside = {
   seksjoner: [
     {
       sporsmal: "Anton Sport",
-      svar: "Reflektor produserer foto og video for Anton Sport til kampanjer, skjermer i butikk, sosiale medier og merkevarebygging gjennom året. Samarbeidet er månedlig, og har vart i over tre år.",
+      svar: "Reflektor produserer foto og video for Anton Sport til kampanjer, skjermer i butikk, sosiale medier og merkevarebygging gjennom året. Samarbeidet er månedlig og har vart i over tre år.",
       punkter: [
         "Løpende foto og video, hver måned",
         "Kampanjer, skjermer i butikk, sosiale medier og merkevarebygging",
@@ -1610,11 +1610,11 @@ export const kjeder: Tjenesteside = {
     },
     {
       sporsmal: "Egon",
-      svar: "Egon har servert nordmenn siden 1984 og er i dag nærmere 50 restauranter fra sør til nord. Reflektor har produsert menyfoto, reels, kampanjefilm og skjermreklame for kjeden siden 2022, fra én fast produksjonsdag i måneden.",
+      svar: "Egon har servert nordmenn siden 1984 og teller i dag nærmere 50 restauranter fra sør til nord. Reflektor har produsert menyfoto, reels, kampanjefilm og skjermreklame for kjeden siden 2022, fra én fast produksjonsdag i måneden.",
       punkter: [
         "Nærmere 50 restauranter over hele landet",
         "Menyfoto, reels, kampanjefilm og skjermreklame",
-        "Seks formater per film — sosiale medier, skjermer i restaurant og kjøpesenter, og annonser",
+        "Seks formater per film: sosiale medier, skjermer i restaurant og kjøpesenter, og annonser",
         "Fast produksjonsdag hver måned siden 2022",
       ],
       /*
@@ -1658,7 +1658,7 @@ export const kjeder: Tjenesteside = {
     },
     {
       sporsmal: "Vitusapotek",
-      svar: "Reflektor har laget TV-reklame for Vitusapotek, i forbindelse med Skal vi danse.",
+      svar: "Reflektor har laget TV-reklame for Vitusapotek i forbindelse med Skal vi danse.",
       punkter: [
         "TV-reklame",
         "Kampanje knyttet til Skal vi danse",
@@ -1907,27 +1907,27 @@ export const eiker = [
   {
     sti: "/reklamefilm",
     navn: "Reklamefilm",
-    flate: "Betalte flater — TV, nettannonser, sosiale medier",
+    flate: "Betalte flater: TV, nettannonser, sosiale medier",
     beskrivelse:
       "Filmen dere betaler for å få vist. Den må fange folk som ikke lette etter dere.",
   },
   {
     sti: "/videoproduksjon-i-oslo",
     navn: "Videoproduksjon",
-    flate: "Egne flater — nettside, tjenesteside, skjerm",
+    flate: "Egne flater: nettside, tjenesteside, skjerm",
     beskrivelse: "Filmen som forklarer, til folk som allerede har funnet dere.",
   },
   {
     sti: "/employer-branding-video-oslo",
     navn: "Employer branding-video",
-    flate: "Rekruttering — stillingsannonse, karriereside",
+    flate: "Rekruttering: stillingsannonse, karriereside",
     beskrivelse: "Filmen som gjør at folk søker jobb hos dere.",
   },
   {
     sti: "/eventfotograf-eventvideo",
     navn: "Event­fotograf og eventvideo",
-    flate: "Dokumentasjon — konferanse, lansering, messe",
-    beskrivelse: "Dekningen av noe som skjer én gang, og skal brukes etterpå.",
+    flate: "Dokumentasjon: konferanse, lansering, messe",
+    beskrivelse: "Dekningen av noe som skjer én gang og skal brukes etterpå.",
   },
 ] as const;
 
