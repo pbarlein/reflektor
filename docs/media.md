@@ -868,3 +868,65 @@ bruker nå. Det siste leses av `kilder.json`, som skriptet skriver ved siden
 av bildene. Datostempler duger ikke — et git-utsjekk gir alle filer samme
 tid, så en test på «nyere enn kilden» ville vært grønn uansett. Alle 17 er
 sett igjennom i kontaktark før de ble sjekket inn; ingen hoder er kuttet.
+
+## Video på iPhone: to feller som kostet tre forsøk (02.10.2026)
+
+Pål meldte fra fra en ekte iPhone: **«den tekster fortsatt på mobil, og
+bildet henger mens lyden går.»** Begge var ekte feil, begge var usynlige i
+Chromium, og den ene hadde jeg nettopp innført selv. Dette står her fordi
+begge er lette å gjøre om igjen.
+
+### 1. Ikke legg et `<track>` på en video med innbrent teksting
+
+`<track kind="captions">` uten `default` er **ikke** avslått på iOS Safari.
+Safari slår på et tekstspor på egen hånd når det finnes ett på brukerens
+språk. Ligger tekstingen allerede i bildet, får man to sett undertekster
+oppå hverandre.
+
+Målingen som sa at sporet var avslått ble gjort i Chromium, og det er
+nettopp derfor feilen overlevde fra 01.10. til 02.10.2026.
+
+**Regelen:** er tekstingen brent inn i bildet, skal det ikke ligge et
+`<track>` der. Det som blir sagt gjøres søkbart med `transcript` i
+VideoObject-markeringen — en VTT-fil leses ikke som innhold uansett.
+
+### 2. Aldri nøstet avrundet klipping over en `<video>`
+
+Dette er den dyre. **En video under TO forfedre med `overflow-hidden` +
+`rounded-*` får WebKit til å slutte å tegne videoflaten mens avspillingen
+fortsetter** — altså lyd uten bilde, på iPhone, mens alt ser riktig ut på
+alle andre nettlesere.
+
+Omtalevideoen har alltid hatt sin egen `overflow-hidden rounded-flate`. Da
+anmeldelsesseksjonen ble et innfelt panel samme dag, fikk panelet de samme
+klassene, og videoen havnet under to lag.
+
+**Regelen:** legger du en video inn i en flate med avrundede hjørner, sjekk
+at ikke både flaten og videoens egen ramme klipper. Trenger panelet
+klipping i det hele tatt? Et rullefelt (`overflow-x-auto`) klipper sitt eget
+innhold, og en rad midt på en flate er ikke i nærheten av et hjørne.
+
+### 3. To ting som IKKE var årsaken, så ingen leter der igjen
+
+- **`transform-gpu` på videoen.** Lagt inn som eget komposisjonslag. Hjalp
+  ikke, og på et `<video>` kan et påtvunget lag gjøre vondt verre. Trukket
+  tilbake.
+- **Kodek alene.** MP4 ble likevel lagt først, og det valget står: VP9
+  dekodes i programvare på de fleste iPhoner, H.264 har maskinvaredekoder på
+  alle. Men det var ikke det som frøs bildet.
+
+### 4. Lat innlasting av `<source>` er ikke verdt det
+
+Avspilleren satte `<source>` inn først når en IntersectionObserver sa fra,
+med `preload="none"`, for å spare på LCP. Den veien har en hel klasse feil i
+seg: et element kan ende i `NETWORK_NO_SOURCE` før kildene kommer, en
+`load()` må rydde opp etterpå, og `play()` kan komme før det finnes noe å
+spille.
+
+Jeg lagde og målte bort én slik feil samme dag: betingelsen
+`readyState === 0` i `load()`-vakten slo til midt i en normal innlasting og
+ga `ERR_ABORTED` på MP4-fila, så nettleseren falt til WebM — presis motsatt
+av hensikten.
+
+**Regelen:** `preload="metadata"` henter noen få kilobyte, ikke filmen.
+Rendre kildene i markeringen, og la observeren styre bare play og pause.
