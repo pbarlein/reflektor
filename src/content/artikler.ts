@@ -602,7 +602,11 @@ export const artikler: Artikkel[] = [
         tekst:
           "SoMe er en norsk forkortelse for sosiale medier: tjenester der brukerne selv lager, deler og kommenterer innhold. For bedrifter er de to ting på én gang: en kanal der dere kan publisere gratis, og en annonseplattform der dere kan betale for å nå akkurat den målgruppen dere vil.",
       },
-      { type: "overskrift", niva: 2, tekst: "Hvor mange bruker sosiale medier?" },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Hvor mange bruker sosiale medier?",
+      },
       {
         type: "avsnitt",
         tekst:
@@ -639,7 +643,11 @@ export const artikler: Artikkel[] = [
             "B2B, rekruttering, ledere og fagfolk",
             "Fagtekster, video med ansatte",
           ],
-          ["TikTok", "Yngre målgrupper, underholdning", "Korte, uformelle videoer"],
+          [
+            "TikTok",
+            "Yngre målgrupper, underholdning",
+            "Korte, uformelle videoer",
+          ],
         ],
       },
       {
@@ -803,9 +811,7 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Innholdsproduksjon er arbeidet med å lage tekst, foto og video som en bedrift bruker i markedsføringen: på nettsiden, i sosiale medier, i annonser og i rekruttering. Det kan gjøres internt, av frilansere eller av et byrå, som enkeltprosjekter eller som løpende produksjon.",
-        lenker: [
-          { frase: "løpende produksjon", sti: "/innholdsproduksjon" },
-        ],
+        lenker: [{ frase: "løpende produksjon", sti: "/innholdsproduksjon" }],
       },
       { type: "overskrift", niva: 2, tekst: "Hva regnes som innhold?" },
       {
@@ -1154,7 +1160,7 @@ export const artikler: Artikkel[] = [
      * for en bokstav ingen søker på.
      */
     bilde: {
-      fil: "goretex-sept-1800",
+      fil: "goretex-sept-1600",
       alt: "Person i skalljakke i en togdør",
     },
     tittel: "Hva er videomarkedsføring?",
@@ -1330,7 +1336,11 @@ export const artikler: Artikkel[] = [
         tekst:
           "Employer branding er hvordan en bedrift fremstår som arbeidsgiver, og arbeidet med å bli et sted folk vil jobbe. Det handler om hva nåværende og fremtidige ansatte vet og mener om bedriften. Det vises i stillingsannonser, på karrieresiden, i sosiale medier og gjennom de ansatte selv.",
       },
-      { type: "overskrift", niva: 2, tekst: "Employer brand og employer branding" },
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Employer brand og employer branding",
+      },
       {
         type: "liste",
         punkter: [
@@ -1403,7 +1413,7 @@ export const artikler: Artikkel[] = [
           "Et bilde som ikke stemmer. Lover dere noe som ikke er sant, slutter folk raskt.",
         ],
       },
-/*
+      /*
         OVERSKRIFTEN ER OMFORMULERT. Copyen hadde «Hva koster en employer
         branding-video?», som er ordrett spørsmålet på
         /employer-branding-video-oslo. Tjenestesiden skal eie det

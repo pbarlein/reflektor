@@ -32,7 +32,8 @@ function finnRuter(katalog: string, prefiks = ""): string[] {
     if (navn.startsWith("_") || navn.startsWith("(")) continue;
     const segment = navn.startsWith("[") ? null : `${prefiks}/${navn}`;
     if (segment) {
-      if (readdirSync(sti).some((f) => f.startsWith("page."))) ruter.push(segment);
+      if (readdirSync(sti).some((f) => f.startsWith("page.")))
+        ruter.push(segment);
       ruter.push(...finnRuter(sti, segment));
     }
   }
@@ -87,7 +88,9 @@ const mangler: Funn[] = [];
 
 for (const fil of finnFiler("src")) {
   const innhold = readFileSync(fil, "utf8");
-  for (const treff of innhold.matchAll(/["'`](\/[a-z0-9æøå._/-]+\.(?:jpg|jpeg|png|webp|avif|svg|mp4|webm))["'`]/gi)) {
+  for (const treff of innhold.matchAll(
+    /["'`](\/[a-z0-9æøå._/-]+\.(?:jpg|jpeg|png|webp|avif|svg|mp4|webm))["'`]/gi,
+  )) {
     const sti = treff[1];
     if (!MEDIEKATALOGER.some((k) => sti.startsWith(k))) continue;
     if (existsSync(`public${sti}`)) continue;
@@ -107,7 +110,8 @@ for (const c of veggrader.flat()) {
       ? [`public/arbeid/${c.fil}-vegg.jpg`]
       : [`public/arbeid/${c.fil}.mp4`, `public/arbeid/${c.fil}.jpg`];
   for (const f of forventet)
-    if (!existsSync(f)) mangler.push({ fil: "src/content/arbeid.ts (vegg)", lenke: f });
+    if (!existsSync(f))
+      mangler.push({ fil: "src/content/arbeid.ts (vegg)", lenke: f });
 }
 for (const c of arbeidskolonner.flat()) {
   const forventet =
@@ -115,13 +119,53 @@ for (const c of arbeidskolonner.flat()) {
       ? [`public/arbeid/${c.fil}-1600.jpg`]
       : [`public/reels/${c.fil}.mp4`, `public/reels/${c.fil}.jpg`];
   for (const f of forventet)
-    if (!existsSync(f)) mangler.push({ fil: "src/content/arbeid.ts (rutenett)", lenke: f });
+    if (!existsSync(f))
+      mangler.push({ fil: "src/content/arbeid.ts (rutenett)", lenke: f });
 }
 
 const { reels } = await import("../src/content/reels.ts");
 for (const r of reels)
   for (const f of [`public/reels/${r.fil}.mp4`, `public/reels/${r.fil}.jpg`])
     if (!existsSync(f)) mangler.push({ fil: "src/content/reels.ts", lenke: f });
+
+/*
+ * TOPPBILDENE PÅ ARTIKLER, CASER OG TJENESTESIDER. Lagt til 02.10.2026,
+ * etter at denne sjekken slapp gjennom et bilde som ikke lastet på
+ * /blogg.
+ *
+ * Hullet var det samme som for veggen og rutenettet, bare i en annen
+ * datafil: `bilde.fil` lagrer navnet UTEN endelse, og malen legger på
+ * `.jpg` selv. Regexen over leter etter bokstavelige stier i koden og ser
+ * aldri innholdet.
+ *
+ * Feilen oppsto da jeg døpte om `goretex-sept-1800.jpg` til `-1600` for
+ * rutenettet. Den manuelle «er dette bildet i bruk»-sjekken jeg gjorde
+ * først lette etter `"goretex-sept"` og traff ikke `"goretex-sept-1800"`.
+ * Nøyaktig derfor skal slike sjekker stå i et skript og ikke i hodet.
+ */
+const { artikler } = await import("../src/content/artikler.ts");
+for (const a of artikler) {
+  const f = `public/arbeid/${a.bilde.fil}.jpg`;
+  if (!existsSync(f))
+    mangler.push({ fil: `src/content/artikler.ts (${a.slug})`, lenke: f });
+}
+
+/* Kortbildene på casene ligger i public/caser/, ikke i public/arbeid/. */
+const { kundecaser } = await import("../src/content/caser.ts");
+for (const k of kundecaser)
+  for (const b of k.kortbilder) {
+    const f = `public/caser/${b.fil}.jpg`;
+    if (!existsSync(f))
+      mangler.push({ fil: `src/content/caser.ts (${k.slug})`, lenke: f });
+  }
+
+const { tjenestesider } = await import("../src/content/tjenester.ts");
+for (const t of tjenestesider) {
+  if (!t.bilde) continue;
+  const f = `public/arbeid/${t.bilde.fil}.jpg`;
+  if (!existsSync(f))
+    mangler.push({ fil: `src/content/tjenester.ts (${t.sti})`, lenke: f });
+}
 
 /*
  * Logoene refereres med `/logoer/${l.id}.png`, altså en malstreng.
@@ -185,10 +229,14 @@ for (const mappe of MEDIEMAPPER) {
   }
 }
 
-console.log(`\nlenkesjekk\n\n  ${ruter.size} ruter, ${redirectKilder.size} redirects\n`);
+console.log(
+  `\nlenkesjekk\n\n  ${ruter.size} ruter, ${redirectKilder.size} redirects\n`,
+);
 
 if (foreldrelose.length > 0) {
-  console.warn(`⚠ ${foreldrelose.length} mediefiler uten referanse (advarsel):\n`);
+  console.warn(
+    `⚠ ${foreldrelose.length} mediefiler uten referanse (advarsel):\n`,
+  );
   for (const f of foreldrelose) console.warn(`  ${f}`);
   console.warn("");
 }
