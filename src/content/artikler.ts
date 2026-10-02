@@ -21,9 +21,14 @@ import { kr, tilbud } from "./site";
  *
  * ORDRETT. Teksten er Reflektors egen publiserte copy, hentet fra
  * www.reflektor.no og flyttet uten en eneste endring i formuleringene.
- * Regel 3 i AGENTS.md: bloggen beholdes for lenkeverdien — ~481
- * refererende domener — og innholdet skal ikke styre arkitekturen. Da skal
- * det heller ikke skrives om for å passe den.
+ * Regel 3 i AGENTS.md: bloggen beholdes for SØKESYNLIGHETEN — artiklene
+ * rangerer på ord folk søker på — og innholdet skal ikke styre
+ * arkitekturen. Da skal det heller ikke skrives om for å passe den.
+ *
+ * RETTET 02.10.2026: her sto «for lenkeverdien — ~481 refererende
+ * domener». Tallet var domenets, ikke bloggens. Hele /blogg-stien har 3
+ * levende refererende domener; de 589 domenet har, peker nesten alle på
+ * forsiden. Begrunnelsen er rettet, regelen står.
  *
  * ÅTTE ARTIKLER, IKKE SYTTEN. `bloggSlugs` i site.ts lister 17 slugs.
  * Målt mot levende side 19.09.2026 var 8 ekte artikler, 3 aliaser som

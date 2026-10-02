@@ -447,8 +447,15 @@ export const alleLandingssider = [...landingssider, ...eldreLandingssider];
 /**
  * Bloggslugs. MÅ IKKE ENDRES.
  *
- * Beholdes for lenkeverdien (~481 refererende domener). Innholdet er
- * ordbok- og skoleoppgavestoff som ikke konverterer, og skal ikke utvides.
+ * BEHOLDES FOR SØKESYNLIGHETEN. Artiklene rangerer på ord folk søker på —
+ * aliaset /blogg/hvordan-markedsfore-bedrift har alene 41 279 visninger.
+ * Innholdet er ordbok- og skoleoppgavestoff som ikke konverterer, og skal
+ * ikke utvides.
+ *
+ * RETTET 02.10.2026: her sto «for lenkeverdien (~481 refererende
+ * domener)». Tallet var domenets, ikke bloggens. Hele /blogg-stien har 3
+ * levende refererende domener. Regelen står, begrunnelsen var feil. Se
+ * AGENTS.md, regel 3.
  */
 export const bloggSlugs = [
   "hvilke-virkemidler-er-mest-effektive-i-reklame-og-hvordan-brukes-de",

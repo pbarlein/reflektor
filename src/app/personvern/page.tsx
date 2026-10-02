@@ -6,6 +6,7 @@ import {
   personvernSeksjoner,
   type Personvernblokk,
 } from "@/content/personvern";
+import { basisUrl } from "@/lib/miljo";
 
 /**
  * /personvern — erklæringen fra dagens reflektor.no, ordrett.
@@ -34,6 +35,15 @@ export const metadata: Metadata = {
   title: "Personvernerklæring",
   description:
     "Slik samler Reflektor AS inn og behandler personopplysninger fra skjemaer, nettsider og annonser.",
+  /*
+   * CANONICAL LAGT TIL 02.10.2026. Den manglet, og var den eneste
+   * indekserbare siden uten. Konsekvensen er konkret og ikke teoretisk:
+   * uten canonical er hver variant av adressen sin egen side for Google —
+   * og en personvernerklæring er nettopp den siden som får påhengte
+   * parametere, fordi den lenkes fra bunnteksten på alle sider, inkludert
+   * annonselandingssidene der adressen bærer gclid og utm.
+   */
+  alternates: { canonical: `${basisUrl()}/personvern` },
 };
 
 function Blokk({ blokk }: { blokk: Personvernblokk }) {

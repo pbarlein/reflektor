@@ -31,15 +31,25 @@ import { standardSkript } from "@/lib/samtykke";
  * KONSEKVENSEN, som Pål ble forelagt og godtok 02.10.2026: tredjepartene i
  * containeren som ikke leser Consent Mode, kjører nå også før samtykke. Det
  * gjelder Apollo (bedriftsidentifisering), Microsoft Clarity (sesjonsopptak)
- * og HubSpot (CRM-sporing og «collected forms», som er det som legger
- * skjemaleads inn i HubSpot). Det er i strid med ekomlovens krav om aktivt
+ * og HubSpot (CRM-sporing). Det er i strid med ekomlovens krav om aktivt
  * samtykke fra 01.01.2025, og banneret stopper dem ikke. Valget er Påls.
  *
- * SLIK GJØRES DET RYDDIG senere, uten å miste noe: sett «Require additional
- * consent» på de tre taggene i GTM (docs/gtm-samtykke.md), og la
- * /api/skjema sende hvert lead direkte til HubSpot, slik at CRM-oppføringen
- * ikke lenger avhenger av sporingskoden. Da kan containeren fortsatt lastes
- * for alle.
+ * TO AV TRE TRINN ER GJORT SENERE SAMME DAG, 02.10.2026:
+ *
+ * 1. CRM-ET AVHENGER IKKE LENGER AV SPORINGSKODEN. `/api/skjema` sender nå
+ *    hvert lead rett til HubSpot fra serveren (lib/hubspot.ts), og
+ *    kontaktskjemaet er merket `data-hs-do-not-collect` så HubSpots
+ *    «collected forms» ikke oppretter kontakten en gang til. Leadet kommer
+ *    fram også for den som blokkerer sporing — og, viktigere her: HubSpot-
+ *    taggen kan nå settes bak samtykke uten at noe lead går tapt.
+ * 2. CLARITY FÅR SAMTYKKET DIREKTE. Clarity leser ikke Consent Mode, men
+ *    har sin egen `consentv2`-API, og den kalles nå fra <head> og fra
+ *    banneret (lib/samtykke.ts). Uten samtykke kjører den i «no-consent
+ *    mode» uten cookies, uansett hva GTM gjør.
+ *
+ * DET SOM GJENSTÅR er trinnet som faktisk stopper taggene: sett «Require
+ * additional consent» på de tre taggene inne i GTM. Framgangsmåten står i
+ * docs/gtm-samtykke.md. Containeren kan fortsatt lastes for alle.
  */
 export const GTM_ID = "GTM-N4KGSS93";
 

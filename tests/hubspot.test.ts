@@ -1,0 +1,227 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import {
+  byggInnsending,
+  delNavn,
+  ENDEPUNKT,
+  lesHutk,
+  sendLeadTilHubspot,
+} from "@/lib/hubspot";
+import type { Lead } from "@/lib/lead";
+
+/**
+ * Leadlevering til HubSpot.
+ *
+ * HVORFOR DET TESTES. Kallet skjer etter at svaret er sendt til besøkende,
+ * og det logger i stedet for å kaste. Det betyr at en feil her er helt
+ * usynlig fra nettsiden: skjemaet virker, /takk kommer, e-posten kommer —
+ * og CRM-et står tomt. Det eneste sporet er en linje i Vercel-loggen som
+ * ingen leser før noen savner et lead.
+ *
+ * Tre ting dekkes:
+ *   1. navnesplitten, som skriver seg rett inn i CRM-et og ikke kan rettes
+ *      maskinelt etterpå
+ *   2. at `nettside_kilde` faktisk følger med — det er det eneste feltet
+ *      som sier hvilken annonse leadet kom fra
+ *   3. at en feil eller et tidsavbrudd fra HubSpot ikke kan velte svaret
+ *      til besøkende, altså 303 til /takk
+ */
+
+const BASIS = "https://www.reflektor.no";
+
+function lead(endringer: Partial<Lead> = {}): Lead {
+  return {
+    navn: "Pål Barlein",
+    epost: "pal@reflektor.no",
+    bedrift: "Reflektor",
+    telefon: "99887766",
+    melding: "Hei",
+    side: "/kontaktoss",
+    kilde: "source=google | medium=cpc",
+    ...endringer,
+  };
+}
+
+test("navnet deles i fornavn og resten", () => {
+  assert.deepEqual(delNavn("Pål"), { fornavn: "Pål", etternavn: "" });
+  assert.deepEqual(delNavn("Pål Barlein"), {
+    fornavn: "Pål",
+    etternavn: "Barlein",
+  });
+  /*
+   * TRE ORD GÅR TIL FORNAVN + «RESTEN», ikke til to og ett. Vi kan ikke
+   * vite om «Erik» er mellomnavn eller del av et dobbelt fornavn, og en
+   * gjetning som deler feil står i CRM-et for alltid.
+   */
+  assert.deepEqual(delNavn("Pål Erik Barlein"), {
+    fornavn: "Pål",
+    etternavn: "Erik Barlein",
+  });
+  assert.deepEqual(delNavn(""), { fornavn: "", etternavn: "" });
+  assert.deepEqual(delNavn("   "), { fornavn: "", etternavn: "" });
+  /* Doble mellomrom skal ikke bli et tomt «mellomnavn». */
+  assert.deepEqual(delNavn("  Pål   Barlein "), {
+    fornavn: "Pål",
+    etternavn: "Barlein",
+  });
+});
+
+test("nettside_kilde følger med nyttelasten", () => {
+  const innsending = byggInnsending(lead(), undefined, BASIS);
+  const felt = new Map(innsending.fields.map((f) => [f.name, f.value]));
+
+  assert.equal(felt.get("nettside_kilde"), "source=google | medium=cpc");
+  assert.equal(felt.get("email"), "pal@reflektor.no");
+  assert.equal(felt.get("firstname"), "Pål");
+  assert.equal(felt.get("lastname"), "Barlein");
+  assert.equal(felt.get("company"), "Reflektor");
+  assert.equal(felt.get("phone"), "99887766");
+  assert.equal(felt.get("message"), "Hei");
+});
+
+test("tomme felt utelates i stedet for å overskrive", () => {
+  const innsending = byggInnsending(
+    lead({ bedrift: "", telefon: "", kilde: "", navn: "Pål" }),
+    undefined,
+    BASIS,
+  );
+  const navn = innsending.fields.map((f) => f.name);
+
+  assert.ok(!navn.includes("company"));
+  assert.ok(!navn.includes("phone"));
+  assert.ok(!navn.includes("nettside_kilde"));
+  /* Ett ord i navnefeltet gir tomt etternavn, som dermed også utelates. */
+  assert.ok(!navn.includes("lastname"));
+  assert.ok(navn.includes("firstname"));
+  assert.ok(navn.includes("email"));
+});
+
+test("konteksten peker på siden leadet kom fra, og sender ikke IP", () => {
+  const u = byggInnsending(lead(), "abc123", BASIS);
+
+  assert.equal(u.context.pageUri, "https://www.reflektor.no/kontaktoss");
+  assert.equal(u.context.pageName, "/kontaktoss");
+  assert.equal(u.context.hutk, "abc123");
+  assert.ok(
+    !("ipAddress" in u.context),
+    "IP-adressen skal ikke sendes: det eneste vi kunne sendt herfra er " +
+      "serverens egen, ikke besøkendes.",
+  );
+
+  /* `side` uten skråstrek («ukjent») skal ikke gi en ødelagt URL. */
+  const ukjent = byggInnsending(lead({ side: "ukjent" }), undefined, BASIS);
+  assert.equal(ukjent.context.pageUri, "https://www.reflektor.no/ukjent");
+  assert.equal(ukjent.context.hutk, undefined);
+});
+
+test("hubspotutk plukkes ut av cookie-strengen", () => {
+  assert.equal(lesHutk("hubspotutk=abc123"), "abc123");
+  assert.equal(
+    lesHutk("reflektor_samtykke=1.11; hubspotutk=abc123; _ga=GA1.1.2"),
+    "abc123",
+  );
+  assert.equal(lesHutk("reflektor_samtykke=1.11"), undefined);
+  assert.equal(lesHutk(""), undefined);
+  assert.equal(lesHutk(null), undefined);
+  /* Tom verdi er ikke en nøkkel, og skal ikke sendes som en. */
+  assert.equal(lesHutk("hubspotutk="), undefined);
+  /* Navnet skal ikke treffe på et prefiks. */
+  assert.equal(lesHutk("nothubspotutk=abc"), undefined);
+});
+
+test("sendLeadTilHubspot kaster aldri, uansett hva HubSpot gjør", async () => {
+  const opprinnelig = globalThis.fetch;
+
+  try {
+    globalThis.fetch = async () =>
+      new Response("Bad request", { status: 400 });
+    await assert.doesNotReject(sendLeadTilHubspot(lead(), undefined, BASIS));
+
+    globalThis.fetch = async () => {
+      throw new Error("TimeoutError");
+    };
+    await assert.doesNotReject(sendLeadTilHubspot(lead(), undefined, BASIS));
+
+    /* Uten brukbar e-post gjøres ikke kallet i det hele tatt. */
+    let kalt = false;
+    globalThis.fetch = async () => {
+      kalt = true;
+      return new Response("", { status: 200 });
+    };
+    await sendLeadTilHubspot(lead({ epost: "ikke en adresse" }), undefined, BASIS);
+    assert.equal(kalt, false);
+  } finally {
+    globalThis.fetch = opprinnelig;
+  }
+});
+
+test("nyttelasten sendes som JSON til riktig endepunkt", async () => {
+  const opprinnelig = globalThis.fetch;
+  let url: string | undefined;
+  let kropp: unknown;
+
+  try {
+    globalThis.fetch = async (inn, init) => {
+      url = String(inn);
+      kropp = JSON.parse(String(init?.body));
+      return new Response("", { status: 200 });
+    };
+    await sendLeadTilHubspot(lead(), "abc123", BASIS);
+  } finally {
+    globalThis.fetch = opprinnelig;
+  }
+
+  assert.equal(url, ENDEPUNKT);
+  assert.ok(
+    ENDEPUNKT.includes("/148641188/ca67f6ca-0e02-433f-85bb-7f0825ccf60d"),
+    "Portal-ID og skjema-GUID skal være de som er opprettet i HubSpot " +
+      "02.10.2026. Endres de, går leadene til et skjema som ikke finnes.",
+  );
+  assert.deepEqual(kropp, byggInnsending(lead(), "abc123", BASIS));
+});
+
+/**
+ * DEN VIKTIGSTE TESTEN I FILA.
+ *
+ * Regelen i hodet på api/skjema/route.ts er at svaret ALLTID er 303 til
+ * /takk — også for bot, også når e-posten feiler, og nå også når HubSpot
+ * feiler. /takk bærer GA4-hendelsen og Ads-konverteringen, altså målingen
+ * av Reflektors eneste KPI. Et annet svar herfra koster en konvertering.
+ *
+ * `after()` kaster utenfor en forespørselskontekst, og testen kjører
+ * nettopp utenfor en. Det er derfor den også dekker fallbacken i ruta:
+ * uten `try/catch` rundt `after()` ville denne testen gitt 500.
+ */
+test("skjemaruta svarer 303 til /takk selv om HubSpot feiler", async () => {
+  const opprinnelig = globalThis.fetch;
+
+  try {
+    globalThis.fetch = async () => {
+      throw new Error("nett nede");
+    };
+
+    const { POST } = await import("@/app/api/skjema/route");
+
+    const kropp = new FormData();
+    kropp.set("navn", "Pål Barlein");
+    kropp.set("epost", "pal@reflektor.no");
+    kropp.set("side", "/kontaktoss");
+
+    const svar = await POST(
+      new Request("https://www.reflektor.no/api/skjema", {
+        method: "POST",
+        body: kropp,
+        headers: { cookie: "hubspotutk=abc123" },
+      }) as never,
+    );
+
+    assert.equal(svar.status, 303);
+    assert.equal(
+      new URL(svar.headers.get("location") ?? "").pathname,
+      "/takk",
+    );
+  } finally {
+    globalThis.fetch = opprinnelig;
+  }
+});

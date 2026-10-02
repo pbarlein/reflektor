@@ -105,6 +105,21 @@ const redirects: NextConfig["redirects"] = async () => [
      * ingenting å redde.
      */
     "/tjenester/produktfoto",
+    /*
+     * /produktfoto UTEN /tjenester/ — lagt til 02.10.2026.
+     *
+     * Search Console rapporterte 18 404-er på den nye siden etter cutover.
+     * Seksten var dekket av kartet her. Denne var ikke: adressen fantes på
+     * Squarespace som en egen side ved siden av /tjenester/produktfoto, og
+     * den falt utenfor fordi kartet ble tegnet fra /tjenester/-treet.
+     *
+     * KONTROLLERT FØR DEN BLE LAGT INN, slik regel 1 i AGENTS.md krever:
+     * https://www.reflektor.no/produktfoto svarer 404. Den er altså død,
+     * og dette er en faktisk 404 som rettes — ikke en live adresse som
+     * flyttes. Samme mål som /tjenester/produktfoto, av samme grunn: det
+     * er dit Google allerede har konsolidert produktfoto-adressene.
+     */
+    "/produktfoto",
   ].map((source) => ({
     source,
     destination: "/innholdsproduksjon",
@@ -194,9 +209,17 @@ const redirects: NextConfig["redirects"] = async () => [
    *
    * I Next kjører redirects FØR ruting. En `/blogg/:slug` → `/blogg` ville
    * derfor slått ut hver eneste ekte artikkel — hele bloggen, som er det ene
-   * vi beholder for lenkeverdiens skyld (~481 refererende domener). De seks
-   * døde slugene står oppført hver for seg lenger nede, og det er den riktige
-   * formen her.
+   * vi beholder for søkesynligheten. De seks døde slugene står oppført hver
+   * for seg lenger nede, og det er den riktige formen her.
+   *
+   * RETTET 02.10.2026: her sto «lenkeverdiens skyld (~481 refererende
+   * domener)». Tallet var domenets, ikke bloggens. Målt i Ahrefs har hele
+   * /blogg-stien 3 levende refererende domener; de 589 domenet har, peker
+   * nesten alle på forsiden. Grunnen til å beholde URL-ene er at artiklene
+   * rangerer på ord folk søker på — aliaset
+   * /blogg/hvordan-markedsfore-bedrift har alene 41 279 visninger. Det er
+   * presis sammenblandingen av visninger og lenkeverdi som advarselen
+   * nederst i denne fila handler om. Se AGENTS.md, regel 3.
    */
 
   /* 1 466 visninger, 43 søkeord. Live etterfølger med samme navn. */
@@ -280,6 +303,46 @@ const redirects: NextConfig["redirects"] = async () => [
   {
     source: "/gratis-strategimote",
     destination: "/kontaktoss",
+    statusCode: 301,
+  },
+
+  /*
+   * SKJEMASIDEN SOM HØRTE TIL /gratis-strategimote. Lagt til 02.10.2026.
+   *
+   * Squarespace hadde en egen side for selve skjemaet, og den ble lenket
+   * fra knappen på strategimøtesiden. Den sto ikke i kartet her, og dukket
+   * opp blant de 18 404-ene i Search Console etter cutover.
+   *
+   * Kontrollert samme dag: https://www.reflektor.no/gratis-strategimote-kontaktskjema
+   * svarer 404. Målet er /kontaktoss, som for siden den hørte til — det er
+   * der skjemaet står nå.
+   */
+  {
+    source: "/gratis-strategimote-kontaktskjema",
+    destination: "/kontaktoss",
+    statusCode: 301,
+  },
+
+  /*
+   * RSS-FEEDEN. Lagt til 02.10.2026.
+   *
+   * Squarespace serverte bloggens feed på `/blogg?format=rss` — deres egen
+   * konvensjon, ikke vår. Etter cutover svarte adressen med HTML-oversikten
+   * i stedet: en feed som ikke lenger var en feed, uten at noe meldte fra.
+   * Alt som abonnerte, sluttet stille å virke.
+   *
+   * `has` ER DET SOM GJØR DENNE TRYGG. Betingelsen gjelder bare når
+   * spørringen faktisk er `format=rss`. `/blogg` uten parametere treffes
+   * ikke, og oversikten står urørt — den er en live side med organisk
+   * trafikk, og en ubetinget redirect herfra ville vært nøyaktig det regel 1
+   * i AGENTS.md forbyr.
+   *
+   * Feeden ligger i src/app/blogg/rss.xml/route.ts.
+   */
+  {
+    source: "/blogg",
+    has: [{ type: "query" as const, key: "format", value: "rss" }],
+    destination: "/blogg/rss.xml",
     statusCode: 301,
   },
 

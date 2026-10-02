@@ -112,6 +112,90 @@ export function tilSignaler(s: Samtykke): Samtykkesignaler {
 }
 
 /**
+ * Microsoft Clarity har sin egen samtykke-API. Lagt til 02.10.2026.
+ *
+ * HVORFOR DEN TRENGS. Clarity leser ikke Google Consent Mode. Den tar opp
+ * sesjonen — museflytting, klikk, rulling — og setter egne cookies, og den
+ * fyrer i dag på `gtm.js`, altså hver sidevisning, uten noen
+ * samtykkebetingelse. Fram til samtykkekontrollen er satt på taggen inne i
+ * GTM (framgangsmåten står i docs/gtm-samtykke.md) er dette kallet det
+ * eneste som forteller Clarity hva brukeren har svart.
+ *
+ * Fra 31.10.2025 håndhever Clarity dessuten et krav om samtykkesignal for
+ * besøk fra EØS, Storbritannia og Sveits. Uten signal kjører den i
+ * «no-consent mode»: ingen cookies, og én tilfeldig ID per sidevisning i
+ * stedet for en sesjon. Verifisert mot Microsofts egen dokumentasjon
+ * 02.10.2026 — API-et heter `consentv2`, og nøklene har stor S:
+ * `ad_Storage` og `analytics_Storage`. Det eldre `clarity("consent", true)`
+ * er på vei ut og skal ikke brukes.
+ *
+ * KARTLEGGINGEN TIL VÅRE TO KATEGORIER er den samme som for Google:
+ * opptaket er analyse, cookien som følger brukeren på tvers av sesjoner er
+ * det Clarity selv kaller ad_Storage.
+ */
+export type Claritysignaler = {
+  ad_Storage: "granted" | "denied";
+  analytics_Storage: "granted" | "denied";
+};
+
+export function tilClaritysignaler(s: Samtykke): Claritysignaler {
+  return {
+    ad_Storage: s.markedsforing ? "granted" : "denied",
+    analytics_Storage: s.analyse ? "granted" : "denied",
+  };
+}
+
+/**
+ * Et vindu-lignende objekt, nok til å melde fra til Clarity. Gjør funksjonen
+ * under testbar uten nettleser.
+ */
+export type Clarityko = { (...a: unknown[]): void; q?: unknown[] };
+
+export type Clarityvindu = { clarity?: Clarityko };
+
+/**
+ * Sender signalet til Clarity, og sørger for at det overlever at Clarity
+ * lastes etterpå.
+ *
+ * DETTE ER DET IKKE-OPPLAGTE. Clarity lastes av GTM, asynkront, og GTM
+ * lastes `afterInteractive`. Samtykket er kjent før det: for den som
+ * allerede har svart leses cookien i <head>, og for den som klikker i
+ * banneret kan klikket komme før GTM er ferdig. Et kall på et
+ * `window.clarity` som ikke finnes ennå ville bare forsvunnet, og Clarity
+ * ville aldri fått signalet for den sidevisningen.
+ *
+ * LØSNINGEN ER KØEN CLARITY SELV BRUKER. Installasjonssnutten til Clarity
+ * begynner med `c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)}`
+ * — altså: finnes `window.clarity` allerede, beholdes den, og det lastede
+ * skriptet tømmer `clarity.q` når det kommer. Vi oppretter derfor samme
+ * stubb først, slik at kallet ligger i køen Clarity selv vil tømme.
+ *
+ * Clarity pusher `arguments`; vi pusher argumentene som en array. Køen
+ * tømmes med `apply`, som behandler de to likt — og en array er det
+ * eneste av de to en moderne pilfunksjon kan lage.
+ *
+ * ALTERNATIVET VAR Å GJENTA KALLET PÅ EN HENDELSE og håpe at Clarity var
+ * lastet da. Køen er det robuste valget fordi den ikke avhenger av
+ * rekkefølge i det hele tatt: kommer Clarity aldri, ligger kallet ubrukt i
+ * en array og gjør ingenting.
+ *
+ * FORBEHOLD, verdt å vite neste gang noen måler dette: signalet respekteres
+ * bare hvis Clarity-prosjektet (`rkgf0frfdt`) er satt opp til å kreve
+ * samtykke. Er det ikke det, er kallet uskadelig, men virkningsløst.
+ */
+export function meldTilClarity(vindu: Clarityvindu, s: Samtykke): void {
+  let clarity = vindu.clarity;
+  if (!clarity) {
+    const ko: Clarityko = (...a: unknown[]) => {
+      (ko.q = ko.q ?? []).push(a);
+    };
+    vindu.clarity = ko;
+    clarity = ko;
+  }
+  clarity("consentv2", tilClaritysignaler(s));
+}
+
+/**
  * Skriptet som kjører FØR alt annet, i <head>.
  *
  * DET GJENTAR OGSÅ `samtykke_oppdatert` FOR GJENGANGERE, lagt til
@@ -173,6 +257,16 @@ export function tilSignaler(s: Samtykke): Samtykkesignaler {
  * `data-samtykke` på <html> er det banneret leser for å vite om det skal
  * vises. Å sette det her, synkront, er det som gjør at banneret ikke
  * blinker for den som allerede har svart.
+ *
+ * CLARITY-SIGNALET SENDES HERFRA OGSÅ, lagt til 02.10.2026, og det sendes
+ * ALLTID — også for den som ikke har svart ennå. Da er begge nøklene
+ * `denied`, og det er nettopp poenget: Clarity skiller ikke mellom «sa
+ * nei» og «har ikke svart», den skiller mellom «har et signal» og «har
+ * ikke noe». Uten signal kjører den som før, med cookies.
+ *
+ * Stubben som opprettes her er den samme køen `meldTilClarity()` over
+ * bygger, og den opprettes med vilje i <head>: da finnes køen før GTM
+ * laster Clarity-taggen, og rekkefølgen kan ikke gå galt.
  */
 export function standardSkript(): string {
   return `
@@ -203,6 +297,8 @@ export function standardSkript(): string {
   });
   gtag("set","ads_data_redaction",g!=="granted");
   gtag("set","url_passthrough",true);
+  window.clarity=window.clarity||function(){(window.clarity.q=window.clarity.q||[]).push(arguments);};
+  window.clarity("consentv2",{ad_Storage:g,analytics_Storage:a});
   if(v)window.dataLayer.push({
     event:"samtykke_oppdatert",
     samtykke_analyse:a,

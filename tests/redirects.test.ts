@@ -67,7 +67,16 @@ function ruter(): Set<string> {
       if (statSync(full).isDirectory()) {
         // Gruppemapper (foo) er ikke del av URL-en.
         gå(full, navn.startsWith("(") ? sti : `${sti}/${navn}`);
-      } else if (navn === "page.tsx") {
+      } else if (navn === "page.tsx" || navn === "route.ts") {
+        /*
+         * `route.ts` TELLER OGSÅ SOM RUTE. Lagt til 02.10.2026, da
+         * /blogg/rss.xml kom.
+         *
+         * Uten den besto testen bare ved et uhell: `/blogg/[slug]` er en
+         * dynamisk rute, og jokeren nedenfor matchet /blogg/rss.xml som om
+         * det var en artikkel. En feilstavet filnavn ville dermed gått
+         * gjennom.
+         */
         funnet.add(sti === "" ? "/" : sti);
       }
     }
@@ -113,14 +122,33 @@ test("hvert redirect-mål finnes som rute", async () => {
 });
 
 test("ingen redirect peker til seg selv eller videre til en annen redirect", async () => {
-  const kilder = new Map((await kart()).map((r) => [r.source, r.destination]));
+  const alle = await kart();
 
-  for (const [kilde, mål] of kilder) {
-    assert.notEqual(kilde, mål, `${kilde} omdirigerer til seg selv`);
+  /*
+   * BETINGEDE REDIRECTS ER IKKE LEDD I EN KJEDE. Lagt til 02.10.2026.
+   *
+   * `/blogg` er kilde i én redirect, men bare med `has: format=rss`.
+   * `/blogg` uten parametere treffes ikke, så de seks døde bloggslugene som
+   * peker dit lander på oversikten — ingen kjede. En kjedetest som ikke
+   * skiller på dette melder en feil som ikke finnes, og en test som roper
+   * ulv blir slått av.
+   *
+   * Det er nettopp `has` som gjør den redirecten trygg: uten den ville
+   * oversikten vært flyttet, og den er en live side med organisk trafikk.
+   */
+  const ubetinget = new Map(
+    alle.filter((r) => !("has" in r)).map((r) => [r.source, r.destination]),
+  );
+
+  for (const r of alle) {
+    assert.notEqual(r.source, r.destination, `${r.source} omdirigerer til seg selv`);
+  }
+
+  for (const [kilde, mål] of ubetinget) {
     assert.ok(
-      !kilder.has(mål),
+      !ubetinget.has(mål),
       `${kilde} → ${mål}, men ${mål} omdirigerer videre til ` +
-        `${kilder.get(mål)}. En kjede taper lenkeverdi og er unødvendig ` +
+        `${ubetinget.get(mål)}. En kjede taper lenkeverdi og er unødvendig ` +
         `— pek ${kilde} rett på sluttmålet.`,
     );
   }
@@ -181,4 +209,61 @@ test("hver redirect er en eksplisitt 301", async () => {
         `Kartet skal være 301 hele veien. Bestemt 27.09.2026.`,
     );
   }
+});
+
+/**
+ * 404-ENE FRA SEARCH CONSOLE ETTER CUTOVER. Lagt til 02.10.2026.
+ *
+ * Search Console rapporterte 18 404-er på den nye siden dagen etter
+ * cutover. Seksten var dekket av kartet. De to under var ikke, og begge er
+ * kontrollert mot live før de ble lagt inn — begge svarer 404 — slik regel
+ * 1 i AGENTS.md krever: «Sjekk at en URL faktisk er død før du legger inn
+ * en redirect.»
+ *
+ * De står her og ikke bare i kartet fordi det er det eneste stedet som
+ * sier HVORFOR de finnes. Fjerner noen en av dem, melder testen med
+ * begrunnelsen i hånden.
+ */
+const SEARCH_CONSOLE_404 = [
+  ["/produktfoto", "/innholdsproduksjon"],
+  ["/gratis-strategimote-kontaktskjema", "/kontaktoss"],
+] as const;
+
+test("404-ene fra Search Console er dekket", async () => {
+  const kilder = new Map((await kart()).map((r) => [r.source, r.destination]));
+
+  for (const [kilde, mål] of SEARCH_CONSOLE_404) {
+    assert.equal(
+      kilder.get(kilde),
+      mål,
+      `${kilde} var en 404 i Search Console 02.10.2026 og skal 301-es til ` +
+        `${mål}. Se begrunnelsen i next.config.ts.`,
+    );
+  }
+});
+
+/**
+ * RSS-FEEDEN. Lagt til 02.10.2026.
+ *
+ * Squarespace serverte feeden på `/blogg?format=rss`. Testen holder på de to
+ * tingene som gjør gjenopprettingen trygg: at betingelsen faktisk står der,
+ * og at feeden finnes som rute.
+ */
+test("/blogg?format=rss går til feeden, og bare med betingelsen", async () => {
+  const treff = (await kart()).filter((r) => r.source === "/blogg");
+
+  assert.equal(treff.length, 1, "/blogg skal være kilde i presis én redirect");
+  assert.equal(treff[0].destination, "/blogg/rss.xml");
+  assert.deepEqual(
+    (treff[0] as { has?: unknown[] }).has,
+    [{ type: "query", key: "format", value: "rss" }],
+    `/blogg er en live side med organisk trafikk. Uten \`has\` ville ` +
+      `redirecten flyttet hele bloggoversikten — presis det regel 1 i ` +
+      `AGENTS.md forbyr.`,
+  );
+  assert.ok(
+    ruter().has("/blogg/rss.xml"),
+    "/blogg/rss.xml finnes ikke som rute. Redirecten ville sendt " +
+      "abonnentene fra en feed til en 404.",
+  );
 });

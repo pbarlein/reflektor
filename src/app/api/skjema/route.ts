@@ -1,6 +1,8 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { after, NextResponse, type NextRequest } from "next/server";
 
+import { lesHutk, sendLeadTilHubspot } from "@/lib/hubspot";
 import { sendLeadPaEpost } from "@/lib/lead";
+import { basisUrl } from "@/lib/miljo";
 import { foroftig, klientnokkel, rens } from "@/lib/skjemavern";
 
 /**
@@ -87,6 +89,46 @@ export async function POST(req: NextRequest) {
       await sendLeadPaEpost(lead);
     } catch (feil) {
       console.error("[lead] Sending feilet:", feil);
+    }
+
+    /*
+     * HUBSPOT, LAGT TIL 02.10.2026. Se lib/hubspot.ts for hvorfor leadet
+     * også skal gå denne veien.
+     *
+     * `after()` OG IKKE `await`, med vilje. Dette er den eneste delen av
+     * innsendingen som ingen venter på: e-posten er hovedkanalen, og
+     * besøkende skal til /takk. `after()` kjører tilbakekallet ETTER at
+     * svaret er sendt — på Vercel via `waitUntil`, så invokasjonen lever
+     * videre til kallet er ferdig. Et `await` her ville lagt HubSpots
+     * svartid rett inn i ventetiden før /takk, og /takk er der målingen av
+     * Reflektors eneste KPI skjer.
+     *
+     * Cookien leses HER og ikke inne i tilbakekallet. Det er lov å lese
+     * forespørselen inne i `after()` i en rutehåndterer, men verdien er
+     * kjent nå, og en lesning som ikke trenger å være der er en lesning
+     * som kan feile senere.
+     */
+    const hutk = lesHutk(req.headers.get("cookie"));
+    const basis = basisUrl();
+
+    /*
+     * `after()` KASTER HVIS DEN KALLES UTENFOR EN FORESPØRSELSKONTEKST.
+     * Verifisert: «`after` was called outside a request scope.» I en
+     * rutehåndterer på Vercel finnes konteksten alltid, så dette skal ikke
+     * kunne skje — men regelen i hodet på fila er at svaret ALLTID er 303
+     * til /takk, og en ufanget feil her ville gitt 500 og tatt med seg
+     * både leadet og målingen av det.
+     *
+     * Fallback er å kalle funksjonen uten å vente. Den kan ikke kaste (se
+     * hubspot.ts), så `void` er trygt: på en kjøretid uten `after()` kan
+     * kallet bli avbrutt når svaret sendes, og det er et dårligere utfall
+     * enn `after()` — men et mye bedre utfall enn en 500.
+     */
+    try {
+      after(() => sendLeadTilHubspot(lead, hutk, basis));
+    } catch (feil) {
+      console.error("[hubspot] after() var ikke tilgjengelig:", feil);
+      void sendLeadTilHubspot(lead, hutk, basis);
     }
   }
 

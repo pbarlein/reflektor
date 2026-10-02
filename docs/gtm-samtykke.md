@@ -22,9 +22,28 @@ i en isolert container i skyen, uten Google-profil.
 **ENDRET 02.10.2026:** Den nye siden laster nå containeren for alle, fra
 første sidevisning, etter Påls eksplisitte valg (se `Sporing.tsx`). Det
 betyr at de tre taggene under nå kjører før samtykke også på den nye siden.
-Oppskriften i denne fila er derfor fortsatt aktuell — og den må kombineres
-med at /api/skjema sender leads direkte til HubSpot, ellers mister CRM-en
-leads fra dem som sier nei.
+Oppskriften i denne fila er derfor fortsatt aktuell.
+
+**FORUTSETNINGEN ER PÅ PLASS, samme dag.** Her sto at oppskriften «må
+kombineres med at /api/skjema sender leads direkte til HubSpot, ellers
+mister CRM-en leads fra dem som sier nei». Det er gjort:
+
+- `/api/skjema` sender nå hvert lead rett til HubSpots Forms API fra
+  serveren (`src/lib/hubspot.ts`). **CRM-et avhenger ikke lenger av
+  sporingsskriptet i det hele tatt** — leadet kommer fram enten besøkende
+  sier ja, sier nei eller blokkerer sporing. HubSpot-taggen kan dermed
+  settes bak samtykke uten at ett lead går tapt.
+- Kontaktskjemaet er merket `data-hs-do-not-collect="true"`, så HubSpots
+  «collected forms» ikke oppretter samme kontakt en gang til fra
+  nettleseren.
+- **Clarity får samtykket uavhengig av GTM.** Den leser ikke Consent Mode,
+  men har sin egen `consentv2`-API, og den kalles nå fra `<head>` og fra
+  banneret (`src/lib/samtykke.ts`). Uten samtykke kjører Clarity i
+  «no-consent mode»: ingen cookies, én ID per sidevisning. Det gjør
+  Clarity-taggen i containeren mindre kritisk — men den skal fortsatt
+  settes bak samtykke, for opptaket i seg selv.
+
+Apollo er den eneste av de tre som ikke har noen annen bryter enn GTM.
 
 **Dagens Squarespace-side laster containeren umiddelbart.** Det er der de
 tre taggene kjører på folk som ikke har tatt stilling til noe, akkurat nå.

@@ -8,8 +8,11 @@ import {
   lesFraCookiestreng,
   parse,
   serialiser,
+  meldTilClarity,
   standardSkript,
+  tilClaritysignaler,
   tilSignaler,
+  type Clarityvindu,
 } from "../src/lib/samtykke.ts";
 
 /**
@@ -133,8 +136,11 @@ test("standardSkript er gyldig JavaScript", () => {
  * GJENGANGEREN. Lagt til 21.09.2026 etter at målingen i nettleseren viste
  * at `samtykke_oppdatert` manglet helt på besøk nummer to.
  *
- * De fem taggene som ikke leser Consent Mode — Meta, Apollo, HubSpot,
- * Clarity, Microsoft Ads — kan bare styres inne i GTM-containeren. Henges
+ * De tre taggene som ikke leser Consent Mode — Apollo, Clarity og HubSpot —
+ * kan bare styres inne i GTM-containeren. (Her sto «fem … Meta, Microsoft
+ * Ads». Rettet 02.10.2026: Meta-pikselen var injisert av Squarespace og
+ * forsvant ved cutover, og Microsoft Ads finnes ikke i containeren i det
+ * hele tatt. Se docs/gtm-samtykke.md.) Henges
  * de på denne hendelsen uten at den gjentas, fyrer de den ene gangen
  * brukeren klikker og aldri mer for den personen. Det er en feil ingen
  * ville oppdaget ved å se på siden.
@@ -211,4 +217,131 @@ test("gjenganger med fullt samtykke får hendelsen med granted", () => {
   const blandet = delvis.find((x) => x.event === "samtykke_oppdatert");
   assert.equal(blandet?.samtykke_analyse, "granted");
   assert.equal(blandet?.samtykke_markedsforing, "denied");
+});
+
+/**
+ * MICROSOFT CLARITY. Lagt til 02.10.2026.
+ *
+ * Clarity leser hverken Googles samtykkesignaler eller dataLayer. Den tar
+ * opp sesjonen og setter egne cookies, og fram til samtykkekontrollen er
+ * satt på taggen inne i GTM er dette kallet det eneste som forteller den
+ * hva brukeren svarte.
+ *
+ * NØKKELNAVNENE ER DET SOM KAN GÅ GALT. De er `ad_Storage` og
+ * `analytics_Storage` — med stor S, ulikt Googles `ad_storage`. Verifisert
+ * mot Microsofts egen dokumentasjon 02.10.2026. En liten s her gir et kall
+ * Clarity ignorerer, uten en feilmelding noe sted.
+ */
+test("Clarity-signalene bruker Microsofts nøkkelnavn, med stor S", () => {
+  assert.deepEqual(tilClaritysignaler(INGEN_SAMTYKKE), {
+    ad_Storage: "denied",
+    analytics_Storage: "denied",
+  });
+  assert.deepEqual(tilClaritysignaler(FULLT_SAMTYKKE), {
+    ad_Storage: "granted",
+    analytics_Storage: "granted",
+  });
+  assert.deepEqual(
+    tilClaritysignaler({ analyse: true, markedsforing: false }),
+    { ad_Storage: "denied", analytics_Storage: "granted" },
+  );
+});
+
+/**
+ * KØEN ER HELE POENGET. Clarity lastes av GTM, asynkront, og samtykket er
+ * kjent før det. Et kall på et `window.clarity` som ikke finnes ennå ville
+ * forsvunnet, og Clarity ville aldri fått signalet for den sidevisningen.
+ */
+test("meldTilClarity legger kallet i kø når Clarity ikke er lastet", () => {
+  const vindu: Clarityvindu = {};
+  meldTilClarity(vindu, FULLT_SAMTYKKE);
+
+  assert.ok(vindu.clarity, "stubben må opprettes");
+  assert.deepEqual(vindu.clarity.q, [
+    ["consentv2", { ad_Storage: "granted", analytics_Storage: "granted" }],
+  ]);
+});
+
+test("meldTilClarity bruker Clarity direkte når den er lastet", () => {
+  const kall: unknown[][] = [];
+  const vindu: Clarityvindu = {
+    clarity: (...a: unknown[]) => {
+      kall.push(a);
+    },
+  };
+  meldTilClarity(vindu, { analyse: true, markedsforing: false });
+
+  assert.deepEqual(kall, [
+    ["consentv2", { ad_Storage: "denied", analytics_Storage: "granted" }],
+  ]);
+  assert.equal(
+    vindu.clarity?.q,
+    undefined,
+    "en lastet Clarity skal ikke få en kø påtvunget",
+  );
+});
+
+/**
+ * Oppstartsskriptet må melde fra til Clarity også for den som IKKE har
+ * svart ennå — da med `denied` på begge.
+ *
+ * DET ER IKKE OVERFLØDIG. Clarity skiller ikke mellom «sa nei» og «har ikke
+ * svart»; den skiller mellom «har et signal» og «har ikke noe». Uten signal
+ * kjører den som før, med cookies, og fra 31.10.2025 håndhever den dessuten
+ * et krav om signal for besøk fra EØS.
+ */
+test("oppstartsskriptet melder fra til Clarity, også uten svar", () => {
+  const kjor = (cookie: string) => {
+    const kall: unknown[][] = [];
+    const doc = { cookie, documentElement: { setAttribute() {} } };
+    const vindu: Record<string, unknown> = {
+      dataLayer: [],
+      clarity: (...a: unknown[]) => kall.push(a),
+    };
+    new Function("window", "document", standardSkript())(vindu, doc);
+    return kall;
+  };
+
+  assert.deepEqual(kjor(""), [
+    ["consentv2", { ad_Storage: "denied", analytics_Storage: "denied" }],
+  ]);
+
+  assert.deepEqual(
+    kjor(`${COOKIE_NAVN}=${serialiser({ analyse: true, markedsforing: true })}`),
+    [["consentv2", { ad_Storage: "granted", analytics_Storage: "granted" }]],
+  );
+
+  assert.deepEqual(
+    kjor(`${COOKIE_NAVN}=${serialiser({ analyse: true, markedsforing: false })}`),
+    [["consentv2", { ad_Storage: "denied", analytics_Storage: "granted" }]],
+  );
+});
+
+/**
+ * Skriptet må opprette køen selv når Clarity ikke finnes — det er det
+ * normale tilfellet, siden skriptet kjører i <head> og GTM laster Clarity
+ * etterpå.
+ */
+test("oppstartsskriptet oppretter Clarity-køen når Clarity ikke finnes", () => {
+  const doc = { cookie: "", documentElement: { setAttribute() {} } };
+  const vindu: Record<string, unknown> = { dataLayer: [] };
+  new Function("window", "document", standardSkript())(vindu, doc);
+
+  const clarity = vindu.clarity as { q?: unknown[] } | undefined;
+  assert.ok(clarity, "køen må opprettes i <head>, før GTM laster Clarity");
+  assert.equal(clarity.q?.length, 1);
+});
+
+/**
+ * Clarity-kallet må komme ETTER consent default, av samme grunn som
+ * gjentakelsen av `samtykke_oppdatert`: rekkefølgen i <head> er den ene
+ * tingen som er garantert her, og den skal ikke byttes om ved et uhell.
+ */
+test("Clarity-kallet kommer etter consent default", () => {
+  const k = standardSkript();
+  assert.ok(k.indexOf('"consent","default"') < k.indexOf("consentv2"));
+  assert.ok(
+    k.includes("ad_Storage") && k.includes("analytics_Storage"),
+    "nøklene skal ha stor S — en liten s gir et kall Clarity ignorerer",
+  );
 });

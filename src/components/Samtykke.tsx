@@ -15,8 +15,10 @@ import {
   FULLT_SAMTYKKE,
   INGEN_SAMTYKKE,
   lesFraCookiestreng,
+  meldTilClarity,
   serialiser,
   tilSignaler,
+  type Clarityvindu,
   type Samtykke as Valg,
 } from "@/lib/samtykke";
 
@@ -96,7 +98,7 @@ function lagre(valg: Valg) {
 /**
  * Sender valget videre til Google og til GTM.
  *
- * TO KANALER, og begge trengs:
+ * TRE KANALER, og alle tre trengs:
  *
  * `consent update` styrer Googles egne tagger direkte — GA4 og Ads leser
  * det uten at noen trenger å konfigurere noe.
@@ -118,12 +120,17 @@ function lagre(valg: Valg) {
  * Anbefalingen i docs/gtm-samtykke.md er likevel GTMs innebygde
  * samtykkekontroll framfor en egen utløser, fordi den leser tilstanden
  * direkte. Gjentakelsen er sikkerhetsnettet under begge valg.
+ *
+ * TREDJE KANAL, LAGT TIL 02.10.2026: `meldTilClarity()`. Clarity leser
+ * hverken Googles samtykkesignaler eller dataLayer — den har sin egen
+ * `consentv2`-API, og uten et kall dit setter den cookies og tar opp
+ * sesjonen uansett hva brukeren svarte. Se lib/samtykke.ts.
  */
 function meldFra(valg: Valg) {
   const w = window as unknown as {
     dataLayer?: unknown[];
     gtag?: (...a: unknown[]) => void;
-  };
+  } & Clarityvindu;
   w.dataLayer = w.dataLayer ?? [];
   w.gtag?.("consent", "update", tilSignaler(valg));
   w.gtag?.("set", "ads_data_redaction", !valg.markedsforing);
@@ -133,6 +140,7 @@ function meldFra(valg: Valg) {
     samtykke_markedsforing: valg.markedsforing ? "granted" : "denied",
     samtykke_kilde: "valg",
   });
+  meldTilClarity(w, valg);
 }
 
 /**

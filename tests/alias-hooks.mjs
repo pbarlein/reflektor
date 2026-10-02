@@ -54,6 +54,18 @@ export async function resolve(spesifikator, kontekst, neste) {
     }
   }
 
+  /*
+   * `next/server` MÅ PEKES PÅ FILA. Lagt til 02.10.2026.
+   *
+   * Next-pakken eksporterer `next/server` via `exports` i sin package.json,
+   * men bare for bundlere — ren node finner den ikke og foreslår selv
+   * «next/server.js». Uten denne linja kunne ingen rutehåndterer importeres
+   * i en test, og api/skjema/route.ts er den ruta som bærer leadene.
+   */
+  if (sti === "next/server") {
+    return neste("next/server.js", kontekst);
+  }
+
   if (sti.startsWith("@/")) {
     const treff = prov(path.join(SRC, sti.slice(2)));
     if (treff) {

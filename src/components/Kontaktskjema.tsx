@@ -54,7 +54,26 @@ export function Kontaktskjema({ side }: { side: string }) {
   }, []);
 
   return (
-    <form method="post" action="/api/skjema" className="grid gap-5">
+    <form
+      method="post"
+      action="/api/skjema"
+      className="grid gap-5"
+      /*
+        HOLDER HUBSPOTS «COLLECTED FORMS» UNNA. Lagt til 02.10.2026.
+
+        Sporingsskriptet til HubSpot leser av skjemaer det ikke eier og
+        oppretter kontakten selv. Fra 02.10.2026 sender /api/skjema hvert
+        lead rett til HubSpot fra serveren (se lib/hubspot.ts), og uten
+        dette attributtet ville samme innsending kommet inn to veier: én
+        gang fra nettleseren og én gang fra serveren.
+
+        Attributtet er HubSpots eget og slår av avlesningen for akkurat
+        dette skjemaet. Serverveien er den som skal bli stående: den
+        virker også for den som blokkerer sporing, og den er ikke avhengig
+        av samtykke til markedsføringscookies.
+      */
+      data-hs-do-not-collect="true"
+    >
       <input type="hidden" name="lastet" ref={lastet} defaultValue="0" />
       <input type="hidden" name="side" value={side} />
       <input type="hidden" name="kilde" ref={kilde} defaultValue="" />

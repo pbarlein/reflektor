@@ -43,7 +43,20 @@ export const metadata: Metadata = {
   title: "Blogg om sosiale medier og innholdsproduksjon",
   description:
     "Artikler fra Reflektor om sosiale medier, videomarkedsføring, innholdsproduksjon og employer branding — og hva det koster å sette bort jobben.",
-  alternates: { canonical: `${basisUrl()}/blogg` },
+  alternates: {
+    canonical: `${basisUrl()}/blogg`,
+    /*
+     * RSS-FEEDEN, LAGT TIL 02.10.2026. Dette blir en
+     * `<link rel="alternate" type="application/rss+xml">` i <head>, og det
+     * er slik en RSS-leser faktisk finner feeden: man limer inn adressen
+     * til bloggen, og leseren leter etter denne taggen. Uten den må man
+     * kjenne URL-en til feeden på forhånd.
+     *
+     * Squarespace hadde feeden på `/blogg?format=rss`. Se
+     * blogg/rss.xml/route.ts og redirecten i next.config.ts.
+     */
+    types: { "application/rss+xml": `${basisUrl()}/blogg/rss.xml` },
+  },
 };
 
 function Metarad({ a }: { a: Artikkel }) {
