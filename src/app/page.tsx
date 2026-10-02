@@ -70,17 +70,34 @@ export default function Forside() {
         siden, og to Review-objekter for det samme sitatet ville vært to
         anmeldelser i markeringen og én i virkeligheten.
       */}
-      {omtale && (
-        <FilmSchema
-          navn={omtale.video.navn}
-          beskrivelse={omtale.video.beskrivelse}
-          sti={omtale.video.sti}
-          plakat={`${omtale.video.sti}-poster.jpg`}
-          sekunder={omtale.video.sekunder}
-          publisert={omtale.video.publisert}
-          sidesti="/"
-        />
-      )}
+      {omtale &&
+        (() => {
+          /*
+            MARKERINGEN SKAL PEKE PÅ FILA SOM FAKTISK VISES HER. Rettet
+            02.10.2026, da forsiden gikk over til 9:16-utgaven.
+
+            `contentUrl` og `thumbnailUrl` sto på 4:5-fila, som nå bare
+            brukes på kundecasen og tjenestesidene. En VideoObject som
+            oppgir en annen fil enn den som ligger på siden er en påstand
+            som ikke stemmer — og `thumbnailUrl` er dessuten det Google
+            viser i videoresultater, så feil plakat er feil bilde i søk.
+
+            Alt annet — navn, beskrivelse, lengde, dato — er identisk: det
+            er samme opptak, bare et annet utsnitt.
+          */
+          const sti = omtale.video.stiStaende ?? omtale.video.sti;
+          return (
+            <FilmSchema
+              navn={omtale.video.navn}
+              beskrivelse={omtale.video.beskrivelse}
+              sti={sti}
+              plakat={`${sti}-poster.jpg`}
+              sekunder={omtale.video.sekunder}
+              publisert={omtale.video.publisert}
+              sidesti="/"
+            />
+          );
+        })()}
       {/*
         `abonnementspris` er eksplisitt her og bare her. Fra 21.09.2026 er
         prisblokken avslått som standard i TjenesteSchema, fordi de fire

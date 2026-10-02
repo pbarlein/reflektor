@@ -31,6 +31,7 @@ export function Omtalevideo({
   sti,
   alt,
   undertekster,
+  forhold = "4/5",
   className = "",
 }: {
   /** Sti uten filendelse. `.webm`, `.mp4`, `-poster.jpg` leses herfra. */
@@ -38,6 +39,15 @@ export function Omtalevideo({
   alt: string;
   /** Sti til VTT-fila. Utelates om det ikke finnes teksting. */
   undertekster?: string;
+  /**
+   * Formatet på rammen. Standard er 4:5.
+   *
+   * LAGT TIL 02.10.2026. Rammen var låst til 4:5, og siden videoen ligger
+   * med `object-cover`, ble en 9:16-fil beskåret 30 % i bredden uten at noe
+   * sa fra. Verdien MÅ stemme med fila som ligger i `sti` — det er ikke en
+   * knapp for å endre utsnitt, det er en opplysning om hva fila er.
+   */
+  forhold?: "4/5" | "9/16";
   className?: string;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
@@ -83,7 +93,9 @@ export function Omtalevideo({
 
   return (
     <div
-      className={`relative aspect-[4/5] overflow-hidden rounded-flate bg-flate-dempet ${className}`}
+      className={`relative overflow-hidden rounded-flate bg-flate-dempet ${
+        forhold === "9/16" ? "aspect-[9/16]" : "aspect-[4/5]"
+      } ${className}`}
     >
       <video
         ref={ref}

@@ -82,21 +82,29 @@ export function Anmeldelsesrad({
   anmeldelser,
   overskrift,
   eyebrow,
-  innslag,
+  video,
+  sitat,
 }: {
   anmeldelser: Anmeldelse[];
   overskrift: React.ReactNode;
   eyebrow: React.ReactNode;
   /**
-   * Noe som står mellom overskriften og anmeldelsesraden.
+   * Omtalevideoen, i venstre spalte.
    *
    * LAGT TIL 01.10.2026 for omtalevideoen fra Soulcake. Den kunne ikke
    * vært en egen seksjon over: da hadde den fått sin egen overskrift, og
    * siden ville sagt «det kundene sier» to ganger på rad. Her hører den
    * under den overskriften som allerede står der — videoen er det sterkeste
    * kunden sier, og anmeldelsene er de elleve andre.
+   *
+   * DELT I TO PROPER 02.10.2026, da overskriften flyttet ned til siden av
+   * videoen. Før dette lå video og sitat samlet i én `innslag`-node under
+   * overskriften. Nå er videoen den ene spalten og overskrift + sitat den
+   * andre, og da må de inn hver for seg.
    */
-  innslag?: React.ReactNode;
+  video?: React.ReactNode;
+  /** Sitatet og attribusjonen, under overskriften i høyre spalte. */
+  sitat?: React.ReactNode;
 }) {
   return (
     /*
@@ -121,22 +129,54 @@ export function Anmeldelsesrad({
     */
     <Container>
       <div className="overflow-hidden rounded-flate bg-dyp px-6 py-12 text-pa-dyp sm:px-14 sm:py-14">
-        <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
+        {/*
+          VIDEOEN TIL VENSTRE, OVERSKRIFTEN TIL HØYRE. Endret 02.10.2026,
+          bestilt av Pål: «gjør videoen i anmeldelsene 9x16 og noe større.
+          flytt tittelen til seksjonen til høyre for å gi plass til
+          videoen.»
+
+          FØR DETTE sto overskriften alene øverst i full bredde, og videoen
+          lå under den i en 18 rem smal 4:5-ramme ved siden av sitatet.
+          Videoen var det sterkeste beviset på siden og det minste elementet
+          i seksjonen.
+
+          `lg:items-center` og ikke `items-start`: en 9:16-ramme er høy, og
+          tekstspalten ved siden av er kortere. Står de på topp, henger
+          videoen alene under teksten i et halvt skjermbilde.
+
+          `minmax(0,22rem)` og ikke `22rem`: en fast sporbredde lar ikke
+          sporet krympe under sitt eget innhold, og på de smaleste
+          lg-bredene presset det tekstspalten sammen. 22 rem er samme
+          spaltebredde som omtalen har på kundecasen — målt gir det 352 ×
+          626 px mot de 288 × 360 rammen hadde før, altså nesten tre ganger
+          flaten.
+        */}
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,22rem)_1fr] lg:items-center lg:gap-16">
+          {video}
+
           <div>
             <Eyebrow variant="dyp">{eyebrow}</Eyebrow>
             <h2 className="mt-4 max-w-2xl text-3xl text-balance sm:text-4xl">
               {overskrift}
             </h2>
+            {sitat}
           </div>
+        </div>
 
-          {/*
-            Tallet står som et tall, ikke som en påstand i en setning.
-            «5,0» i display-grad ved siden av stjernene leses på et blikk;
-            «vi har 5,0 i snitt på Google» må leses som språk og veier
-            mindre. Kilden står under, slik at det ikke er Reflektor som
-            sier det.
-          */}
-          <p className="flex shrink-0 items-center gap-5">
+        {/*
+          TALLET STÅR OVER KORTENE, ikke lenger øverst i seksjonen. Det er
+          dit det hører: det oppsummerer anmeldelsene under, ikke videoen
+          over, og etter at overskriften flyttet til høyre for videoen var
+          det ikke lenger noe å stå ved siden av.
+
+          Tallet står som et tall, ikke som en påstand i en setning.
+          «5,0» i display-grad ved siden av stjernene leses på et blikk;
+          «vi har 5,0 i snitt på Google» må leses som språk og veier
+          mindre. Kilden står under, slik at det ikke er Reflektor som
+          sier det.
+        */}
+        <div className="mt-14 border-t border-[rgba(245,240,232,0.14)] pt-10">
+          <p className="flex items-center gap-5">
             <span
               className="font-[family-name:var(--font-display-serif)] text-[3.25rem] leading-none tracking-[-0.02em]"
               aria-hidden="true"
@@ -154,10 +194,8 @@ export function Anmeldelsesrad({
               {googleProfil.antall} anmeldelser.
             </span>
           </p>
-        </div>
-        {innslag}
 
-        {/*
+          {/*
         Raden starter på panelets venstre innholdskant og fortsetter ut
         gjennom panelets høyre kant. Den avkuttede kanten ER rulle-
         anvisningen — en gradient eller en pil ville lagt til pynt for å si
@@ -183,23 +221,23 @@ export function Anmeldelsesrad({
         rulles med tastatur i Chrome. Firefox gjør det av seg selv; Chrome
         gjør det ikke, og da er hele raden utilgjengelig uten mus.
       */}
-        <ul
-          tabIndex={0}
-          aria-label="Anmeldelser hentet fra Google"
-          className="
+          <ul
+            tabIndex={0}
+            aria-label="Anmeldelser hentet fra Google"
+            className="
           mt-14 -mr-6 flex snap-x snap-mandatory items-stretch gap-4
           overflow-x-auto pr-6 pb-3 sm:-mr-14 sm:pr-14
           [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
           focus-visible:outline focus-visible:outline-2
           focus-visible:outline-offset-4 focus-visible:outline-aksent-pa-dyp
         "
-        >
-          {anmeldelser.map((a) => (
-            <li
-              key={a.navn}
-              className={`flex shrink-0 snap-start flex-col rounded-flate border border-[rgba(245,240,232,0.14)] bg-[rgba(245,240,232,0.10)] p-6 backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)] ${bredde(a.sitat.length)}`}
-            >
-              {/*
+          >
+            {anmeldelser.map((a) => (
+              <li
+                key={a.navn}
+                className={`flex shrink-0 snap-start flex-col rounded-flate border border-[rgba(245,240,232,0.14)] bg-[rgba(245,240,232,0.10)] p-6 backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)] ${bredde(a.sitat.length)}`}
+              >
+                {/*
               GLASSKORT. Fyll på 6 % bone over den brune flaten gir målt
               effektiv bakgrunn #3a2921: bone-tekst 12,19 og dempet tekst
               7,52, altså AAA på begge. `backdrop-blur` er det som gjør det
@@ -210,22 +248,24 @@ export function Anmeldelsesrad({
               STØTTES. Der den ikke gjør det, beholdes det kraftigere fyllet,
               slik at kortet fortsatt leser som et kort.
             */}
-              <blockquote className="text-[0.9375rem] leading-[1.6] text-pretty">
-                {a.sitat}
-              </blockquote>
-              {/* Attribusjonen skyves til bunnen, slik at navnene står på
+                <blockquote className="text-[0.9375rem] leading-[1.6] text-pretty">
+                  {a.sitat}
+                </blockquote>
+                {/* Attribusjonen skyves til bunnen, slik at navnene står på
                 samme høyde i hele raden selv om sitatene er ulikt lange. */}
-              <p className="mt-auto pt-6 text-sm tracking-[0.02em]">
-                <span className="font-medium">{a.navn}</span>
-                {a.selskap && (
-                  <span className="block text-pa-dyp-dempet">{a.selskap}</span>
-                )}
-              </p>
-            </li>
-          ))}
-        </ul>
+                <p className="mt-auto pt-6 text-sm tracking-[0.02em]">
+                  <span className="font-medium">{a.navn}</span>
+                  {a.selskap && (
+                    <span className="block text-pa-dyp-dempet">
+                      {a.selskap}
+                    </span>
+                  )}
+                </p>
+              </li>
+            ))}
+          </ul>
 
-        {/*
+          {/*
         Bare lenken. Her sto en setning om at ni av elleve har tekst og at
         anmeldelsene dekker både produksjonsoppdrag og månedsavtaler. Pål
         ba om å få den bort: raden skal leses, ikke forklares.
@@ -237,16 +277,17 @@ export function Anmeldelsesrad({
         besøk». Det er et produksjonsoppdrag, ikke et abonnement. Endres
         overskriften, må dette vurderes på nytt.
       */}
-        <p className="mt-8 text-sm tracking-[0.02em]">
-          <a
-            href={googleProfil.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex min-h-6 items-center text-aksent-pa-dyp underline decoration-from-font underline-offset-4"
-          >
-            Se alle anmeldelsene på Google
-          </a>
-        </p>
+          <p className="mt-8 text-sm tracking-[0.02em]">
+            <a
+              href={googleProfil.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-6 items-center text-aksent-pa-dyp underline decoration-from-font underline-offset-4"
+            >
+              Se alle anmeldelsene på Google
+            </a>
+          </p>
+        </div>
       </div>
     </Container>
   );

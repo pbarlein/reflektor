@@ -27,40 +27,84 @@ import { front } from "@/content/sider/front";
  * INNHOLDET HENTES FRA CASET, ikke skrevet på nytt her. Sitatet og navnet
  * står ett sted, og de to sidene kan ikke komme i utakt.
  */
-function Kundeord() {
-  const soulcake = hentCase("soulcake");
-  const ord = soulcake?.kundeord;
+function soulcakeOrd() {
+  return hentCase("soulcake")?.kundeord ?? null;
+}
+
+/**
+ * Videoen, i venstre spalte.
+ *
+ * 9:16 OG STØRRE, endret 02.10.2026 etter bestilling fra Pål. To ting lå
+ * bak den gamle 4:5-rammen på 18 rem, og begge er rettet:
+ *
+ * 1. FILA VAR BESKÅRET. Masteren fra produksjonen er 1080×1920, altså ekte
+ *    9:16. Utgaven som lå på nettstedet var en 4:5-versjon laget for de
+ *    smale spaltene på case- og tjenestesidene. Forsiden viser nå hele
+ *    formatet, fra den samme masteren — se `stiStaende` i caser.ts.
+ * 2. RAMMEN VAR LÅST TIL 4:5 i komponenten, og siden videoen ligger med
+ *    `object-cover`, ville en 9:16-fil i den rammen blitt klippet 30 % i
+ *    bredden uten at noe sa fra. Derfor er formatet nå en opplysning
+ *    komponenten får, ikke en antakelse den gjør.
+ */
+function Kundevideo() {
+  const ord = soulcakeOrd();
   if (!ord) return null;
 
   return (
-    <div className="mt-12 grid gap-8 lg:grid-cols-[18rem_1fr] lg:items-center lg:gap-14">
-      <Omtalevideo
-        sti={ord.video.sti}
-        alt={ord.video.alt}
-        undertekster={ord.video.undertekster}
-      />
-      <div className="max-w-xl">
-        <p className="leading-relaxed text-pretty text-pa-dyp-dempet">
-          Ragnhild Gaarde Bucataru i Soulcake om fem år med foto og video fra
-          Reflektor.
-        </p>
-        <blockquote className="mt-5 border-l-2 border-aksent-pa-dyp pl-5 text-xl leading-relaxed text-pretty sm:text-2xl">
-          «Vi prøver egentlig å booke dem opp, så det ikke er plass til dere
-          andre.»
-        </blockquote>
-        <Link
-          href="/vart-arbeid/soulcake"
-          className="group mt-6 inline-flex items-center gap-2 text-sm tracking-[0.02em] text-pa-dyp underline decoration-aksent-pa-dyp decoration-1 underline-offset-[0.35em]"
+    <Omtalevideo
+      forhold="9/16"
+      sti={ord.video.stiStaende ?? ord.video.sti}
+      alt={ord.video.alt}
+      undertekster={ord.video.undertekster}
+    />
+  );
+}
+
+/**
+ * Sitatet og lenken, under overskriften i høyre spalte.
+ *
+ * BILDETEKSTEN ER FJERNET 02.10.2026, bestilt av Pål: «på mobil har du
+ * tekstet videoen. fjern teksten om den ikke har noen hensikt. videoen er
+ * jo tekstet fra før av.»
+ *
+ * Her sto «Ragnhild Gaarde Bucataru i Soulcake om fem år med foto og video
+ * fra Reflektor.» rett over sitatet — og på telefon, der spaltene stables,
+ * landet den rett under videoen og leste som en bildetekst. Den fortalte
+ * dessuten det videoen viser: hun sier selv på kamera at det er fem år, og
+ * den innbrente tekstingen gjengir det ordrett.
+ *
+ * DET ENESTE DEN GJORDE SOM VIDEOEN IKKE GJØR, var å navngi henne. Navnet
+ * er derfor flyttet dit det hører hjemme — under sitatet, som attribusjon,
+ * i samme form som på kundecasen og tjenestesidene. Setningen er borte,
+ * opplysningen er ikke.
+ *
+ * `sagtAv` HENTES FRA CASET og er ikke skrevet på nytt her, slik filhodet
+ * over lover. Sitatet er fortsatt en bevisst forkortet utgave for forsiden:
+ * den fulle versjonen står på casen.
+ */
+function Kundesitat() {
+  const ord = soulcakeOrd();
+  if (!ord) return null;
+
+  return (
+    <div className="mt-6 max-w-xl">
+      <blockquote className="border-l-2 border-aksent-pa-dyp pl-5 text-xl leading-relaxed text-pretty sm:text-2xl">
+        «Vi prøver egentlig å booke dem opp, så det ikke er plass til dere
+        andre.»
+      </blockquote>
+      <p className="mt-3 pl-5 text-sm text-pa-dyp-dempet">– {ord.sagtAv}</p>
+      <Link
+        href="/vart-arbeid/soulcake"
+        className="group mt-6 inline-flex items-center gap-2 text-sm tracking-[0.02em] text-pa-dyp underline decoration-aksent-pa-dyp decoration-1 underline-offset-[0.35em]"
+      >
+        Se hele Soulcake-casen
+        <span
+          aria-hidden
+          className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
         >
-          Se hele Soulcake-casen
-          <span
-            aria-hidden
-            className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
-          >
-            →
-          </span>
-        </Link>
-      </div>
+          →
+        </span>
+      </Link>
     </div>
   );
 }
@@ -107,7 +151,8 @@ export function Anmeldelsesseksjon() {
             )
           }
           anmeldelser={klarerteAnmeldelser}
-          innslag={<Kundeord />}
+          video={<Kundevideo />}
+          sitat={<Kundesitat />}
         />
       </section>
     </>
