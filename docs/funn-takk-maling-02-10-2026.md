@@ -1,80 +1,85 @@
-# Konverteringen telles ikke i GA4 etter cutover
+# Konverteringsmålingen etter cutover — og en feilslutning jeg gjorde
 
-Funnet 02.10.2026, etter at Pål hadde fylt ut kontaktskjemaet manuelt.
-**Dette er den eneste KPI-en nettstedet har.**
+Skrevet 02.10.2026. **Konklusjonen i første utgave av dette dokumentet var
+feil.** Den sa at KPI-en ikke blir målt. Det er ikke påvist, og måten jeg
+målte på var feil. Hele notatet står som det er, fordi feilen er lærerik.
 
-## Hva som er galt
+## Det jeg trodde
 
-`takk_page_view` legges i dataLayer på `/takk`, men **sendes aldri til GA4.**
-Ingen tagg i GTM-containeren gjør hendelsen om til en GA4-hendelse.
+Jeg målte at `takk_page_view` legges i dataLayer på `/takk`, men aldri sendes
+til GA4 — GA4 mottar bare `page_view` og `user_engagement`. Jeg konkluderte
+med at en tagg i GTM var brutt, og at den eneste KPI-en ikke telles.
 
-Målt på live-siden, i en ny nettleser, med samtykke gitt og uten blokkering:
+## Hvorfor det var feil
 
-    Hendelser GA4 faktisk mottar fra /takk:  user_engagement, page_view
-    takk_page_view sendt:                    NEI
+Det står i koden, i `TakkHendelse.tsx`, skrevet 27.09.2026:
 
-## Hvorfor det ikke er vår kode
+> **ADVARSEL, AVKLART 27.09.2026: IKKE LAG EN GTM-UTLØSER PÅ DENNE HENDELSEN.**
+> Denne pushen er i dag uten mottaker. Ingen utløser i GTM-containeren lytter
+> på `takk_page_view` — det er verifisert i både publisert kode og i
+> grensesnittet.
+>
+> Nøkkelhendelsen finnes likevel, og den er ekte. Den lages INNE I GA4, som en
+> «opprettet hendelse» avledet av page_view.
 
-Hele kjeden fram til Google er kontrollert og virker:
+At hendelsen ikke sendes til GA4 er altså **meningen**. Den lages av GA4 selv,
+av en vanlig sidevisning, på tre betingelser:
+
+    event_name      contains  page_view
+    page_location   contains  takk
+    page_referrer   contains  reflektor.no
+
+Jeg målte om en tagg fyrte. Den taggen skal ikke finnes. Jeg testet dessuten
+ved å gå rett til `/takk`, altså uten referrer — da kan betingelsen aldri
+være oppfylt, uansett hvor friskt oppsettet er.
+
+## Hva som faktisk er kontrollert nå
 
 | Ledd | Status |
 |---|---|
-| Skjemaet sendes inn | ✅ 3 vellykkede innsendinger i dag (303 fra `/api/skjema`) |
-| `/takk` serveres | ✅ 10 treff i serverloggen siste seks timer |
-| `takk_page_view` i dataLayer | ✅ ligger der, etter `gtm.js` — riktig rekkefølge |
-| GTM lastet | ✅ `GTM-N4KGSS93` og `G-1QJ6BRWGJ8` begge aktive |
-| GTM behandler dataLayer | ✅ `gtm.dom` og `gtm.load` følger etter |
-| GA4 mottar hendelsen | ❌ **bare `page_view` og `user_engagement`** |
+| Skjemaet sendes inn | ✅ tre vellykkede innsendinger i dag (303 fra `/api/skjema`) |
+| `/takk` serveres | ✅ i serverloggen |
+| **Referreren overlever POST → 303** | ✅ `document.referrer` på `/takk` er `/kontaktoss` |
+| `page_location` inneholder «takk» | ✅ |
+| `page_referrer` inneholder «reflektor.no» | ✅ følger av referreren over |
+| GA4 mottar `page_view` fra `/takk` | ✅ målt på live med samtykke gitt |
 
-Bruddet sitter altså mellom dataLayer og GA4 — det vil si **inne i
-GTM-containeren**, som koden her ikke kan røre.
+Alle tre betingelsene GA4 trenger er altså oppfylt.
 
-## Hva tallene viser
+## Hvorfor tallene ser tomme ut i dag
 
-GA4 for Reflektor (eiendom 317376140), hentet via Supermetrics:
+GA4 henger etter på inneværende dag. Bevis: en sidevisning jeg selv utløste på
+`/takk` på live-siden, med samtykke, var **ikke** i GA4 noen minutter senere.
+Heller ikke som sidevisning. Fraværet av `takk_page_view` i dag sier derfor
+ingenting — verken det ene eller det andre.
 
-    01.09  takk_page_view  1
-    02.09  takk_page_view  1
-    03.09  takk_page_view  1
-    24.09  takk_page_view  1
-    29.09  takk_page_view  1
-    30.09  takk_page_view  2
-    01.10  takk_page_view  1
-    02.10  (ingen)
+Hendelsen er registrert jevnlig til og med 01.10. Kontrolleres på nytt neste
+dag.
 
-Alle de tidligere står på **Squarespace-siden**. 02.10 er første dag på
-Vercel, og da slutter hendelsen. Sidevisninger registreres samme dag, så det
-er ikke forsinkelse i GA4 — data flyter, hendelsen mangler.
+## Hvorfor kodeløsningen IKKE skal lages
 
-## Mest sannsynlige årsak
+Pål ba om at hendelsen sendes rett fra koden som en reserve. **Det ville gjort
+skade.** GA4 lager allerede `takk_page_view` av den samme sidevisningen. Sendes
+den i tillegg fra koden, telles hver eneste lead to ganger.
 
-Containeren har en samtykketagg som fyrer på klikk på et element hvis tekst
-inneholder **«ACCEPT»** — den er arvegods fra Squarespace-banneret, og står
-som punkt 9 på cutover-lista. Den nye sidens knapp heter **«Godta alle»** og
-treffer aldri.
+Det er ikke en teoretisk fare. Kommentaren i `TakkHendelse.tsx` viser til at
+versjon 36 av containeren ryddet opp i nøyaktig den feilen for Meta-taggen:
+«Pause Meta Lead - fjerner dobbelttelling».
 
-Er konverteringstaggen satt opp med krav om samtykke som bare den utløseren
-gir, vil den aldri fyre på den nye siden. Det passer med at `page_view`
-kommer fram (konfigurasjonstaggen er ikke sperret) mens konverteringen ikke
-gjør det.
+Pushen i dataLayer beholdes som et ufarlig krokpunkt, uten mottaker. Den skal
+ikke kobles til noe.
 
-Dette er en hypotese. Den kan bekreftes eller avkreftes på to minutter inne i
-GTM, og den kan ikke undersøkes herfra.
+## Det ene som faktisk kan ryke
 
-## Hva Pål må sjekke i GTM
+`page_referrer contains reflektor.no`. Endres skjemaflyten slik at referreren
+forsvinner — for eksempel ved å bytte POST + 303 mot en serverhandling —
+slutter nøkkelhendelsen å bli laget, **uten at noe annet ser galt ut**. Det er
+derfor `src/app/api/skjema/route.ts` står i fundamentlista i AGENTS.md.
 
-1. Finnes det fortsatt en tagg som sender GA4-hendelsen `takk_page_view`?
-2. Hvilken utløser har den — og matcher den fortsatt?
-3. Har taggen «Require additional consent», og i så fall hvilken?
-4. Rydd «ACCEPT»-utløseren, som uansett står på lista.
+Referreren er kontrollert i dag og overlever.
 
-## Hvis taggen er borte
+## Lærdommen
 
-Da kan hendelsen sendes rett fra koden i stedet for gjennom containeren.
-**Det må ikke gjøres samtidig som taggen finnes i GTM** — da telles hver lead
-to ganger, og KPI-en blir like gal den andre veien.
-
-## Imens
-
-Leads går ikke tapt. De kommer fram på e-post, og `kilde`-feltet forteller
-hvor de kom fra. Det som mangler er tellingen i GA4 og Google Ads.
+Kommentaren som forklarte alt sto i den filen saken gjaldt. Jeg målte først og
+leste etterpå. Hadde jeg lest først, hadde jeg spart en gal konklusjon sendt
+til kunden på lanseringsdagen.
