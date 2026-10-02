@@ -887,6 +887,10 @@ export const artikler: Artikkel[] = [
         sti: "/blogg/hva-koster-et-some-byra",
         tekst: "hva et SoMe-byrå koster i markedet",
       },
+      {
+        sti: "/blogg/sosiale-medier-strategi",
+        tekst: "slik legger dere en strategi som ender i en plan",
+      },
     ],
   },
   {
@@ -984,6 +988,24 @@ export const artikler: Artikkel[] = [
         tekst:
           "I dag foregår innholdsproduksjonen ofte digitalt. Man sprer budskapet sitt på digitale plattformer og engasjerer kunder og interessenter på sosiale medier. Det er en arena hvor folk har store krav, der det finnes en større tilgang på pålitelig informasjon og hvor forbrukere er smartere. Derfor handler digital innholdsproduksjon om å levere kvalitetsinnhold som oppfattes som hjelpsomt.",
       },
+      /*
+        FORMAT- OG KANALLISTA ER FJERNET HERFRA 02.10.2026.
+
+        Den sto ORDRETT i «Hva er innholdsmarkedsføring?» også — sju
+        identiske avsnitt på to URL-er. Målt ved å sammenligne alle avsnitt
+        på tvers av de femten artiklene: dette var det eneste ekte
+        duplikatet på hele nettstedet, bortsett fra CTA-boilerplaten som er
+        bevisst.
+
+        DEN HØRER HJEMME I DEN ANDRE ARTIKKELEN, ikke her. Der er den trinn
+        3 og 4 i en guide på fem trinn, og å fjerne den ville revet guiden i
+        stykker. Her sto den som en løsrevet oppramsing — og dessuten
+        halvveis overflødig internt, siden «Innholdsproduksjon i praksis»
+        rett under dekker blogginnlegg, bilder og video med egne avsnitt.
+
+        Igjen står setningen som innledet lista, med en lenke dit lista
+        faktisk er. Det er samtidig krysslenken de to artiklene manglet.
+      */
       {
         type: "overskrift",
         niva: 2,
@@ -992,27 +1014,12 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Digitalt innhold kommer i forskjellige formater og kan brukes på ulike kanaler. Utforsk de ulike formene innholdet kan ta i listen nedenfor:",
-      },
-      { type: "overskrift", niva: 3, tekst: "Formater:" },
-      {
-        type: "liste",
-        punkter: [
-          "Blogginnlegg: Del den ekspertisen og erfaringen du har i blogginnlegg som du publiserer på egen nettside og kobler sammen med tjenestene eller produktet du selger.",
-          "Innlegg i sosiale medier: Del nyheter, bilder og videoer av underholdningsverdi, og skap et fellesskap med følgerne og kundene dine.",
-          "Infografikk: Grafiske fremstillinger er en presis måte å formidle et budskap, som du også kan bruke i blogginnlegg og sosiale medier.",
-          "E-bøker, white papers og artikler: Alle disse formatene fremstår profesjonelle, i tillegg til at det er morsomt å jobbe med, fordi du kan dypdykke i emner og dele kunnskap. Kombiner skriftlig og visuelt innhold og del innholdet digitalt og fysisk.",
-          "Video: Et ressurskrevende format som har stort potensial for å engasjere lesere.",
-          "Podkast: Gå i dybden på samme måte som du gjør i en e-bok eller white paper, men del kunnskapen i podkast format og tiltrekk andre segmenter av målgruppen din.",
-        ],
-      },
-      { type: "overskrift", niva: 3, tekst: "Kanaler:" },
-      {
-        type: "liste",
-        punkter: [
-          "Egen nettside: Benytt deg av metoder innenfor søkemotoroptimalisering (SEO) og produser evergreen content i form av blogginnlegg som gir langvarig verdi.",
-          "Sosiale medier: Dette forutsetter aktualitet og underholdningsverdi, ettersom innholdet er kort, presist og enkelt å konsumere.",
-          "E-post marketing: Del guider, gode tilbud eller bransjeinnsikt til potensielle kunder i nyhetsbrev som man sender på e-post. Bruk Call-to-Action-knapper i nyhetsbrevet og guide leserne til nettsiden din.",
+          "Digitalt innhold kommer i forskjellige formater og kan brukes på ulike kanaler. Hvilke formater og kanaler som finnes, og hvordan du velger mellom dem, står i guiden til innholdsmarkedsføring.",
+        lenker: [
+          {
+            frase: "guiden til innholdsmarkedsføring",
+            sti: "/blogg/hva-er-innholdsmarkedsforing",
+          },
         ],
       },
       { type: "overskrift", niva: 2, tekst: "Innholdsproduksjon i praksis" },
@@ -1748,6 +1755,14 @@ export const artikler: Artikkel[] = [
     lesVidere: [
       { sti: "/videoproduksjon-i-oslo", tekst: "video til egne flater" },
       { sti: "/reklamefilm", tekst: "reklamefilm for betalte flater" },
+      {
+        sti: "/blogg/hva-koster-videoproduksjon",
+        tekst: "hva en videoproduksjon koster i markedet",
+      },
+      {
+        sti: "/blogg/hva-innebaerer-digital-historiefortelling",
+        tekst: "digital historiefortelling i praksis",
+      },
     ],
   },
   {
@@ -2458,6 +2473,10 @@ export const artikler: Artikkel[] = [
         sti: "/blogg/hva-koster-et-some-byra",
         tekst: "hva et SoMe-byrå koster i markedet",
       },
+      {
+        sti: "/blogg/some-byra-frilanser-eller-ansatt",
+        tekst: "det samme regnestykket med frilanseren regnet inn",
+      },
     ],
   },
   /*
@@ -2707,6 +2726,10 @@ export const artikler: Artikkel[] = [
       {
         sti: "/blogg/hva-koster-eventfotograf",
         tekst: "hva en eventfotograf koster i markedet",
+      },
+      {
+        sti: "/blogg/hva-er-videomarkedsfring",
+        tekst: "hva videomarkedsføring er, og når det lønner seg",
       },
     ],
     tilleggsfaq: [
@@ -3594,6 +3617,10 @@ export const artikler: Artikkel[] = [
       {
         sti: "/blogg/hva-koster-et-some-byra",
         tekst: "hva et SoMe-byrå koster i markedet",
+      },
+      {
+        sti: "/blogg/markedsforing-i-sosiale-medier-some",
+        tekst: "markedsføring i sosiale medier, fra grunnen av",
       },
     ],
     tilleggsfaq: [

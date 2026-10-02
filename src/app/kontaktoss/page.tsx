@@ -29,7 +29,12 @@ import { basisUrl } from "@/lib/miljo";
  * strøm er laget, og ingen sporing er rørt.
  */
 export const metadata: Metadata = {
-  title: "Kontakt oss | Reflektor",
+  /*
+    UTEN «| Reflektor». Malen i layout.tsx legger på suffikset selv, så det
+    sto to ganger: «Kontakt oss | Reflektor | Reflektor». Funnet 02.10.2026
+    ved å lese ut title fra alle 31 rutene i den bygde siden.
+  */
+  title: "Kontakt oss",
   description:
     "Ta kontakt med Reflektor. Skriv kort om bedriften, så får dere et forslag tilbake innen tre virkedager. Uforpliktende.",
   alternates: { canonical: `${basisUrl()}/kontaktoss` },

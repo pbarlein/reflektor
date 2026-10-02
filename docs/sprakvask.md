@@ -183,3 +183,108 @@ matche, og overskriften ville blitt til FAQPage-markup på seks artikler
 samtidig — nøyaktig feilen lista ble skrevet for å hindre. Lista er oppdatert,
 og det er verifisert i den bygde HTML-en at `/blogg/hva-er-innholdsproduksjon`
 fortsatt har fem FAQ-spørsmål og ikke seks.
+
+---
+
+# Runde 3: kannibalisering, lenker og design (02.10.2026, lanseringsdag)
+
+## Kannibalisering: ett ekte funn, og det er fjernet
+
+Alle avsnitt på alle 31 ruter ble sammenlignet mot hverandre, hentet ut av
+den bygde siden. Resultatet:
+
+**«Hva er innholdsproduksjon?» og «Hva er innholdsmarkedsføring?» delte sju
+avsnitt ORDRETT** — hele format- og kanallista (blogginnlegg, infografikk,
+video, podkast, egen nettside, sosiale medier, e-post). To URL-er med samme
+tekst, begge med søkesynlighet.
+
+Lista er fjernet fra `hva-er-innholdsproduksjon` og står igjen i
+`hva-er-innholdsmarkedsforing`. Begrunnelsen for den retningen: der er den
+trinn 3 og 4 i en guide på fem trinn, og å fjerne den ville revet guiden i
+stykker. I den andre sto den som en løsrevet oppramsing, og var dessuten
+halvveis overflødig internt — seksjonen rett under, «Innholdsproduksjon i
+praksis», dekker blogginnlegg, bilder og video med egne avsnitt. Setningen
+som innledet lista står igjen, med en lenke dit lista faktisk er.
+
+Etter fjerningen: **null duplikatavsnitt** på tvers av de femten artiklene.
+CTA-boilerplaten som går igjen er bevisst og regnes ikke med.
+
+**Forsiden og /faq deler 41 % av forsidens brødtekst**, og det får stå.
+Markeringen er allerede skilt — forsiden merker opp seks spørsmål, de fire
+siste er merket opp på /faq, ikke begge steder. De fire står på forsiden
+fordi de tar innvendinger rett før skjemaet, og skjemaleads er KPI-en.
+
+## De gamle tekstene: det er lite å korrigere
+
+Oppdraget var å researche temaene og rette det som er feil. Funnet er at
+**det nesten ikke finnes datofestede påstander i dem.** De sju gamle
+artiklene er tidløse definisjonstekster uten statistikk.
+
+Det ene harde tallet som finnes står i «Markedsføring i sosiale medier»: 82 %
+av befolkningen bruker sosiale medier en gjennomsnittsdag, 1 time og 55
+minutter i snitt. Kontrollert mot SSB, Norsk mediebarometer 2025:
+**begge tall stemmer.**
+
+Det som er svakt ved de gamle tekstene er altså ikke feil fakta. Det er at de
+er generiske — ordbok- og skoleoppgavestoff, akkurat som AGENTS.md sier. Å
+gjøre dem spisse er en skriveoppgave, ikke en rettejobb, og den hører ikke
+hjemme på lanseringsdagen. Se anbefalingen nederst.
+
+## Lenker på tvers
+
+Lenkegrafen ble målt uten topp- og bunnmeny, altså bare lenker i brødtekst og
+i «Fra Reflektor»-boksene.
+
+| | Før | Etter |
+|---|---|---|
+| Sider med høyst én inngående lenke | 7 | 2 |
+
+De to som står igjen er `/blogg` og `/om-oss`, og begge ligger i
+hovedmenyen på alle 31 sider. Det er sterkere enn en brødtekstlenke.
+
+Fem nye koblinger, alle mellom sider som behandler samme tema og ikke pekte
+på hverandre:
+
+- «Markedsføring i sosiale medier» ↔ «Sosiale medier-strategi»
+- «Hva koster videoproduksjon» → «Hva er videomarkedsføring»
+- «Hva er videomarkedsføring» → prisguiden og digital historiefortelling
+- «SoMe-ansvarlig eller byrå» → «SoMe-byrå, frilanser eller ansatt»
+  (den siste regner inn det tredje alternativet den første mangler)
+
+Pluss krysslenken som erstattet duplikatlista.
+
+## Design
+
+**Vannrett scroll på telefon, og den er borte.** Alle 31 ruter er målt i 390,
+768 og 1440 px. Én side rullet sidelengs: «Hva er innholdsmarkedsføring?» på
+390 px, der H1-en målte 381 px i en 342 px bred spalte.
+
+Årsaken var ikke et designvalg, men en skjult detalj: typeskalaen i
+`src/styles/tokens/typography.css` er prosjektets egen, og `text-4xl` er
+**48 px** her, ikke 36 som i Tailwinds standard. H1-en på bloggen sto altså
+på 48 px helt ned til 390 px bredde. Trappen går nå 38 → 48 → 62, som
+dessuten er jevnere enn 48 → 62. `hyphens-auto` er lagt til som
+sikkerhetsnett for neste lange ord — norsk er et sammensetningsspråk, og
+dette treffer ikke bare denne tittelen.
+
+Etter endringen: **0 av 31 sider med vannrett scroll i alle tre bredder.**
+axe melder null avvik.
+
+**Tittelen på /kontaktoss sa «Kontakt oss | Reflektor | Reflektor».** Malen
+legger på suffikset selv. Funnet ved å lese ut `<title>` fra alle 31 rutene i
+den bygde siden, ikke fra koden.
+
+## Anbefaling: ikke skriv om de gamle artiklene i dag
+
+De sju gamle artiklene er det eneste på nettstedet med bevist
+søkesynlighet. I dag bytter de plattform. Skriver vi dem om samtidig, endrer
+vi to ting på én gang på nettopp den delen som er målbar — og går noe ned
+etterpå, vet vi ikke hvilken av de to som gjorde det.
+
+Gevinsten er dessuten liten: artiklene konverterer ikke, og det er slått fast
+i AGENTS.md. Risikoen ligger på rangeringer vi ikke måler på, gevinsten på
+leads de ikke leverer.
+
+Det som faktisk var galt i dem — duplikatet, de manglende lenkene, språket —
+er rettet. En omskrivning kan gjøres når som helst neste uke, med samme
+innsats og uten å blande seg med plattformbyttet.

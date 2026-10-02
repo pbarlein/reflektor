@@ -158,7 +158,27 @@ export default async function BloggInnlegg({ params }: Props) {
       <article className="pt-16 pb-20 sm:pt-24">
         <Container>
           <Eyebrow>Blogg</Eyebrow>
-          <h1 className="mt-4 max-w-4xl text-4xl text-balance sm:text-5xl">
+          {/*
+            `hyphens-auto` ER IKKE PYNT. «Hva er innholdsmarkedsføring?» ga
+            vannrett scroll på 390 px — H1-en målte 381 px i en 342 px bred
+            spalte, fordi «innholdsmarkedsføring» er 21 tegn og ikke kan
+            brytes uten orddeling. Målt 02.10.2026 på alle 31 ruter i tre
+            bredder; dette var den eneste siden med sidelengs scroll.
+
+            Norsk er et sammensetningsspråk, så dette treffer ikke bare
+            denne tittelen — det treffer neste lange ord også.
+
+            TRAPPEN ER OGSÅ ENDRET, og det var den som faktisk løste det.
+            Typeskalaen i src/styles/tokens/typography.css er prosjektets
+            egen: `text-4xl` er 48 px her, ikke 36 som i Tailwinds standard.
+            H1-en sto altså på 48 px helt ned til 390 px bredde. Nå går den
+            38 → 48 → 62, og det er en jevnere trapp enn 48 → 62.
+
+            `hyphens-auto` blir stående som sikkerhetsnett for neste lange
+            ord. Chrome deler etter bokmålsordboka fordi <html lang="nb"> er
+            satt; «no» ville ikke truffet noen ordbok. Se layout.tsx.
+          */}
+          <h1 className="mt-4 max-w-4xl text-3xl text-balance hyphens-auto sm:text-4xl sm:hyphens-none lg:text-5xl">
             {a.tittel}
           </h1>
           {/*
