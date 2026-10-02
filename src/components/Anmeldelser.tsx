@@ -99,8 +99,28 @@ export function Anmeldelsesrad({
   innslag?: React.ReactNode;
 }) {
   return (
-    <div className="py-20 sm:py-28">
-      <Container>
+    /*
+      INNFELT PANEL, IKKE EN HELBREDDS STRIPE. Endret 02.10.2026, bestilt av
+      Pål: «gjør seksjonen med anmeldelser noe smalere i bakgrunnen og ikke
+      dekk hele siden i bredden med mørke.»
+
+      DETTE ER Å RETTE SEG ETTER SIDENS EGEN FORM, ikke å finne på en ny.
+      Hver eneste andre mørke flate på nettstedet er allerede et innfelt
+      panel med samme klasser — «Dere setter av én dag» rett under her,
+      kontaktblokken, avslutningsblokken på hver tjeneste-, case- og
+      bloggside. Anmeldelsene var den ENESTE mørke flaten som gikk fra kant
+      til kant, og skilte seg ut uten at noe valg lå bak.
+
+      `overflow-hidden` er ikke pynt: uten den ville anmeldelsesraden, som
+      med vilje er bredere enn panelet, malt seg forbi de avrundede hjørnene.
+
+      Luften over og under panelet ligger nå UTENFOR det, i seksjonen rundt
+      (se forside/Anmeldelsesseksjon.tsx). Det er forskjellen fra før: i en
+      helbredds stripe lå `py` inne i fargen og lagde ingen avstand til
+      naboene i det hele tatt.
+    */
+    <Container>
+      <div className="overflow-hidden rounded-flate bg-dyp px-6 py-12 text-pa-dyp sm:px-14 sm:py-14">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
           <div>
             <Eyebrow variant="dyp">{eyebrow}</Eyebrow>
@@ -136,48 +156,50 @@ export function Anmeldelsesrad({
           </p>
         </div>
         {innslag}
-      </Container>
 
-      {/*
-        Raden starter på containerens venstrekant og fortsetter ut av
-        skjermen til høyre. Den avkuttede kanten ER rulleanvisningen — en
-        gradient eller en pil ville lagt til pynt for å si det samme.
+        {/*
+        Raden starter på panelets venstre innholdskant og fortsetter ut
+        gjennom panelets høyre kant. Den avkuttede kanten ER rulle-
+        anvisningen — en gradient eller en pil ville lagt til pynt for å si
+        det samme.
 
-        `calc(50% - 34.5rem)` treffer containerens venstrekant: halve
-        bredden minus halve maksbredden (36rem) pluss containerens egen
-        luft (1,5rem). Prosenten regnes mot elementets egen bredde, ikke mot
-        100vw — rullefeltet ville ellers forskjøvet raden noen piksler mot
-        containeren. Understrekene i klassenavnet blir mellomrom: `calc()`
-        krever luft rundt minus, og uten den er hele regelen ugyldig og
-        raden starter på null.
+        FORENKLET 02.10.2026, da flaten ble et innfelt panel. Her sto
+        `pl-[max(1.5rem,calc(50%_-_34.5rem))]` med samme verdi på
+        `scroll-padding-left`, og en lang forklaring av hvorfor: raden lå
+        den gang utenfor enhver container og måtte regne seg fram til
+        containerens venstrekant selv. Nå ligger den INNE i panelet, og
+        panelets egen `px` er den kanten. Regnestykket er borte fordi
+        behovet er borte.
 
-        `scroll-padding-left` må ha samme verdi. `snap-start` innretter mot
-        rullefeltets snapport, ikke mot innholdskanten — uten den ville
-        kortene man ruller til lagt seg helt inntil skjermkanten mens det
-        første står pent på containerlinjen.
+        `-mr-6 sm:-mr-14` opphever panelets høyre luft, slik at raden når
+        helt ut til kanten og blir klippet av `overflow-hidden` og hjørnene.
+        `pr-` med samme verdi gir det siste kortet luft når man har rullet
+        helt ut — uten den ville det klistret seg til kanten.
+
+        `snap-start` innretter mot rullefeltets snapport. Uten
+        `scroll-padding` er den nå lik innholdskanten, som er det vi vil ha.
 
         `tabIndex` fordi et rullbart felt uten fokuserbart innhold ikke kan
         rulles med tastatur i Chrome. Firefox gjør det av seg selv; Chrome
         gjør det ikke, og da er hele raden utilgjengelig uten mus.
       */}
-      <ul
-        tabIndex={0}
-        aria-label="Anmeldelser hentet fra Google"
-        className="
-          mt-14 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto
-          scroll-pl-[max(1.5rem,calc(50%_-_34.5rem))] pr-6 pb-3
-          pl-[max(1.5rem,calc(50%_-_34.5rem))]
+        <ul
+          tabIndex={0}
+          aria-label="Anmeldelser hentet fra Google"
+          className="
+          mt-14 -mr-6 flex snap-x snap-mandatory items-stretch gap-4
+          overflow-x-auto pr-6 pb-3 sm:-mr-14 sm:pr-14
           [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
           focus-visible:outline focus-visible:outline-2
           focus-visible:outline-offset-4 focus-visible:outline-aksent-pa-dyp
         "
-      >
-        {anmeldelser.map((a) => (
-          <li
-            key={a.navn}
-            className={`flex shrink-0 snap-start flex-col rounded-flate border border-[rgba(245,240,232,0.14)] bg-[rgba(245,240,232,0.10)] p-6 backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)] ${bredde(a.sitat.length)}`}
-          >
-            {/*
+        >
+          {anmeldelser.map((a) => (
+            <li
+              key={a.navn}
+              className={`flex shrink-0 snap-start flex-col rounded-flate border border-[rgba(245,240,232,0.14)] bg-[rgba(245,240,232,0.10)] p-6 backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)] ${bredde(a.sitat.length)}`}
+            >
+              {/*
               GLASSKORT. Fyll på 6 % bone over den brune flaten gir målt
               effektiv bakgrunn #3a2921: bone-tekst 12,19 og dempet tekst
               7,52, altså AAA på begge. `backdrop-blur` er det som gjør det
@@ -188,22 +210,22 @@ export function Anmeldelsesrad({
               STØTTES. Der den ikke gjør det, beholdes det kraftigere fyllet,
               slik at kortet fortsatt leser som et kort.
             */}
-            <blockquote className="text-[0.9375rem] leading-[1.6] text-pretty">
-              {a.sitat}
-            </blockquote>
-            {/* Attribusjonen skyves til bunnen, slik at navnene står på
+              <blockquote className="text-[0.9375rem] leading-[1.6] text-pretty">
+                {a.sitat}
+              </blockquote>
+              {/* Attribusjonen skyves til bunnen, slik at navnene står på
                 samme høyde i hele raden selv om sitatene er ulikt lange. */}
-            <p className="mt-auto pt-6 text-sm tracking-[0.02em]">
-              <span className="font-medium">{a.navn}</span>
-              {a.selskap && (
-                <span className="block text-pa-dyp-dempet">{a.selskap}</span>
-              )}
-            </p>
-          </li>
-        ))}
-      </ul>
+              <p className="mt-auto pt-6 text-sm tracking-[0.02em]">
+                <span className="font-medium">{a.navn}</span>
+                {a.selskap && (
+                  <span className="block text-pa-dyp-dempet">{a.selskap}</span>
+                )}
+              </p>
+            </li>
+          ))}
+        </ul>
 
-      {/*
+        {/*
         Bare lenken. Her sto en setning om at ni av elleve har tekst og at
         anmeldelsene dekker både produksjonsoppdrag og månedsavtaler. Pål
         ba om å få den bort: raden skal leses, ikke forklares.
@@ -215,7 +237,6 @@ export function Anmeldelsesrad({
         besøk». Det er et produksjonsoppdrag, ikke et abonnement. Endres
         overskriften, må dette vurderes på nytt.
       */}
-      <Container>
         <p className="mt-8 text-sm tracking-[0.02em]">
           <a
             href={googleProfil.url}
@@ -226,7 +247,7 @@ export function Anmeldelsesrad({
             Se alle anmeldelsene på Google
           </a>
         </p>
-      </Container>
-    </div>
+      </div>
+    </Container>
   );
 }

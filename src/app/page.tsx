@@ -120,9 +120,15 @@ export default function Forside() {
         ansikt og navn, etter fem år som kunde. Først deretter viser vi
         arbeidet. Belegget kommer før påstanden, ikke etter.
 
-        RYTMEN GÅR OPP. Heroen er `bg-flate-dempet`, denne er `bg-dyp`,
-        «Slik ser det ut» er lys, «Dere setter av én dag» er `bg-dyp` igjen.
+        RYTMEN GÅR OPP. Heroen er `bg-flate-dempet`, denne er mørk,
+        «Slik ser det ut» er lys, «Dere setter av én dag» er mørk igjen.
         Lys og mørk veksler hele veien ned, og ingen to mørke flater møtes.
+
+        DEN MØRKE FLATEN ER INNFELT, ikke helbredds. Endret 02.10.2026,
+        bestilt av Pål. Her sto «denne er `bg-dyp`», altså en stripe fra
+        kant til kant. Alle de andre mørke flatene på nettstedet er innfelte
+        paneler — også «Dere setter av én dag» rett under. Anmeldelsene var
+        den eneste som ikke var det.
 
         UTENOM ABONNEMENTET BLIR STÅENDE RETT OVER PRISEN av samme grunn:
         priskortet er `glassflate` på mørk bunn, og den grå blokken er pusten

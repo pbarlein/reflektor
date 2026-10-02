@@ -83,7 +83,22 @@ export function Anmeldelsesseksjon() {
       trenger noe å bryte mot, og flatebyttet markerer at det er noen andre
       enn Reflektor som snakker.
     */}
-      <section className="bg-dyp text-pa-dyp">
+      {/*
+        LUFTEN LIGGER HER, UTENFOR PANELET. Endret 02.10.2026 sammen med at
+        flaten ble innfelt (se Anmeldelser.tsx).
+
+        Før dette var seksjonen `bg-dyp text-pa-dyp` uten padding, og all
+        luften lå inne i fargen. Da lagde den ingen avstand til naboene:
+        målt på live var det 0 px mellom bunnen av den mørke stripen og
+        overskriften i seksjonen under. Nå betaler seksjonen for luften
+        under seg, som alle de andre på forsiden, og Logostripe over
+        betaler for luften på toppen med samme verdi.
+
+        Fargen og tekstfargen hører til panelet, ikke til seksjonen — ellers
+        ville `text-pa-dyp` farget bone-tekst på lys bakgrunn utenfor
+        panelet.
+      */}
+      <section className="pb-24 sm:pb-32">
         <Anmeldelsesrad
           eyebrow={hentTekst(front, "front.reviews.eyebrow")}
           overskrift={

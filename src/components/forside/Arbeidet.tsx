@@ -16,29 +16,25 @@ export function Arbeidet() {
     <>
       {/* 2 · ARBEIDET — vis produktet før du forklarer det */}
       {/*
-        TOPPLUFT, LAGT TIL 02.10.2026. Pål: «avstand mellom seksjonene er
-        for kort.»
+        INGEN TOPPLUFT HER, og det er med vilje.
 
-        Målt på live før rettelsen: avstanden fra bunnen av den mørke
-        anmeldelsesseksjonen til toppen av «ARBEIDET» var **0 px**, både på
-        390 og 1440. Overskriften lå klistret inntil fargekanten.
+        02.10.2026 sto det `pt-24 sm:pt-32` her. Det var en lapp på et
+        problem som lå et annet sted: anmeldelsesseksjonen over var en
+        helbredds mørk stripe uten padding utenfor fargen, så avstanden
+        mellom de to var målt 0 px. Da Pål samme dag ba om at den mørke
+        flaten skulle bli smalere, ble den et innfelt panel med luften
+        utenfor seg — og da betaler seksjonen over for avstanden selv, som
+        alle andre på forsiden gjør.
 
-        ÅRSAKEN ER VERDT Å KUNNE, for den kommer igjen. Forsiden har én
-        rytme: hver seksjon betaler for luften UNDER seg, og ingen har luft
-        over. Det virker så lenge naboene deler bakgrunn. Anmeldelsene er
-        den eneste seksjonen på forsiden med egen bakgrunnsfarge, og da
-        havner dens `py-20 sm:py-28` INNENFOR fargen — den lager ingen
-        avstand etter at fargen slutter. Denne seksjonen må derfor betale
-        for luften selv.
+        Lappen er derfor tatt bort igjen. Hadde den blitt stående, ville
+        avstanden blitt dobbel.
 
-        Verdien er litt større enn den mørke seksjonens egen innvendige
-        luft. Et fargeskifte er et hardere brudd enn en vanlig
-        seksjonsovergang og tåler mer.
-
-        Legges det en ny seksjon med egen bakgrunn på siden, har den samme
-        behov: den under må ha `pt-`.
+        FORSIDENS RYTME, for den som lurer: hver seksjon betaler for luften
+        UNDER seg, ingen har luft over. Legges det inn en ny seksjon med
+        egen bakgrunnsfarge, må den fargede flaten være innfelt og luften
+        ligge utenfor den — ellers oppstår nøyaktig den samme feilen igjen.
       */}
-      <section className="pt-24 pb-28 sm:pt-32 sm:pb-36">
+      <section className="pb-28 sm:pb-36">
         <Container>
           <Eyebrow>{hentTekst(front, "front.work.eyebrow")}</Eyebrow>
           <h2 className="mt-4 max-w-2xl text-3xl sm:text-4xl">
