@@ -34,29 +34,29 @@ function soulcakeOrd() {
 /**
  * Videoen, i venstre spalte.
  *
- * 9:16 OG STØRRE, endret 02.10.2026 etter bestilling fra Pål. To ting lå
- * bak den gamle 4:5-rammen på 18 rem, og begge er rettet:
+ * TILBAKE TIL 4:5, bestilt av Pål 02.10.2026 samme kveld som den ble satt
+ * til 9:16: «Soul cake videoen i anmeldelser kan du croppe om til 4:5 …
+ * videoen ble uforholdsmessig stor.»
  *
- * 1. FILA VAR BESKÅRET. Masteren fra produksjonen er 1080×1920, altså ekte
- *    9:16. Utgaven som lå på nettstedet var en 4:5-versjon laget for de
- *    smale spaltene på case- og tjenestesidene. Forsiden viser nå hele
- *    formatet, fra den samme masteren — se `stiStaende` i caser.ts.
- * 2. RAMMEN VAR LÅST TIL 4:5 i komponenten, og siden videoen ligger med
- *    `object-cover`, ville en 9:16-fil i den rammen blitt klippet 30 % i
- *    bredden uten at noe sa fra. Derfor er formatet nå en opplysning
- *    komponenten får, ikke en antakelse den gjør.
+ * Han har rett. I 9:16 var videoen 626 px høy i en 22 rem spalte, mens
+ * teksten ved siden av målte 330. Seksjonen ble 1 368 px på desktop, og
+ * nesten 300 av dem var film uten noe å stå ved siden av.
+ *
+ * DETTE ER IKKE EN BESKJÆRING AV 9:16-FILA. Produksjonen har levert en egen
+ * 4:5-eksport — `Ragnhild omtale 4x5.mov` — der den innbrente tekstingen er
+ * satt INNE i 4:5-rammen. En ren beskjæring av 9:16-utgaven ville tatt bort
+ * 30 % av bredden og dermed deler av teksten. Fila det pekes på her er den
+ * eksporten, og den har ligget i repoet hele tiden: `sti`, ikke
+ * `stiStaende`.
+ *
+ * Verifisert bilde for bilde før byttet: «REFLEKTOR X SOULCAKE»-plakaten og
+ * alle undertekstlinjene står i sin helhet innenfor rammen.
  */
 function Kundevideo() {
   const ord = soulcakeOrd();
   if (!ord) return null;
 
-  return (
-    <Omtalevideo
-      forhold="9/16"
-      sti={ord.video.stiStaende ?? ord.video.sti}
-      alt={ord.video.alt}
-    />
-  );
+  return <Omtalevideo forhold="4/5" sti={ord.video.sti} alt={ord.video.alt} />;
 }
 
 /**

@@ -118,21 +118,25 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
         finnes ingen rekkefølge å miste.
       */}
       {/*
-        HØYDEN ER SENKET FRA 60,5 TIL 50 REM 02.10.2026, bestilt av Pål:
-        «Kort ned seksjonen med masse medier. veldig fint å vide mye, så
-        kanskje bare gjøre seksjonen mindre for kortere skrolling, men bevare
-        antallet.»
+        HØYDEN ER SENKET TO GANGER 02.10.2026: 60,5 rem → 50 → 42. Pål,
+        andre runde: «Seksjonen med masse eksempler på bilder og videoer
+        synes jeg fortsatt er for høy. ikke ha så stort mellomrom mellom
+        mediene, gjør seksjonen lavere.»
 
-        ALLE ELLEVE CELLENE STÅR. Det er bare høyden på stablene som er
-        mindre: 968 px ble 800, altså 168 px kortere forside på desktop uten
-        at ett medie er tatt ut.
+        968 px er nå 672 på desktop, altså nesten en tredjedel kortere, med
+        like mange celler.
+
+        MELLOMROMMET ER HALVERT i samme slengen: 16 px ble 8 på desktop,
+        12 ble 6 på telefon. Det er ikke bare 20 px spart — tettere celler
+        leser som ett verk og ikke som elleve løse bilder, og det er den
+        egentlige gevinsten.
 
         PRISEN ER BESKJÆRINGEN, og den er regnet. 60,5 rem var satt så en
-        2-enhets celle landet på nøyaktig 9:16 — 264 x 468 px. På 50 rem blir
-        den 264 x 384, altså omtrent 2:3. De stående klippene mister 25 % i
-        høyden mot 0 før, og de stående bildene går fra å vise 59 % av
-        originalen til 48 %. Det er samme størrelsesorden som mobilutgaven
-        allerede gjør mot alle elleve: der tvinges hver celle til 4:5.
+        2-enhets celle landet på nøyaktig 9:16 — 264 x 468 px. På 42 rem
+        blir den 270 x 328, altså omtrent 5:6. De stående klippene mister
+        en tredjedel av høyden. Det tåler de her: motivene er kuratert og
+        står midt i bildet, og mobilutgaven har alltid tvunget alle elleve
+        til kvadrat.
 
         INGEN NY EKSPORT AV FILENE. Pål spurte om de burde formateres om når
         de blir mindre. Bredden på en celle er uendret — det er bare høyden
@@ -140,11 +144,11 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
         bredde per skjerm fra `sizes` under. En ny eksport ville ikke spart
         en byte.
       */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:h-[50rem] lg:grid-cols-4 lg:gap-4">
+      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 sm:gap-2 lg:h-[42rem] lg:grid-cols-4 lg:gap-2">
         {kolonner.map((kol, k) => (
           <div
             key={k}
-            className="contents lg:flex lg:h-full lg:flex-col lg:gap-4"
+            className="contents lg:flex lg:h-full lg:flex-col lg:gap-2"
           >
             {kol.map((c) => celle(c, teller++ >= MOBILGRENSE))}
           </div>

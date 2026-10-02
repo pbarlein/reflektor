@@ -933,7 +933,97 @@ Rendre kildene i markeringen, og la observeren styre bare play og pause.
 
 ---
 
-## Produksjonsdagsklippet i «Dette inngår» (02.10.2026)
+## Russemerch ER ABONNEMENTSKUNDE (bekreftet av Pål 02.10.2026)
+
+Dette avgjør hvordan filmene deres kan brukes, og det er lett å gå feil på.
+
+AGENTS.md sier «produksjonskunder navngis aldri som SoMe-abonnenter». Jeg
+leste den regelen som et forbud mot å navngi Russemerch i
+abonnementsseksjonen, og klippet derfor bort den innbrente «REFLEKTOR X
+RUSSEMERCH»-plakaten fra BTS-filmen. Det var feil: regelen gjelder
+produksjonskunder, og Russemerch er ikke en av dem.
+
+**Russemerch kan navngis som abonnent.** Det gjøres i dag ett sted — under
+filmen i «Dette inngår» på forsiden. Anton Sport, Egon, Peppes, The Well,
+Soulcake og de andre i logoraden er fortsatt produksjonskunder og skal
+fortsatt ikke omtales som abonnenter.
+
+Materialet deres ligger i `Kundemappe/Russemerch/September/Export/`, med ni
+ferdige filmer i 9x16 og 16x9, i `no` og `com`.
+
+---
+
+## Produksjonsdagsfilmen i «Dette inngår» (02.10.2026, andre utgave)
+
+**Fil:** `public/arbeid/russemerch/produksjonsdag.mp4` + `.webm` +
+`-poster.jpg`. 864×1080 (4:5), 23,1 s, H.264 High / VP9, **med lyd**
+(AAC 96 kb/s og Opus 80 kb/s). 5,3 MB mp4, 5,5 MB webm.
+
+**Kilde:** `Kundemappe/Reflektor/2026/September/Russemerch 4x5.mov`
+(1080×1350, PCM-lyd).
+
+**HELE FILMEN, uten klipp.** Bestilt av Pål: «ta med hele videoen». Den
+åpner med «REFLEKTOR X RUSSEMERCH»-plakaten og har et «Obs!»-kort midt i —
+begge er en del av redigeringen og står.
+
+**Den spilles med `Omtalevideo` og ikke `Klipp`**, så den får samme
+«Slå på lyd»-knapp som Soulcake-omtalen. Det var også bestilt. En film med
+lyd som bare kan ses stumt er en halv film.
+
+**4:5 og ikke 9:16.** Samme grunn som for Soulcake-omtalen samme kveld: i
+9:16 blir en film i en 17 rem spalte 480 px høy mot 340 for teksten ved
+siden av.
+
+### Den første utgaven, som ble erstattet samme kveld
+
+Et trimmet, stumt BTS-klipp på 17,3 s i 9:16, uten kundemerking, satt
+sammen av to utsnitt. Begrunnelsen for å klippe bort plakaten og
+«Obs!»-kortet var den feilleste regelen over. Filene er slettet.
+
+---
+
+## Bål-klippet i mediegalleriet (02.10.2026)
+
+**Fil:** `public/reels/bal.mp4` + `.jpg`. 540×960, 13,6 s, H.264, uten lyd,
+1,6 MB.
+
+**Kilde:** `Kundemappe/Russemerch/September/Export/no/Bål 9x16.mp4`
+(2160×3840, 16,7 s).
+
+De siste 3,1 sekundene er klippet: der ligger et hvitt
+Russemerch-logokort. Et hvitt felt midt i en loop i et rutenett leser som
+at bildet er borte. Funnet med øyemål på en kontaktkopi, ikke antatt.
+
+Klippet erstatter BTS-klippet `produksjonsdag` i rutenettet. En ferdig
+levert film til en abonnementskunde er sterkere bevis enn et
+bak-kulissene-klipp, og motivet — tåkelagt høstfjell, bål, marshmallows —
+er det sterkeste i hele blokken. `produksjonsdag` brukes fortsatt på
+/om-oss og på tjenestesidene.
+
+---
+
+## To nye stillbilder i mediegalleriet (02.10.2026)
+
+Pål: «erstatt de to vedlagte bildene med noe mye kulere … vær sikker på at
+du velger bilder og videoer med wow-effekt.»
+
+**Ut:** `dag1` (sjokoladekaker på brett) og `helios` (gløggflasker på grønt
+tekstil). Teknisk fine stilleben, men stille: ingen mennesker, ingen lys,
+ingenting som skjer. Filene blir liggende — de brukes på tjenestesidene.
+
+**Inn:**
+
+- `goretex-sept-1600.jpg` — redaksjonelt portrett i regnjakke foran en
+  togvogn. Lå allerede i repoet, ubrukt, som `-1800`. Det eneste
+  mote-/livsstilsmotivet i rutenettet, og det bryter matdominansen.
+- `burger-1600.jpg` — to hender rundt en burger i varm bokeh. Fra
+  `Kundemappe/Jordbærpikene/Bilder/B51A0589.jpg` (5857×3905, september
+  2026). Samme sjanger som det det erstatter, men med hender, lys og dybde
+  i stedet for et produkt på et bord.
+
+---
+
+## Det første produksjonsdagsklippet (02.10.2026, erstattet)
 
 **Fil:** `public/arbeid/russemerch.mp4` + `.jpg`. 540×960, 17,3 s, H.264 High,
 yuv420p, 25 fps, 1 070 kb/s, 2,3 MB. Samme oppskrift og samme bitrate som

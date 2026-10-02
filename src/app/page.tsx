@@ -92,7 +92,10 @@ export default function Forside() {
         (() => {
           /*
             MARKERINGEN SKAL PEKE PÅ FILA SOM FAKTISK VISES HER. Rettet
-            02.10.2026, da forsiden gikk over til 9:16-utgaven.
+            02.10.2026 — først da forsiden gikk over til 9:16-utgaven, og
+            samme kveld tilbake til 4:5 da Pål meldte at videoen ble
+            uforholdsmessig stor. Regelen er den samme begge veier: fila i
+            markeringen er fila på siden.
 
             `contentUrl` og `thumbnailUrl` sto på 4:5-fila, som nå bare
             brukes på kundecasen og tjenestesidene. En VideoObject som
@@ -103,7 +106,7 @@ export default function Forside() {
             Alt annet — navn, beskrivelse, lengde, dato — er identisk: det
             er samme opptak, bare et annet utsnitt.
           */
-          const sti = omtale.video.stiStaende ?? omtale.video.sti;
+          const sti = omtale.video.sti;
           return (
             <FilmSchema
               navn={omtale.video.navn}
@@ -212,17 +215,24 @@ export default function Forside() {
       */}
       <Pris />
       <Arbeidsrutenett />
-      <UtenomAbonnementet />
       {/*
-        DETTE INNGÅR står der priskortet sto, og arver begrunnelsen som lå
-        her: den grå kortraden over er pusten foran en mørk flate, og
-        seksjonen under er lys igjen.
+        DETTE INNGÅR ER FLYTTET OVER «UTENOM ABONNEMENTET» 02.10.2026,
+        bestilt av Pål. Rekkefølgen var bakvendt: kortraden som sier «hvis
+        abonnementet er mer enn dere trenger, gjør vi enkeltprosjekter óg»
+        kom FØR spesifikasjonen av hva abonnementet er. Utgangen sto før
+        slutten på argumentet.
 
-        Den er to gamle seksjoner slått sammen — spesifikasjonen fra
-        priskortet og de tre stegene fra «Slik jobber vi» — med en film fra
-        en produksjonsdag ved siden av. Se DetteInngar.tsx.
+        Nå leser siden: prisen → arbeidet → dette er hva du får → og hvis
+        det ikke passer, her er alternativet. Rytmen holder: rutenettet over
+        er lyst, dette er mørkt, kortraden under er lys igjen.
+
+        Seksjonen er to gamle slått sammen — spesifikasjonen fra priskortet
+        og de tre stegene fra «Slik jobber vi» — med en film fra en
+        produksjonsdag hos en abonnementskunde ved siden av. Se
+        DetteInngar.tsx.
       */}
       <DetteInngar />
+      <UtenomAbonnementet />
       <Vegg />
       <Faq />
       <Kontakt />

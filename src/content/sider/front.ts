@@ -119,22 +119,46 @@ export const front: Side = {
           "Dere setter av én dag. Resten av måneden er vår jobb.",
           { maksTegn: 70 },
         ),
+        /*
+         * KORTET NED 02.10.2026, bestilt av Pål: «Gjør hele "slik jobber
+         * vi"-seksjonen mye lavere. finn en smart måte å komprimere og
+         * forkorte betydelig.»
+         *
+         * De tre forklaringene var 134, 134 og 148 tegn og brakk over tre
+         * linjer hver på en telefon. Nå er de 97, 110 og 112, og tittelen
+         * står på samme linje som teksten i stedet for over den — til
+         * sammen rundt 190 px kortere seksjon på mobil.
+         *
+         * HVA SOM FAKTISK ER STRØKET, og hvor det står igjen:
+         *
+         * - «sesong, tilbud, folk og produkter» (steg 1). Oppramsingen
+         *   forklarte «hva måneden skal handle om» med eksempler. Setningen
+         *   står uten dem.
+         * - «til 8–10 videoer» (steg 2). Tallet står i priskortet, i punkt
+         *   3 under «Dette inngår», i heroen og i JSON-LD-en. Det var det
+         *   mest gjentatte tallet på hele forsiden.
+         * - «på Instagram og videre til Facebook» (steg 3). Begge kanalene
+         *   står i «Dette inngår» rett under, i heroen og i markeringen.
+         *
+         * Ingen av dem forsvinner altså fra siden — de slutter bare å stå
+         * tre ganger.
+         */
         "front.how.steps[0]": tekst(
-          "Vi planlegger | Før opptak avtaler vi hva måneden skal handle om: sesong, tilbud, folk og produkter. Dere trenger ikke levere manus eller ideer.",
+          "Vi planlegger | Før opptak avtaler vi hva måneden skal handle om. Dere trenger ikke levere manus eller ideer.",
           {
             maksTegn: 180,
             jobb: "Tittel og forklaring, skilt med |.",
           },
         ),
         "front.how.steps[1]": tekst(
-          "Vi filmer én dag | Vi kommer til dere og filmer alt til 8–10 videoer på én dag. Folk gjør jobben sin som vanlig. Vi finner videoene i det.",
+          "Vi filmer én dag | Vi kommer til dere og filmer alt på én dag. Folk gjør jobben sin som vanlig – vi finner videoene i det.",
           {
             maksTegn: 180,
             jobb: "Tittel og forklaring, skilt med |.",
           },
         ),
         "front.how.steps[2]": tekst(
-          "Vi klipper og publiserer | Ferdige klipp går ut to ganger i uken på Instagram og videre til Facebook. Neste produksjonsdag står allerede i kalenderen.",
+          "Vi klipper og publiserer | Ferdige klipp går ut to ganger i uken. Neste produksjonsdag står allerede i kalenderen.",
           {
             maksTegn: 180,
             jobb: "Tittel og forklaring, skilt med |.",

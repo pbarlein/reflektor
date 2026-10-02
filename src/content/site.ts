@@ -224,6 +224,40 @@ export const tilbud = {
   ],
 
   /**
+   * De samme seks punktene, kortet ned til én linje hver.
+   *
+   * HVORFOR TO LISTER. Pål, 02.10.2026: «finn en smart måte å komprimere og
+   * forkorte betydelig, slik at hva som inngår og hva som ikke inngår kommer
+   * frem med mye mindre tekst. husk at det er viktig å ivareta SEO og AEO.»
+   *
+   * De to kravene trekker hver sin vei, og dette er måten å få begge: den
+   * KORTE listen er det mennesker ser, den LANGE er det maskiner leser.
+   *
+   * `inngar` er uendret og fortsatt kanonisk. Den ligger i JSON-LD-en på
+   * forsiden som `hasOfferCatalog.itemListElement` — se Schema.tsx — så alle
+   * detaljene som er strøket visuelt («hos dere, hos oss eller ute på
+   * lokasjon», «med krysspublisering til Facebook», «annonser, nettsider,
+   * skjermer, presentasjoner») står fortsatt i markeringen. Det er nettopp
+   * den markeringen språkmodeller og søk leser for å svare på hva
+   * abonnementet inneholder.
+   *
+   * REKKEFØLGEN OG ANTALLET MÅ FØLGE `inngar` 1:1. En test i
+   * test/innhold.test.ts feiler hvis lengdene går fra hverandre.
+   *
+   * FORBEHOLDET I PUNKT 3 STÅR. «Produksjonsmål» er Påls eget ord og er
+   * ikke et fyllord — det er forskjellen på et mål og en garanti, og
+   * AGENTS.md sier uttrykkelig at det ikke skal mykes opp.
+   */
+  inngarKort: [
+    "SoMe-strategi og produksjonsplaner",
+    "Én produksjonsdag i måneden, hos dere eller på lokasjon",
+    "Produksjonsmål: 8–10 ferdige videoer i måneden",
+    "Publisering på Instagram og Facebook, to ganger i uken",
+    "Vi justerer planen etter hva som engasjerer",
+    "Fri bruk av alt innhold",
+  ],
+
+  /**
    * Hva kunden kan BRUKE videoene til. Ikke hvor vi publiserer.
    *
    * LAGT TIL 29.09.2026, og forskjellen er hele poenget. `inngar` sier at vi

@@ -38,32 +38,110 @@ export type Medie = { type: "foto" | "video"; fil: string; alt: string };
 /** Én celle i rutenettet: samme felter som veggen, pluss høydevekten. */
 export type Celle = Medie & { enheter: 1 | 2 };
 
+/*
+ * UTVALGET ER BYTTET 02.10.2026, bestilt av Pål: «erstatt de to vedlagte
+ * bildene med noe mye kulere … vær sikker på at du velger bilder og videoer
+ * med wow-effekt.»
+ *
+ * UT: `dag1` (sjokoladekaker på brett) og `helios` (gløggflasker på grønt
+ * tekstil). Begge er tekniske fine stilleben, og begge er stille: ingen
+ * mennesker, ingen lys, ingenting som skjer. I en celle på 264 px leser de
+ * som lagerbilder. Filene blir liggende — de brukes på tjenestesidene, der
+ * de gjør jobben sin i en annen sammenheng.
+ *
+ * INN: `goretex-sept`, et redaksjonelt portrett i regnjakke på T-banen, og
+ * `burger`, to hender rundt en burger i varm bokeh. Det første er det
+ * eneste mote-/livsstilsmotivet i rutenettet og bryter med matdominansen.
+ * Det andre er samme sjanger som det det erstatter, men med hender, lys og
+ * dybde i stedet for et produkt på et bord.
+ *
+ * INN OGSÅ: `bal` fra Russemerch — høstfjell i tåke, bål, marshmallows.
+ * Det er en ferdig levert film til en abonnementskunde, og det er sterkere
+ * bevis enn BTS-klippet `produksjonsdag` som sto i den cellen. Det klippet
+ * brukes fortsatt på /om-oss og på tjenestesidene.
+ */
 export const arbeidskolonner: Celle[][] = [
   [
-    { type: "video", fil: "gekko", alt: "Vertikalt klipp av elsykkel", enheter: 2 },
-    { type: "foto", fil: "dag1", alt: "Nærbilde av bakverk på brett", enheter: 1 },
-    { type: "foto", fil: "helios", alt: "Flaskestilleben på grønt tekstil", enheter: 1 },
+    {
+      type: "video",
+      fil: "gekko",
+      alt: "Vertikalt klipp av elsykkel",
+      enheter: 2,
+    },
+    {
+      type: "foto",
+      fil: "goretex-sept",
+      alt: "Person i regnjakke foran en togvogn",
+      enheter: 1,
+    },
+    {
+      type: "foto",
+      fil: "burger",
+      alt: "To hender rundt en burger med bacon",
+      enheter: 1,
+    },
   ],
   [
-    { type: "foto", fil: "drone", alt: "Dronebilde av hotellanlegg med utendørsbasseng", enheter: 1 },
-    { type: "video", fil: "zeroh", alt: "Vertikalt klipp av drikkevare", enheter: 2 },
-    { type: "foto", fil: "mat1", alt: "Ansatte i et produksjonslokale", enheter: 1 },
+    {
+      type: "foto",
+      fil: "drone",
+      alt: "Dronebilde av hotellanlegg med utendørsbasseng",
+      enheter: 1,
+    },
+    {
+      type: "video",
+      fil: "zeroh",
+      alt: "Vertikalt klipp av drikkevare",
+      enheter: 2,
+    },
+    {
+      type: "foto",
+      fil: "mat1",
+      alt: "Ansatte i et produksjonslokale",
+      enheter: 1,
+    },
   ],
   [
-    { type: "foto", fil: "stallen", alt: "Kokker på et kjøkken med en plakett", enheter: 1 },
-    { type: "foto", fil: "kafe1", alt: "Vegg av flasker i en butikkhylle", enheter: 1 },
-    { type: "video", fil: "battery", alt: "Vertikalt klipp fra industri", enheter: 2 },
+    {
+      type: "foto",
+      fil: "stallen",
+      alt: "Kokker på et kjøkken med en plakett",
+      enheter: 1,
+    },
+    {
+      type: "foto",
+      fil: "kafe1",
+      alt: "Vegg av flasker i en butikkhylle",
+      enheter: 1,
+    },
+    {
+      type: "video",
+      fil: "battery",
+      alt: "Vertikalt klipp fra industri",
+      enheter: 2,
+    },
   ],
   [
-    // Egon-klippet lå her. Det er flyttet til prisseksjonen, der
+    // Egon-klippet lå her først. Det er flyttet til prisseksjonen, der
     // REFLEKTOR × EGON-merkingen gjør mest nytte — prisseksjonen er der
     // kunden bestemmer seg. Klippet skal ikke stå to steder på samme side.
     //
-    // BTS-klippet erstatter det, og hører egentlig bedre hjemme her:
-    // seksjonen heter «Slik ser det ut når vi filmer hos andre», og dette
-    // er nettopp det — lampe, reflektor og monitor på en produksjonsdag.
-    { type: "video", fil: "produksjonsdag", alt: "Vertikalt klipp fra en produksjonsdag", enheter: 2 },
-    { type: "foto", fil: "peppes1", alt: "Gjest med pizzastykke foran et neonskilt", enheter: 2 },
+    // Så sto BTS-klippet `produksjonsdag` her. Det er byttet 02.10.2026
+    // mot `bal`: en ferdig levert film til en abonnementskunde slår et
+    // bak-kulissene-klipp som bevis, og motivet — tåkelagt høstfjell, bål,
+    // marshmallows — er det sterkeste i hele rutenettet.
+    {
+      type: "video",
+      fil: "bal",
+      alt: "Vertikalt klipp fra bål i høstfjellet",
+      enheter: 2,
+    },
+    {
+      type: "foto",
+      fil: "peppes1",
+      alt: "Gjest med pizzastykke foran et neonskilt",
+      enheter: 2,
+    },
   ],
 ];
 
@@ -107,28 +185,113 @@ export type Veggcelle = Medie & {
 
 export const veggrader: Veggcelle[][] = [
   [
-    { type: "video", fil: "noods", alt: "Liggende klipp av nudelretter ovenfra", format: "16/9" },
-    { type: "foto", fil: "dag4", alt: "Opptak med kamera under et arrangement", format: "3/4" },
-    { type: "video", fil: "matcha", alt: "Vertikalt klipp av matcha som vispes", format: "9/16" },
-    { type: "foto", fil: "fabrikk", alt: "Ansatte i arbeidstøy i et produksjonslokale", format: "1/1" },
+    {
+      type: "video",
+      fil: "noods",
+      alt: "Liggende klipp av nudelretter ovenfra",
+      format: "16/9",
+    },
+    {
+      type: "foto",
+      fil: "dag4",
+      alt: "Opptak med kamera under et arrangement",
+      format: "3/4",
+    },
+    {
+      type: "video",
+      fil: "matcha",
+      alt: "Vertikalt klipp av matcha som vispes",
+      format: "9/16",
+    },
+    {
+      type: "foto",
+      fil: "fabrikk",
+      alt: "Ansatte i arbeidstøy i et produksjonslokale",
+      format: "1/1",
+    },
     // Gongbadet. Lå i reel-veggen et par timer; byttet med Rhassoul, som
     // Pål ville ha der. Filnavnet er fortsatt «spa» — det beskriver
     // avdelingen, ikke filmen, og begge klippene er fra The Well.
-    { type: "video", fil: "spa", alt: "Vertikalt klipp fra gongbad i spaavdelingen", format: "9/16" },
-    { type: "foto", fil: "goretex2", alt: "Nærbilde av en sko på asfalt", format: "1/1" },
-    { type: "video", fil: "bekkestua", alt: "Vertikalt klipp fra et treningslokale", format: "9/16" },
-    { type: "foto", fil: "peppes2", alt: "Gjest ved et bord med pizza", format: "4/5" },
-    { type: "foto", fil: "industri", alt: "Nærbilde av slitt arbeidsutstyr", format: "1/1" },
+    {
+      type: "video",
+      fil: "spa",
+      alt: "Vertikalt klipp fra gongbad i spaavdelingen",
+      format: "9/16",
+    },
+    {
+      type: "foto",
+      fil: "goretex2",
+      alt: "Nærbilde av en sko på asfalt",
+      format: "1/1",
+    },
+    {
+      type: "video",
+      fil: "bekkestua",
+      alt: "Vertikalt klipp fra et treningslokale",
+      format: "9/16",
+    },
+    {
+      type: "foto",
+      fil: "peppes2",
+      alt: "Gjest ved et bord med pizza",
+      format: "4/5",
+    },
+    {
+      type: "foto",
+      fil: "industri",
+      alt: "Nærbilde av slitt arbeidsutstyr",
+      format: "1/1",
+    },
   ],
   [
-    { type: "foto", fil: "aktivering", alt: "Utendørs aktivering med stand og publikum", format: "1/1" },
-    { type: "video", fil: "kontor", alt: "Vertikalt klipp fra en arbeidsplass", format: "9/16" },
-    { type: "foto", fil: "mat2", alt: "Person om bord i en båt", format: "3/4" },
-    { type: "video", fil: "servering", alt: "Liggende klipp fra et måltid", format: "16/9" },
-    { type: "video", fil: "kakao", alt: "Vertikalt klipp av kakaodrikk som helles", format: "9/16" },
+    {
+      type: "foto",
+      fil: "aktivering",
+      alt: "Utendørs aktivering med stand og publikum",
+      format: "1/1",
+    },
+    {
+      type: "video",
+      fil: "kontor",
+      alt: "Vertikalt klipp fra en arbeidsplass",
+      format: "9/16",
+    },
+    {
+      type: "foto",
+      fil: "mat2",
+      alt: "Person om bord i en båt",
+      format: "3/4",
+    },
+    {
+      type: "video",
+      fil: "servering",
+      alt: "Liggende klipp fra et måltid",
+      format: "16/9",
+    },
+    {
+      type: "video",
+      fil: "kakao",
+      alt: "Vertikalt klipp av kakaodrikk som helles",
+      format: "9/16",
+    },
     { type: "foto", fil: "dag6", alt: "Bakverk i en disk", format: "1/1" },
-    { type: "foto", fil: "portrett", alt: "Portrett utendørs mot blå himmel", format: "3/4" },
-    { type: "foto", fil: "kafe2", alt: "Person i genser fotografert bakfra utendørs", format: "3/4" },
-    { type: "foto", fil: "scene", alt: "Foredragsholder foran en skjerm", format: "3/4" },
+    {
+      type: "foto",
+      fil: "portrett",
+      alt: "Portrett utendørs mot blå himmel",
+      format: "3/4",
+    },
+    {
+      type: "foto",
+      fil: "kafe2",
+      alt: "Person i genser fotografert bakfra utendørs",
+      format: "3/4",
+    },
+    {
+      type: "foto",
+      fil: "scene",
+      alt: "Foredragsholder foran en skjerm",
+      format: "3/4",
+    },
   ],
 ];
