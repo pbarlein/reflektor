@@ -596,6 +596,41 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: "/:sti*", headers: sikkerhetsheadere },
+
+      /*
+       * CACHE PÅ FILENE I public/. Lagt til 02.10.2026.
+       *
+       * De ble levert med `max-age=0`, altså «spør meg på nytt hver gang».
+       * Lighthouse målte 295 KiB som kunne vært gjenbrukt på forsiden
+       * alene. Det er bilder, logoer og plakatbilder som ikke har endret
+       * seg på uker.
+       *
+       * IKKE `immutable`, og det er hele poenget med å skrive dette ned.
+       * `immutable` betyr «denne URL-en vil aldri svare med noe annet», og
+       * det er bare sant når filnavnet endres ved ny versjon. Filene våre
+       * heter det samme etter en utskifting — `peppes1-1600.jpg` er
+       * `peppes1-1600.jpg` også om motivet byttes. Med `immutable` ville
+       * et bytte ikke nådd fram til noen som hadde besøkt siden før, og vi
+       * ville ikke hatt noen måte å tvinge det på.
+       *
+       * `stale-while-revalidate` gir det beste av begge: nettleseren viser
+       * den lagrede fila med en gang og henter en ny i bakgrunnen. Ett
+       * døgn fersk, en uke brukbar.
+       *
+       * NEXTS EGNE FILER ER IKKE BERØRT. /_next/static har allerede
+       * innholdshash i filnavnet og settes til `immutable` av Next selv —
+       * der ER det sant.
+       */
+      {
+        source:
+          "/:sti*.:ext(jpg|jpeg|png|webp|avif|gif|svg|ico|mp4|webm|woff|woff2|vtt)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, stale-while-revalidate=604800",
+          },
+        ],
+      },
       /*
        * INDEKSERINGSSPERREN SOM HEADER, ikke bare som meta-tagg.
        *

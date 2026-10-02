@@ -1,6 +1,9 @@
 "use client";
 
 import Script from "next/script";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+
 import { tillatSporing } from "@/lib/miljo";
 
 import { standardSkript } from "@/lib/samtykke";
@@ -92,10 +95,116 @@ export function Samtykkestandard() {
   );
 }
 
+/**
+ * CONTAINEREN LASTES ETTER AT SIDEN ER FERDIG. Endret 02.10.2026.
+ *
+ * MÅLINGEN SOM UTLØSTE DET: Total Blocking Time var 1 207 ms på forsiden,
+ * 1 217 ms på /reels-produksjon og 1 434 ms på den tyngste bloggartikkelen.
+ * Med GTM og alt den laster blokkert scorer forsiden 99. Egen kode er
+ * altså rask; det er tredjepartene i containeren som spiser hovedtråden
+ * mens siden fortsatt holder på å bli brukbar.
+ *
+ * SAMTYKKEOPPSETTET ER NØYAKTIG SOM FØR. Dette er ikke en endring i HVA
+ * som lastes eller HVEM som får det — variant 2 står: GTM med HubSpot,
+ * Clarity og Apollo laster for alle. Det eneste som er endret er NÅR.
+ *
+ * REKKEFØLGEN SOM MÅ HOLDE, og som holder:
+ *
+ * 1. `Samtykkestandard` kjører fortsatt `beforeInteractive`, altså i
+ *    <head> før alt annet. Consent Mode settes der, og `dataLayer`
+ *    opprettes der.
+ * 2. Hendelser som pushes før containeren laster, går IKKE tapt. De ligger
+ *    i `dataLayer`-arrayen, og GTM leser hele arrayen når den starter.
+ *    Det gjelder `samtykke_oppdatert` fra banneret og `takk_page_view`.
+ * 3. Containeren lastes ved det som kommer først av: nettleseren er ferdig
+ *    (`load`) og har et ledig øyeblikk (`requestIdleCallback`), eller
+ *    brukeren gjør noe (rulling, trykk, tast). Det siste er viktig: den
+ *    som ruller med en gang skal ikke vente på en tomgangsluke som aldri
+ *    kommer.
+ *
+ * `/takk` ER UNNTAKET, og det er ikke til forhandling. Der fyrer
+ * GA4-nøkkelhendelsen og Ads-konverteringen som bærer 107+ historiske
+ * konverteringer. En utsettelse der ville byttet målingen av Reflektors
+ * eneste KPI mot noen hundre millisekunder på en side ingen vurderer oss
+ * etter. Containeren lastes derfor med en gang.
+ *
+ * IKKE PARTYTOWN. Den flytter tredjepartsskript til en web worker og er
+ * ustabil med nettopp GTM, HubSpot og Meta — og en ustabil sporing er
+ * dyrere enn en treg side.
+ */
 export function Sporing() {
   // Ingen container utenfor produksjon. Se tillatSporing() i miljo.ts —
   // forhåndsvisningene har målt forurenset GA4-eiendommen.
-  if (!tillatSporing()) return null;
+  const pa = tillatSporing();
+  const sti = usePathname();
+  /*
+    `/takk` leses med `startsWith` og ikke likhet, slik at en etterfølgende
+    skråstrek eller et språkprefiks senere ikke stilner konverteringen.
+  */
+  const erTakk = sti?.startsWith("/takk") ?? false;
+  const [last, settLast] = useState(false);
+
+  /*
+    `/takk` SETTER IKKE TILSTAND. Den rendrer <Script> med en gang, under
+    returen. Å sette tilstand synkront i en effekt er noe React-
+    kompilatoren avviser — og med rette: verdien er kjent før effekten
+    kjører, så en ekstra rendring ville vært gratis arbeid på nettopp den
+    siden som ikke har noe å gi bort.
+  */
+  useEffect(() => {
+    if (!pa || erTakk || last) return;
+
+    let ferdig = false;
+    const start = () => {
+      if (ferdig) return;
+      ferdig = true;
+      rydd();
+      settLast(true);
+    };
+
+    /*
+      To veier inn, og den som kommer først vinner.
+
+      `requestIdleCallback` har et tak på 2,5 sekunder, slik at en side med
+      mye å gjøre ikke utsetter containeren i det uendelige. Safari har
+      ikke `requestIdleCallback`; der er `setTimeout` hele mekanismen.
+    */
+    let tomgang = 0;
+    let klokke = 0;
+    const etterLast = () => {
+      const w = window as unknown as {
+        requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number;
+      };
+      if (typeof w.requestIdleCallback === "function") {
+        tomgang = w.requestIdleCallback(start, { timeout: 2500 });
+      } else {
+        klokke = window.setTimeout(start, 2500);
+      }
+    };
+
+    const hendelser = ["scroll", "pointerdown", "keydown", "touchstart"];
+    const rydd = () => {
+      window.removeEventListener("load", etterLast);
+      hendelser.forEach((h) => window.removeEventListener(h, start));
+      if (tomgang) {
+        (
+          window as unknown as { cancelIdleCallback?: (id: number) => void }
+        ).cancelIdleCallback?.(tomgang);
+      }
+      if (klokke) window.clearTimeout(klokke);
+    };
+
+    if (document.readyState === "complete") etterLast();
+    else window.addEventListener("load", etterLast);
+    hendelser.forEach((h) =>
+      window.addEventListener(h, start, { once: true, passive: true }),
+    );
+
+    return rydd;
+  }, [pa, erTakk, last]);
+
+  if (!pa) return null;
+  if (!erTakk && !last) return null;
 
   return (
     <Script id="gtm" strategy="afterInteractive">

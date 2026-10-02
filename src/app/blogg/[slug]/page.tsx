@@ -264,11 +264,23 @@ export default async function BloggInnlegg({ params }: Props) {
             forskjellen gir siden en rytme den ikke hadde.
           */}
           <figure className="relative mt-12 aspect-[16/9] max-w-3xl overflow-hidden rounded-medie bg-flate-dempet">
+            {/*
+              INGEN `priority` HER. Fjernet 02.10.2026.
+
+              `priority` forhåndslaster bildet med høy prioritet og er ment
+              for LCP-elementet. Dette bildet står ETTER ingressen — det er
+              hele poenget med plasseringen, se kommentaren over — og
+              ligger dermed under folden på mobil. Å forhåndslaste det
+              betyr å la et bilde ingen ser ennå konkurrere med teksten de
+              faktisk leser.
+
+              LCP-elementet på artikkelsidene er H1 og ingressen, altså
+              tekst. Det som hjelper dem er at ingenting annet går foran.
+            */}
             <Image
               src={`/arbeid/${a.bilde.fil}.jpg`}
               alt={a.bilde.alt}
               fill
-              priority
               sizes="(min-width: 768px) 48rem, 100vw"
               className="object-cover"
               style={
