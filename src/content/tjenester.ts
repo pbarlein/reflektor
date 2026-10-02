@@ -327,6 +327,22 @@ export const reklamefilm: Tjenesteside = {
     {
       sporsmal: "Hva koster en reklamefilm?",
       svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster, avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nDere kan påvirke tallet selv. Holder dere lokasjon og eventuelle statister eller skuespillere, går prisen ned, og på en reklamefilm er det ofte de to postene som veier mest.`,
+      /*
+        LENKENE TIL DE TO ARTIKLENE, lagt til 02.10.2026.
+        Prisartikkelen svarer på det tjenestesiden ikke kan uten å bli en
+        artikkel: hva skuespillere, musikk og visning koster i tillegg. Den
+        som leser dette spørsmålet er nøyaktig den som lurer på resten.
+      */
+      lenker: [
+        {
+          sti: "/blogg/hva-koster-reklamefilm",
+          tekst: "Hva koster en reklamefilm? Hele regnestykket",
+        },
+        {
+          sti: "/blogg/hva-er-reklame",
+          tekst: "Hva er reklame? Definisjon, typer og virkemidler",
+        },
+      ],
     },
     {
       sporsmal: "Hva skiller en reklamefilm fra en vanlig bedriftsvideo?",

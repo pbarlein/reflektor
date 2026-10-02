@@ -10,6 +10,7 @@ import { Eyebrow, Merkelapp } from "@/components/Eyebrow";
 import { Knappelenke } from "@/components/Knapp";
 import {
   ArtikkelSchema,
+  ForfatterSchema,
   BrodsmuleSchema,
   FaqSchema,
 } from "@/components/Schema";
@@ -20,6 +21,7 @@ import {
   somFaq,
   type Innlenke,
 } from "@/content/artikler";
+import { forfatter } from "@/lib/artikkelmarkering";
 import { basisUrl } from "@/lib/miljo";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -146,12 +148,20 @@ export default async function BloggInnlegg({ params }: Props) {
           { navn: a.tittel },
         ]}
       />
+      {/*
+        PERSONEN RENDRES ÉN GANG PER ARTIKKELSIDE, slik at `author`-
+        referansen i ArtikkelSchema har et objekt å peke på. Se
+        ForfatterSchema i Schema.tsx for hvorfor det er en @id-referanse og
+        ikke et gjentatt personobjekt.
+      */}
+      <ForfatterSchema />
       <ArtikkelSchema
         tittel={a.tittel}
         beskrivelse={a.beskrivelse}
         sti={`/blogg/${a.slug}`}
         publisert={a.publisert}
         oppdatert={a.oppdatert}
+        bilde={`/bilder/og/blogg-${a.slug}.jpg`}
       />
       {faq.length > 0 && <FaqSchema qa={faq} />}
 
@@ -186,7 +196,26 @@ export default async function BloggInnlegg({ params }: Props) {
             se hvor gammel teksten er uten å grave i kildekoden — og en
             skjult dato er et signal man later som man ikke har.
           */}
+          {/*
+            BYLINE MED NAVN, lagt til 02.10.2026.
+
+            Her sto bare datoen. En artikkel uten navngitt forfatter er
+            svakere på to måter som begge er målbare: Googles
+            retningslinjer for innholdskvalitet spør hvem som står bak
+            teksten, og en språkmodell som skal gjengi hvem som mener noe
+            om bransjen finner ingen å gjengi når svaret er et
+            aksjeselskap.
+
+            Navnet lenker til kortet hans på /om-oss, som nå har et anker.
+          */}
           <p className="mt-6 font-sans text-xs font-medium tracking-[0.08em] text-blekk-dempet uppercase">
+            <Link
+              href={forfatter.sti}
+              className="underline decoration-transparent underline-offset-4 transition-colors hover:decoration-aksent motion-reduce:transition-none"
+            >
+              {forfatter.navn}
+            </Link>
+            {`, ${forfatter.rolle} · Publisert `}
             <time dateTime={a.publisert}>
               {new Date(a.publisert).toLocaleDateString("nb-NO", {
                 day: "numeric",
@@ -513,6 +542,47 @@ export default async function BloggInnlegg({ params }: Props) {
           </Container>
         </section>
       )}
+
+      {/* ── Forfatteren ───────────────────────────────────────────── */}
+      {/*
+        FORFATTERBOKSEN STÅR FØR «Fra Reflektor», ikke etter.
+
+        Rekkefølgen er et valg: først hvem som skrev dette og hvorfor de
+        kan noe om det, så hva vi selger. Motsatt rekkefølge ville gjort
+        boksen til en signatur under en annonse.
+
+        Teksten er Påls egen, levert som copy. Den er ikke skrevet her.
+      */}
+      <section className="pb-14">
+        <Container>
+          <div className="max-w-2xl rounded-flate border border-kant bg-flate-dempet px-6 py-7 sm:px-8">
+            <p className="text-[1.0625rem] leading-relaxed text-pretty text-blekk-dempet">
+              <Link
+                href={forfatter.sti}
+                className="font-medium text-blekk underline decoration-aksent decoration-1 underline-offset-4"
+              >
+                {forfatter.navn}
+              </Link>{" "}
+              er CEO i Reflektor, et SoMe-byrå og produksjonshus i Oslo.
+              Reflektor startet som produksjonsselskap og har laget foto, video
+              og reklamefilm for blant andre Anton Sport, Egon, Peppes Pizza og
+              Vitusapotek. I 2025 ble Reflektor kåret til Gaselle-bedrift av
+              Dagens Næringsliv.
+            </p>
+            <a
+              href={forfatter.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex min-h-6 items-center gap-2 font-sans text-xs font-medium tracking-[0.08em] text-blekk-dempet uppercase underline decoration-transparent underline-offset-4 transition-colors hover:decoration-aksent motion-reduce:transition-none"
+            >
+              LinkedIn
+              <span aria-hidden className="text-aksent">
+                →
+              </span>
+            </a>
+          </div>
+        </Container>
+      </section>
 
       {/* ── Broen: fra bredt søk til kommersiell side ─────────────── */}
       <section className="pb-20">

@@ -105,6 +105,12 @@ function lag(): string {
       `${site.kontakt.adresse}`,
     `- ${site.kontakt.epost}, ${site.kontakt.telefon}`,
     "",
+    "## English",
+    "",
+    `- [Social media agency in Oslo, fixed monthly price](${base}/en): ` +
+      "One English summary of the subscription, the price and who we work " +
+      "with. The rest of the site is in Norwegian.",
+    "",
     "## Artikler",
     "",
     ...artikler.map(

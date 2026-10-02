@@ -267,3 +267,35 @@ test("/blogg?format=rss går til feeden, og bare med betingelsen", async () => {
       "abonnentene fra en feed til en 404.",
   );
 });
+
+/**
+ * INGEN REDIRECT SKAL PEKE PÅ EN OVERSIKTSSIDE. Lagt til 02.10.2026.
+ *
+ * Fem døde bloggadresser gikk til /blogg, fordi det var det Squarespace
+ * gjorde. En 301 til en oversiktsside behandler Google i praksis som en myk
+ * 404: målet svarer ikke på det den gamle adressen svarte på, og
+ * lenkeverdien går tapt i stedet for å flytte seg.
+ *
+ * Testen er med vilje streng. Finner en senere gjennomgang en adresse uten
+ * nær slektning, er oversikten fortsatt bedre enn en 404 — og da skal
+ * unntaket skrives inn her, med begrunnelse, ikke sniklegges inn i kartet.
+ *
+ * /vart-arbeid STÅR IKKE I LISTA, og det er ikke en forglemmelse.
+ * `/vrt-arbeid` → `/vart-arbeid` er en skrivefeilrettelse: kilden ER
+ * oversiktssiden, bare uten å-en. Der er oversikten riktig mål, ikke en
+ * nødløsning. Regelen gjelder døde artikler som sendes til en liste over
+ * andre artikler.
+ */
+const OVERSIKTSSIDER = ["/blogg"];
+
+test("ingen redirect peker på en oversiktsside", async () => {
+  for (const r of await kart()) {
+    assert.ok(
+      !OVERSIKTSSIDER.includes(r.destination),
+      `${r.source} → ${r.destination}. En 301 til en oversiktsside er i ` +
+        `praksis en myk 404 for Google: målet svarer ikke på det kilden ` +
+        `het. Pek den på nærmeste side etter tema, eller skriv unntaket ` +
+        `inn i OVERSIKTSSIDER med en begrunnelse.`,
+    );
+  }
+});

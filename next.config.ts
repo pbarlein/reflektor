@@ -393,28 +393,68 @@ const redirects: NextConfig["redirects"] = async () => [
     statusCode: 301,
   },
 
-  /* Seks døde — 301 til oversikten, som i dag. */
+  /*
+   * DE DØDE PEKER NÅ PÅ NÆRMESTE TEMA, IKKE PÅ OVERSIKTEN. Endret
+   * 02.10.2026.
+   *
+   * Her sto «seks døde — 301 til oversikten, som i dag», og speilingen av
+   * Squarespace var riktig på cutover-dagen. Men en 301 til en
+   * oversiktsside behandler Google i praksis som en myk 404: målet svarer
+   * ikke på det den gamle adressen svarte på, og lenkeverdien går tapt i
+   * stedet for å flytte seg.
+   *
+   * Hver av dem er derfor vurdert på tema, og alle fem fant et mål. Ingen
+   * redirect i kartet peker lenger på /blogg. Finner neste gjennomgang en
+   * gammel adresse uten nær slektning, er oversikten fortsatt bedre enn en
+   * 404 — men den skal være siste utvei, ikke standardvalget.
+   */
+
+  /*
+   * «Virkemidler i reklame» er en egen H2 i /blogg/hva-er-reklame. Dette
+   * er den tetteste treffer i hele kartet: samme spørsmål, samme ord.
+   */
   {
     source:
       "/blogg/hvilke-virkemidler-er-mest-effektive-i-reklame-og-hvordan-brukes-de",
-    destination: "/blogg",
+    destination: "/blogg/hva-er-reklame",
     statusCode: 301,
   },
+  /*
+   * En holdningskampanje er en reklamekampanje som skal endre en holdning
+   * i stedet for å selge et produkt. Artikkelen om reklame dekker både
+   * definisjonen, typene og virkemidlene, og er nærmeste levende side.
+   */
   {
     source: "/blogg/hva-er-holdningskampanje",
-    destination: "/blogg",
+    destination: "/blogg/hva-er-reklame",
     statusCode: 301,
   },
-  { source: "/blogg/hva-er-reklame", destination: "/blogg", statusCode: 301 },
-  { source: "/blogg/hva-er-personas", destination: "/blogg", statusCode: 301 },
+  /*
+   * Personas er et verktøy for å bestemme hvem innholdet er for. Det er
+   * nøyaktig jobben strategiartikkelen gjør.
+   */
+  {
+    source: "/blogg/hva-er-personas",
+    destination: "/blogg/sosiale-medier-strategi",
+    statusCode: 301,
+  },
+  /*
+   * Visuell identitet handler om hvordan innholdet ser ut. Artikkelen om
+   * innholdsproduksjon er den som forklarer hva som lages og hvordan.
+   */
   {
     source: "/blogg/hva-er-visuell-identitet",
-    destination: "/blogg",
+    destination: "/blogg/hva-er-innholdsproduksjon",
     statusCode: 301,
   },
+  /*
+   * Portrettfoto er en tjeneste vi leverer, ikke et tema vi har skrevet
+   * om. Da er tjenestesiden riktigere enn en artikkel: den som søkte etter
+   * hvordan man tar portretter, er nærmere å ville ha dem tatt.
+   */
   {
     source: "/blogg/hvordan-ta-portrett-bilder",
-    destination: "/blogg",
+    destination: "/innholdsproduksjon",
     statusCode: 301,
   },
 

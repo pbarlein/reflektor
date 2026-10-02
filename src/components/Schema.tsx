@@ -1,5 +1,10 @@
 import { site, tilbud } from "@/content/site";
 import { basisUrl } from "@/lib/miljo";
+import {
+  artikkelMarkering,
+  forfatterMarkering,
+  type Artikkelmarkering,
+} from "@/lib/artikkelmarkering";
 import { googleProfil } from "@/content/anmeldelser";
 import { omoss } from "@/content/omoss";
 
@@ -19,6 +24,31 @@ import { omoss } from "@/content/omoss";
  * /kontaktoss, ikke forsiden. Forsiden bærer ikke merkevaren i dag.
  */
 const ORG_ID = `${basisUrl()}/#organisasjon`;
+
+/**
+ * Forfatteren. Lagt til 02.10.2026.
+ *
+ * HVORFOR EN PERSON OG IKKE BARE ORGANISASJONEN. Artiklene hadde
+ * `author: { "@id": ORG_ID }` — altså «Reflektor AS skrev dette». Det er
+ * formelt riktig og praktisk verdiløst: Googles retningslinjer for
+ * innholdskvalitet ber om hvem som står bak teksten, og en språkmodell som
+ * skal si hvem som mener noe om bransjen har ingenting å gripe fatt i når
+ * svaret er et aksjeselskap.
+ *
+ * SELVE OBJEKTET LIGGER I lib/artikkelmarkering.ts, sammen med
+ * Article-objektet. Grunnen står der: markering er data, og data skal kunne
+ * testes uten å bygge nettstedet.
+ */
+export function ForfatterSchema() {
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(forfatterMarkering()),
+      }}
+    />
+  );
+}
 
 export function OrganisasjonSchema() {
   const base = basisUrl();
@@ -487,39 +517,8 @@ export function TeamSchema() {
  * vi vet når den ble flyttet hit — men en flytting er ikke en revisjon, og
  * å markere den som det ville vært å jukse med nettopp det signalet.
  */
-export function ArtikkelSchema({
-  tittel,
-  beskrivelse,
-  sti,
-  publisert,
-  oppdatert,
-}: {
-  tittel: string;
-  beskrivelse: string;
-  sti: string;
-  publisert: string;
-  /** Settes bare når artikkelen faktisk er innholdsoppdatert. */
-  oppdatert?: string;
-}) {
-  const data = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: tittel,
-    description: beskrivelse,
-    datePublished: publisert,
-    /*
-      `dateModified` BARE NÅR DEN FINNES. Google bruker den til å vise
-      hvor fersk en side er, og en `dateModified` som settes til i dag
-      hver gang noe bygges ville vært en usann opplysning på tjue sider
-      samtidig. Feltet kommer fra `oppdatert` i artikler.ts, og det settes
-      manuelt når innholdet faktisk er endret.
-    */
-    ...(oppdatert ? { dateModified: oppdatert } : {}),
-    inLanguage: "nb-NO",
-    mainEntityOfPage: { "@type": "WebPage", "@id": `${basisUrl()}${sti}` },
-    author: { "@id": ORG_ID },
-    publisher: { "@id": ORG_ID },
-  };
+export function ArtikkelSchema(props: Artikkelmarkering) {
+  const data = artikkelMarkering(props);
 
   return (
     <script

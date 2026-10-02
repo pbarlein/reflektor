@@ -157,7 +157,27 @@ export default function OmOss() {
                 brekker til to linjer mens de tre andre ikke gjør det — da
                 står fire roller på tre ulike høyder. Nå flukter de.
               */
-              <li key={a.navn} className="flex flex-col bg-flate">
+              /*
+                ANKERET PÅ PÅLS KORT, lagt til 02.10.2026. Bylinen og
+                forfatterboksen i hver artikkel lenker til
+                /om-oss#pal-barlein, og `Person`-markeringen bruker samme
+                adresse som `@id`. Uten ankeret peker begge på toppen av
+                siden, og lenken lover noe den ikke holder.
+
+                Slugen er utledet fra navnet og ikke skrevet inn, så den
+                kan ikke komme i utakt med lista.
+              */
+              <li
+                key={a.navn}
+                id={a.navn
+                  .toLowerCase()
+                  .replace(/[æ]/g, "ae")
+                  .replace(/[ø]/g, "o")
+                  .replace(/[å]/g, "a")
+                  .replace(/[^a-z0-9]+/g, "-")
+                  .replace(/^-|-$/g, "")}
+                className="flex scroll-mt-24 flex-col bg-flate"
+              >
                 {/*
                   Portrettene er skutt i samme oppsett mot samme mørke
                   bakgrunn, så de tåler å stå kant i kant uten ramme. 3:4 er

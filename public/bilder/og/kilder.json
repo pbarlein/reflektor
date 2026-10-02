@@ -48,6 +48,12 @@
   "blogg-hva-koster-eventfotograf": {
     "kilde": "retail24-sandefjord-topp"
   },
+  "blogg-hva-koster-reklamefilm": {
+    "kilde": "popup-arbeid-1800"
+  },
+  "blogg-hva-er-reklame": {
+    "kilde": "goretex2-vegg"
+  },
   "case-soulcake": {
     "kilde": "soulcake",
     "fokus": "50% 20%"

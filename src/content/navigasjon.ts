@@ -103,6 +103,16 @@ export const bunnmeny: { tittel: string; lenker: Lenke[] }[] = [
       { navn: "Blogg", sti: "/blogg" },
       { navn: "Ta kontakt", sti: "/kontaktoss" },
       { navn: "Personvern", sti: "/personvern" },
+      /*
+        «English» STÅR I SELSKAP-SPALTA, ikke som en språkvelger i headeren.
+        Lagt til 02.10.2026 sammen med /en.
+
+        Det er én engelsk side, ikke en engelsk utgave av nettstedet. En
+        språkvelger øverst ville lovet at hele siden finnes på engelsk, og
+        det gjør den ikke. I bunnteksten er den der den som leter etter den
+        vil lete.
+      */
+      { navn: "English", sti: "/en" },
     ],
   },
 ];

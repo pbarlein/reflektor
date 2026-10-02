@@ -46,7 +46,25 @@ export const metadata: Metadata = {
   title: hentTekst(front, "front.meta.title") ?? undefined,
   description: hentTekst(front, "front.meta.description") ?? undefined,
   // Absolutt URL fra basisUrl(), ikke hardkodet — se miljo.ts.
-  alternates: { canonical: `${basisUrl()}/` },
+  alternates: {
+    canonical: `${basisUrl()}/`,
+    /*
+      HREFLANG, LAGT TIL 02.10.2026 sammen med /en.
+
+      Henvisningene MÅ gå begge veier. Google krever at den engelske siden
+      peker tilbake på den norske, og omvendt — gjør de ikke det, ignoreres
+      hele settet, og da har vi markering uten virkning. /en har samme
+      blokk.
+
+      `x-default` er denne siden: den er den fullstendige, og den engelske
+      er en oppsummering.
+    */
+    languages: {
+      "nb-NO": basisUrl(),
+      en: `${basisUrl()}/en`,
+      "x-default": basisUrl(),
+    },
+  },
 };
 
 export default function Forside() {
