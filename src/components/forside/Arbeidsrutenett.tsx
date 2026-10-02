@@ -11,14 +11,20 @@ export function Arbeidsrutenett() {
   return (
     <>
       {/*
-      Stillbildene står nå som EGEN seksjon etter prosessblokken, ikke rett
-      under klippene.
+      Stillbildene står som EGEN seksjon mellom priskortet og kortraden for
+      enkeltprosjekter, ikke rett under klippene i «Slik ser det ut».
 
       Grunnen er rytme: reel-veggen og åtte store bilder rett etter
       hverandre ble en vegg av bildeflate uten pusterom, og leseren mistet
-      argumentet mellom dem. Prosessblokken deler dem — video, tekst, foto —
-      og fotonettet får da også fungere som bevis PÅ det blokken nettopp
-      påsto, i stedet for som mer av det samme.
+      argumentet mellom dem. Et kort med tekst deler dem — video, tekst,
+      foto — og fotonettet får da også fungere som bevis PÅ det kortet
+      nettopp påsto, i stedet for som mer av det samme.
+
+      KORTET OVER ER NÅ PRISEN og ikke «Slik jobber vi». Seksjonen ble lagt
+      ned 02.10.2026 og priskortet flyttet inn i sluket den etterlot — se
+      page.tsx. For rutenettet er det ingen forskjell: det er fortsatt et
+      mørkt kort over og et lyst avsnitt under, og det er det rytmen handler
+      om.
 
       Ingen egen overskrift, med vilje. Seksjonen er et visuelt pustehull i
       argumentet, ikke et nytt kapittel, og en overskrift ville gjort den
@@ -27,53 +33,20 @@ export function Arbeidsrutenett() {
       {/*
         LUFTA UNDER ER LIK LUFTA OVER, satt 19.09.2026 etter måling.
 
-        Seksjonen hadde `pb-28 sm:pb-36`, altså 144 px ned til priskortet,
-        mens prosesskortet over slutter 80 px opp. Det er den samme
+        Seksjonen hadde `pb-28 sm:pb-36`, altså 144 px ned til neste
+        seksjon, mens kortet over slutter 80 px opp. Det er den samme
         overgangen — mørkt kort mot bilderutenett — med nesten dobbel
         avstand på den ene siden. Målt blekk til blekk på tvers av hele
-        forsiden var 144 ikke det største gapet (arbeidsseksjonen mot
-        prosesskortet er 152), men det var det eneste som sto rett overfor
-        sin egen motsats.
+        forsiden var 144 ikke det største gapet, men det var det eneste som
+        sto rett overfor sin egen motsats.
 
         `pb-20` gir 80 px på begge sider. Rutenettet leser da som ett
-        pusterom mellom to kort i stedet for som en seksjon som henger
-        løsere nedover enn oppover.
+        pusterom mellom to seksjoner i stedet for som en seksjon som henger
+        løsere nedover enn oppover. Priskortet over har samme verdi.
       */}
       <section className="pb-20" aria-label="Arbeid fra produksjonsdager">
         <Arbeidskolonner kolonner={arbeidskolonner} />
       </section>
-
-      {/*
-      4 · PRIS
-
-      Prisen er kvalifiseringsøyeblikket. Den var tidligere en venstrestilt
-      tekstspalte, og leste som en prisliste i stedet for som et tilbud.
-
-      Tre grep, alle basert på at seksjonen manglet visuelt uttrykk og ikke
-      informasjon:
-
-      1. TALLET I SERIFF, i display-grad. Det var satt i Poppins fordi det
-         ligger i en <p>. Et seksifret beløp i høykontrast-seriff på 8rem er
-         forskjellen på at prisen leses som en opplysning og at den leses
-         som et løfte. Skalakontrast er det billigste wow-grepet som finnes,
-         og det eneste som ikke er dekor.
-
-      2. ET BILDE. Seksjonen solgte en produksjonsdag uten å vise en. Bildet
-         viser nettopp opptak, og står i samme rad som tallet — det binder
-         prisen til det man får for den.
-
-      3. TALLRAD. De tre tellbare størrelsene — 1 produksjonsdag, 8–10
-         videoer, 2 publiseringer i uken — lå begravet i kulepunkter. De er
-         tall, og tall skal se ut som tall. Verdiene leses fra `tilbud`, og
-         ordene er de samme som står i den godkjente copyen.
-
-      Tallraden ligger i venstre spalte og ikke under begge, slik at bildet
-      får fylle sin spalte i full høyde. Ellers oppstår et tomrom som gjør
-      at seksjonen ser uferdig ut nettopp der den skal virke mest sikker.
-
-      Det som inngår er beholdt som bord, men nedtonet: det er
-      dokumentasjon, ikke argument.
-    */}
     </>
   );
 }

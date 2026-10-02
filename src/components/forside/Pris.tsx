@@ -47,6 +47,22 @@ import { tilbud } from "@/content/site";
  * ett kort. Slik gjør Basecamp og Designjoy det også: pris og innhold i
  * samme blokk, ikke som to kapitler.
  *
+ * «DETTE INNGÅR» ER FLYTTET UT 02.10.2026, bestilt av Pål. Avsnittet over
+ * står som historikk, men det gjelder ikke lenger for denne fila: de seks
+ * punktene, de to merknadene og «inngår ikke»/«vilkår» ligger nå i
+ * DetteInngar.tsx, sammen med de tre stegene fra den nedlagte seksjonen
+ * «Slik jobber vi».
+ *
+ * GRUNNEN ER IKKE PLASS, MEN GJENTAKELSE. De tre stegene — vi planlegger,
+ * vi filmer én dag, vi klipper og publiserer — er de samme seks punktene
+ * fortalt som prosess. De sto som to seksjoner med 575 px mellom seg og sa
+ * det samme to ganger. Slått sammen sier de det én gang, i rekkefølge, og
+ * seksjonen «Slik jobber vi» finnes ikke lenger.
+ *
+ * Det dette kortet sitter igjen med er kvalifiseringen: fire tall, ordet,
+ * prisen og klippet. Kortet er dermed kort nok til å stå høyt på siden, der
+ * det nå gjør — se page.tsx.
+ *
  * GLASSFLATEN ER VALGT, ikke arvet. Den er merkevarens egen flate — se
  * .glassflate i globals.css — og gjør to ting her: gir det store ordet noe
  * å gløde mot, og samler seksjonen til én gjenstand i stedet for en stabel.
@@ -77,7 +93,13 @@ export function Pris() {
   return (
     /* id="pris" er målet for menypunktet «Pris». Se navigasjon.ts for
        hvorfor det peker hit og ikke på /sosiale-medier-byra. */
-    <section id="pris" className="scroll-mt-4 pb-24 sm:pb-32">
+    /* LUFTA UNDER ER 80 PX, ikke 96/128 som før. Endret 02.10.2026 sammen
+       med flyttingen: under kortet ligger nå bilderutenettet, og det er
+       nøyaktig den overgangen — mørkt kort mot bilderutenett — som ble målt
+       19.09.2026 og satt til `pb-20` på begge sider. Rutenettet skal lese
+       som ett pusterom mellom to kort, og det krever lik luft over og
+       under. */
+    <section id="pris" className="scroll-mt-4 pb-20">
       <Container>
         <div className="glassflate rounded-medie px-6 py-10 text-pa-dyp sm:px-10 sm:py-12 lg:px-14 lg:py-14">
           <Merkelapp variant="dyp" som="h2">
@@ -197,138 +219,6 @@ export function Pris() {
               }}
               className="relative order-first mt-8 aspect-[16/9] overflow-hidden rounded-flate bg-[rgba(245,240,232,0.06)] sm:aspect-[21/9] lg:order-none lg:mt-0 lg:aspect-auto lg:h-full"
             />
-          </div>
-
-          {/*
-            DETTE INNGÅR — i samme kort, som en tett liste med hårstreker i
-            stedet for åtte glasskort.
-
-            Kortene var 1 264 px på desktop og 1 690 på mobil. Som liste er
-            den under 300. Innholdet er uendret; det var formen som kostet.
-            Et kort per punkt sier «dette er åtte ting»; en liste sier
-            «dette er én leveranse med åtte deler», og det siste er sant.
-
-            To spalter fra sm, og rekkefølgen flyter NEDOVER spaltene og
-            ikke bortover — den som leser en tospaltet liste nedover skal
-            ikke få 1, 3, 5.
-          */}
-          <div className="mt-10 border-t border-[color:var(--kant-pa-dyp)] pt-8 sm:mt-12 sm:pt-10">
-            <Merkelapp variant="dyp">Dette inngår</Merkelapp>
-            {/*
-              GLASSFLATER I STEDET FOR HÅRSTREKER, 27.09.2026. Pål: «oppfattes
-              litt tungt å lese … kan vi ramme inn punktene i en glass-look
-              som anmeldelsene».
-
-              Han har rett i observasjonen. Seks like tunge linjer skilt av
-              hårstreker på en mørk flate gir ingen holdepunkter — øyet finner
-              ikke starten på neste punkt, og hele blokken leses som én masse.
-
-              MEN LISTEN BESTÅR. Dette var kort én gang, og de ble gjort om
-              til liste med vilje: kortene målte 1 264 px på desktop og 1 690
-              på mobil, og «et kort per punkt sier dette er seks ting, en
-              liste sier én leveranse med seks deler». Det argumentet står
-              fortsatt.
-
-              Derfor glass på RADENE, ikke kort. Hvert punkt blir en egen
-              flate å feste blikket på, men de ligger fortsatt tett i to
-              spalter og leses som én leveranse. Samme oppskrift som
-              anmeldelseskortene, så flatene hører hjemme i samme språk.
-            */}
-            <ul className="mt-5 grid gap-3 sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-3 sm:gap-x-5">
-              {tilbud.inngar.map((punkt, i) => (
-                <li
-                  key={punkt}
-                  className="flex gap-4 px-5 py-4 rounded-flate border border-[rgba(245,240,232,0.14)] bg-[rgba(245,240,232,0.10)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.06)]"
-                >
-                  {/*
-                    Løpenummer og ikke hake. En hake sier «SaaS-prisplan» —
-                    det var komponenten som utløste «AI-preget» i en
-                    tidligere runde. Et nummer sier spesifikasjon, og gjør
-                    omfanget tellbart.
-                  */}
-                  <span
-                    aria-hidden
-                    className="display shrink-0 text-[0.9375rem] tabular-nums text-aksent-pa-dyp"
-                  >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span className="text-[0.9375rem] leading-relaxed text-pretty">
-                    {punkt}
-                  </span>
-                </li>
-              ))}
-            </ul>
-
-            {/*
-              Stillbilder står som egen merknad og ikke som et sjuende
-              punkt. Forskjellen er ikke kosmetisk: de seks er fast
-              leveranse, stillbilder er «ved behov», og et likt punkt ville
-              lest som et likt løfte. Se `tilbud.stillbilder` i site.ts for
-              Påls instruks ordrett.
-            */}
-            {/*
-              `max-w-3xl` er ikke pynt. Merknaden gikk over hele kortets
-              bredde og målte 90 tegn per linje. Løpende tekst leses
-              best mellom 45 og 75 tegn — over det mister øyet
-              linjestarten på vei tilbake. 768 px gir 69 her. Rammen
-              beholder full bredde; det er bare teksten som brekker
-              tidligere.
-            */}
-            {/*
-              Samme glass som punktene, men med svakere fyll. Her sto en
-              STIPLET ramme, og stiplet leser som «midlertidig» eller
-              «plassholder» — den motsatte beskjeden av det merknaden gir.
-              Et dusere glass sier «hører til, men er ikke et av de seks».
-            */}
-            <p className="mt-5 max-w-3xl px-5 py-4 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet rounded-flate border border-[rgba(245,240,232,0.10)] bg-[rgba(245,240,232,0.05)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.03)]">
-              {tilbud.stillbilder}
-            </p>
-
-            {/*
-              ANDRE MERKNAD, LAGT TIL 29.09.2026. Den svarer på et spørsmål
-              punktene over reiser uten å besvare: punkt fire sier hvor VI
-              publiserer, og sier ingenting om hva kunden kan gjøre med
-              filene.
-
-              Google AI Mode leste det som en begrensning og strøk Reflektor
-              fra svaret da en kjede spurte. Setningen retter ikke opp punkt
-              fire — det står som det står, og er låst — den legger til det
-              som manglet. Se `tilbud.bruksrett` i site.ts.
-            */}
-            <p className="mt-3 max-w-3xl px-5 py-4 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet rounded-flate border border-[rgba(245,240,232,0.10)] bg-[rgba(245,240,232,0.05)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(245,240,232,0.03)]">
-              {tilbud.bruksrett}
-            </p>
-
-            {/*
-              «Inngår ikke» skal være en LITEN dose — se
-              research-konvertering.md om blemishing-effekten: negativ
-              informasjon løfter inntrykket bare når den er liten, perifer
-              og kommer etter det positive. Derfor deler de to bredden 1:2.
-            */}
-            <div className="mt-8 grid gap-6 text-[0.9375rem] leading-relaxed sm:mt-9 lg:grid-cols-3 lg:gap-10">
-              <p className="text-pa-dyp-dempet">
-                <span className="mb-1 block font-sans text-xs font-medium tracking-[0.08em] uppercase">
-                  Inngår ikke
-                </span>
-                {/*
-                  Punktene er skrevet med stor forbokstav hver for seg, fordi
-                  de tidligere sto etter en innledning. Nå danner de sin egen
-                  setning, og da må alle ned bortsett fra den første.
-                */}
-                {((t) => t.charAt(0).toUpperCase() + t.slice(1))(
-                  tilbud.inngarIkke.join(", ").toLowerCase(),
-                )}
-                .
-              </p>
-              <p className="text-pretty lg:col-span-2">
-                <span className="mb-1 block font-sans text-xs font-medium tracking-[0.08em] text-pa-dyp-dempet uppercase">
-                  Vilkår
-                </span>
-                {hentTekst(front, "front.price.note") ?? (
-                  <TbdMarkor id="front.price.note" />
-                )}
-              </p>
-            </div>
           </div>
         </div>
       </Container>

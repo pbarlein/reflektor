@@ -930,3 +930,33 @@ av hensikten.
 
 **Regelen:** `preload="metadata"` henter noen få kilobyte, ikke filmen.
 Rendre kildene i markeringen, og la observeren styre bare play og pause.
+
+---
+
+## Produksjonsdagsklippet i «Dette inngår» (02.10.2026)
+
+**Fil:** `public/arbeid/russemerch.mp4` + `.jpg`. 540×960, 17,3 s, H.264 High,
+yuv420p, 25 fps, 1 070 kb/s, 2,3 MB. Samme oppskrift og samme bitrate som
+`bts-anton-sport.mp4`.
+
+**Kilde:** `Reflektor/Kundemappe/Reflektor/2026/September/Russemerch2.mov` i
+Dropbox. Masteren er 1080×1920 og 23,1 s.
+
+**To ting er klippet bort, og begge med grunn:**
+
+1. **De første fire sekundene**, som har en innbrent «REFLEKTOR X
+   RUSSEMERCH»-plakat. Klippet står i seksjonen som spesifiserer hva
+   abonnementet inneholder, og en navngitt kunde der ville lest som at
+   kunden er abonnent. Det er uttrykkelig forbudt i AGENTS.md. Det som står
+   igjen er vårt eget team i arbeid, uten merking.
+2. **Et svart plakatkort på 10,32–11,44 s** (teksten «Obs!»). Et stumt,
+   loopende dekorklipp kan ikke bære en beskjed som skal leses, og et svart
+   hull midt i loopen leser som at filmen har stoppet. Kuttet er funnet med
+   `blackdetect`, ikke med øyemål.
+
+Startpunktet er 4,15 s og ikke 4,0: ved 3,95 ligger halen av en gul
+whip-overgang, og den ville blitt plakatbildet.
+
+**Oppløsningen er 540 px bred, ikke 720 som BTS-klippene.** Cella er 288 px
+på desktop og 294 på en telefon. 540 dekker to ganger pikselforholdet på
+begge, og 720 ville vært 1 MB ekstra uten en synlig forskjell.

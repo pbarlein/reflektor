@@ -141,7 +141,17 @@ export function Anmeldelsesseksjon() {
         ville `text-pa-dyp` farget bone-tekst på lys bakgrunn utenfor
         panelet.
       */}
-      <section className="pb-24 sm:pb-32">
+      {/*
+        LUFTA ER STRAMMET INN 02.10.2026, bestilt av Pål: «litt for mye
+        spacing over arbeid». Her sto `pb-24 sm:pb-32`, altså 96 px på mobil
+        og 128 på desktop ned til «Slik ser det ut når vi filmer hos andre».
+
+        Avstanden kom av en rettelse dagen før — seksjonen hadde 0 px under
+        seg og måtte få luft som alle andre — og den ble satt én hakk for
+        romslig. `pb-16 sm:pb-24` gir 64 og 96, som er samme verdi som
+        seksjonen over betaler på toppen.
+      */}
+      <section className="pb-16 sm:pb-24">
         <Anmeldelsesrad
           eyebrow={hentTekst(front, "front.reviews.eyebrow")}
           overskrift={

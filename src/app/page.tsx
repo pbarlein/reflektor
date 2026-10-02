@@ -11,13 +11,13 @@ import { Anmeldelsesseksjon } from "@/components/forside/Anmeldelsesseksjon";
 import { Arbeidet } from "@/components/forside/Arbeidet";
 import { Arbeidsrutenett } from "@/components/forside/Arbeidsrutenett";
 import { Bunnlogoer } from "@/components/forside/Bunnlogoer";
+import { DetteInngar } from "@/components/forside/DetteInngar";
 import { Faq } from "@/components/forside/Faq";
 import { Hero } from "@/components/forside/Hero";
 import { Kontakt } from "@/components/forside/Kontakt";
 import { Logostripe } from "@/components/forside/Logostripe";
 import { Pris } from "@/components/forside/Pris";
 import { UtenomAbonnementet } from "@/components/forside/UtenomAbonnementet";
-import { SlikFungererDet } from "@/components/forside/SlikFungererDet";
 import { Vegg } from "@/components/forside/Vegg";
 import { forsidensSporsmalForMarkup } from "@/content/faq";
 import { hentCase } from "@/content/caser";
@@ -188,10 +188,41 @@ export default function Forside() {
       */}
       <Anmeldelsesseksjon />
       <Arbeidet />
-      <SlikFungererDet />
+      {/*
+        PRISEN ER FLYTTET HIT 02.10.2026, bestilt av Pål: «Hva tenker du om
+        å skille "pris" og "dette inngår"? da kan vi sette prisseksjonen der
+        "slik jobber vi" er i dag.»
+
+        Her lå seksjonen «Slik jobber vi». Den er lagt ned, og de tre
+        stegene står nå i DetteInngar nede på siden — begrunnelsen i sin
+        helhet står i filhodet der. Kort: stegene og de seks punktene var
+        samme leveranse fortalt to ganger, i hver sin mørke blokk, med
+        priskortet imellom.
+
+        PRISKORTET PASSER I SLUKET DEN ETTERLOT seg på to måter. Rytmen er
+        uendret — begge er mørke flater mellom «Slik ser det ut» og
+        bilderutenettet, så lys og mørk veksler fortsatt hele veien ned. Og
+        kortet er nå kort nok til å tåle å stå høyt: uten «Dette inngår» er
+        det fire tall, ett ord, prisen og ett klipp.
+
+        AT PRISEN KOMMER TIDLIG ER POENGET, ikke en bivirkning. Prisåpenhet
+        er den ene posisjoneringen Reflektor har dokumentert, og den som
+        ikke har 30 000 kr i måneden skal få vite det før hun har rullet
+        gjennom halve forsiden.
+      */}
+      <Pris />
       <Arbeidsrutenett />
       <UtenomAbonnementet />
-      <Pris />
+      {/*
+        DETTE INNGÅR står der priskortet sto, og arver begrunnelsen som lå
+        her: den grå kortraden over er pusten foran en mørk flate, og
+        seksjonen under er lys igjen.
+
+        Den er to gamle seksjoner slått sammen — spesifikasjonen fra
+        priskortet og de tre stegene fra «Slik jobber vi» — med en film fra
+        en produksjonsdag ved siden av. Se DetteInngar.tsx.
+      */}
+      <DetteInngar />
       <Vegg />
       <Faq />
       <Kontakt />

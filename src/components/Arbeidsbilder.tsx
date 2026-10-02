@@ -59,7 +59,18 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
         det er dette som gir en rett bunnkant. Fra lg nullstilles det, og
         cellene blir flex-barn med egen høyde igjen.
       */
-      className={`relative aspect-[4/5] overflow-hidden rounded-flate bg-flate-dempet lg:aspect-auto lg:block ${
+      /*
+        KVADRATISK UNDER sm, 4:5 FRA sm, satt 02.10.2026 sammen med at
+        desktophøyden ble senket. På en 390 px telefon er cellen 165 px bred;
+        i 4:5 ble de seks synlige 723 px til sammen, i kvadrat 519. Det er
+        204 px kortere rulling for de samme seks bildene.
+
+        Beskjæringen er den samme avveiningen som på desktop: et 2:3-bilde
+        viser 83 % av høyden i 4:5 og 67 % i kvadrat. Motivene står midt i
+        bildet — det er kuratert, se arbeid.ts — og kvadratet er dessuten
+        formatet de fleste av dem er publisert i fra før.
+      */
+      className={`relative aspect-square overflow-hidden rounded-flate bg-flate-dempet sm:aspect-[4/5] lg:aspect-auto lg:block ${
         skjultPaMobil ? "hidden" : ""
       } ${c.enheter === 2 ? "lg:flex-[2]" : "lg:flex-1"}`}
     >
@@ -106,7 +117,30 @@ export function Arbeidskolonner({ kolonner }: { kolonner: Celle[][] }) {
         et kuratert galleri uten bildetekster er det uten betydning — det
         finnes ingen rekkefølge å miste.
       */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:h-[60.5rem] lg:grid-cols-4 lg:gap-4">
+      {/*
+        HØYDEN ER SENKET FRA 60,5 TIL 50 REM 02.10.2026, bestilt av Pål:
+        «Kort ned seksjonen med masse medier. veldig fint å vide mye, så
+        kanskje bare gjøre seksjonen mindre for kortere skrolling, men bevare
+        antallet.»
+
+        ALLE ELLEVE CELLENE STÅR. Det er bare høyden på stablene som er
+        mindre: 968 px ble 800, altså 168 px kortere forside på desktop uten
+        at ett medie er tatt ut.
+
+        PRISEN ER BESKJÆRINGEN, og den er regnet. 60,5 rem var satt så en
+        2-enhets celle landet på nøyaktig 9:16 — 264 x 468 px. På 50 rem blir
+        den 264 x 384, altså omtrent 2:3. De stående klippene mister 25 % i
+        høyden mot 0 før, og de stående bildene går fra å vise 59 % av
+        originalen til 48 %. Det er samme størrelsesorden som mobilutgaven
+        allerede gjør mot alle elleve: der tvinges hver celle til 4:5.
+
+        INGEN NY EKSPORT AV FILENE. Pål spurte om de burde formateres om når
+        de blir mindre. Bredden på en celle er uendret — det er bare høyden
+        som er kortere — og `next/image` leverer uansett AVIF/WebP i riktig
+        bredde per skjerm fra `sizes` under. En ny eksport ville ikke spart
+        en byte.
+      */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:h-[50rem] lg:grid-cols-4 lg:gap-4">
         {kolonner.map((kol, k) => (
           <div
             key={k}
