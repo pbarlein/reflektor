@@ -82,10 +82,18 @@ genererte deploy-URL-er og previews, ikke for prosjektets alias.
 
 Kontrollert 29.09.2026:
 
-- **Ingen egne domener er koblet til.** Prosjektet svarer kun på
-  `reflektor-ny.vercel.app`. Både `reflektor.no` og `www.reflektor.no` må
-  legges til før DNS flyttes, ellers svarer Vercel med feil sertifikat i det
-  øyeblikket DNS peker hit. Å legge dem til rører ikke DNS i seg selv.
+- ~~Ingen egne domener er koblet til.~~ **UTFØRT 02.10.2026.**
+  `www.reflektor.no` er lagt inn som produksjonsdomene, og `reflektor.no`
+  omdirigerer dit med 308. Begge står som `verified` hos Vercel.
+
+  **www er primær, ikke apex.** `site.domene` er `https://www.reflektor.no`,
+  så alle canonicals peker dit, og dagens reflektor.no 301-er allerede til
+  www — kontrollert mot live side samme dag. Retningen er altså den samme
+  som før.
+
+  Kontrollert rett etterpå at dagens side er urørt: `reflektor.no` svarer
+  fortsatt 301 til www, `www.reflektor.no` svarer 200, og `Server:`-headeren
+  sier fortsatt Squarespace. Å legge til domener i Vercel rører ikke DNS.
 - **Bare `RESEND_API_KEY` er satt, og det er riktig.** `LEAD_MOTTAKER` og
   `LEAD_AVSENDER` står tomme og faller tilbake på standardene i
   `src/lib/lead.ts`: leads går til `pal@reflektor.no`, sendt fra Resends
@@ -173,6 +181,24 @@ holder.
 `NEXT_PUBLIC_TILLAT_INDEKSERING=true` i Vercel. Se `src/lib/miljo.ts`.
 
 Først når DNS peker hit. Ikke for å «teste at SEO virker».
+
+### FELLE: variabelen virker ikke før siden er bygget på nytt
+
+Funnet 02.10.2026 ved å teste begge veier. `NEXT_PUBLIC_`-variabler bakes
+inn i koden **når siden bygges**, ikke når den kjører. Setter man variabelen
+i Vercel og lar det være med det, serverer siden fortsatt `Disallow: /` og
+`noindex` — i uker, uten at noe sier fra.
+
+Testet: samme bygg startet med og uten variabelen gir identisk resultat
+(sperren på). Bygget på nytt med variabelen satt gir `Allow: /`, absolutte
+canonicals mot `https://www.reflektor.no`, sitemap på samme domene — og
+`/takk` fortsatt `noindex`, som det skal.
+
+**Etter at variabelen er satt i Vercel må det deployes på nytt.** Enten ved
+å trykke «Redeploy» på siste deploy, eller ved å pushe en commit.
+
+**Kontroller etterpå** at `https://www.reflektor.no/robots.txt` sier
+`Allow: /`. Gjør den ikke det, er ikke bygget kjørt på nytt.
 
 ---
 
