@@ -55,7 +55,6 @@ function Kundevideo() {
       forhold="9/16"
       sti={ord.video.stiStaende ?? ord.video.sti}
       alt={ord.video.alt}
-      undertekster={ord.video.undertekster}
     />
   );
 }

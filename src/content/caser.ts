@@ -105,7 +105,19 @@ export type Kundecase = {
        */
       stiStaende?: string;
       alt: string;
-      /** Felles for begge utgavene: samme opptak, samme tidskoder. */
+      /**
+       * VTT-fila. Felles for begge utgavene: samme opptak, samme tidskoder.
+       *
+       * LEGGES IKKE LENGER INN SOM <track> I AVSPILLEREN, fra 02.10.2026.
+       * iOS Safari slo sporet på av seg selv, uten `default`, og la
+       * nettleserens tekstboks oppå tekstingen som er brent inn i bildet.
+       * Det som blir sagt ligger i `transkripsjon` under, og det er den
+       * som havner i VideoObject-markeringen.
+       *
+       * Fila blir liggende: den er en ekte leveranse fra produksjonen, og
+       * den trengs igjen den dagen en avspiller skal ha ekte teksting på
+       * et opptak uten innbrent tekst.
+       */
       undertekster: string;
       /** Målt med ffmpeg på fila. Til VideoObject. */
       sekunder: number;

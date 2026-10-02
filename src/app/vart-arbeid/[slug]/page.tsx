@@ -279,7 +279,6 @@ export default async function CaseSide({ params }: Props) {
                 <Omtalevideo
                   sti={k.kundeord.video.sti}
                   alt={k.kundeord.video.alt}
-                  undertekster={k.kundeord.video.undertekster}
                 />
                 <div className="max-w-2xl">
                   <Eyebrow>{k.kundeord.merkelapp}</Eyebrow>

@@ -94,6 +94,23 @@ export default function Forside() {
               plakat={`${sti}-poster.jpg`}
               sekunder={omtale.video.sekunder}
               publisert={omtale.video.publisert}
+              /*
+                TRANSKRIPSJONEN ER LAGT TIL 02.10.2026, samtidig som
+                <track>-elementet ble fjernet fra avspilleren (iOS Safari
+                slo det på av seg selv og la nettleserens tekstboks oppå
+                den innbrente tekstingen).
+
+                Begrunnelsen for sporet var at det gjorde det som blir sagt
+                søkbart. Det er DETTE feltet som faktisk gjør den jobben —
+                en VTT-fil leses ikke som innhold — og kundecasen har hatt
+                det hele tiden. Forsiden hadde det ikke. Nå har begge det,
+                og rensingen er den samme som der.
+              */
+              transkripsjon={omtale.transkripsjon
+                .join(" ")
+                .replace(/[«»]/g, "")
+                .replace(/\s+/g, " ")
+                .trim()}
               sidesti="/"
             />
           );

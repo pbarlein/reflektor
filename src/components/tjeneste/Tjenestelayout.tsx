@@ -73,7 +73,6 @@ function Kundeord({ slug }: { slug: string }) {
       <Omtalevideo
         sti={ord.video.sti}
         alt={ord.video.alt}
-        undertekster={ord.video.undertekster}
       />
       <blockquote className="border-l-2 border-aksent pl-5">
         <p className="text-lg leading-relaxed text-pretty">«{ord.sitat}»</p>

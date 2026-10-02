@@ -30,15 +30,12 @@ import { useEffect, useRef, useState } from "react";
 export function Omtalevideo({
   sti,
   alt,
-  undertekster,
   forhold = "4/5",
   className = "",
 }: {
   /** Sti uten filendelse. `.webm`, `.mp4`, `-poster.jpg` leses herfra. */
   sti: string;
   alt: string;
-  /** Sti til VTT-fila. Utelates om det ikke finnes teksting. */
-  undertekster?: string;
   /**
    * Formatet på rammen. Standard er 4:5.
    *
@@ -70,6 +67,13 @@ export function Omtalevideo({
           return;
         }
         settLastet(true);
+        /*
+          `play()` BLIR STÅENDE HER, og ikke bare i effekten under. Den som
+          ruller forbi og tilbake igjen skal få filmen i gang på nytt, og
+          `lastet` er allerede `true` da — effekten kjører ikke flere
+          ganger. Kallet er ufarlig før kildene finnes: løftet avvises, og
+          avvisningen fanges.
+        */
         if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
           void v.play().catch(() => {});
         }
@@ -79,6 +83,32 @@ export function Omtalevideo({
     iakt.observe(v);
     return () => iakt.disconnect();
   }, []);
+
+  /*
+    REDNINGSPLANKE NÅR KILDENE KOM FOR SENT. Lagt til 02.10.2026.
+
+    Et <video> uten <source> kan rekke å ende i `NETWORK_NO_SOURCE` — «jeg
+    har prøvd alt jeg har, og fant ingenting». Dukker kildene opp etterpå,
+    starter ikke nettleseren utvelgelsen på nytt av seg selv.
+
+    BARE DEN TILSTANDEN SKAL UTLØSE `load()`. Første forsøk hadde også
+    `readyState === 0` i betingelsen, og det var feil på en måte som er
+    verdt å huske: `readyState` ER 0 mens den første kilden holder på å
+    lastes. Effekten rakk dermed å kalle `load()` midt i en normal
+    innlasting, og målt i nettleseren ga det `ERR_ABORTED` på MP4-fila og
+    fall videre til WebM — altså presis motsatt av det rekkefølgen over
+    skal oppnå.
+  */
+  useEffect(() => {
+    if (!lastet) return;
+    const v = ref.current;
+    if (!v) return;
+    if (v.networkState !== v.NETWORK_NO_SOURCE) return;
+    v.load();
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      void v.play().catch(() => {});
+    }
+  }, [lastet]);
 
   function vekslLyd() {
     const v = ref.current;
@@ -97,9 +127,43 @@ export function Omtalevideo({
         forhold === "9/16" ? "aspect-[9/16]" : "aspect-[4/5]"
       } ${className}`}
     >
+      {/*
+        INGEN <track> HER. Fjernet 02.10.2026, etter at Pål meldte fra fra
+        en ekte iPhone: «den tekster fortsatt på mobil».
+
+        Sporet lå her UTEN `default`, i den tro at det dermed var avslått.
+        Det stemmer i Chromium — målt der, og det er nettopp derfor feilen
+        overlevde. iOS Safari slår på et tekstspor på egen hånd når det
+        finnes ett på brukerens språk, uavhengig av `default`. Da ligger
+        nettleserens egen tekstboks oppå tekstingen som er BRENT INN i
+        bildet, og man får to sett undertekster i samme ramme.
+
+        BEGRUNNELSEN FOR Å HA DET ER IKKE TAPT. Den var at sporet «gjør det
+        som blir sagt søkbart». Det er `transcript` i VideoObject-
+        markeringen som faktisk gjør den jobben — en VTT-fil er ikke noe
+        Google leser som innhold — og transkripsjonen ligger nå i
+        markeringen på begge sidene som viser filmen. Kundecasen har den i
+        tillegg som utslåbar tekst på siden.
+
+        Den andre begrunnelsen, «lar den som vil slå det på selv», var
+        tom: tekstingen er brent inn, så alle har den allerede.
+
+        VTT-fila blir liggende i repoet. Se `undertekster` i caser.ts.
+      */}
       <video
         ref={ref}
-        className="absolute inset-0 size-full object-cover"
+        /*
+          `transform-gpu` gir videoen sitt eget komposisjonslag.
+
+          Lagt til 02.10.2026 sammen med fryse-rettelsene over. Omtalen
+          ligger nå inne i et panel med `overflow-hidden` og avrundede
+          hjørner, og noen piksler unna kort med `backdrop-filter`. Den
+          kombinasjonen er en kjent kilde til at WebKit slutter å tegne
+          videoflaten mens avspillingen fortsetter — altså «bildet henger
+          mens lyden går». Et eget lag tar videoen ut av den delte
+          malingen.
+        */
+        className="absolute inset-0 size-full transform-gpu object-cover"
         poster={`${sti}-poster.jpg`}
         preload="none"
         muted
@@ -111,23 +175,37 @@ export function Omtalevideo({
       >
         {lastet && (
           <>
-            <source src={`${sti}.webm`} type="video/webm" />
+            {/*
+              MP4 FØRST. Snudd 02.10.2026, etter at Pål meldte fra fra en
+              ekte iPhone: «bildet henger mens lyden går.»
+
+              WebM lå først, med den begrunnelsen at VP9 er 34 % mindre enn
+              H.264 her. Den gevinsten er ikke verdt det den koster: VP9
+              dekodes i programvare på de fleste iPhoner, mens H.264 har
+              maskinvaredekoder på alle. Et bilde som fryser mens lyden
+              løper videre er nøyaktig det en programvaredekoder som ikke
+              rekker over sanntid ser ut som — og denne videoen er det
+              sterkeste beviset på forsiden.
+
+              Nettlesere velger den FØRSTE kilden de sier de støtter, så
+              dette gir H.264 til alle. WebM blir stående som reserve.
+              Rekkefølgen er det eneste verktøyet <source> gir — den kan
+              ikke velges per nettleser uten å gjette på brukeragenten.
+
+              `type` ER BEVISST UPRESIST. En eksakt kodekstreng
+              (`avc1.64001f`) ville latt en nettleser uten H.264 hoppe over
+              MP4-fila uten å be om den først. Men de to filene komponenten
+              brukes med har ulikt nivå — `avc1.64001f` og `avc1.640028` —
+              så én streng her ville vært feil for den ene. Og i praksis
+              har hver eneste ekte nettleser H.264.
+
+              FALLBACKEN ER VERIFISERT, og det skjedde ved et uhell: den
+              Chromium testene kjører i er bygget uten H.264. Den ber om
+              MP4-fila, avbryter, og faller til WebM — som er nettopp slik
+              kjeden skal oppføre seg når den første kilden ikke går.
+            */}
             <source src={`${sti}.mp4`} type="video/mp4" />
-            {undertekster && (
-              /*
-                IKKE `default`. Tekstingen er BRENT INN i bildet, og en
-                `default`-track legger nettleserens egen tekstboks oppå den
-                — to sett undertekster i samme ramme, målt i nettleseren
-                01.10.2026. Sporet ligger her likevel, fordi det gjør det
-                som blir sagt søkbart og lar den som vil slå det på selv.
-              */
-              <track
-                kind="captions"
-                src={undertekster}
-                srcLang="no"
-                label="Norsk"
-              />
-            )}
+            <source src={`${sti}.webm`} type="video/webm" />
           </>
         )}
       </video>
