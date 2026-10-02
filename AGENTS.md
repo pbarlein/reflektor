@@ -120,7 +120,13 @@ Squarespace. Se `docs/forhandsvisning.md`.
   serverer `Disallow: /` og `noindex`. Sperren åpnes kun ved å sette
   `NEXT_PUBLIC_TILLAT_INDEKSERING=true`, og først når DNS peker hit. Ikke fjern
   sperren for å «teste at SEO virker».
-- **Arbeid på branch**, ikke `main`. Push til `main` utløser produksjonsdeploy.
+- **Denne branchen ER produksjon i Vercel.** Kontrollert 02.10.2026: det
+  finnes ingen `main` på remoten, og prosjektets produksjonsbranch er
+  `claude/reflektor-new-website-10fmt0`. Hver push hit bygger et deploy med
+  `target: production`. Her sto det før «arbeid på branch, ikke `main`», som
+  ga inntrykk av at pushene var trygge kladder. Det er de ikke — de er
+  ufarlige av to andre grunner: ingen egne domener er koblet til prosjektet,
+  og indekseringssperren står. Faller én av de to bort, er neste push live.
 
 ## Omstart 15.09.2026 — design bygges fritt
 

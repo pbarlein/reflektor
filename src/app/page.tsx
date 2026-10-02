@@ -109,26 +109,29 @@ export default function Forside() {
 
       <Hero />
       <Logostripe />
+      {/*
+        ANMELDELSENE STÅR HER, RETT ETTER LOGORADEN, bestilt av Pål
+        02.10.2026: «anmeldelsesdelen må rett over slik ser det ut når vi
+        filmer hos andre. da bygger vi tillit enda raskere.»
+
+        Den lå nederst til 01.10.2026, så over prisen, og nå her. Rekkefølgen
+        er altså: hvem som helst kan påstå noe om seg selv i heroen, logoene
+        viser hvem som har kjøpt, og så sier en av dem det selv — på film, med
+        ansikt og navn, etter fem år som kunde. Først deretter viser vi
+        arbeidet. Belegget kommer før påstanden, ikke etter.
+
+        RYTMEN GÅR OPP. Heroen er `bg-flate-dempet`, denne er `bg-dyp`,
+        «Slik ser det ut» er lys, «Dere setter av én dag» er `bg-dyp` igjen.
+        Lys og mørk veksler hele veien ned, og ingen to mørke flater møtes.
+
+        UTENOM ABONNEMENTET BLIR STÅENDE RETT OVER PRISEN av samme grunn:
+        priskortet er `glassflate` på mørk bunn, og den grå blokken er pusten
+        foran det.
+      */}
+      <Anmeldelsesseksjon />
       <Arbeidet />
       <SlikFungererDet />
       <Arbeidsrutenett />
-      {/*
-        ANMELDELSENE ER FLYTTET OPP FORBI PRISEN, 01.10.2026, bestilt av Pål
-        («burde kundeanmeldelsene med soulcakereferansen være høyere oppe?»).
-
-        Prisen er 30 000 kr/mnd og står åpent. Et tall i den størrelsen leses
-        som dyrt eller rimelig ut fra hva leseren alt tror om avsenderen, og
-        den troen bygges av andre enn oss. Sto anmeldelsene under prisen,
-        kom belegget etter at tallet var vurdert. Nå kommer omtalen fra Soul
-        Cake — på film, med ansikt og navn — rett før.
-
-        UTENOM ABONNEMENTET BLIR STÅENDE MELLOM DE TO, og det er ikke
-        tilfeldig: anmeldelsesseksjonen er `bg-dyp` i full bredde og
-        priskortet er `glassflate` på mørk bunn. Side om side ville de blitt
-        to mørke flater etter hverandre uten pust imellom. Den grå blokken
-        skiller dem.
-      */}
-      <Anmeldelsesseksjon />
       <UtenomAbonnementet />
       <Pris />
       <Vegg />

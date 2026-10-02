@@ -55,6 +55,29 @@ Steg 6 skal gjøres **etter** steg 5, ikke før. Åpnes sperren mens DNS fortsat
 peker på Squarespace, indekserer Google forhåndsvisningen på vercel.app — og
 da har nettstedet to adresser i indeksen.
 
+## Det finnes ingen `main` — denne branchen er produksjon
+
+Kontrollert 02.10.2026, og det endrer hva cutover faktisk er.
+
+Remoten har ingen `main`. Vercel-prosjektets produksjonsbranch er
+`claude/reflektor-new-website-10fmt0`, og de åtte siste deployene fra den er
+alle `target: production`. **Det finnes altså ikke noe «slå sammen til main»-
+steg før lansering.** Siste push er allerede bygget og ligger klar.
+
+Det som holder den av lufta er nøyaktig to ting, og begge er på denne lista:
+ingen egne domener er koblet til prosjektet, og indekseringssperren står. Den
+dagen domenene kobles og DNS flyttes, er det siste push på denne branchen som
+blir reflektor.no — uten noe mellomledd.
+
+Praktisk konsekvens: **ikke push noe halvferdig etter at domenene er koblet.**
+Fram til da er det ufarlig.
+
+`reflektor-ny.vercel.app` svarer 200 for alle, med `Disallow: /` og
+`noindex` — verifisert 02.10.2026. Vercel Authentication står på for
+genererte deploy-URL-er og previews, ikke for prosjektets alias.
+
+---
+
 ## Det som mangler i Vercel i dag
 
 Kontrollert 29.09.2026:
