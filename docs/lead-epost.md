@@ -101,3 +101,15 @@ påminnelsen. Vil Pål ha den sjekken, må tilgangen utvides.
 avtalestadiene, og tilgang til å logge aktivitet på kontakten. Mangler de,
 hopper koden over akkurat det og sender likevel — men da er stadie-sjekken
 blind, og e-postene vises ikke i tidslinjen.
+
+## Verifisert live 03.10.2026, 21:40
+
+Jobben kjører av seg selv hvert femte minutt, autentisert, og svarer 200.
+Første runde logget tre leads den *ville* sendt til, og ett hoppet over
+(`pal@reflektor.no`, som regelen om `@reflektor.no` skal stoppe).
+
+**Etterslepet er den ene fellen ved byttet.** Vinduet for e-post 1 er 48
+timer tilbake. Slås bryteren på i dag, får de tre siste leadene e-posten
+med én gang — og de har allerede fått HubSpots versjon. Skal de slippe,
+må `lead_epost1_sendt` og `lead_epost2_sendt` settes på dem i HubSpot før
+bryteren snus. Venter man to døgn, faller de ut av vinduet selv.
