@@ -132,6 +132,7 @@ export async function hentPlanlagte(): Promise<Planlagt[] | null> {
       "company",
       "recent_conversion_date",
       "recent_conversion_event_name",
+      "lead_epost1_sendt",
     ],
     sorts: [{ propertyName: "recent_conversion_date", direction: "DESCENDING" }],
     limit: 50,
@@ -170,7 +171,16 @@ export async function hentPlanlagte(): Promise<Planlagt[] | null> {
           kilde: hendelse.includes(SKJEMANAVN.meta)
             ? ("Meta" as const)
             : ("Nettside" as const),
-          sendtInn: new Date(p.recent_conversion_date ?? Date.now()),
+          /*
+            TIDSPUNKTET REGNES FRA E-POST 1 NÅR DEN ER SENDT, ellers fra
+            innsendingen. Fra 04.10.2026 er det e-post 1 som starter
+            klokka: påminnelsen er et svar på den, ikke på skjemaet.
+            Mangler den — Meta-leads som ennå ikke er plukket opp — er
+            innsendingstidspunktet det nærmeste vi har.
+          */
+          sendtInn: new Date(
+            p.lead_epost1_sendt ?? p.recent_conversion_date ?? Date.now(),
+          ),
         };
       })
       /*
@@ -183,5 +193,293 @@ export async function hentPlanlagte(): Promise<Planlagt[] | null> {
   } catch (feil) {
     console.error("[paaminnelse] Søket i HubSpot feilet.", feil);
     return null;
+  }
+}
+
+/* ───────────────────── LEAD-E-POSTENE FRA PÅLS GMAIL ────────────────── */
+
+/**
+ * Egenskapene Cowork opprettet 04.10.2026 for å holde styr på de to
+ * e-postene. De er sannheten om hva som er sendt — ikke en liste i minnet,
+ * ikke en logg. En jobb som kjører hvert femte minutt må kunne krasje midt
+ * i og starte på nytt uten å sende noe to ganger.
+ */
+export const EPOST_FELT = {
+  en: "lead_epost1_sendt",
+  to: "lead_epost2_sendt",
+  trad: "lead_epost_trad_id",
+  meldingsId: "lead_epost1_message_id",
+} as const;
+
+const LESEFELT = [
+  "email",
+  "firstname",
+  "lastname",
+  "company",
+  "lifecyclestage",
+  "engagements_last_meeting_booked",
+  "recent_conversion_event_name",
+  "recent_conversion_date",
+  AVBRUTT_FELT,
+  EPOST_FELT.en,
+  EPOST_FELT.to,
+  EPOST_FELT.trad,
+  EPOST_FELT.meldingsId,
+];
+
+export type Leadkontakt = {
+  id: string;
+  epost: string;
+  navn: string;
+  bedrift: string;
+  lifecycle: string;
+  epost1Sendt: string;
+  epost2Sendt: string;
+  tradId: string;
+  meldingsId: string;
+  avbrutt: string;
+  moteBooket: string;
+};
+
+function somLeadkontakt(r: {
+  id: string;
+  properties: Record<string, string | null>;
+}): Leadkontakt {
+  const p = r.properties;
+  return {
+    id: r.id,
+    epost: p.email ?? "",
+    navn: [p.firstname, p.lastname].filter(Boolean).join(" ").trim(),
+    bedrift: p.company ?? "",
+    lifecycle: p.lifecyclestage ?? "",
+    epost1Sendt: p[EPOST_FELT.en] ?? "",
+    epost2Sendt: p[EPOST_FELT.to] ?? "",
+    tradId: p[EPOST_FELT.trad] ?? "",
+    meldingsId: p[EPOST_FELT.meldingsId] ?? "",
+    avbrutt: p[AVBRUTT_FELT] ?? "",
+    moteBooket: p.engagements_last_meeting_booked ?? "",
+  };
+}
+
+async function sok(
+  filterGroups: unknown[],
+  limit = 50,
+): Promise<Leadkontakt[] | null> {
+  if (!harToken()) return null;
+  try {
+    const svar = await fetch(`${BASIS}/crm/v3/objects/contacts/search`, {
+      method: "POST",
+      headers: hoder(),
+      body: JSON.stringify({ filterGroups, properties: LESEFELT, limit }),
+      signal: AbortSignal.timeout(TIDSTAK_MS),
+    });
+    if (!svar.ok) {
+      console.error(
+        `[leadepost] Søket i HubSpot svarte ${svar.status}. ${await svar.text().catch(() => "")}`,
+      );
+      return null;
+    }
+    const data = (await svar.json()) as {
+      results?: { id: string; properties: Record<string, string | null> }[];
+    };
+    return (data.results ?? []).map(somLeadkontakt);
+  } catch (feil) {
+    console.error("[leadepost] Søket i HubSpot feilet.", feil);
+    return null;
+  }
+}
+
+/** Én kontakt, slått opp på e-post. Null hvis den ikke finnes ennå. */
+export async function hentLeadkontakt(
+  epost: string,
+): Promise<Leadkontakt | null> {
+  if (!harToken()) return null;
+  const adresse = encodeURIComponent(epost.trim().toLowerCase());
+  try {
+    const svar = await fetch(
+      `${BASIS}/crm/v3/objects/contacts/${adresse}?idProperty=email&properties=${LESEFELT.join(",")}`,
+      { headers: hoder(), signal: AbortSignal.timeout(TIDSTAK_MS) },
+    );
+    if (!svar.ok) return null;
+    return somLeadkontakt(
+      (await svar.json()) as {
+        id: string;
+        properties: Record<string, string | null>;
+      },
+    );
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Meta-leads som ikke har fått e-post 1.
+ *
+ * NETTSIDELEADS TAS AV SKJEMARUTA, med én gang. Kommer de likevel hit —
+ * fordi kontakten ikke var opprettet da ruta prøvde — fanges de opp av at
+ * `lead_epost1_sendt` er tom.
+ */
+export async function nyeLeadsUtenEpost(): Promise<Leadkontakt[] | null> {
+  const toDogn = Date.now() - 48 * 60 * 60 * 1000;
+  return sok([
+    {
+      filters: [
+        {
+          propertyName: "recent_conversion_date",
+          operator: "GTE",
+          value: String(toDogn),
+        },
+        { propertyName: EPOST_FELT.en, operator: "NOT_HAS_PROPERTY" },
+        { propertyName: "lifecyclestage", operator: "NEQ", value: "customer" },
+      ],
+    },
+  ]);
+}
+
+/** Kontakter som har fått e-post 1, men ikke e-post 2. */
+export async function venterPaaPaaminnelse(): Promise<Leadkontakt[] | null> {
+  return sok([
+    {
+      filters: [
+        { propertyName: EPOST_FELT.en, operator: "HAS_PROPERTY" },
+        { propertyName: EPOST_FELT.to, operator: "NOT_HAS_PROPERTY" },
+        { propertyName: AVBRUTT_FELT, operator: "NEQ", value: "true" },
+        { propertyName: "lifecyclestage", operator: "NEQ", value: "customer" },
+      ],
+    },
+  ]);
+}
+
+/** Stadiene på avtalene som henger på kontakten. Tom liste ved feil. */
+export async function dealstadier(kontaktId: string): Promise<string[]> {
+  if (!harToken()) return [];
+  try {
+    const kobling = await fetch(
+      `${BASIS}/crm/v4/objects/contacts/${kontaktId}/associations/deals?limit=20`,
+      { headers: hoder(), signal: AbortSignal.timeout(TIDSTAK_MS) },
+    );
+    if (!kobling.ok) {
+      console.error(
+        `[leadepost] Fikk ikke avtalene til kontakt ${kontaktId} (${kobling.status}). Mangler tokenet crm.objects.deals.read?`,
+      );
+      return [];
+    }
+    const ider = (
+      (await kobling.json()) as { results?: { toObjectId: string }[] }
+    ).results?.map((r) => r.toObjectId);
+    if (!ider?.length) return [];
+
+    const avtaler = await fetch(`${BASIS}/crm/v3/objects/deals/batch/read`, {
+      method: "POST",
+      headers: hoder(),
+      body: JSON.stringify({
+        properties: ["dealstage"],
+        inputs: ider.map((id) => ({ id })),
+      }),
+      signal: AbortSignal.timeout(TIDSTAK_MS),
+    });
+    if (!avtaler.ok) return [];
+    return (
+      (await avtaler.json()) as {
+        results?: { properties: { dealstage?: string } }[];
+      }
+    ).results
+      ?.map((d) => d.properties.dealstage ?? "")
+      .filter(Boolean) ?? [];
+  } catch (feil) {
+    console.error("[leadepost] Oppslag av avtaler feilet.", feil);
+    return [];
+  }
+}
+
+/** Skriver tilbake at e-posten er sendt. Returnerer om det gikk. */
+export async function merkSendt(
+  kontaktId: string,
+  felt: Record<string, string>,
+): Promise<boolean> {
+  if (!harToken()) return false;
+  try {
+    const svar = await fetch(`${BASIS}/crm/v3/objects/contacts/${kontaktId}`, {
+      method: "PATCH",
+      headers: hoder(),
+      body: JSON.stringify({ properties: felt }),
+      signal: AbortSignal.timeout(TIDSTAK_MS),
+    });
+    if (svar.ok) return true;
+    console.error(
+      `[leadepost] Klarte ikke merke kontakt ${kontaktId} som sendt (${svar.status}). ${await svar.text().catch(() => "")}`,
+    );
+    return false;
+  } catch (feil) {
+    console.error("[leadepost] Merkingen feilet.", feil);
+    return false;
+  }
+}
+
+/**
+ * Legger e-posten i kontaktens tidslinje.
+ *
+ * FØRST SOM E-POSTAKTIVITET, så som notat. E-postaktiviteten er riktig
+ * type og vises som en e-post; den krever en tilgang tokenet kanskje ikke
+ * har. Notatet krever mindre og er bedre enn ingenting.
+ *
+ * FEILER BEGGE, SKJER INGENTING ANNET ENN EN LOGGLINJE. En e-post som er
+ * sendt, men ikke logget, er fortsatt sendt — og kontakten har uansett
+ * datoen i `lead_epost1_sendt`.
+ */
+export async function loggEpost(
+  kontaktId: string,
+  emne: string,
+  tekst: string,
+): Promise<void> {
+  if (!harToken()) return;
+  const na = new Date().toISOString();
+  const kobling = (typeId: number) => [
+    {
+      to: { id: kontaktId },
+      types: [
+        { associationCategory: "HUBSPOT_DEFINED", associationTypeId: typeId },
+      ],
+    },
+  ];
+
+  const forsok = [
+    {
+      sti: "emails",
+      kropp: {
+        properties: {
+          hs_timestamp: na,
+          hs_email_direction: "EMAIL",
+          hs_email_status: "SENT",
+          hs_email_subject: emne,
+          hs_email_text: tekst,
+        },
+        associations: kobling(198),
+      },
+    },
+    {
+      sti: "notes",
+      kropp: {
+        properties: { hs_timestamp: na, hs_note_body: `${emne}\n\n${tekst}` },
+        associations: kobling(202),
+      },
+    },
+  ];
+
+  for (const f of forsok) {
+    try {
+      const svar = await fetch(`${BASIS}/crm/v3/objects/${f.sti}`, {
+        method: "POST",
+        headers: hoder(),
+        body: JSON.stringify(f.kropp),
+        signal: AbortSignal.timeout(TIDSTAK_MS),
+      });
+      if (svar.ok) return;
+      console.error(
+        `[leadepost] Klarte ikke logge e-posten som ${f.sti} (${svar.status}).`,
+      );
+    } catch {
+      /* neste forsøk */
+    }
   }
 }

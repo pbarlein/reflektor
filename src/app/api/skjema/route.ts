@@ -7,6 +7,7 @@ import {
   normaliserNettside,
 } from "@/lib/kontaktfelt";
 import { sendLeadPaEpost, type Lead } from "@/lib/lead";
+import { sendEpost1TilNyttLead } from "@/lib/leadutsending";
 import { basisUrl } from "@/lib/miljo";
 import { foroftig, klientnokkel, rens } from "@/lib/skjemavern";
 
@@ -181,6 +182,20 @@ export async function POST(req: NextRequest) {
       } catch {
         // sendLeadPaEpost har allerede logget «LEADVARSEL FEILET».
       }
+
+      /*
+        E-POSTEN TIL LEADET MED PRESENTASJON OG BOOKINGLENKE, lagt til
+        04.10.2026. Den sendes fra Påls egen Gmail — se lib/gmail.ts for
+        hvorfor den ikke lenger går gjennom HubSpot.
+
+        SIST I REKKEFØLGEN, med vilje. Varselet til Pål er hovedkanalen og
+        skal aldri stå bak noe annet i køen. Denne kan dessuten utsettes
+        uten tap: finnes ikke kontakten i HubSpot ennå, tar jobben som
+        kjører hvert femte minutt den i stedet.
+
+        BRYTEREN STÅR AV til Pål slår den på. Se lib/leadutsending.ts.
+      */
+      await sendEpost1TilNyttLead(lead.epost);
     };
 
     try {
