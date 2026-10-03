@@ -8,7 +8,6 @@ import {
 } from "@/lib/kontaktfelt";
 import { sendLeadPaEpost, type Lead } from "@/lib/lead";
 import { basisUrl } from "@/lib/miljo";
-import { foroftigPaKanten } from "@/lib/mengde";
 import { foroftig, klientnokkel, rens } from "@/lib/skjemavern";
 
 /**
@@ -58,15 +57,28 @@ export async function POST(req: NextRequest) {
   let botAktig = false;
 
   /*
-   * MENGDEBEGRENSNING I TO LAG, se lib/mengde.ts: først brannmuren, som
-   * teller på tvers av serverinstanser, så telleren i minnet som gulv.
+   * MENGDEBEGRENSNING, NEDERSTE LAG.
    *
-   * SVARET ER DET SAMME SOM VED SUKSESS — 303 til /takk. Den som sender
-   * skjemaet seks ganger på ti minutter får ingen feilmelding og ingen
-   * grunn til å prøve en annen vei. Det som IKKE skjer, er varselet til
-   * Pål og innsendingen til HubSpot.
+   * DEN ØVERSTE LIGGER I VERCELS BRANNMUR, satt opp 04.10.2026: 5
+   * forespørsler per IP per 600 sekunder mot `/api/skjema`, svar 429. Den
+   * teller på tvers av alle serverinstanser og stopper trafikken FØR den
+   * når denne koden. Den er den som faktisk holder.
+   *
+   * HER STO ET KALL TIL `checkRateLimit`, som skulle latt koden lese den
+   * samme telleren og svare 303 til /takk i stedet for 429 — slik at den
+   * som spammer ikke får vite at noe ble stoppet. Det krever en regel
+   * knyttet til en id, og den varianten finnes ikke i Vercels grensesnitt:
+   * regelen settes opp på sti og handling, uten id å spørre etter. Kallet
+   * kunne derfor aldri treffe noe, og er fjernet igjen samme dag.
+   *
+   * DENNE TELLEREN LIGGER I MINNET til én instans og er gulvet: den
+   * stopper én maskin som sender om og om igjen hvis brannmurregelen en dag
+   * blir slettet. Se skjemavern.ts for hva den ikke dekker.
+   *
+   * SVARET ER SOM VED SUKSESS — 303 til /takk. Det som IKKE skjer, er
+   * varselet til Pål og innsendingen til HubSpot.
    */
-  if ((await foroftigPaKanten(req)) || foroftig(klientnokkel(req.headers))) {
+  if (foroftig(klientnokkel(req.headers))) {
     botAktig = true;
     console.warn(
       `[skjema] Over mengdegrensen for ${klientnokkel(req.headers)}. Innsendingen ble IKKE sendt videre.`,

@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { varsel } from "@/lib/lead.ts";
-import { foroftigPaKanten } from "@/lib/mengde.ts";
 
 /**
  * Sikkerhetsnettet rundt kontaktskjemaet, bestilt 04.10.2026.
@@ -10,23 +9,6 @@ import { foroftigPaKanten } from "@/lib/mengde.ts";
  * Tre ting som alle handler om det samme: et lead skal aldri forsvinne
  * stille. Enten kommer det fram, eller så står det tydelig et sted Pål ser.
  */
-
-/* ───────────────────────── MENGDEBEGRENSNING ────────────────────────── */
-
-/**
- * DEN VIKTIGSTE EGENSKAPEN ER AT DEN SLIPPER GJENNOM VED TVIL.
- *
- * Testen kjører utenfor Vercel, uten brannmurregel — nøyaktig situasjonen
- * som oppstår hvis regelen slettes eller tjenesten er nede. Svaret skal
- * være «ikke begrenset», aldri en kastet feil: en henvendelse er verdt mer
- * enn en grense.
- */
-test("kantgrensen slipper gjennom når den ikke kan svare", async () => {
-  const svar = await foroftigPaKanten(
-    new Request("https://www.reflektor.no/api/skjema", { method: "POST" }),
-  );
-  assert.equal(svar, false);
-});
 
 /* ──────────────── ADVARSEL NÅR HUBSPOT IKKE FIKK LEADET ─────────────── */
 

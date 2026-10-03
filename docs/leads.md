@@ -157,26 +157,29 @@ stille.**
 
 ### 1. Mengdebegrensning: 5 per IP per 10 minutter
 
-Over grensen svarer ruta **som ved suksess** — 303 til `/takk`. Den som
-sender skjemaet seks ganger får ingen feilmelding og ingen grunn til å prøve
-en annen vei. Det som ikke skjer, er varselet og innsendingen til HubSpot.
-Hendelsen logges.
+**Den ligger i Vercels brannmur**, satt opp 04.10.2026: `/api/skjema`, 5
+forespørsler per IP per 600 sekunder, svar 429. Den teller på tvers av alle
+serverinstanser og stopper trafikken FØR den når koden. Det er den som
+faktisk holder mot en flom.
 
-Begrensningen ligger i to lag:
+**Telleren i `skjemavern.ts` står igjen som gulv.** Den ligger i minnet til
+én instans, og fanger opp én maskin som sender om og om igjen hvis
+brannmurregelen en dag blir slettet. Over den grensen svarer ruta **som ved
+suksess** — 303 til `/takk` — uten å sende noe videre, og logger det.
 
-| Lag | Teller | Status |
-|---|---|---|
-| Vercels brannmur, via `checkRateLimit` | på tvers av alle serverinstanser | **Krever én regel som ikke finnes ennå** |
-| `foroftig` i `skjemavern.ts` | i minnet til én instans | aktiv |
+**ET FORSØK SOM BLE REVERSERT SAMME DAG.** Bestillingen var at svaret skulle
+se ut som suksess også over brannmurgrensen, slik at den som spammer ikke
+får vite at noe ble stoppet. Veien dit er Vercels `checkRateLimit`, der
+koden leser kantens teller og selv bestemmer svaret. Den krever en regel
+knyttet til en **id**, og den varianten finnes ikke i Vercels grensesnitt:
+regelen settes opp på sti og handling, uten id å spørre etter. Vercels API
+svarer dessuten «Seawall Config not found» for dette prosjektet, så regelen
+kan verken opprettes eller leses herfra — den ble satt opp manuelt.
 
-**Regelen må lages én gang i Vercels grensesnitt**: Firewall → ny
-rate-limit-regel med id `skjema`, 5 per 600 sekunder, nøkkel IP. Vercels API
-svarer «Seawall Config not found» for dette prosjektet, så den kan ikke
-opprettes herfra — hverken med PATCH eller PUT. Koden kaller allerede
-regelen; i det øyeblikket den finnes, begynner den å telle.
-
-Kallet **slipper alltid gjennom ved tvil**. Feiler eller henger det, leses
-svaret som «ikke begrenset». En henvendelse er verdt mer enn en grense.
+Valget sto da mellom ingen grense på tvers av instanser, eller en grense som
+svarer 429. 429 vant: den stopper spam før koden i det hele tatt kjører, og
+den sjeldne ekte kunden som skulle treffe grensen får i det minste beskjed
+om å prøve igjen, i stedet for at henvendelsen forsvinner stille.
 
 ### 2. «⚠ Leadet ble IKKE lagret i HubSpot»
 
