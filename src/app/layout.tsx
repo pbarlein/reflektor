@@ -10,11 +10,30 @@ import { Kildefanger } from "@/components/Kildefanger";
 import { kortBeskrivelse, site } from "@/content/site";
 import { basisUrl, tillatIndeksering } from "@/lib/miljo";
 
-// Poppins er merkevarefonten. Vektene følger manualen:
-// Light 300, Regular 400, Medium 500, Bold 700, Black 900.
+/*
+ * Poppins er merkevarefonten.
+ *
+ * TO VEKTER, IKKE FEM. Kuttet 03.10.2026 etter måling av forsiden.
+ *
+ * Her sto 300, 400, 500, 700 og 900 — manualens fem. `next/font` legger en
+ * `<link rel="preload" as="font">` i <head> for HVER vekt, og de sju lenkene
+ * (fem Poppins + to Instrument Serif) sto foran stilarket med høyeste
+ * prioritet. På en strupet mobilforbindelse betyr det at det
+ * render-blokkerende stilarket må vente på fontfiler ingen side bruker.
+ *
+ * TELT I KODEN FØR KUTTET, ikke antatt: `font-medium` brukes 52 ganger,
+ * `font-normal` én, `font-semibold` én (på /takk, der overskriften er satt i
+ * Instrument Serif og vekten ikke slår inn). `font-light`, `font-bold` og
+ * `font-black` brukes null ganger. 300, 700 og 900 ble altså lastet ned på
+ * hver eneste sidevisning uten at én bokstav på nettstedet var satt i dem.
+ *
+ * SKAL EN AV DEM TAS I BRUK IGJEN, må vekten legges tilbake her. Uten den
+ * synteserer nettleseren en falsk fet variant, og den ser annerledes ut enn
+ * den ekte.
+ */
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "700", "900"],
+  weight: ["400", "500"],
   variable: "--font-poppins",
   display: "swap",
 });

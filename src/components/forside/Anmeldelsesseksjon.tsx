@@ -51,6 +51,10 @@ function soulcakeOrd() {
  *
  * Verifisert bilde for bilde før byttet: «REFLEKTOR X SOULCAKE»-plakaten og
  * alle undertekstlinjene står i sin helhet innenfor rammen.
+ *
+ * 9:16-UTGAVEN ER SLETTET 03.10.2026. Den lå igjen «i tilfelle», og da var
+ * den 10 MB i deployen som ingen nettleser noen gang ba om. Masteren ligger
+ * i Dropbox; trengs formatet igjen, kodes det på nytt derfra.
  */
 function Kundevideo() {
   const ord = soulcakeOrd();

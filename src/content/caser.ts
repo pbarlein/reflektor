@@ -91,19 +91,6 @@ export type Kundecase = {
     video: {
       /** Sti uten filendelse, under /arbeid/. */
       sti: string;
-      /**
-       * Samme opptak i 9:16, uten filendelse. Utelates om det ikke finnes.
-       *
-       * LAGT TIL 02.10.2026. Masteren fra produksjonen er 1080×1920 — ekte
-       * 9:16. Fila `sti` peker på er en 4:5-utgave som ble laget for de
-       * smale spaltene på case- og tjenestesidene, der en stående film i
-       * full høyde ville tatt over en side der tallene er hovedsaken.
-       *
-       * Forsiden har plass til hele formatet, og da skal den ha hele
-       * formatet. Begge utgavene ligger i repoet fordi de løser hver sin
-       * oppgave — ikke fordi noen glemte å rydde.
-       */
-      stiStaende?: string;
       alt: string;
       /**
        * VTT-fila. Felles for begge utgavene: samme opptak, samme tidskoder.
@@ -256,7 +243,6 @@ export const kundecaser: Kundecase[] = [
       overskrift: "«Men vi er veldig, veldig, veldig fornøyde.»",
       video: {
         sti: "/arbeid/soulcake/soulcake-omtale-ragnhild",
-        stiStaende: "/arbeid/soulcake/soulcake-omtale-ragnhild-9x16",
         alt: "Ragnhild Gaarde Bucataru i Soulcake forteller om samarbeidet med Reflektor",
         undertekster: "/arbeid/soulcake/soulcake-omtale-ragnhild.no.vtt",
         sekunder: 22,

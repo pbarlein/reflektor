@@ -29,7 +29,7 @@ export const FELTGRENSER = {
   telefon: 40,
   melding: 4000,
   side: 120,
-  kilde: 1200, // UTM + klikk-ID + referrer + landingsside, se lib/kilde.ts
+  kilde: 1200, // Etikett + UTM + referrer + landingsside, se lib/kilde.ts
 } as const;
 
 export type Feltnavn = keyof typeof FELTGRENSER;

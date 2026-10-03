@@ -1050,3 +1050,57 @@ whip-overgang, og den ville blitt plakatbildet.
 **Oppløsningen er 540 px bred, ikke 720 som BTS-klippene.** Cella er 288 px
 på desktop og 294 på en telefon. 540 dekker to ganger pikselforholdet på
 begge, og 720 ville vært 1 MB ekstra uten en synlig forskjell.
+
+---
+
+## Vektrunden 03.10.2026: hva som faktisk lastet, og hva som ble gjort
+
+Forsiden veide 2 758 kB målt med Lighthouse mobil. Fordelingen var ikke der
+jeg trodde.
+
+**Plakatbildene var den største posten, ikke filmene.** 32 plakatfiler à
+45–95 kB, til sammen 1 841 kB i repoet og rundt 600 kB på forsiden alene.
+`poster` laster ALLTID, uavhengig av `preload` — det er hele poenget med
+attributtet. Tjueto klipp på forsiden ga tjueto bilder hentet før noen
+hadde rullet en piksel.
+
+To grep, i denne rekkefølgen:
+
+1. **Alle plakater kodet på nytt**, q:v 7 i stedet for q:v 2–3. Et bilde som
+   er synlig i under ett sekund før filmen starter trenger ikke
+   arkivkvalitet. 1 841 → 1 348 kB uten at én piksel er borte i bredden.
+2. **Plakaten settes først når flaten nærmer seg.** Den ligger i
+   `data-plakat` og flyttes til `poster` av iakttakeren 200 px før cellen
+   kommer i bildet. Se Klipp.tsx og lib/videosynlighet.ts.
+
+   **Fellen her er redusert bevegelse.** Hooken returnerte tidlig for den
+   som har slått av animasjon, fordi plakatbildet var det eneste de skulle
+   se. Flyttes plakaten ut av markeringen, betyr den tidlige returen at de
+   ikke får NOE å se. Forlasteren kjører derfor alltid; det er bare
+   avspillingen som står over.
+
+**Omtalefilmene var kodet for et format de ikke vises i.** Soulcake-omtalen
+lå som 1080×1350 og 8,3 MB, i en spalte som er 352 px bred. Begge omtalene
+er nå 720×900, CRF 29:
+
+| Fil | Før | Etter |
+|---|---|---|
+| soulcake-omtale-ragnhild.mp4 | 8,3 MB | 2,2 MB |
+| soulcake-omtale-ragnhild.webm | 5,5 MB | 2,3 MB |
+| russemerch/produksjonsdag.mp4 | 5,3 MB | 2,6 MB |
+| russemerch/produksjonsdag.webm | 5,5 MB | 2,9 MB |
+
+CRF 26 og 29 ble sammenlignet bilde for bilde på den innbrente tekstingen,
+beskåret og forstørret. Ingen synlig forskjell. 29 er valgt.
+
+**9:16-utgaven av Soulcake-omtalen er slettet.** 10 MB i deployen som ingen
+nettleser noen gang ba om — den ble ubrukt da forsiden gikk tilbake til 4:5
+kvelden før, og lå igjen «i tilfelle». Masteren ligger i Dropbox
+(`Ragnhild omtale 4x5.mov` og `Ragnhild omtale.mov`).
+
+**Heroklippet er IKKE rørt.** `antonburst.mp4` er 1 011 kB og er nå den
+desidert største enkeltfila på forsiden. Den er allerede kodet hardt — CRF
+33, åtte sekunder, verifisert mot CRF 31 uten synlig forskjell — og en ny
+omkoding fra den ferdige fila gir bare 738 kB med generasjonstap på det
+elementet som males først. Skal den ned, må den klippes på nytt fra
+masteren.

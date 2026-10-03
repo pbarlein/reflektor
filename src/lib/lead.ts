@@ -34,7 +34,111 @@ const MOTTAKER = process.env.LEAD_MOTTAKER ?? "pal@reflektor.no";
  * mottakere, må et eget domene verifiseres i Resend – det krever DNS-oppføringer
  * for e-post, ikke for nettstedet, og flytter altså ikke reflektor.no.
  */
-const AVSENDER = process.env.LEAD_AVSENDER ?? "Reflektor <onboarding@resend.dev>";
+const AVSENDER =
+  process.env.LEAD_AVSENDER ?? "Reflektor <onboarding@resend.dev>";
+
+/**
+ * Emnefeltet.
+ *
+ * «Ny henvendelse: Marisol – La Mexicana AS». Navn og bedrift er det Pål
+ * trenger for å vite om han skal åpne den nå eller etter møtet, og
+ * innboksen på telefon viser rundt 40 tegn.
+ *
+ * Her sto «Ny henvendelse fra <navn>». Bedriften manglet, og det er den som
+ * avgjør hvor interessant henvendelsen er.
+ */
+export function emne(lead: Pick<Lead, "navn" | "bedrift">): string {
+  const navn = rensEnLinje(lead.navn).trim();
+  const bedrift = rensEnLinje(lead.bedrift).trim();
+  if (!navn && !bedrift) return "Ny henvendelse fra nettsiden";
+  const hale = [navn, bedrift].filter(Boolean).join(" – ");
+  return `Ny henvendelse: ${hale}`.slice(0, 160);
+}
+
+/** Escaper de fire tegnene som kan bryte ut av HTML-en i e-posten. */
+function esc(tekst: string): string {
+  return tekst
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/**
+ * Telefonnummeret som `tel:`-lenke.
+ *
+ * Alt annet enn sifre og en innledende pluss fjernes fra selve lenken —
+ * «+47 123 45 678» er riktig å LESE og feil å ringe. Teksten står som
+ * skrevet.
+ */
+function telefonlenke(nummer: string): string {
+  const rent = nummer.replace(/[^\d+]/g, "");
+  if (!rent) return esc(nummer);
+  return `<a href="tel:${esc(rent)}">${esc(nummer)}</a>`;
+}
+
+/**
+ * Selve e-posten, i den rekkefølgen den leses.
+ *
+ * MELDINGEN ØVERST. Bestilt av Pål 03.10.2026. Her sto kontaktinfoen først
+ * og meldingen nederst, etter en tom linje — altså måtte han forbi seks
+ * linjer felt for å finne ut hva folk faktisk spurte om. Navn og bedrift
+ * står allerede i emnefeltet.
+ *
+ * KILDEN NEDERST, av samme grunn: den er nyttig når han skal vurdere hvor
+ * annonsekronene virker, og aldri det første han trenger å vite.
+ *
+ * BÅDE HTML OG REN TEKST. HTML-en gir `tel:`-lenken, som er hele poenget
+ * på telefon — ett trykk i stedet for merk, kopier, lim inn. Ren tekst
+ * følger med fordi en e-post uten den leses som vedlegg i enkelte klienter,
+ * og fordi den er det som står igjen hvis HTML-en blokkeres.
+ */
+function brodtekst(lead: Lead): { tekst: string; html: string } {
+  const felt: [string, string, string][] = [
+    ["Navn", lead.navn, esc(lead.navn)],
+    [
+      "E-post",
+      lead.epost,
+      `<a href="mailto:${esc(lead.epost)}">${esc(lead.epost)}</a>`,
+    ],
+    ["Bedrift", lead.bedrift || "—", esc(lead.bedrift || "—")],
+    [
+      "Telefon",
+      lead.telefon || "—",
+      lead.telefon ? telefonlenke(lead.telefon) : "—",
+    ],
+    ["Side", lead.side, esc(lead.side)],
+  ];
+
+  const melding = lead.melding || "(ingen melding)";
+  const kilde = lead.kilde || "ukjent";
+
+  const tekst = [
+    melding,
+    "",
+    "—",
+    "",
+    ...felt.map(([navn, verdi]) => `${navn}: ${verdi}`),
+    "",
+    `Kilde: ${kilde}`,
+  ].join("\n");
+
+  const html = [
+    '<div style="font-family:system-ui,-apple-system,Segoe UI,sans-serif;font-size:15px;line-height:1.6;color:#2a2521">',
+    `<p style="white-space:pre-wrap;margin:0 0 20px">${esc(melding)}</p>`,
+    '<hr style="border:0;border-top:1px solid #ddd6cc;margin:0 0 20px">',
+    '<table cellpadding="0" cellspacing="0" border="0" style="font-size:15px;line-height:1.6">',
+    ...felt.map(
+      ([navn, , verdi]) =>
+        `<tr><td style="padding:0 16px 4px 0;color:#6b6258">${navn}</td><td style="padding:0 0 4px">${verdi}</td></tr>`,
+    ),
+    "</table>",
+    `<p style="margin:20px 0 0;color:#6b6258;font-size:13px">Kilde: ${esc(kilde)}</p>`,
+    "</div>",
+  ].join("");
+
+  return { tekst, html };
+}
 
 export async function sendLeadPaEpost(lead: Lead): Promise<void> {
   const nokkel = process.env.RESEND_API_KEY;
@@ -55,16 +159,7 @@ export async function sendLeadPaEpost(lead: Lead): Promise<void> {
     return;
   }
 
-  const linjer = [
-    `Navn:    ${lead.navn}`,
-    `E-post:  ${lead.epost}`,
-    `Bedrift: ${lead.bedrift || "—"}`,
-    `Telefon: ${lead.telefon || "—"}`,
-    `Side:    ${lead.side}`,
-    `Kilde:   ${lead.kilde || "ukjent"}`,
-    "",
-    lead.melding || "(ingen melding)",
-  ].join("\n");
+  const { tekst, html } = brodtekst(lead);
 
   const svar = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -82,10 +177,9 @@ export async function sendLeadPaEpost(lead: Lead): Promise<void> {
        * fra Resend og dermed ingen e-post.
        */
       ...(serUtSomEpost(lead.epost) ? { reply_to: lead.epost } : {}),
-      subject: rensEnLinje(
-        `Ny henvendelse fra ${lead.navn || "nettsiden"}`,
-      ).slice(0, 160),
-      text: linjer,
+      subject: emne(lead),
+      text: tekst,
+      html,
     }),
   });
 

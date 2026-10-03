@@ -48,8 +48,15 @@ export function useSpillNarSynlig() {
     /*
      * Ingen bevegelse betyr ingen bevegelse. Da står plakatbildet, som er
      * hentet fra klippet selv — brukeren mister motivet, ikke innholdet.
+     *
+     * HER STO `return`. Det var riktig så lenge plakaten lå i markeringen,
+     * og ble feil 03.10.2026 da den ble flyttet til `data-plakat`: en tidlig
+     * retur betydde at den som har slått av bevegelse ikke fikk NOE å se.
+     * Nå settes plakaten uansett, og det er bare avspillingen som står over.
      */
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const roligere = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
 
     const iakt = new IntersectionObserver(
       (poster) => {
@@ -64,8 +71,48 @@ export function useSpillNarSynlig() {
       { threshold: 0, rootMargin: ROTMARGIN },
     );
 
-    for (const v of Object.values(refs.current)) if (v) iakt.observe(v);
-    return () => iakt.disconnect();
+    /*
+     * FORLASTEREN, lagt til 03.10.2026. Klippene står med `preload="none"`,
+     * og uten denne begynner nedlastingen først i det øyeblikket cellen er
+     * i bildet — altså ser man plakatbildet et halvt sekund før filmen
+     * starter, hver gang.
+     *
+     * 200 px er omtrent en halv tomme rulling på en telefon: nok til at
+     * starten av fila er hentet når cellen kommer fram, lite nok til at en
+     * som aldri ruller dit heller ikke laster noe.
+     *
+     * Den setter `preload` og nøyer seg med det. Å kalle `play()` her ville
+     * startet klipp utenfor skjermen, og det er nettopp det den negative
+     * margen under er til for å unngå.
+     */
+    const forlaster = new IntersectionObserver(
+      (poster) => {
+        for (const p of poster) {
+          if (!p.isIntersecting) continue;
+          const v = p.target as HTMLVideoElement;
+          /*
+           * PLAKATEN FØRST, OG UANSETT. Den er det eneste den som har slått
+           * av bevegelse får se — se Klipp.tsx for hvorfor den ikke står i
+           * markeringen fra start.
+           */
+          const plakat = v.dataset.plakat;
+          if (plakat && !v.poster) v.poster = plakat;
+          if (!roligere && v.preload === "none") v.preload = "metadata";
+          forlaster.unobserve(v);
+        }
+      },
+      { threshold: 0, rootMargin: "200px 0px 200px 0px" },
+    );
+
+    for (const v of Object.values(refs.current))
+      if (v) {
+        if (!roligere) iakt.observe(v);
+        forlaster.observe(v);
+      }
+    return () => {
+      iakt.disconnect();
+      forlaster.disconnect();
+    };
   }, []);
 
   return (nokkel: string) => (el: HTMLVideoElement | null) => {

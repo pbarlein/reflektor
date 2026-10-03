@@ -26,11 +26,16 @@ import { useEffect, useRef, useState } from "react";
  * H.264 har maskinvaredekoder på alle, og noen sparte megabyte er ikke verdt
  * et bilde som fryser.
  *
- * `preload="metadata"`. Videoen ligger langt nede på alle sidene den brukes
- * og skal ikke koste noe i LCP, men metadata er noen få kilobyte — ikke
- * filmen. Her sto `preload="none"` med kildene satt inn av en
- * IntersectionObserver; se kommentaren over effekten for hvorfor den veien
- * er forlatt.
+ * `preload="none"` TIL FLATEN NÆRMER SEG. Rettet 03.10.2026 etter måling:
+ * forsiden lastet 347 kB av omtalefilmene før noen hadde rullet til dem.
+ * «metadata» på en 22 sekunders film er ikke «noen få kilobyte», slik det
+ * sto her — nettleseren henter en god del av starten.
+ *
+ * KILDENE STÅR LIKEVEL ALLTID I MARKERINGEN. Det er forskjellen på dette og
+ * den gamle løsningen som ble forlatt: der ble <source>-elementene satt inn
+ * av en IntersectionObserver, og da kan elementet rekke å havne i
+ * `NETWORK_NO_SOURCE` før kildene kommer. Her endres bare ett attributt på
+ * et element som alltid har hatt kildene sine.
  */
 export function Omtalevideo({
   sti,
@@ -75,6 +80,31 @@ export function Omtalevideo({
   useEffect(() => {
     const v = ref.current;
     if (!v) return;
+
+    /*
+      TO IAKTTAKERE MED HVER SIN JOBB, satt 03.10.2026.
+
+      FORLASTEREN slår inn 200 px FØR flaten kommer i bildet, setter
+      plakatbildet og `preload` fra «none» til «metadata». Da rekker nettleseren å hente
+      starten av fila mens man fortsatt ruller, og klippet står ikke på
+      plakatbildet i et halvt sekund når man kommer fram. Den kobler seg
+      fra etter første treff: `preload` skal settes én gang, ikke på hver
+      gjennomrulling.
+
+      SPILLEREN har uendret oppførsel: negativ margin, så bare det som
+      faktisk er i bildet spiller.
+    */
+    const forlaster = new IntersectionObserver(
+      ([p]) => {
+        if (!p.isIntersecting) return;
+        if (v.dataset.plakat && !v.poster) v.poster = v.dataset.plakat;
+        if (v.preload === "none") v.preload = "metadata";
+        forlaster.disconnect();
+      },
+      { threshold: 0, rootMargin: "200px 0px 200px 0px" },
+    );
+    forlaster.observe(v);
+
     const iakt = new IntersectionObserver(
       ([p]) => {
         if (!p.isIntersecting) {
@@ -88,7 +118,10 @@ export function Omtalevideo({
       { threshold: 0, rootMargin: "-8% 0px -8% 0px" },
     );
     iakt.observe(v);
-    return () => iakt.disconnect();
+    return () => {
+      forlaster.disconnect();
+      iakt.disconnect();
+    };
   }, []);
 
   /*
@@ -141,8 +174,14 @@ export function Omtalevideo({
       <video
         ref={ref}
         className="absolute inset-0 size-full object-cover"
-        poster={`${sti}-poster.jpg`}
-        preload="metadata"
+        /*
+          PLAKATEN SETTES NÅR FLATEN NÆRMER SEG, som i Klipp.tsx. `poster`
+          laster alltid, uavhengig av `preload`, og de to omtaleplakatene er
+          100 kB som ble hentet før noen hadde rullet til dem. Forlasteren
+          over flytter `data-plakat` hit 200 px i forveien.
+        */
+        data-plakat={`${sti}-poster.jpg`}
+        preload="none"
         muted={!lyd}
         loop={!lyd}
         playsInline

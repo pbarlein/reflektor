@@ -54,7 +54,27 @@ export function Klipp({
     <video
       ref={festRef}
       className="absolute inset-0 size-full object-cover"
-      poster={poster ?? `${sti}.jpg`}
+      /*
+        PLAKATEN SETTES FØRST NÅR FLATEN NÆRMER SEG, for alt som ikke er
+        `ivrig`. Endret 03.10.2026 etter måling.
+
+        `poster` laster ALLTID, uavhengig av `preload`. Forsiden har 22
+        klipp, og plakatbildene deres var 600 kB som ble hentet før noen
+        hadde rullet en piksel — mer enn alt annet på siden til sammen
+        utenom heroklippet.
+
+        Attributtet ligger i `data-plakat` og flyttes til `poster` av
+        `useSpillNarSynlig`, 200 px før cellen kommer i bildet. Fram til da
+        står figurens egen `bg-flate-dempet`, som er den samme flaten
+        plakaten uansett ligger på.
+
+        DEN SETTES OGSÅ NÅR BEVEGELSE ER AVSLÅTT. Det er hele poenget med
+        plakaten for den brukeren — se useSpillNarSynlig, der forlasteren
+        kjører uansett og bare avspillingen står over.
+      */
+      {...(ivrig
+        ? { poster: poster ?? `${sti}.jpg` }
+        : { "data-plakat": poster ?? `${sti}.jpg` })}
       preload={ivrig ? "metadata" : "none"}
       autoPlay={ivrig || undefined}
       muted
