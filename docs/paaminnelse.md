@@ -80,3 +80,34 @@ apper → ny app med tilgangene `crm.objects.contacts.read` og
 
 **Ingenting annet avhenger av disse.** Varselet, skjemaet og innsendingen til
 HubSpot virker uendret uten dem.
+
+## Hvorfor en «legacy»-app, og hva som skjer med den
+
+HubSpot kaller nå private apper for **Legacy Apps**. Appen vi laget
+04.10.2026 er en slik.
+
+**Hvorfor den likevel er riktig valg i dag:**
+
+1. Det er det eneste som er tilgjengelig i Påls konto uten å sette opp et
+   utviklerprosjekt med egen kommandolinje. HubSpots egen side peker dit:
+   «Go to Legacy Apps».
+2. Eksisterende private apper virker som før og er fortsatt støttet.
+
+**Men den går på en klokke, og det er to datoer:**
+
+- **26.10.2026**: HubSpot slår av muligheten til å LAGE nye private apper
+  gjennom grensesnittet i eksisterende kontoer. Vi rakk innenfor med tre
+  uker. Eksisterende apper berøres ikke.
+- **September 2027**: støtten for legacy private apper tar slutt.
+  Erstatningen for en server-til-server-kobling som vår er en **Service
+  Key** via Developer Platform Projects (2026.09 eller nyere).
+
+Det må altså byttes før september 2027. Det er ett token som skal erstattes
+av ett annet; koden som bruker det ligger samlet i `src/lib/hubspotcrm.ts`.
+
+**Alternativet uten token ble vurdert og forkastet.** Egenskapen kunne vært
+satt ved å sende HubSpot-skjemaet på nytt — det endepunktet krever ingen
+nøkkel. Men en ny skjemainnsending oppdaterer «recent conversion date», og
+arbeidsflyten starter nettopp på den. Å avbryte en påminnelse ville da
+utløst en ny e-post til leadet. CRM-veien med token er den eneste som rører
+én egenskap uten å rote i resten.

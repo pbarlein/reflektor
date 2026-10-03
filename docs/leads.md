@@ -118,3 +118,34 @@ Reserven i `lib/hubspot.ts` ble samtidig gjort smartere: avviser HubSpot et
 felt, leses feltnavnet ut av feilmeldingen og nøyaktig det feltet fjernes i
 forsøk nummer to. Før antok den at det alltid var `website`, og da ville en
 avvisning av et annet felt kostet hele leadet.
+
+## Kontroll av hele kjeden, 04.10.2026
+
+Målt på live, uten å sende inn skjemaet (innsendingen stoppes i nettleseren
+rett før den går):
+
+| Ledd | Status |
+|---|---|
+| Kilden fanges på FØRSTE sidevisning, også fra annonselenke | ✓ |
+| Kilden overlever til skjemaet på en annen side | ✓ |
+| Alle felt følger med i innsendingen, også de skjulte | ✓ |
+| Tidsstempelet mot roboter er satt (ikke 0) | ✓ |
+| Honningkrukken ligger i skjemaet | ✓ |
+| HubSpots egen skjemaavlesning er slått av for skjemaet | ✓ |
+| `/takk`: page_view, takk_page_view og generate_lead | ✓ |
+| Alle tre med fullt samtykke (`gcs=G111`) | ✓ |
+
+**Ett funn verdt å kjenne til:** `takk_page_view` og `generate_lead` fyrer
+BARE når besøkende kommer til `/takk` fra siden selv. Åpner noen adressen
+direkte — bokmerke, lim inn, en lenke i en e-post — sendes bare `page_view`.
+
+Det er riktig oppførsel og ikke en feil: en konvertering skal telles når noen
+faktisk har fylt ut skjemaet, ikke når adressen åpnes kaldt. Det er verdt å
+vite fordi det betyr at `/takk` ikke kan brukes som en «takk»-side for noe
+annet uten at tallene blir feil.
+
+**Meta-leads går ikke denne veien i det hele tatt.** De kommer rett inn i
+HubSpot fra Meta-skjemaet, uten å være innom nettsiden. De har derfor ingen
+kildestreng fra oss — HubSpots egen kildemåling er det som gjelder der. Det
+er også grunnen til at oversiktssiden `/paaminnelse` finnes: for Meta-leads
+får Pål ikke noe varsel med knapp fra nettsiden.
