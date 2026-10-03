@@ -149,3 +149,54 @@ HubSpot fra Meta-skjemaet, uten å være innom nettsiden. De har derfor ingen
 kildestreng fra oss — HubSpots egen kildemåling er det som gjelder der. Det
 er også grunnen til at oversiktssiden `/paaminnelse` finnes: for Meta-leads
 får Pål ikke noe varsel med knapp fra nettsiden.
+
+## Sikkerhetsnett rundt skjemaet (04.10.2026)
+
+Tre ting som alle handler om det samme: **et lead skal aldri forsvinne
+stille.**
+
+### 1. Mengdebegrensning: 5 per IP per 10 minutter
+
+Over grensen svarer ruta **som ved suksess** — 303 til `/takk`. Den som
+sender skjemaet seks ganger får ingen feilmelding og ingen grunn til å prøve
+en annen vei. Det som ikke skjer, er varselet og innsendingen til HubSpot.
+Hendelsen logges.
+
+Begrensningen ligger i to lag:
+
+| Lag | Teller | Status |
+|---|---|---|
+| Vercels brannmur, via `checkRateLimit` | på tvers av alle serverinstanser | **Krever én regel som ikke finnes ennå** |
+| `foroftig` i `skjemavern.ts` | i minnet til én instans | aktiv |
+
+**Regelen må lages én gang i Vercels grensesnitt**: Firewall → ny
+rate-limit-regel med id `skjema`, 5 per 600 sekunder, nøkkel IP. Vercels API
+svarer «Seawall Config not found» for dette prosjektet, så den kan ikke
+opprettes herfra — hverken med PATCH eller PUT. Koden kaller allerede
+regelen; i det øyeblikket den finnes, begynner den å telle.
+
+Kallet **slipper alltid gjennom ved tvil**. Feiler eller henger det, leses
+svaret som «ikke begrenset». En henvendelse er verdt mer enn en grense.
+
+### 2. «⚠ Leadet ble IKKE lagret i HubSpot»
+
+Feiler innsendingen til HubSpot — også etter forsøket uten `website` — står
+den linjen øverst i varselet til Pål, før navnet. Da får leadet heller ingen
+automatisk e-post med presentasjon og bookinglenke, fordi arbeidsflyten
+starter på en kontakt som aldri ble opprettet.
+
+**Det tvang fram en ny rekkefølge:** HubSpot først, så e-posten, begge i
+`after()`. Før dette ble e-posten sendt inne i selve forespørselen.
+Kostnaden er at et `after()` som aldri kjører tar med seg begge; gevinsten
+er at Pål får vite når leadet ikke kom fram. Besøkende merker ingenting —
+svaret er sendt før noe av dette starter.
+
+### 3. Varselet prøver to ganger
+
+Feiler Resend, prøves det på nytt etter to sekunder. Feiler det igjen,
+skrives `LEADVARSEL FEILET` i loggen med navn, e-post og side.
+
+**Navn og e-post i loggen er et bevisst unntak** fra regelen lenger oppe om
+at leadet ikke logges. Bestilt av Pål 04.10.2026. Linjen skrives bare når
+e-posten har feilet to ganger — og da er loggen det eneste stedet leadet
+finnes. Et lead ingen vet om er verre enn en logglinje med et navn i.

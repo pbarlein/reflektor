@@ -168,7 +168,11 @@ export function avvisteFelt(kropp: string): Set<string> {
 }
 
 /**
- * Sender leadet. Kaster aldri — den logger.
+ * Sender leadet. Kaster aldri — den logger, og sier fra om det gikk.
+ *
+ * RETURVERDIEN KOM TIL 04.10.2026. Varselet til Pål skal si «⚠ Leadet ble
+ * IKKE lagret i HubSpot» når dette feiler, og da må ruta vite utfallet. Se
+ * api/skjema/route.ts for rekkefølgen det tvinger fram.
  *
  * GRUNNEN TIL AT DEN IKKE KASTER står i route.ts: svaret til besøkende er
  * alltid 303 til /takk, og dette kallet kjører etter at svaret er sendt.
@@ -184,7 +188,7 @@ export async function sendLeadTilHubspot(
   lead: Lead,
   hutk: string | undefined,
   basis: string,
-): Promise<void> {
+): Promise<boolean> {
   /*
    * E-post er det ene feltet HubSpot krever. Mangler den, ville kallet gitt
    * 400 uten at noe kunne vært gjort med det — da er en tydelig logglinje
@@ -194,7 +198,7 @@ export async function sendLeadTilHubspot(
     console.error(
       `[hubspot] Leadet fra ${lead.side} har ingen brukbar e-postadresse og ble IKKE sendt til HubSpot.`,
     );
-    return;
+    return false;
   }
 
   const post = (utelat: ReadonlySet<string>) =>
@@ -240,7 +244,7 @@ export async function sendLeadTilHubspot(
         console.error(
           `[hubspot] HubSpot svarte 400 på leadet fra ${lead.side}. Leadet er IKKE i CRM-et. ${detaljer}`,
         );
-        return;
+        return false;
       }
     }
 
@@ -249,12 +253,15 @@ export async function sendLeadTilHubspot(
       console.error(
         `[hubspot] HubSpot svarte ${svar.status} på leadet fra ${lead.side}. Leadet er IKKE i CRM-et. ${detaljer}`,
       );
-      return;
+      return false;
     }
+
+    return true;
   } catch (feil) {
     console.error(
       `[hubspot] Kallet feilet for leadet fra ${lead.side}. Leadet er IKKE i CRM-et.`,
       feil,
     );
+    return false;
   }
 }

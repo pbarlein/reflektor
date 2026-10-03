@@ -8,6 +8,7 @@ import {
 } from "@/lib/kontaktfelt";
 import { sendLeadPaEpost, type Lead } from "@/lib/lead";
 import { basisUrl } from "@/lib/miljo";
+import { foroftigPaKanten } from "@/lib/mengde";
 import { foroftig, klientnokkel, rens } from "@/lib/skjemavern";
 
 /**
@@ -57,10 +58,20 @@ export async function POST(req: NextRequest) {
   let botAktig = false;
 
   /*
-   * Mengdebegrensning. Se skjemavern.ts for hva denne faktisk dekker og
-   * hva den ikke dekker — den er et gulv, ikke en garanti.
+   * MENGDEBEGRENSNING I TO LAG, se lib/mengde.ts: først brannmuren, som
+   * teller på tvers av serverinstanser, så telleren i minnet som gulv.
+   *
+   * SVARET ER DET SAMME SOM VED SUKSESS — 303 til /takk. Den som sender
+   * skjemaet seks ganger på ti minutter får ingen feilmelding og ingen
+   * grunn til å prøve en annen vei. Det som IKKE skjer, er varselet til
+   * Pål og innsendingen til HubSpot.
    */
-  if (foroftig(klientnokkel(req.headers))) botAktig = true;
+  if ((await foroftigPaKanten(req)) || foroftig(klientnokkel(req.headers))) {
+    botAktig = true;
+    console.warn(
+      `[skjema] Over mengdegrensen for ${klientnokkel(req.headers)}. Innsendingen ble IKKE sendt videre.`,
+    );
+  }
 
   // Honningkrukke: feltet er skjult for mennesker. Utfylt = bot.
   if (data.get("firmanavn")) botAktig = true;
@@ -112,27 +123,22 @@ export async function POST(req: NextRequest) {
     };
 
     /*
-     * E-postfeil skal aldri hindre videresendingen. Uten /takk mister vi
-     * GA4-hendelsen og Ads-konverteringen, og da er leadet usynlig i målingen
-     * selv om det kom fram i innboksen.
-     */
-    try {
-      await sendLeadPaEpost(lead);
-    } catch (feil) {
-      console.error("[lead] Sending feilet:", feil);
-    }
-
-    /*
-     * HUBSPOT, LAGT TIL 02.10.2026. Se lib/hubspot.ts for hvorfor leadet
-     * også skal gå denne veien.
+     * HUBSPOT FØRST, SÅ E-POSTEN. Rekkefølgen er snudd 04.10.2026, og det
+     * er en bestilling med en grunn: varselet skal si «⚠ Leadet ble IKKE
+     * lagret i HubSpot» når innsendingen dit feiler. Da får leadet heller
+     * ingen automatisk e-post med presentasjon og bookinglenke —
+     * arbeidsflyten starter på en kontakt som aldri ble opprettet — og Pål
+     * må legge det inn for hånd. Den opplysningen finnes bare hvis
+     * e-posten skrives ETTER at HubSpot har svart.
      *
-     * `after()` OG IKKE `await`, med vilje. Dette er den eneste delen av
-     * innsendingen som ingen venter på: e-posten er hovedkanalen, og
-     * besøkende skal til /takk. `after()` kjører tilbakekallet ETTER at
-     * svaret er sendt — på Vercel via `waitUntil`, så invokasjonen lever
-     * videre til kallet er ferdig. Et `await` her ville lagt HubSpots
-     * svartid rett inn i ventetiden før /takk, og /takk er der målingen av
-     * Reflektors eneste KPI skjer.
+     * BEGGE LIGGER NÅ I `after()`, og ingen av dem forsinker besøkende.
+     * Svaret er sendt før noe av dette starter. Før dette ble e-posten
+     * sendt inne i forespørselen; kostnaden ved å flytte den er at et
+     * `after()` som aldri kjører tar med seg begge, gevinsten er at Pål
+     * får vite når leadet ikke kom fram.
+     *
+     * HubSpot-kallet har et tak på fire sekunder og kaster aldri (se
+     * hubspot.ts), så e-posten kommer uansett.
      *
      * Cookien leses HER og ikke inne i tilbakekallet. Det er lov å lese
      * forespørselen inne i `after()` i en rutehåndterer, men verdien er
@@ -150,12 +156,20 @@ export async function POST(req: NextRequest) {
      * til /takk, og en ufanget feil her ville gitt 500 og tatt med seg
      * både leadet og målingen av det.
      *
-     * Fallback er å kalle funksjonen uten å vente. Den kan ikke kaste (se
-     * hubspot.ts), så `void` er trygt: på en kjøretid uten `after()` kan
+     * Fallback er å kalle funksjonen uten å vente. Den kan ikke kaste —
+     * begge kallene inne i den fanger sitt eget — så `void` er trygt: på en
+     * kjøretid uten `after()` kan
      * kallet bli avbrutt når svaret sendes, og det er et dårligere utfall
      * enn `after()` — men et mye bedre utfall enn en 500.
      */
-    const etterpa = () => sendLeadTilHubspot(lead, hutk, basis);
+    const etterpa = async () => {
+      const iHubspot = await sendLeadTilHubspot(lead, hutk, basis);
+      try {
+        await sendLeadPaEpost(lead, { hubspotFeilet: !iHubspot });
+      } catch {
+        // sendLeadPaEpost har allerede logget «LEADVARSEL FEILET».
+      }
+    };
 
     try {
       after(etterpa);

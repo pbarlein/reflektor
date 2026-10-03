@@ -91,6 +91,13 @@ const TOM = "–";
 export function varsel(
   lead: Lead,
   sendt: Date = new Date(),
+  /**
+   * Sant når innsendingen til HubSpot feilet, også etter forsøket uten
+   * «website». Da er varselet det ENESTE stedet leadet finnes, og leadet
+   * får heller ingen automatisk e-post med presentasjon og bookinglenke —
+   * arbeidsflyten starter på en kontakt som aldri ble opprettet.
+   */
+  hubspotFeilet = false,
 ): { tekst: string; html: string } {
   const nettside = lead.nettside
     ? lead.nettside + (lead.nettsideUtledet ? " (fra e-post)" : "")
@@ -178,12 +185,25 @@ export function varsel(
       }
     : null;
 
+  /*
+    ADVARSELEN STÅR ØVERST, før navnet. Den er det eneste i e-posten som
+    krever en handling av Pål utover å ringe: leadet må legges inn i HubSpot
+    for hånd, ellers finnes det bare her.
+  */
+  const advarsel = hubspotFeilet
+    ? "⚠ Leadet ble IKKE lagret i HubSpot. Legg det inn manuelt."
+    : null;
+
   const tekst = [
+    ...(advarsel ? [advarsel, ""] : []),
     ...rader.map(([navn, verdi]) => `${navn}: ${verdi}`),
     "Behov:",
     behov,
     ...(skriv
-      ? ["", `${skriv.tekst}: ${lead.epost} (emne: Henvendelsen din til Reflektor)`]
+      ? [
+          "",
+          `${skriv.tekst}: ${lead.epost} (emne: Henvendelsen din til Reflektor)`,
+        ]
       : []),
     ...(oppfolging
       ? [
@@ -191,13 +211,20 @@ export function varsel(
           oppfolging.linje,
           "",
           oppfolging.ring,
-          ...(oppfolging.lenke ? ["", `Avbryt påminnelse: ${oppfolging.lenke}`] : []),
+          ...(oppfolging.lenke
+            ? ["", `Avbryt påminnelse: ${oppfolging.lenke}`]
+            : []),
         ]
       : []),
   ].join("\n");
 
   const html = [
     '<div style="font-family:system-ui,-apple-system,Segoe UI,sans-serif;font-size:16px;line-height:1.6;color:#2a2521">',
+    ...(advarsel
+      ? [
+          `<p style="margin:0 0 20px;padding:14px 16px;background:#fdece9;border-left:4px solid #d8441f;border-radius:4px"><strong>${esc(advarsel)}</strong></p>`,
+        ]
+      : []),
     '<table cellpadding="0" cellspacing="0" border="0" style="font-size:16px;line-height:1.6">',
     ...rader.map(
       ([navn, , verdi]) =>
@@ -243,7 +270,22 @@ export function varsel(
   return { tekst, html };
 }
 
-/** Ett sted for selve utsendingen, så feilhåndteringen er lik for begge. */
+/** Hvor lenge vi venter før forsøk nummer to. */
+const NYTT_FORSOK_MS = 2000;
+
+/**
+ * Selve utsendingen.
+ *
+ * ETT FORSØK TIL ETTER TO SEKUNDER, lagt til 04.10.2026. Resend svarer av
+ * og til 429 eller 5xx i et øyeblikk, og et lead som forsvinner fordi
+ * nettverket hikstet er et lead vi aldri får vite om at vi mistet. To
+ * sekunder er nok til at et kortvarig avbrudd er over, og kort nok til at
+ * `after()` ikke rekker å bli avbrutt.
+ *
+ * BARE ETT FORSØK TIL. Er Resend nede, er de nede — flere forsøk ville bare
+ * holdt en serverinstans åpen uten å endre utfallet, og feilen skal fram i
+ * loggen i stedet.
+ */
 async function send(opp: {
   til: string;
   emne: string;
@@ -259,46 +301,84 @@ async function send(opp: {
      * telefon i klartekst i Vercel-loggen. Loggen er tilgangsstyrt, men
      * personopplysninger skal ikke ligge der uansett.
      */
-    console.error(`[lead] RESEND_API_KEY mangler – «${opp.emne}» ble IKKE sendt.`);
+    console.error(
+      `[lead] RESEND_API_KEY mangler – «${opp.emne}» ble IKKE sendt.`,
+    );
     return;
   }
 
-  const svar = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${nokkel}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: AVSENDER,
-      to: [opp.til],
-      /*
-       * `reply_to` utelates når adressen ikke ser ut som en adresse:
-       * e-posten skal komme fram uansett, og en ugyldig verdi gir 422 fra
-       * Resend og dermed ingen e-post i det hele tatt.
-       */
-      ...(opp.svarTil && serUtSomEpost(opp.svarTil)
-        ? { reply_to: opp.svarTil }
-        : {}),
-      subject: opp.emne,
-      text: opp.tekst,
-      html: opp.html,
-    }),
-  });
+  const forsok = () =>
+    fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${nokkel}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: AVSENDER,
+        to: [opp.til],
+        /*
+         * `reply_to` utelates når adressen ikke ser ut som en adresse:
+         * e-posten skal komme fram uansett, og en ugyldig verdi gir 422 fra
+         * Resend og dermed ingen e-post i det hele tatt.
+         */
+        ...(opp.svarTil && serUtSomEpost(opp.svarTil)
+          ? { reply_to: opp.svarTil }
+          : {}),
+        subject: opp.emne,
+        text: opp.tekst,
+        html: opp.html,
+      }),
+    });
 
-  if (!svar.ok) {
-    const detaljer = await svar.text();
-    throw new Error(`Resend svarte ${svar.status}: ${detaljer}`);
+  try {
+    const forste = await forsok();
+    if (forste.ok) return;
+  } catch {
+    // Nettverksfeil teller som et mislykket forsøk. Vi prøver igjen under.
   }
+
+  await new Promise((r) => setTimeout(r, NYTT_FORSOK_MS));
+
+  const andre = await forsok();
+  if (andre.ok) return;
+
+  const detaljer = await andre.text().catch(() => "");
+  throw new Error(`Resend svarte ${andre.status}: ${detaljer}`);
 }
 
-export async function sendLeadPaEpost(lead: Lead): Promise<void> {
-  const { tekst, html } = varsel(lead);
-  await send({
-    til: MOTTAKER,
-    emne: VARSEL_EMNE,
-    tekst,
-    html,
-    svarTil: lead.epost,
-  });
+/**
+ * Varselet til Pål.
+ *
+ * KASTER IKKE LENGER, endret 04.10.2026. Den logger i stedet — tydelig nok
+ * til å finnes igjen i Vercel-loggen.
+ *
+ * NAVN OG E-POST STÅR I LOGGLINJEN, og det er et bevisst unntak fra regelen
+ * om at personopplysninger ikke skal logges. Bestilt av Pål 04.10.2026.
+ * Grunnen er at linjen BARE skrives når e-posten har feilet to ganger: da
+ * er loggen det eneste stedet leadet finnes, og et lead ingen vet om er
+ * verre enn en logglinje med et navn i.
+ */
+export async function sendLeadPaEpost(
+  lead: Lead,
+  opp: { hubspotFeilet?: boolean } = {},
+): Promise<void> {
+  const { tekst, html } = varsel(lead, new Date(), opp.hubspotFeilet ?? false);
+  try {
+    await send({
+      til: MOTTAKER,
+      emne: VARSEL_EMNE,
+      tekst,
+      html,
+      svarTil: lead.epost,
+    });
+  } catch (feil) {
+    console.error("LEADVARSEL FEILET", {
+      navn: lead.navn,
+      epost: lead.epost,
+      side: lead.side,
+      feil,
+    });
+    throw feil;
+  }
 }
