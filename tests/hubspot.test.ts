@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  avvisteFelt,
   byggInnsending,
   delNavn,
   ENDEPUNKT,
@@ -244,7 +245,7 @@ test("nettsiden følger med, og kan sendes uten", () => {
     "https://reflektor.no",
   );
 
-  const uten = byggInnsending(lead(), undefined, BASIS, true);
+  const uten = byggInnsending(lead(), undefined, BASIS, new Set(["website"]));
   assert.equal(
     uten.fields.find((f) => f.name === "website"),
     undefined,
@@ -264,4 +265,89 @@ test("«(fra e-post)» er en merknad til Pål, ikke en del av adressen", () => {
   const v = i.fields.find((f) => f.name === "website")?.value;
   assert.equal(v, "https://trenogmat.no");
   assert.ok(!v?.includes("e-post"));
+});
+
+/**
+ * RESERVEN NÅR HUBSPOT IKKE KJENNER ET FELT, skrevet om 04.10.2026.
+ *
+ * Fram til da antok forsøk nummer to at det alltid var `website` som ble
+ * avvist. Var det et annet felt, fjernet forsøket feil felt og HELE leadet
+ * gikk tapt — navn, e-post og telefon med.
+ */
+const AVVIST = (felt: string) =>
+  JSON.stringify({
+    status: "error",
+    message: `Error in 'fields.${felt}'.`,
+    errors: [
+      {
+        message: `Error in 'fields.${felt}'. The property "${felt}" does not exist.`,
+        errorType: "FIELD_NOT_IN_FORM_DEFINITION",
+      },
+    ],
+  });
+
+test("feltnavnet leses ut av HubSpots egen feilmelding", () => {
+  assert.deepEqual([...avvisteFelt(AVVIST("website"))], ["website"]);
+  assert.deepEqual([...avvisteFelt(AVVIST("nettside_kilde"))], [
+    "nettside_kilde",
+  ]);
+
+  // Ingen feilkode, eller en annen feil: ikke prøv igjen.
+  assert.equal(avvisteFelt("").size, 0);
+  assert.equal(avvisteFelt('{"errors":[{"errorType":"INVALID_EMAIL"}]}').size, 0);
+
+  // E-post tas aldri ut — uten den ville forsøk nummer to vært nytteløst.
+  assert.equal(avvisteFelt(AVVIST("email")).size, 0);
+});
+
+test("forsøk nummer to fjerner nettopp det feltet HubSpot avviste", async () => {
+  const opprinnelig = globalThis.fetch;
+  const sendt: Record<string, string>[][] = [];
+
+  try {
+    globalThis.fetch = async (_inn, init) => {
+      const kropp = JSON.parse(String(init?.body)) as {
+        fields: Record<string, string>[];
+      };
+      sendt.push(kropp.fields);
+      return sendt.length === 1
+        ? new Response(AVVIST("nettside_kilde"), { status: 400 })
+        : new Response("", { status: 200 });
+    };
+
+    await sendLeadTilHubspot(lead(), "abc123", BASIS);
+  } finally {
+    globalThis.fetch = opprinnelig;
+  }
+
+  assert.equal(sendt.length, 2, "nøyaktig ett nytt forsøk");
+  assert.ok(sendt[0].some((f) => f.name === "nettside_kilde"));
+  assert.ok(
+    !sendt[1].some((f) => f.name === "nettside_kilde"),
+    "det avviste feltet skal være ute",
+  );
+  assert.ok(
+    sendt[1].some((f) => f.name === "website"),
+    "resten av leadet skal fortsatt være med",
+  );
+  assert.ok(sendt[1].some((f) => f.name === "email"));
+});
+
+test("en 400 uten feltnavn gir ingen nye forsøk", async () => {
+  const opprinnelig = globalThis.fetch;
+  let antall = 0;
+
+  try {
+    globalThis.fetch = async () => {
+      antall += 1;
+      return new Response('{"errors":[{"errorType":"INVALID_EMAIL"}]}', {
+        status: 400,
+      });
+    };
+    await sendLeadTilHubspot(lead(), undefined, BASIS);
+  } finally {
+    globalThis.fetch = opprinnelig;
+  }
+
+  assert.equal(antall, 1);
 });

@@ -80,3 +80,37 @@ Ferdigdefinisjonen i 8.8 punkt 4 krever hele kjeden testet ende-til-ende:
 
 Hard reload mellom hver test – GTM kan servere gammel versjon i opptil et
 kvarter etter publisering.
+
+## Åpent punkt: `nettside_kilde` skrives ikke lenger i HubSpot (04.10.2026)
+
+Målt på fire ekte innsendinger samme døgn:
+
+| Tid | Hvem | `website` sendt | `nettside_kilde` lagret |
+|---|---|---|---|
+| 07:06 | ekte lead | nei | **ja** |
+| 08:52 | testinnsending | nei | **ja** |
+| 09:12 | testinnsending | ja | nei |
+| 09:20 | testinnsending (live) | ja | nei |
+
+De to siste er kjørt etter at `website` ble lagt i nyttelasten, og de er de
+to eneste som mangler kilden. Innsendingene ble godtatt: HubSpot talte dem
+som konverteringer, `message` og `website` står på kontakten, og ingen
+feilmelding kom i Vercel-loggen.
+
+**Det er ikke koden.** Nyttelasten er dumpet for nøyaktig dette leadet og
+inneholder `nettside_kilde` med riktig verdi. Enhetstestene dekker det.
+Samme streng, fra samme felt, ble skrevet uten problemer kl. 08:52.
+
+**Det som ikke kan leses herfra** er HubSpots egen skjemadefinisjon og
+svarkroppen fra endepunktet. Begge krever enten innlogget HubSpot eller en
+ny testinnsending. Derfor står det som et åpent punkt til Cowork: se på
+feltene i skjemaet «reflektor.no – kontaktskjema» og på hva innsendingene
+kl. 09:12 og 09:20 faktisk inneholdt.
+
+**Leadet går ikke tapt i mellomtiden.** Kilden står i e-posten til Pål, som
+er hovedkanalen, og den er uendret. Det er bare feltet i CRM-et som er tomt.
+
+Reserven i `lib/hubspot.ts` er samtidig gjort smartere: avviser HubSpot et
+felt, leses feltnavnet ut av feilmeldingen og nøyaktig det feltet fjernes i
+forsøk nummer to. Før antok den at det alltid var `website`, og da ville en
+avvisning av et annet felt kostet hele leadet.

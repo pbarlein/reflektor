@@ -94,7 +94,7 @@ export function byggInnsending(
   lead: Lead,
   hutk: string | undefined,
   basis: string,
-  utenNettside = false,
+  utelat: ReadonlySet<string> = new Set(),
 ): Hubspotinnsending {
   const { fornavn, etternavn } = delNavn(lead.navn);
 
@@ -110,13 +110,12 @@ export function byggInnsending(
       «(fra e-post)» er en opplysning til Pål i varselet, ikke en del av
       adressen, og skal ikke med hit.
 
-      `utenNettside` er reserven: avviser HubSpot innsendingen fordi feltet
-      ikke finnes i skjemadefinisjonen, sendes den på nytt uten. Se
-      sendLeadTilHubspot. Et lead skal aldri gå tapt på grunn av et felt.
+      `utelat` er reserven: avviser HubSpot innsendingen fordi et felt ikke
+      finnes i skjemadefinisjonen, sendes den på nytt uten nettopp det
+      feltet. Se sendLeadTilHubspot. Et lead skal aldri gå tapt på grunn av
+      et felt.
     */
-    ...(utenNettside
-      ? ([] as [string, string][])
-      : ([["website", lead.nettside]] as [string, string][])),
+    ["website", lead.nettside],
     ["message", lead.melding],
     ["nettside_kilde", lead.kilde],
   ];
@@ -125,7 +124,7 @@ export function byggInnsending(
 
   return {
     fields: felt
-      .filter(([, verdi]) => verdi !== "")
+      .filter(([navn, verdi]) => verdi !== "" && !utelat.has(navn))
       .map(([name, value]) => ({ name, value })),
     context: {
       ...(hutk ? { hutk } : {}),
@@ -146,6 +145,26 @@ export function lesHutk(cookie: string | null | undefined): string | undefined {
     return verdi || undefined;
   }
   return undefined;
+}
+
+/**
+ * Feltnavnene HubSpot avviste, lest ut av svarkroppen.
+ *
+ * HubSpot svarer slik: `{"errors":[{"message":"Error in \'fields.website\'.
+ * ...","errorType":"FIELD_NOT_IN_FORM_DEFINITION"}]}`. Feltnavnet står bare
+ * inne i meldingsteksten, så det må plukkes ut derfra.
+ *
+ * `email` TAS ALDRI UT. Det er det ene feltet HubSpot krever, og en
+ * innsending uten det ville blitt avvist uansett — da er en logglinje mer
+ * verdt enn et forsøk til. Tom mengde betyr «ikke prøv igjen».
+ */
+export function avvisteFelt(kropp: string): Set<string> {
+  if (!kropp.includes("FIELD_NOT_IN_FORM_DEFINITION")) return new Set();
+  const funnet = new Set<string>();
+  for (const treff of kropp.matchAll(/fields\.([a-zA-Z0-9_]+)/g)) {
+    if (treff[1] !== "email") funnet.add(treff[1]);
+  }
+  return funnet;
 }
 
 /**
@@ -178,37 +197,45 @@ export async function sendLeadTilHubspot(
     return;
   }
 
-  const post = (utenNettside: boolean) =>
+  const post = (utelat: ReadonlySet<string>) =>
     fetch(ENDEPUNKT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(byggInnsending(lead, hutk, basis, utenNettside)),
+      body: JSON.stringify(byggInnsending(lead, hutk, basis, utelat)),
       signal: AbortSignal.timeout(TIDSTAK_MS),
     });
 
   try {
-    let svar = await post(false);
+    let svar = await post(new Set());
 
     /*
-     * ETT FORSØK TIL UTEN `website`, lagt til 04.10.2026.
+     * ETT FORSØK TIL UTEN FELTET HUBSPOT IKKE KJENNER, lagt til 04.10.2026.
      *
-     * Feltet må finnes i HubSpot-skjemadefinisjonen for at innsendingen
-     * skal godtas; gjør det ikke det, svarer HubSpot 400 med
-     * `FIELD_NOT_IN_FORM_DEFINITION` og HELE leadet avvises. Feltet er lagt
-     * inn 03.10.2026, men det er en innstilling i et grensesnitt noen kan
-     * endre, og da skal ikke neste henvendelse forsvinne.
+     * Hvert felt må finnes i HubSpots egen skjemadefinisjon for at
+     * innsendingen skal godtas; gjør det ikke det, svarer HubSpot 400 med
+     * `FIELD_NOT_IN_FORM_DEFINITION` og HELE leadet avvises — også navn,
+     * e-post og telefon. Skjemadefinisjonen er en innstilling i et
+     * grensesnitt noen kan endre, og et lead skal aldri gå tapt fordi noen
+     * ryddet i den.
+     *
+     * DEN LESER HVILKET FELT DET GJELDER ut av HubSpots egen feilmelding
+     * («Error in \'fields.website\'») i stedet for å anta at det er
+     * `website`. Her sto `website` som en fast antakelse fram til
+     * 04.10.2026: da ville en avvisning av `nettside_kilde` ha kostet hele
+     * leadet, siden forsøk nummer to hadde fjernet feil felt.
      *
      * Reserven er smal med vilje: bare på den ene feilkoden, bare ett nytt
-     * forsøk, og bare når vi faktisk sendte feltet. Et generelt
-     * gjentakelsesforsøk ville skjult ekte feil.
+     * forsøk, aldri uten e-post — og bare når vi faktisk fant et feltnavn.
+     * Et generelt gjentakelsesforsøk ville skjult ekte feil.
      */
-    if (!svar.ok && svar.status === 400 && lead.nettside) {
+    if (!svar.ok && svar.status === 400) {
       const detaljer = await svar.text().catch(() => "");
-      if (detaljer.includes("FIELD_NOT_IN_FORM_DEFINITION")) {
+      const avvist = avvisteFelt(detaljer);
+      if (avvist.size > 0) {
         console.error(
-          `[hubspot] Feltet «website» finnes ikke i skjemadefinisjonen. Sender leadet fra ${lead.side} på nytt uten det.`,
+          `[hubspot] Feltene ${[...avvist].map((f) => `«${f}»`).join(", ")} finnes ikke i skjemadefinisjonen. Sender leadet fra ${lead.side} på nytt uten dem.`,
         );
-        svar = await post(true);
+        svar = await post(avvist);
       } else {
         console.error(
           `[hubspot] HubSpot svarte 400 på leadet fra ${lead.side}. Leadet er IKKE i CRM-et. ${detaljer}`,
