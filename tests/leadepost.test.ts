@@ -263,6 +263,7 @@ const kandidat = (endringer: Partial<Kandidat> = {}): Kandidat => ({
   avbrutt: "",
   moteBooket: "",
   dealstadier: [],
+  harSvart: false,
   ...endringer,
 });
 
@@ -312,6 +313,7 @@ test("alt som skal stoppe påminnelsen, stopper den", () => {
     { avbrutt: "true" },
     { lifecycle: "customer" },
     { moteBooket: "2026-10-05T12:00:00Z" },
+    { harSvart: true },
     ...STOPPSTADIER.map((s) => ({ dealstadier: [s] })),
   ];
   for (const g of grunner) {
@@ -331,6 +333,38 @@ test("stadiet nye leads havner i stopper ingenting", () => {
   assert.equal(
     skalHaEpost2(
       kandidat({ epost1Sendt: sendt, dealstadier: ["appointmentscheduled"] }),
+      na("2026-10-06T07:30:00Z"),
+    ),
+    true,
+  );
+});
+
+/**
+ * ET SVAR STOPPER PÅMINNELSEN. Har leadet skrevet tilbake, er samtalen i
+ * gang, og en automatisk «fikk du sett på presentasjonen?» er det eneste
+ * som kan ødelegge den.
+ */
+test("et svar i tråden stopper påminnelsen", () => {
+  const tid = na("2026-10-06T07:30:00Z");
+  assert.equal(
+    skalHaEpost2(kandidat({ epost1Sendt: sendt, harSvart: true }), tid),
+    false,
+  );
+  assert.equal(
+    skalHaEpost2(kandidat({ epost1Sendt: sendt, harSvart: false }), tid),
+    true,
+  );
+});
+
+/**
+ * ET USIKKERT NEI SKAL IKKE STOPPE NOE. Fikk vi ikke lest tråden, sender vi
+ * likevel. En forbigående feil hos Google skal ikke stilne hele
+ * oppfølgingen uten at noen merker det.
+ */
+test("fikk vi ikke lest tråden, sendes påminnelsen likevel", () => {
+  assert.equal(
+    skalHaEpost2(
+      kandidat({ epost1Sendt: sendt, harSvart: null }),
       na("2026-10-06T07:30:00Z"),
     ),
     true,

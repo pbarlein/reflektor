@@ -30,7 +30,9 @@ import { createSign, randomUUID } from "node:crypto";
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
 const SEND_URL =
   "https://gmail.googleapis.com/gmail/v1/users/me/messages/send";
-const SCOPE = "https://www.googleapis.com/auth/gmail.send";
+const TRAD_URL = "https://gmail.googleapis.com/gmail/v1/users/me/threads";
+const SEND_SCOPE = "https://www.googleapis.com/auth/gmail.send";
+const LES_SCOPE = "https://www.googleapis.com/auth/gmail.readonly";
 const TIDSTAK_MS = 10000;
 
 export function gmailAvsender(): string {
@@ -60,7 +62,7 @@ function base64url(b: Buffer | string): string {
  * `sub` ER DET VIKTIGE FELTET: det er brukeren tjenestekontoen opptrer som.
  * Uten den sender vi som tjenestekontoen selv, som ikke har noen innboks.
  */
-async function tjenestekontoNokkel(): Promise<string | null> {
+async function tjenestekontoNokkel(scope: string): Promise<string | null> {
   const rå = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
   if (!rå) return null;
 
@@ -82,7 +84,7 @@ async function tjenestekontoNokkel(): Promise<string | null> {
     JSON.stringify({
       iss: konto.client_email,
       sub: gmailAvsender(),
-      scope: SCOPE,
+      scope,
       aud: TOKEN_URL,
       iat: na,
       exp: na + 3600,
@@ -140,8 +142,19 @@ async function oauthNokkel(): Promise<string | null> {
   return ((await svar.json()) as { access_token?: string }).access_token ?? null;
 }
 
-async function tilgangsnokkel(): Promise<string | null> {
-  return (await tjenestekontoNokkel()) ?? (await oauthNokkel());
+/**
+ * Nøkkelen vi bruker, for det den skal brukes til.
+ *
+ * SCOPE ER BARE TJENESTEKONTOENS SAK. Ber vi om lesetilgang på en
+ * tjenestekonto en administrator ikke har gitt lesetilgang, svarer Google
+ * nei på HELE nøkkelen — og da stopper også sendingen. Derfor ber vi om
+ * lesetilgang kun når vi faktisk skal lese, aldri når vi skal sende.
+ *
+ * MED FORNYINGSNØKKEL AVGJØR NØKKELEN SELV hva den har lov til. Scope kan
+ * ikke sendes med i det kallet, så her er argumentet uten virkning.
+ */
+async function tilgangsnokkel(scope: string): Promise<string | null> {
+  return (await tjenestekontoNokkel(scope)) ?? (await oauthNokkel());
 }
 
 /**
@@ -253,7 +266,7 @@ export function byggMime(e: Epost, meldingsId: string): string {
 
 /** Sender. Kaster aldri — den logger og svarer null. */
 export async function sendGmail(e: Epost): Promise<Sendt | null> {
-  const nokkel = await tilgangsnokkel();
+  const nokkel = await tilgangsnokkel(SEND_SCOPE);
   if (!nokkel) {
     console.error("[gmail] Ingen tilgangsnøkkel. E-posten ble IKKE sendt.");
     return null;
@@ -286,6 +299,102 @@ export async function sendGmail(e: Epost): Promise<Sendt | null> {
     return { tradId: data.threadId ?? "", meldingsId };
   } catch (feil) {
     console.error("[gmail] Kallet feilet.", feil);
+    return null;
+  }
+}
+
+/* ────────────────────────── HAR LEADET SVART? ───────────────────────── */
+
+/**
+ * Plukker adressen ut av en `From`-header.
+ *
+ * Headeren ser ut som «Pål Barlein <pal@reflektor.no>», men kan også være
+ * bare adressen, og navnet kan være kodet. Vi trenger adressen og
+ * ingenting annet.
+ */
+export function adresseFra(hode: string): string {
+  const vinkel = hode.match(/<([^>]+)>/);
+  return (vinkel ? vinkel[1]! : hode).trim().toLowerCase();
+}
+
+type Tradmelding = {
+  internalDate?: string;
+  payload?: { headers?: { name?: string; value?: string }[] };
+};
+
+/**
+ * Har noen andre enn Pål skrevet i tråden etter at e-post 1 gikk ut?
+ *
+ * `true` = ja, `false` = nei, `null` = vi fikk ikke lest tråden.
+ *
+ * NULL BETYR «SEND LIKEVEL». Et nei vi ikke er sikre på, skal ikke stoppe
+ * påminnelsen: da hadde en forbigående feil hos Google stilnet hele
+ * oppfølgingen uten at noen merket det. Verste utfall av å sende er at en
+ * som alt har svart får én e-post for mye. Verste utfall av å ikke sende er
+ * at vi mister leadet.
+ *
+ * VI SAMMENLIGNER MOT AVSENDERADRESSEN, ikke mot leadets. En videresending,
+ * en kollega på kopi eller en autosvar-robot er også et tegn på at noen har
+ * tatt tak i tråden — og da skal ikke maskinen mase.
+ *
+ * TIDSPUNKTET ER MED FORDI GMAIL TRÅDER PÅ EMNE. Har Pål snakket med samme
+ * adresse før, kan eldre meldinger ligge i samme tråd. Bare det som kom
+ * ETTER e-post 1 teller som svar.
+ */
+export async function harSvarITrad(
+  tradId: string,
+  etter: Date,
+): Promise<boolean | null> {
+  if (!tradId) return null;
+
+  const nokkel = await tilgangsnokkel(`${SEND_SCOPE} ${LES_SCOPE}`);
+  if (!nokkel) {
+    console.error("[gmail] Ingen tilgangsnøkkel. Fikk ikke sjekket tråden.");
+    return null;
+  }
+
+  try {
+    const svar = await fetch(
+      `${TRAD_URL}/${encodeURIComponent(tradId)}?format=metadata&metadataHeaders=From`,
+      {
+        headers: { Authorization: `Bearer ${nokkel}` },
+        signal: AbortSignal.timeout(TIDSTAK_MS),
+      },
+    );
+
+    if (!svar.ok) {
+      /*
+        403 betyr nesten alltid at nøkkelen mangler gmail.readonly. Vi sier
+        det rett ut i loggen, for det er den ene feilen som ikke retter seg
+        selv.
+      */
+      console.error(
+        `[gmail] Fikk ikke lest tråden (${svar.status})${svar.status === 403 ? " — mangler nøkkelen gmail.readonly?" : ""}. ${await svar.text().catch(() => "")}`,
+      );
+      return null;
+    }
+
+    const data = (await svar.json()) as { messages?: Tradmelding[] };
+    const meldinger = data.messages ?? [];
+    const oss = gmailAvsender().trim().toLowerCase();
+    const grense = etter.getTime();
+
+    return meldinger.some((m) => {
+      const fra = m.payload?.headers?.find(
+        (h) => h.name?.toLowerCase() === "from",
+      )?.value;
+      if (!fra) return false;
+      if (adresseFra(fra) === oss) return false;
+
+      /*
+        Mangler klokkeslettet, regner vi meldingen som et svar. Den er ikke
+        vår, og den ligger i tråden — det er nok.
+      */
+      const tid = Number(m.internalDate);
+      return Number.isFinite(tid) ? tid > grense : true;
+    });
+  } catch (feil) {
+    console.error("[gmail] Kallet for å lese tråden feilet.", feil);
     return null;
   }
 }

@@ -125,6 +125,13 @@ export type Kandidat = {
   moteBooket: string;
   /** Stadiene på tilknyttede avtaler. Tom liste hvis ingen. */
   dealstadier: string[];
+  /**
+   * Har noen andre enn Pål skrevet i Gmail-tråden etter e-post 1?
+   *
+   * `null` betyr at vi ikke fikk lest tråden. Da sender vi likevel — se
+   * lib/gmail.ts for hvorfor et usikkert nei ikke skal stoppe noe.
+   */
+  harSvart: boolean | null;
 };
 
 /**
@@ -153,6 +160,10 @@ export function skalHaEpost1(k: Kandidat): boolean {
 /**
  * Påminnelsen, med alle forbeholdene.
  *
+ * ET SVAR STOPPER DEN. Har leadet — eller hvem som helst andre enn Pål —
+ * skrevet i tråden etter e-post 1, er samtalen i gang, og en automatisk
+ * «fikk du sett på presentasjonen?» er da det eneste som kan ødelegge den.
+ *
  * VINDUET ER TRE TIMER, fra 09:00 til 12:00. Har jobben stått stille over
  * natten, skal den ikke ta igjen det tapte ved å sende en «god morgen»-
  * påminnelse klokka fire om ettermiddagen. Da er det bedre å la være.
@@ -163,6 +174,7 @@ export function skalHaEpost1(k: Kandidat): boolean {
 export function skalHaEpost2(k: Kandidat, na: Date): boolean {
   if (!k.epost1Sendt || k.epost2Sendt) return false;
   if (k.avbrutt === "true") return false;
+  if (k.harSvart === true) return false;
   if (k.lifecycle.toLowerCase() === "customer") return false;
   if (k.dealstadier.some((s) => STOPPSTADIER.includes(s))) return false;
 

@@ -1,4 +1,4 @@
-import { sendGmail, harGmail } from "./gmail";
+import { harSvarITrad, sendGmail, harGmail } from "./gmail";
 import {
   dealstadier,
   EPOST_FELT,
@@ -56,6 +56,7 @@ export async function sendEpost1(k: Leadkontakt): Promise<Utfall> {
       avbrutt: k.avbrutt,
       moteBooket: k.moteBooket,
       dealstadier: [],
+      harSvart: null,
     })
   ) {
     return "hoppet-over";
@@ -99,6 +100,24 @@ export async function sendEpost1(k: Leadkontakt): Promise<Utfall> {
 
 export async function sendEpost2(k: Leadkontakt, na: Date): Promise<Utfall> {
   const stadier = await dealstadier(k.id);
+
+  /*
+    SVARSJEKKEN GJØRES FØR ALT ANNET SOM KOSTER, men etter at vi vet at
+    kontakten i det hele tatt er en kandidat. Vi leser tråden fra
+    tidspunktet e-post 1 gikk ut: alt som er eldre, er en samtale Pål
+    hadde med den samme adressen før dette leadet kom inn.
+  */
+  const epost1Tid = new Date(k.epost1Sendt);
+  const harSvart = Number.isNaN(epost1Tid.getTime())
+    ? null
+    : await harSvarITrad(k.tradId, epost1Tid);
+
+  if (harSvart === true) {
+    console.info(
+      `[leadepost] ${k.epost} har svart i tråden. Påminnelsen sendes ikke.`,
+    );
+  }
+
   if (
     !skalHaEpost2(
       {
@@ -109,6 +128,7 @@ export async function sendEpost2(k: Leadkontakt, na: Date): Promise<Utfall> {
         avbrutt: k.avbrutt,
         moteBooket: k.moteBooket,
         dealstadier: stadier,
+        harSvart,
       },
       na,
     )

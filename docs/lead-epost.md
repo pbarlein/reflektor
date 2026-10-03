@@ -91,11 +91,8 @@ sending og lagrer den. Skulle Gmail overskrive den, er `threadId` fortsatt
 riktig, og tråden holder i Gmail — men `In-Reply-To` kan peke på noe som
 ikke finnes hos mottakere utenfor Gmail.
 
-**Sjekken «har leadet svart?» er ikke bygget.** Den krever
-`gmail.readonly` eller `gmail.metadata` for å lese tråden. Med bare
-`gmail.send` finnes det ingen måte å vite det. Konsekvensen: svarer noen på
-e-post 1 uten å booke møte og uten at en avtale flyttes, får de også
-påminnelsen. Vil Pål ha den sjekken, må tilgangen utvides.
+~~**Sjekken «har leadet svart?» er ikke bygget.**~~ **Bygget 04.10.2026,
+etter at fornyingsnøkkelen fikk `gmail.readonly`.** Se eget avsnitt under.
 
 **HubSpot-tokenet trenger mer.** `crm.objects.deals.read` for
 avtalestadiene, og tilgang til å logge aktivitet på kontakten. Mangler de,
@@ -131,3 +128,30 @@ Brødteksten var riktig fra før: begge MIME-delene sier `charset=UTF-8` og
 RFC 2045 krever. Signaturen har ingen `mailto:`-lenke — adressen og
 telefonnummeret er ren tekst, og bare Canva-lenken og `/book` er lenker.
 Verifisert med en uavhengig RFC 2047-dekoder, ikke bare med vår egen.
+
+## Svarsjekken, bygget 04.10.2026
+
+Før påminnelsen går ut, leses Gmail-tråden. Har noen andre enn
+avsenderadressen skrevet i den etter at e-post 1 gikk ut, sendes
+påminnelsen ikke.
+
+**Hvem som helst annen teller.** En kollega på kopi, en videresending eller
+et autosvar er også et tegn på at tråden lever. Da skal ikke maskinen mase.
+
+**Tidspunktet er med fordi Gmail tråder på emne.** Har Pål snakket med
+samme adresse før, kan eldre meldinger ligge i samme tråd. Bare det som kom
+etter e-post 1 teller som svar.
+
+**Et usikkert nei stopper ingenting.** Fikk vi ikke lest tråden — manglende
+tilgang, feil hos Google, nettverk — sendes påminnelsen likevel, og feilen
+logges. Verste utfall av å sende er at en som alt har svart får én e-post
+for mye. Verste utfall av å ikke sende er at vi mister leadet. En
+forbigående feil skal ikke stilne hele oppfølgingen uten at noen merker
+det.
+
+**Lesetilgang ber vi bare om når vi skal lese.** Med tjenestekonto svarer
+Google nei på hele nøkkelen hvis en administrator ikke har gitt
+`gmail.readonly` — og da hadde også sendingen stoppet. Derfor er de to
+kallene skilt: sending ber om `gmail.send` alene.
+
+Kallet henter bare `From`-headeren, ikke innholdet i meldingene.
