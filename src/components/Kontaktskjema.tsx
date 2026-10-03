@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Knapp } from "./Knapp";
 import { site, tilbud } from "@/content/site";
@@ -56,31 +56,58 @@ const feltMedFeil = `${felt.replace("border-kant", "border-aksent")}`;
 type Feilfelt = "telefon" | "nettside";
 
 export function Kontaktskjema({ side }: { side: string }) {
-  // Tidsstempel settes på DOM-noden. Verdien leses kun ved innsending, så en
-  // render for å lagre den ville vært bortkastet.
-  const lastet = useRef<HTMLInputElement>(null);
-  const kilde = useRef<HTMLInputElement>(null);
+  /*
+    DE SKJULTE FELTENE ER REACT-TILSTAND, IKKE VERDIER SATT PÅ DOM-NODEN.
+    Rettet 04.10.2026, etter at kilden sluttet å komme fram til HubSpot.
+
+    FEILEN: begge verdiene ble satt imperativt i en effekt
+    (`ref.current.value = …`) på et felt som ellers bare hadde
+    `defaultValue`. Det virket helt til skjemaet fikk en «Sender …»-tilstand
+    på knappen. Den tilstanden utløser en ny render midt i innsendingen, og
+    React setter da verdien på et ukontrollert felt tilbake til
+    `defaultValue` — den vet ikke om en verdi den ikke selv har skrevet.
+
+    MÅLT, IKKE RESONNERT: rett før klikket sto riktig kilde i feltet; i
+    `FormData` ved innsending sto `kilde=""` og `lastet="0"`, på samme
+    DOM-node. Fire innsendinger i HubSpot bekrefter samme skille — de to
+    etter at knappen fikk tilstand mangler kilden, de to før har den.
+
+    `side` ble sendt riktig hele veien. Det er nettopp forskjellen: den har
+    alltid vært et `value`-felt React selv styrer. Nå er alle tre like.
+  */
+  const [skjult, settSkjult] = useState({ lastet: "0", kilde: "" });
   const [feil, settFeil] = useState<Partial<Record<Feilfelt, string>>>({});
   const [sender, settSender] = useState(false);
 
   useEffect(() => {
-    if (lastet.current) lastet.current.value = String(Date.now());
-    // Kilden fra første (eller siste merkede) besøk, se lib/kilde.ts.
-    // Mangler den, brukes dette besøket.
-    if (kilde.current) {
+    /*
+      VERDIENE SETTES I EN TIDSAVBRUDD-TILBAKEKALLING og ikke rett i
+      effekten. React-kompilatoren tillater ikke `setState` i selve
+      effektkroppen (`react-hooks/set-state-in-effect`), og begge verdiene
+      må uansett hentes i nettleseren: `localStorage` finnes ikke på
+      serveren, og et tidsstempel fra serveren ville ikke sagt noe om når
+      siden ble vist.
+    */
+    const id = setTimeout(() => {
+      // Kilden fra første (eller siste merkede) besøk, se lib/kilde.ts.
+      // Mangler den, brukes dette besøket.
       let verdi: string | null = null;
       try {
         verdi = localStorage.getItem(KILDE_NOKKEL);
       } catch {}
-      kilde.current.value =
-        verdi ??
-        byggKilde(
-          location.search,
-          document.referrer,
-          location.hostname,
-          location.pathname,
-        );
-    }
+      settSkjult({
+        lastet: String(Date.now()),
+        kilde:
+          verdi ??
+          byggKilde(
+            location.search,
+            document.referrer,
+            location.hostname,
+            location.pathname,
+          ),
+      });
+    }, 0);
+    return () => clearTimeout(id);
   }, []);
 
   /*
@@ -189,9 +216,9 @@ export function Kontaktskjema({ side }: { side: string }) {
       */
       data-hs-do-not-collect="true"
     >
-      <input type="hidden" name="lastet" ref={lastet} defaultValue="0" />
-      <input type="hidden" name="side" value={side} />
-      <input type="hidden" name="kilde" ref={kilde} defaultValue="" />
+      <input type="hidden" name="lastet" value={skjult.lastet} readOnly />
+      <input type="hidden" name="side" value={side} readOnly />
+      <input type="hidden" name="kilde" value={skjult.kilde} readOnly />
 
       {/* Honningkrukke: skjult for mennesker, ikke for boter. Ingen CAPTCHA. */}
       <div className="absolute left-[-9999px]" aria-hidden="true">

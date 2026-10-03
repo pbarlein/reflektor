@@ -81,36 +81,40 @@ Ferdigdefinisjonen i 8.8 punkt 4 krever hele kjeden testet ende-til-ende:
 Hard reload mellom hver test – GTM kan servere gammel versjon i opptil et
 kvarter etter publisering.
 
-## Åpent punkt: `nettside_kilde` skrives ikke lenger i HubSpot (04.10.2026)
+## Kilden sluttet å komme fram til HubSpot — og hvorfor (04.10.2026)
 
-Målt på fire ekte innsendinger samme døgn:
+**Feilen:** `nettside_kilde` sto tomt på alle kontakter opprettet etter at
+skjemaet ble skrevet om. Feltet er det eneste i CRM-et som sier hvilken
+annonse eller kanal en henvendelse kom fra.
 
-| Tid | Hvem | `website` sendt | `nettside_kilde` lagret |
-|---|---|---|---|
-| 07:06 | ekte lead | nei | **ja** |
-| 08:52 | testinnsending | nei | **ja** |
-| 09:12 | testinnsending | ja | nei |
-| 09:20 | testinnsending (live) | ja | nei |
+**Årsaken var ikke HubSpot.** De to skjulte feltene `lastet` og `kilde` fikk
+verdiene sine satt direkte på DOM-noden i en effekt, på felt som ellers bare
+hadde `defaultValue`. Det virket i ukevis — helt til knappen fikk en
+«Sender …»-tilstand. Den tilstanden utløser en ny render midt i
+innsendingen, og React setter da et ukontrollert felt tilbake til
+`defaultValue`. En verdi React ikke selv har skrevet, kjenner den ikke.
 
-De to siste er kjørt etter at `website` ble lagt i nyttelasten, og de er de
-to eneste som mangler kilden. Innsendingene ble godtatt: HubSpot talte dem
-som konverteringer, `message` og `website` står på kontakten, og ingen
-feilmelding kom i Vercel-loggen.
+Målt på live: rett før klikket sto riktig kilde i feltet; i `FormData` ved
+innsending sto `kilde=""` og `lastet="0"` — på samme DOM-node.
+`side` kom fram hele veien, og det er nettopp forskjellen: den har alltid
+vært et `value`-felt React styrer selv.
 
-**Det er ikke koden.** Nyttelasten er dumpet for nøyaktig dette leadet og
-inneholder `nettside_kilde` med riktig verdi. Enhetstestene dekker det.
-Samme streng, fra samme felt, ble skrevet uten problemer kl. 08:52.
+**To ting var borte samtidig, og begge var stille.** Kilden i CRM-et, og
+tidsstempelet bot-vakten bruker (innsending under to sekunder etter lasting).
+Ingenting feilet synlig: e-posten kom fram, leadet kom fram, HubSpot svarte
+200. Varselet til Pål viser ikke kilden, så den eneste indikasjonen fantes i
+CRM-et.
 
-**Det som ikke kan leses herfra** er HubSpots egen skjemadefinisjon og
-svarkroppen fra endepunktet. Begge krever enten innlogget HubSpot eller en
-ny testinnsending. Derfor står det som et åpent punkt til Cowork: se på
-feltene i skjemaet «reflektor.no – kontaktskjema» og på hva innsendingene
-kl. 09:12 og 09:20 faktisk inneholdt.
+**Rettingen:** alle tre skjulte felt er nå React-tilstand og rendres med
+`value`. `tests/skjultefelt.test.ts` feiler hvis noen går tilbake til
+`defaultValue` eller setter en verdi på DOM-noden igjen.
 
-**Leadet går ikke tapt i mellomtiden.** Kilden står i e-posten til Pål, som
-er hovedkanalen, og den er uendret. Det er bare feltet i CRM-et som er tomt.
+**Hva som ble lett feil underveis:** kildefeltet forsvant i samme utrulling
+som `website` ble lagt til i HubSpot-nyttelasten, og korrelasjonen pekte
+først på HubSpots skjemadefinisjon. Den var uskyldig. Lærdommen er at
+HubSpot lagrer det den får — står feltet tomt der, ble det aldri sendt.
 
-Reserven i `lib/hubspot.ts` er samtidig gjort smartere: avviser HubSpot et
+Reserven i `lib/hubspot.ts` ble samtidig gjort smartere: avviser HubSpot et
 felt, leses feltnavnet ut av feilmeldingen og nøyaktig det feltet fjernes i
 forsøk nummer to. Før antok den at det alltid var `website`, og da ville en
 avvisning av et annet felt kostet hele leadet.

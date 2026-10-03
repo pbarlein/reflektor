@@ -351,3 +351,73 @@ test("en 400 uten feltnavn gir ingen nye forsøk", async () => {
 
   assert.equal(antall, 1);
 });
+
+/**
+ * KILDEN SKAL ALLTID MED TIL HUBSPOT, bestilt 04.10.2026.
+ *
+ * `nettside_kilde` er det eneste feltet i CRM-et som sier hvilken annonse
+ * eller kanal en henvendelse kom fra. Den sluttet å komme fram da skjemaet
+ * fikk en «Sender …»-tilstand — se Kontaktskjema.tsx for hva som faktisk
+ * skjedde — og feilen var usynlig fordi varselet til Pål ikke viser kilden.
+ * Denne testen dekker serversiden av veien.
+ */
+test("nettside_kilde er med både med og uten website", () => {
+  const med = byggInnsending(lead(), undefined, BASIS);
+  assert.equal(
+    med.fields.find((f) => f.name === "nettside_kilde")?.value,
+    lead().kilde,
+  );
+
+  const uten = byggInnsending(
+    lead(),
+    undefined,
+    BASIS,
+    new Set(["website"]),
+  );
+  assert.equal(
+    uten.fields.find((f) => f.name === "nettside_kilde")?.value,
+    lead().kilde,
+  );
+  assert.equal(uten.fields.find((f) => f.name === "website"), undefined);
+});
+
+test("ruta sender kilden fra skjemafeltet videre til HubSpot", async () => {
+  const opprinnelig = globalThis.fetch;
+  let sendt: { name: string; value: string }[] = [];
+
+  try {
+    globalThis.fetch = async (_inn, init) => {
+      const k = JSON.parse(String(init?.body)) as {
+        fields: { name: string; value: string }[];
+      };
+      if (k.fields) sendt = k.fields;
+      return new Response("", { status: 200 });
+    };
+
+    const { POST } = await import("@/app/api/skjema/route");
+
+    const kropp = new FormData();
+    kropp.set("navn", "Marisol");
+    kropp.set("epost", "marisol@example.no");
+    kropp.set("telefon", "47605070");
+    kropp.set("side", "/kontaktoss");
+    kropp.set("kilde", "Instagram (lenke i bio) | source=ig | landet på: /");
+
+    await POST(
+      new Request("https://www.reflektor.no/api/skjema", {
+        method: "POST",
+        body: kropp,
+      }) as never,
+    );
+    // after() kjører utenfor forespørselskonteksten i test: ruta faller
+    // tilbake til et direkte kall, og det er ferdig når POST er det.
+    await new Promise((r) => setTimeout(r, 50));
+  } finally {
+    globalThis.fetch = opprinnelig;
+  }
+
+  assert.equal(
+    sendt.find((f) => f.name === "nettside_kilde")?.value,
+    "Instagram (lenke i bio) | source=ig | landet på: /",
+  );
+});
