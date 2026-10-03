@@ -69,10 +69,13 @@ test("lesFraCookiestreng finner vår cookie blant andre", () => {
 });
 
 test("lesFraCookiestreng tåler prosentkoding", () => {
-  assert.deepEqual(lesFraCookiestreng(`${COOKIE_NAVN}=${encodeURIComponent("1.01")}`), {
-    analyse: false,
-    markedsforing: true,
-  });
+  assert.deepEqual(
+    lesFraCookiestreng(`${COOKIE_NAVN}=${encodeURIComponent("1.01")}`),
+    {
+      analyse: false,
+      markedsforing: true,
+    },
+  );
 });
 
 test("ingen samtykke gir nektet på alle signaler unntatt security", () => {
@@ -121,7 +124,7 @@ test("standardSkript nevner alle signalene og setter dem nektet som utgangspunkt
   for (const s of Object.keys(tilSignaler(INGEN_SAMTYKKE))) {
     assert.ok(k.includes(s), `${s} mangler i skriptet`);
   }
-  assert.ok(k.includes('"consent","default"'), "må sette default, ikke update");
+  assert.ok(k.includes('"consent","default"'), "må sette default");
   assert.ok(k.includes(COOKIE_NAVN), "må lese vår egen cookie");
   assert.ok(k.includes("ads_data_redaction"), "Googles anbefaling mangler");
   assert.ok(k.includes("url_passthrough"), "Googles anbefaling mangler");
@@ -185,7 +188,9 @@ test("gjenganger med fullt samtykke får hendelsen med granted", () => {
     return dataLayer;
   };
 
-  const full = kjor(`${COOKIE_NAVN}=${serialiser({ analyse: true, markedsforing: true })}`);
+  const full = kjor(
+    `${COOKIE_NAVN}=${serialiser({ analyse: true, markedsforing: true })}`,
+  );
   const hendelse = full.find((x) => x.event === "samtykke_oppdatert");
   assert.ok(hendelse, "gjengangeren må få hendelsen");
   assert.equal(hendelse.samtykke_analyse, "granted");
@@ -307,12 +312,16 @@ test("oppstartsskriptet melder fra til Clarity, også uten svar", () => {
   ]);
 
   assert.deepEqual(
-    kjor(`${COOKIE_NAVN}=${serialiser({ analyse: true, markedsforing: true })}`),
+    kjor(
+      `${COOKIE_NAVN}=${serialiser({ analyse: true, markedsforing: true })}`,
+    ),
     [["consentv2", { ad_Storage: "granted", analytics_Storage: "granted" }]],
   );
 
   assert.deepEqual(
-    kjor(`${COOKIE_NAVN}=${serialiser({ analyse: true, markedsforing: false })}`),
+    kjor(
+      `${COOKIE_NAVN}=${serialiser({ analyse: true, markedsforing: false })}`,
+    ),
     [["consentv2", { ad_Storage: "denied", analytics_Storage: "granted" }]],
   );
 });
@@ -343,5 +352,89 @@ test("Clarity-kallet kommer etter consent default", () => {
   assert.ok(
     k.includes("ad_Storage") && k.includes("analytics_Storage"),
     "nøklene skal ha stor S — en liten s gir et kall Clarity ignorerer",
+  );
+});
+
+/**
+ * SAMTYKKET MÅ OVERLEVE TIL NESTE SIDE, og det gjorde det ikke.
+ *
+ * Målt på live 03.10.2026: etter «Godta alle» gikk første sidevisning med
+ * `gcs=G111`, og alle senere med `G100` — også `/takk`, der konverteringen
+ * telles. GA4 viste null `generate_lead` og null `takk_page_view` for 02.10.
+ *
+ * GTM-containeren har sin egen «Consent Mode - Default»-tagg som kjører
+ * inne i `gtm.js` og setter alt til nektet igjen. En `default` kan
+ * overstyres av en annen `default`; en `update` kan den ikke.
+ *
+ * Testen ser på hva som faktisk havner i dataLayer, ikke på hva strengen
+ * inneholder — det er den eneste måten å fange at rekkefølgen er riktig.
+ */
+test("lagret samtykke sendes som BÅDE default og update", () => {
+  const kjor = (cookie: string) => {
+    const dataLayer: unknown[] = [];
+    const doc = { cookie, documentElement: { setAttribute() {} } };
+    const vindu: Record<string, unknown> = { dataLayer };
+    new Function("window", "document", standardSkript())(vindu, doc);
+    return dataLayer
+      .filter(
+        (x): x is IArguments => typeof x === "object" && x !== null && "0" in x,
+      )
+      .map((x) => [x[0], x[1], x[2]]);
+  };
+
+  const full = kjor(
+    `${COOKIE_NAVN}=${serialiser({ analyse: true, markedsforing: true })}`,
+  );
+  const defaults = full.filter((k) => k[0] === "consent" && k[1] === "default");
+  const updates = full.filter((k) => k[0] === "consent" && k[1] === "update");
+
+  assert.equal(defaults.length, 1, "nøyaktig én default");
+  assert.equal(updates.length, 1, "nøyaktig én update");
+  assert.equal(
+    full.findIndex((k) => k[1] === "default") <
+      full.findIndex((k) => k[1] === "update"),
+    true,
+    "default må komme før update",
+  );
+  for (const sett of [defaults[0][2], updates[0][2]]) {
+    const s = sett as Record<string, string>;
+    assert.equal(s.analytics_storage, "granted");
+    assert.equal(s.ad_storage, "granted");
+    assert.equal(s.ad_user_data, "granted");
+    assert.equal(s.ad_personalization, "granted");
+  }
+});
+
+test("bare nødvendige: update sendes med denied på markedsføring", () => {
+  const dataLayer: unknown[] = [];
+  const doc = {
+    cookie: `${COOKIE_NAVN}=${serialiser({ analyse: false, markedsforing: false })}`,
+    documentElement: { setAttribute() {} },
+  };
+  new Function("window", "document", standardSkript())({ dataLayer }, doc);
+  const update = dataLayer
+    .filter(
+      (x): x is IArguments => typeof x === "object" && x !== null && "0" in x,
+    )
+    .find((x) => x[0] === "consent" && x[1] === "update");
+  assert.ok(update, "den som har svart nei skal også få en update");
+  const s = update[2] as Record<string, string>;
+  assert.equal(s.analytics_storage, "denied");
+  assert.equal(s.ad_storage, "denied");
+});
+
+test("ingen cookie gir ingen update", () => {
+  const dataLayer: unknown[] = [];
+  const doc = { cookie: "", documentElement: { setAttribute() {} } };
+  new Function("window", "document", standardSkript())({ dataLayer }, doc);
+  const update = dataLayer
+    .filter(
+      (x): x is IArguments => typeof x === "object" && x !== null && "0" in x,
+    )
+    .find((x) => x[0] === "consent" && x[1] === "update");
+  assert.equal(
+    update,
+    undefined,
+    "uten svar er tilstanden nektet fra default — en update ville sagt at noen har svart nei",
   );
 });

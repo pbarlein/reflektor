@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+
 import { Knapp } from "./Knapp";
-import { useEffect, useRef } from "react";
 import { site, tilbud } from "@/content/site";
 import { KILDE_NOKKEL, byggKilde } from "@/lib/kilde";
+import { normaliserMobil, normaliserNettside } from "@/lib/kontaktfelt";
 
 /**
  * Kontaktskjema — designet fra evidensen, ikke fra briefens fire felt.
@@ -26,6 +28,21 @@ import { KILDE_NOKKEL, byggKilde } from "@/lib/kilde";
  *
  * Vanlig POST til /api/skjema, ikke serverhandling: det gir ekte sidelasting
  * på /takk, som hele målingen henger på. Virker også uten JavaScript.
+ *
+ * ENDRET 04.10.2026, bestilt av Pål:
+ *
+ * MOBILNUMMER ER PÅKREVD. Han ringer leads samme dag, og et lead uten
+ * nummer er et lead som må vente på en e-post. Feltet flyttet samtidig opp
+ * foran e-posten, fordi rekkefølgen i skjemaet er den samme som rekkefølgen
+ * i varselet han får.
+ *
+ * NETTSIDE ER NYTT OG VALGFRITT. Den er det første han ser på før han
+ * ringer. Står feltet tomt, utledes den av e-postdomenet når det ikke er en
+ * gratisadresse — se lib/kontaktfelt.ts.
+ *
+ * INGEN BOOKINGKNAPP HER. Kalenderen står på /takk, rett etter innsending.
+ * To handlinger ved siden av hverandre deler oppmerksomheten, og skjemaet er
+ * den ene siden faktisk måles på.
  */
 
 const felt =
@@ -33,11 +50,19 @@ const felt =
   "text-blekk transition-colors placeholder:text-blekk-svak " +
   "focus:border-aksent focus:outline-none";
 
+const feltMedFeil = `${felt.replace("border-kant", "border-aksent")}`;
+
+/** Feltene som valideres i nettleseren utover det HTML-en gjør selv. */
+type Feilfelt = "telefon" | "nettside";
+
 export function Kontaktskjema({ side }: { side: string }) {
   // Tidsstempel settes på DOM-noden. Verdien leses kun ved innsending, så en
   // render for å lagre den ville vært bortkastet.
   const lastet = useRef<HTMLInputElement>(null);
   const kilde = useRef<HTMLInputElement>(null);
+  const [feil, settFeil] = useState<Partial<Record<Feilfelt, string>>>({});
+  const [sender, settSender] = useState(false);
+
   useEffect(() => {
     if (lastet.current) lastet.current.value = String(Date.now());
     // Kilden fra første (eller siste merkede) besøk, se lib/kilde.ts.
@@ -49,14 +74,104 @@ export function Kontaktskjema({ side }: { side: string }) {
       } catch {}
       kilde.current.value =
         verdi ??
-        byggKilde(location.search, document.referrer, location.hostname, location.pathname);
+        byggKilde(
+          location.search,
+          document.referrer,
+          location.hostname,
+          location.pathname,
+        );
     }
   }, []);
+
+  /*
+    VALIDERINGEN SKJER VED INNSENDING, ikke ved hvert tastetrykk.
+
+    En feilmelding som dukker opp mens man skriver det tredje sifferet i et
+    telefonnummer er en feilmelding om at man ikke er ferdig. Baymards
+    testing er entydig på at det oppleves som at skjemaet kjefter.
+
+    Serveren validerer det samme uansett — se api/skjema/route.ts. Dette er
+    til for å slippe en rundtur for en skrivefeil, ikke et vern.
+  */
+  function vedInnsending(e: React.FormEvent<HTMLFormElement>) {
+    const skjema = e.currentTarget;
+    const nye: Partial<Record<Feilfelt, string>> = {};
+
+    const tlf = (skjema.elements.namedItem("telefon") as HTMLInputElement)
+      ?.value;
+    const m = normaliserMobil(tlf ?? "");
+    if (!m.ok) nye.telefon = m.feil;
+
+    const nett = (skjema.elements.namedItem("nettside") as HTMLInputElement)
+      ?.value;
+    if (nett?.trim()) {
+      const n = normaliserNettside(nett);
+      if (!n.ok) nye.nettside = n.feil;
+    }
+
+    settFeil(nye);
+    if (Object.keys(nye).length > 0) {
+      e.preventDefault();
+      const forste = skjema.elements.namedItem(
+        Object.keys(nye)[0],
+      ) as HTMLInputElement | null;
+      forste?.focus();
+      return;
+    }
+
+    /*
+      NAVN, E-POST OG BEDRIFT LEGGES I `sessionStorage` FOR KALENDEREN.
+
+      /takk viser HubSpot-kalenderen rett etter innsending, og den kan
+      forhåndsutfylles. Da slipper den som nettopp skrev navnet sitt å
+      skrive det på nytt.
+
+      IKKE I URL-EN. Adressen til /takk går til GA4, GTM og Clarity som
+      `page_location`, den havner i nettleserhistorikken og i
+      referrer-headeren til alt siden laster. `sessionStorage` er bundet til
+      fanen, leses ikke av sporingen, og nøkkelen slettes av kalenderen med
+      én gang verdien er brukt.
+
+      Feiler lagringen — privat modus, blokkert lagring — skjer ingenting.
+      Kalenderen vises som før, bare uten ferdig utfylte felt.
+    */
+    try {
+      const les = (n: string) =>
+        (skjema.elements.namedItem(n) as HTMLInputElement)?.value?.trim() ?? "";
+      const ord = les("navn").split(/\s+/).filter(Boolean);
+      sessionStorage.setItem(
+        "rfl_lead",
+        JSON.stringify({
+          fornavn: ord[0] ?? "",
+          etternavn: ord.slice(1).join(" "),
+          epost: les("epost"),
+          bedrift: les("bedrift"),
+        }),
+      );
+    } catch {}
+
+    /*
+      KNAPPEN LÅSES, MEN SKJEMAET SENDES SOM VANLIG. `disabled` settes etter
+      at nettleseren har begynt innsendingen; settes den synkront her, ville
+      et deaktivert felt eller en deaktivert knapp kunne falt ut av
+      POST-dataene i enkelte nettlesere.
+    */
+    settSender(true);
+  }
+
+  const feilmelding = (navn: Feilfelt) =>
+    feil[navn] ? (
+      <p id={`${navn}-feil`} role="alert" className="text-sm text-aksent">
+        {feil[navn]}
+      </p>
+    ) : null;
 
   return (
     <form
       method="post"
       action="/api/skjema"
+      onSubmit={vedInnsending}
+      noValidate={false}
       className="grid gap-5"
       /*
         HOLDER HUBSPOTS «COLLECTED FORMS» UNNA. Lagt til 02.10.2026.
@@ -81,7 +196,12 @@ export function Kontaktskjema({ side }: { side: string }) {
       {/* Honningkrukke: skjult for mennesker, ikke for boter. Ingen CAPTCHA. */}
       <div className="absolute left-[-9999px]" aria-hidden="true">
         <label htmlFor="firmanavn">Firmanavn</label>
-        <input id="firmanavn" name="firmanavn" tabIndex={-1} autoComplete="off" />
+        <input
+          id="firmanavn"
+          name="firmanavn"
+          tabIndex={-1}
+          autoComplete="off"
+        />
       </div>
 
       <div className="grid gap-2">
@@ -95,6 +215,39 @@ export function Kontaktskjema({ side }: { side: string }) {
           autoComplete="name"
           className={felt}
         />
+      </div>
+
+      <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
+        <div className="grid gap-2">
+          <label htmlFor="bedrift" className="text-sm font-medium">
+            Bedrift <span className="text-blekk-dempet">(påkrevd)</span>
+          </label>
+          <input
+            id="bedrift"
+            name="bedrift"
+            required
+            autoComplete="organization"
+            className={felt}
+          />
+        </div>
+
+        <div className="grid gap-2">
+          <label htmlFor="telefon" className="text-sm font-medium">
+            Mobilnummer <span className="text-blekk-dempet">(påkrevd)</span>
+          </label>
+          <input
+            id="telefon"
+            name="telefon"
+            type="tel"
+            required
+            inputMode="tel"
+            autoComplete="tel"
+            aria-invalid={feil.telefon ? true : undefined}
+            aria-describedby={feil.telefon ? "telefon-feil" : undefined}
+            className={feil.telefon ? feltMedFeil : felt}
+          />
+          {feilmelding("telefon")}
+        </div>
       </div>
 
       <div className="grid gap-2 sm:grid-cols-2 sm:gap-4">
@@ -113,31 +266,29 @@ export function Kontaktskjema({ side }: { side: string }) {
         </div>
 
         <div className="grid gap-2">
-          <label htmlFor="bedrift" className="text-sm font-medium">
-            Bedrift <span className="text-blekk-dempet">(påkrevd)</span>
+          <label htmlFor="nettside" className="text-sm font-medium">
+            Nettside <span className="text-blekk-dempet">(valgfritt)</span>
           </label>
+          {/*
+            IKKE `type="url"`. Den avviser «dinbedrift.no» fordi protokollen
+            mangler — altså nøyaktig slik folk skriver en nettside — og
+            nettleserens egen feilmelding ville kommet på en helt riktig
+            adresse. Normaliseringen gjør jobben i stedet, både her og på
+            serveren. Se lib/kontaktfelt.ts.
+          */}
           <input
-            id="bedrift"
-            name="bedrift"
-            required
-            autoComplete="organization"
-            className={felt}
+            id="nettside"
+            name="nettside"
+            type="text"
+            inputMode="url"
+            autoComplete="url"
+            placeholder="dinbedrift.no"
+            aria-invalid={feil.nettside ? true : undefined}
+            aria-describedby={feil.nettside ? "nettside-feil" : undefined}
+            className={feil.nettside ? feltMedFeil : felt}
           />
+          {feilmelding("nettside")}
         </div>
-      </div>
-
-      <div className="grid gap-2">
-        <label htmlFor="telefon" className="text-sm font-medium">
-          Telefon <span className="text-blekk-dempet">(valgfritt)</span>
-        </label>
-        <input
-          id="telefon"
-          name="telefon"
-          type="tel"
-          inputMode="tel"
-          autoComplete="tel"
-          className={felt}
-        />
       </div>
 
       <div className="grid gap-2">
@@ -161,9 +312,18 @@ export function Kontaktskjema({ side }: { side: string }) {
         Knappetekst beskriver hva du får, ikke hva du gjør. Ikke fordi et
         prosenttall sier det – de tallene er usporbare – men fordi det er
         klarere.
+
+        `aria-disabled` OG IKKE `disabled` MENS DEN SENDER. En deaktivert
+        knapp mister fokus, og skjermleseren mister da stedet sitt midt i
+        innsendingen. `pointer-events-none` stopper det andre klikket;
+        `aria-disabled` forteller hjelpemidlene hvorfor.
       */}
-      <Knapp type="submit" className="mt-1 justify-self-start">
-        Få et strategiforslag
+      <Knapp
+        type="submit"
+        aria-disabled={sender || undefined}
+        className={`mt-1 justify-self-start ${sender ? "pointer-events-none opacity-70" : ""}`}
+      >
+        {sender ? "Sender …" : "Få et strategiforslag"}
       </Knapp>
 
       {/*

@@ -26,11 +26,14 @@
  *    etikettlogikken under bruker dem til å avgjøre at et besøk kom fra en
  *    annonse — de skrives bare ikke ut.
  *
- *    HVIS GCLID SKAL BRUKES SENERE, til offline konverteringsimport i Google
- *    Ads, må den lagres i et EGET felt i HubSpot. Den skal ikke tilbake inn
- *    i denne strengen: et felt et menneske leser og et felt en maskin leser
- *    er to forskjellige felt, og det var sammenblandingen som skapte
- *    problemet.
+ *    DE SKAL HELLER IKKE LAGRES ET ANNET STED HERFRA. Her sto at gclid
+ *    måtte i et eget HubSpot-felt hvis offline konverteringsimport ble
+ *    aktuelt. Det er feil, og rettet 04.10.2026 etter kontroll i HubSpot:
+ *    HubSpot fyller selv de innebygde feltene `hs_google_click_id` og
+ *    `hs_facebook_click_id` fra sporingskoden, og knytter dem til kontakten
+ *    via `hutk` når skjemaet sendes fra serveren. Verifisert på ekte leads.
+ *    HubSpots egen Google Ads-kobling bruker nettopp de feltene. Skriver vi
+ *    gclid i tillegg, konkurrerer vi med den.
  *
  * 2. EN LESBAR ETIKETT STÅR FØRST. «Instagram (lenke i bio)», «Google Ads»,
  *    «Direkte». De rå verdiene følger etter, for den som vil ha dem.
@@ -236,6 +239,24 @@ function etikettFor(
     return { etikett: "Bing Ads", kanal: "Bing" };
   }
 
+  /*
+   * E-POST OG NYHETSBREV. `utm_medium=email` er standardmerkingen fra alle
+   * verktøy som sender ut nyhetsbrev, og `_hsenc`/`mc_eid` i adressen er
+   * HubSpots og Mailchimps egne klikksporinger. Uten denne havnet et klikk
+   * fra et nyhetsbrev under «Annet», som ikke sier noe.
+   */
+  if (
+    medium === "email" ||
+    medium === "e-post" ||
+    medium === "newsletter" ||
+    medium === "nyhetsbrev" ||
+    p.get("_hsenc") ||
+    p.get("_hsmi") ||
+    p.get("mc_eid")
+  ) {
+    return { etikett: "E-post/nyhetsbrev" };
+  }
+
   if (kanal) {
     /*
      * SØK ELLER HENVISNING. Google og Bing uten betalt merking er et
@@ -322,7 +343,15 @@ export function byggKilde(
 
   deler.push(`landet på: ${kort(sti, 80)}`);
 
-  return deler.join(" | ");
+  /*
+   * TAK PÅ 250 TEGN. Strengen står i et HubSpot-felt Pål leser på telefon,
+   * og den er allerede kuttet per verdi. Taket er det siste gjerdet: en
+   * kampanje med fem lange UTM-verdier skal ikke kunne lage en vegg av
+   * tekst igjen. Etiketten står først, så det som eventuelt kuttes er det
+   * minst viktige.
+   */
+  const ut = deler.join(" | ");
+  return ut.length > 250 ? `${ut.slice(0, 249)}…` : ut;
 }
 
 /**

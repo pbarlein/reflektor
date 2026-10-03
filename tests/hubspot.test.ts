@@ -38,7 +38,9 @@ function lead(endringer: Partial<Lead> = {}): Lead {
     telefon: "99887766",
     melding: "Hei",
     side: "/kontaktoss",
-    kilde: "source=google | medium=cpc",
+    nettside: "https://reflektor.no",
+    nettsideUtledet: false,
+    kilde: "Google Ads | source=google | medium=cpc",
     ...endringer,
   };
 }
@@ -71,7 +73,10 @@ test("nettside_kilde følger med nyttelasten", () => {
   const innsending = byggInnsending(lead(), undefined, BASIS);
   const felt = new Map(innsending.fields.map((f) => [f.name, f.value]));
 
-  assert.equal(felt.get("nettside_kilde"), "source=google | medium=cpc");
+  assert.equal(
+    felt.get("nettside_kilde"),
+    "Google Ads | source=google | medium=cpc",
+  );
   assert.equal(felt.get("email"), "pal@reflektor.no");
   assert.equal(felt.get("firstname"), "Pål");
   assert.equal(felt.get("lastname"), "Barlein");
@@ -134,8 +139,7 @@ test("sendLeadTilHubspot kaster aldri, uansett hva HubSpot gjør", async () => {
   const opprinnelig = globalThis.fetch;
 
   try {
-    globalThis.fetch = async () =>
-      new Response("Bad request", { status: 400 });
+    globalThis.fetch = async () => new Response("Bad request", { status: 400 });
     await assert.doesNotReject(sendLeadTilHubspot(lead(), undefined, BASIS));
 
     globalThis.fetch = async () => {
@@ -149,7 +153,11 @@ test("sendLeadTilHubspot kaster aldri, uansett hva HubSpot gjør", async () => {
       kalt = true;
       return new Response("", { status: 200 });
     };
-    await sendLeadTilHubspot(lead({ epost: "ikke en adresse" }), undefined, BASIS);
+    await sendLeadTilHubspot(
+      lead({ epost: "ikke en adresse" }),
+      undefined,
+      BASIS,
+    );
     assert.equal(kalt, false);
   } finally {
     globalThis.fetch = opprinnelig;
@@ -217,11 +225,43 @@ test("skjemaruta svarer 303 til /takk selv om HubSpot feiler", async () => {
     );
 
     assert.equal(svar.status, 303);
-    assert.equal(
-      new URL(svar.headers.get("location") ?? "").pathname,
-      "/takk",
-    );
+    assert.equal(new URL(svar.headers.get("location") ?? "").pathname, "/takk");
   } finally {
     globalThis.fetch = opprinnelig;
   }
+});
+
+/**
+ * `website` KOM INN 04.10.2026. Feltet må finnes i HubSpots egen
+ * skjemadefinisjon for at innsendingen skal godtas — gjør det ikke det,
+ * avvises HELE leadet med 400. Derfor både at det sendes, og at det kan
+ * sendes uten.
+ */
+test("nettsiden følger med, og kan sendes uten", () => {
+  const med = byggInnsending(lead(), undefined, BASIS);
+  assert.equal(
+    med.fields.find((f) => f.name === "website")?.value,
+    "https://reflektor.no",
+  );
+
+  const uten = byggInnsending(lead(), undefined, BASIS, true);
+  assert.equal(
+    uten.fields.find((f) => f.name === "website"),
+    undefined,
+  );
+  assert.ok(
+    uten.fields.find((f) => f.name === "email"),
+    "resten av leadet skal fortsatt være med",
+  );
+});
+
+test("«(fra e-post)» er en merknad til Pål, ikke en del av adressen", () => {
+  const i = byggInnsending(
+    lead({ nettside: "https://trenogmat.no", nettsideUtledet: true }),
+    undefined,
+    BASIS,
+  );
+  const v = i.fields.find((f) => f.name === "website")?.value;
+  assert.equal(v, "https://trenogmat.no");
+  assert.ok(!v?.includes("e-post"));
 });

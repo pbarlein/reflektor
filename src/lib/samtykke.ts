@@ -244,9 +244,28 @@ export function meldTilClarity(vindu: Clarityvindu, s: Samtykke): void {
  * GTM lastes `afterInteractive`.
  *
  * FOR DEN SOM ALLEREDE HAR SVART settes det lagrede svaret som `default`,
- * ikke som en `update` etterpå. Google anbefaler det for tilbakevendende
- * brukere, og det fjerner vinduet der taggene ville sett «nektet» i et
- * øyeblikk før de fikk beskjed om noe annet.
+ * OG som en `update` rett etter. Google anbefaler `default` for
+ * tilbakevendende brukere, og det fjerner vinduet der taggene ville sett
+ * «nektet» i et øyeblikk før de fikk beskjed om noe annet.
+ *
+ * UPDATE-KALLET ER LAGT TIL 04.10.2026, OG DET ER IKKE BELTE OG SELER.
+ * Målt på live: etter «Godta alle» gikk første sidevisning med `gcs=G111`,
+ * men ALLE senere sidevisninger gikk med `G100` — også `/takk`. GA4 viste
+ * null `generate_lead` og null `takk_page_view` for 02.10.
+ *
+ * Grunnen er at GTM-containeren har sin EGEN «Consent Mode - Default»-tagg
+ * som kjører inne i `gtm.js`. Vår `default` kommer først, men consent-API-et
+ * tar imot en ny `default` fra containeren etterpå, og den setter alt til
+ * nektet igjen. En `default` kan overstyres av en annen `default`; en
+ * `update` kan den ikke. Derfor må det lagrede svaret sendes som begge.
+ *
+ * INGEN COOKIE GIR INGEN UPDATE. Da skal tilstanden være nektet, og den er
+ * det allerede fra `default`. Et update med «denied» ville vært det samme
+ * resultatet, men det ville sagt at brukeren HAR svart nei — og det er en
+ * annen opplysning enn at hun ikke har svart.
+ *
+ * Alternativet var å endre GTM-containeren. Det er uttrykkelig utenfor det
+ * jeg skal røre, og denne veien løser det samme uten å ta den risikoen.
  *
  * `ads_data_redaction` fjerner annonse-ID-er fra nettverkskall så lenge
  * ad_storage er nektet. `url_passthrough` lar Ads måle konverteringer via
@@ -290,6 +309,12 @@ export function standardSkript(): string {
   function gtag(){window.dataLayer.push(arguments);}
   window.gtag=window.gtag||gtag;
   gtag("consent","default",{
+    ad_storage:g,ad_user_data:g,ad_personalization:g,
+    analytics_storage:a,
+    functionality_storage:"denied",personalization_storage:"denied",
+    security_storage:"granted"
+  });
+  if(v)gtag("consent","update",{
     ad_storage:g,ad_user_data:g,ad_personalization:g,
     analytics_storage:a,
     functionality_storage:"denied",personalization_storage:"denied",

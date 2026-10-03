@@ -29,6 +29,7 @@ export const FELTGRENSER = {
   telefon: 40,
   melding: 4000,
   side: 120,
+  nettside: 200,
   kilde: 1200, // Etikett + UTM + referrer + landingsside, se lib/kilde.ts
 } as const;
 

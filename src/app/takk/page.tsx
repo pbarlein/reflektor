@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+
 import { Container } from "@/components/Container";
+import { Motekalender } from "@/components/Motekalender";
 import { TakkHendelse } from "@/components/TakkHendelse";
+import { tilbud } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Takk for henvendelsen",
@@ -14,31 +18,91 @@ export const metadata: Metadata = {
  * Dette er sidevisningen GA4 måler som `takk_page_view`, og som Google Ads
  * teller konverteringer på. 107+ historiske konverteringer henger på den.
  * Endres URL-en eller hendelsen, mister Reflektor målingen av sin eneste KPI.
+ *
+ * INNHOLDET ER BYTTET 04.10.2026. URL-en, `noindex` og `<TakkHendelse />`
+ * er uendret — det er bare det som står på siden som er nytt.
+ *
+ * FØR DETTE STO DET «Takk for henvendelsen. Vi tar kontakt så snart vi kan.»
+ * og ingenting mer. To ting var galt med det:
+ *
+ * 1. Nettsiden lover et strategiforslag innen tre virkedager. Takkesiden sa
+ *    ingenting om det, så den som nettopp hadde fylt ut visste ikke hva som
+ *    skulle skje eller når.
+ * 2. Den hadde ingen vei videre. Et lead som er varmt NÅ måtte vente på at
+ *    Pål rakk å ringe.
+ *
+ * KALENDEREN STÅR HØYT OPPE, og det er hele grepet. Research 03.10.2026:
+ * vises kalenderen umiddelbart etter innsending, booker rundt to av tre
+ * møte; ved manuell oppfølging er tallet rundt én av tre.
+ *
+ * INGENTING FRA SKJEMAET VISES SOM TEKST HER. Ikke navn, ikke bedrift.
+ * Siden er `noindex`, men URL-en og innholdet går til GA4, GTM og Clarity,
+ * og en personopplysning på en kvitteringsside er en personopplysning gitt
+ * bort uten at noen ba om det. Forhåndsutfyllingen av kalenderen går en
+ * annen vei — se Motekalender.tsx.
  */
 export default function Takk() {
   return (
-    <section className="py-20">
+    <section className="pt-14 pb-24 sm:pt-20 sm:pb-32">
       <TakkHendelse />
       <Container>
-        <h1 className="text-4xl font-semibold tracking-tight">
-          Takk for henvendelsen
-        </h1>
-        <p className="mt-6 max-w-xl text-lg text-blekk-dempet">
-          Vi tar kontakt så snart vi kan.
-        </p>
+        <div className="max-w-2xl">
+          <h1 className="text-3xl text-balance sm:text-4xl lg:text-5xl">
+            Takk! Vi har fått henvendelsen.
+          </h1>
+
+          <p className="mt-6 text-lg leading-relaxed text-pretty text-blekk-dempet">
+            Vil du ta en prat med en gang? Velg et tidspunkt som passer, så
+            ringer vi deg.
+          </p>
+        </div>
+
         {/*
-          HER STO EN TODO om at GA4-hendelsen `takk_page_view` «må utløses
-          her». Den er fjernet 29.09.2026, og det er ikke opprydding — den
-          var en felle.
-
-          `<TakkHendelse />` over gjør nøyaktig det TODO-en ba om. Verre:
-          komponentens egen dokumentasjon advarer uttrykkelig mot å koble
-          hendelsen til en utløser i GTM, fordi nøkkelhendelsen allerede
-          lages inne i GA4 fra den samme sidevisningen. Den som fulgte
-          TODO-en ville dobbelttelt Reflektors eneste KPI.
-
-          Les TakkHendelse.tsx før du rører noe her.
+          KALENDEREN I FULL BREDDE under teksten, ikke inne i `max-w-2xl`.
+          HubSpots iframe har sin egen tokolonners layout fra rundt 700 px,
+          og den trenger plassen for å slippe en rullefelt inne i en
+          rullefelt.
         */}
+        <Motekalender />
+
+        <div className="mt-14 max-w-2xl sm:mt-16">
+          <h2 className="text-2xl text-balance sm:text-3xl">Dette skjer ellers</h2>
+          <ol className="mt-6 grid gap-5">
+            {[
+              "Vi ser på bedriften deres og kanalene dere har i dag.",
+              `Innen ${tilbud.strategiforslagVirkedager} virkedager får du et konkret strategiforslag for sosiale medier.`,
+              "Vi tar kontakt på telefon eller e-post og går gjennom det sammen med deg.",
+            ].map((steg, i) => (
+              <li key={steg} className="flex gap-4">
+                <span
+                  aria-hidden
+                  className="display shrink-0 text-[0.9375rem] tabular-nums text-aksent"
+                >
+                  {i + 1}
+                </span>
+                <span className="leading-relaxed text-pretty text-blekk-dempet">
+                  {steg}
+                </span>
+              </li>
+            ))}
+          </ol>
+
+          <p className="mt-10 text-[1.0625rem]">
+            Mens du venter:{" "}
+            <Link
+              href="/vart-arbeid"
+              className="group inline-flex items-center gap-2 underline decoration-aksent decoration-1 underline-offset-[0.35em]"
+            >
+              se hva vi har laget for Soulcake og Egon
+              <span
+                aria-hidden
+                className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
+              >
+                →
+              </span>
+            </Link>
+          </p>
+        </div>
       </Container>
     </section>
   );

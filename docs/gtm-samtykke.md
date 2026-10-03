@@ -23,15 +23,39 @@ Meta-pikselen lastes av Squarespace — ikke av GTM.
 >   (`src/lib/samtykke.ts`). Uten samtykke kjører den i «no-consent mode»:
 >   ingen cookies, én ID per sidevisning.
 >
-> **Apollo har ingen annen bryter enn GTM.** Den kjører derfor før samtykke,
-> og det er i strid med ekomlovens krav om aktivt samtykke fra 01.01.2025.
-> Det står her fordi det er sant, ikke som en innvending: valget er tatt
-> med dette kjent, og det er Påls.
+> **Apollo har ingen annen bryter enn GTM.** Den kjørte derfor før samtykke,
+> og det var i strid med ekomlovens krav om aktivt samtykke fra 01.01.2025.
+>
+> **LØST 03.10.2026:** Pål besluttet å fjerne Apollo helt, og taggen er tatt
+> ut av containeren. Da finnes problemet ikke lenger — en tagg som ikke
+> lastes trenger ikke et samtykke.
 >
 > Avsnittet «Det som gjenstår etterpå» nederst gjelder fortsatt — forslaget
 > til punkt 8 i personvernerklæringen bygger på at de tre kun lastes med
 > samtykke, og **det er ikke tilfellet**. Settes teksten inn nå, står det en
 > påstand i erklæringen som ikke stemmer.
+
+> ## EGEN FEIL, FUNNET OG RETTET 04.10.2026: samtykket overlevde ikke til side to
+>
+> Dette er ikke GTM-oppskriften under, men det hører hjemme her fordi
+> symptomet så ut som den.
+>
+> Målt på live 03.10.2026: etter «Godta alle» gikk FØRSTE sidevisning med
+> `gcs=G111`, og alle senere med `G100` — også `/takk`, der konverteringen
+> telles. GA4 viste null `generate_lead` og null `takk_page_view` for 02.10.
+>
+> Årsaken: oppstartsskriptet vårt satte det lagrede svaret som `default`.
+> GTM-containeren har sin EGEN «Consent Mode - Default»-tagg som kjører
+> inne i `gtm.js` etterpå, og en `default` kan overstyres av en annen
+> `default`. En `update` kan den ikke.
+>
+> Rettingen ligger i `src/lib/samtykke.ts`: finnes cookien, sendes svaret
+> som BÅDE `default` og `update`. **Ingenting er endret i GTM**, og det var
+> hele poenget — feilen lot seg rette på vår side.
+>
+> Tre tester i `tests/samtykke.test.ts` vokter det: lagret ja gir både
+> default og update med granted, lagret nei gir update med denied, og ingen
+> cookie gir ingen update.
 
 Skrevet 21.09.2026. Denne oppskriften utføres **av Pål**, i
 tagmanager.google.com. Claude Code har ingen GTM-tilgang — sesjonen kjører

@@ -117,8 +117,8 @@ test("intern navigasjon teller ikke som referrer", () => {
 
 test("ukjent kilde navngis, ukjent nettsted får med stien", () => {
   assert.equal(
-    byggKilde("?utm_source=nyhetsbrev&utm_medium=email", "", OSS, "/"),
-    "Annet: nyhetsbrev | source=nyhetsbrev | medium=email | landet på: /",
+    byggKilde("?utm_source=partnerside&utm_medium=banner", "", OSS, "/"),
+    "Annet: partnerside | source=partnerside | medium=banner | landet på: /",
   );
   assert.equal(
     byggKilde("", "https://blogg.no/artikkel-om-video", OSS, "/"),
@@ -198,4 +198,36 @@ test("skalLagres: første besøk alltid, senere bare ved annonseklikk", () => {
   assert.equal(skalLagres(null, ""), true);
   assert.equal(skalLagres("Direkte | landet på: /", ""), false);
   assert.equal(skalLagres("Direkte | landet på: /", "?gclid=abc"), true);
+});
+
+/**
+ * E-post og nyhetsbrev, lagt til 04.10.2026. Uten denne havnet et klikk fra
+ * et nyhetsbrev under «Annet», som ikke sier noe om hvor det kom fra.
+ */
+test("nyhetsbrev kjennes igjen på medium og på klikksporingen", () => {
+  assert.equal(
+    byggKilde("?utm_source=nyhetsbrev&utm_medium=email", "", OSS, "/"),
+    "E-post/nyhetsbrev | source=nyhetsbrev | medium=email | landet på: /",
+  );
+  assert.equal(
+    byggKilde("?_hsenc=abc123", "", OSS, "/tilbud"),
+    "E-post/nyhetsbrev | landet på: /tilbud",
+  );
+});
+
+/**
+ * TAKET. Strengen står i et felt Pål leser på telefon. Uten et tak kan en
+ * kampanje med fem lange UTM-verdier bygge den samme veggen av tekst som
+ * utløste omskrivingen.
+ */
+test("strengen er aldri over 250 tegn", () => {
+  const lang = "kampanje-".repeat(20);
+  const ut = byggKilde(
+    `?utm_source=${lang}&utm_medium=${lang}&utm_campaign=${lang}&utm_content=${lang}&utm_term=${lang}`,
+    "https://en-veldig-lang-referrer.example.com/en/lang/sti/som/fortsetter",
+    OSS,
+    "/en/ganske/lang/landingsside",
+  );
+  assert.ok(ut.length <= 250, `var ${ut.length} tegn`);
+  assert.ok(ut.startsWith("Annet:"), "etiketten skal fortsatt stå først");
 });

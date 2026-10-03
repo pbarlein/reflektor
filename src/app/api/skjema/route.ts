@@ -1,7 +1,12 @@
 import { after, NextResponse, type NextRequest } from "next/server";
 
 import { lesHutk, sendLeadTilHubspot } from "@/lib/hubspot";
-import { sendLeadPaEpost } from "@/lib/lead";
+import {
+  nettsideFraEpost,
+  normaliserMobil,
+  normaliserNettside,
+} from "@/lib/kontaktfelt";
+import { sendBekreftelse, sendLeadPaEpost, type Lead } from "@/lib/lead";
 import { basisUrl } from "@/lib/miljo";
 import { foroftig, klientnokkel, rens } from "@/lib/skjemavern";
 
@@ -70,13 +75,39 @@ export async function POST(req: NextRequest) {
      * POST legge flere megabyte inn i en e-post, og kontrolltegn i et navn
      * havner i et e-postemne. Se skjemavern.ts.
      */
-    const lead = {
+    const epost = rens(data.get("epost"), "epost");
+
+    /*
+     * MOBILNUMMERET NORMALISERES HER, ikke bare i nettleseren. Feltet er
+     * påkrevd fra 04.10.2026 fordi Pål ringer leads samme dag, og «påkrevd»
+     * i et HTML-attributt er en hjelp til brukeren, ikke en garanti — en
+     * POST kan komme fra hva som helst.
+     *
+     * ET UGYLDIG NUMMER STOPPER IKKE LEADET. Det er det viktige valget her:
+     * henvendelsen er verdt mer enn formatet. Går nummeret ikke å tolke,
+     * sendes det videre slik det ble skrevet, og Pål ser det som det står.
+     * Alternativet — å avvise — ville kastet et ekte lead for en skrivefeil.
+     */
+    const råtelefon = rens(data.get("telefon"), "telefon");
+    const mobil = normaliserMobil(råtelefon);
+
+    /*
+     * NETTSIDEN: skrevet inn hvis den finnes, ellers utledet av
+     * e-postdomenet når det ikke er en gratisadresse. Se lib/kontaktfelt.ts
+     * for hvorfor en utledet adresse merkes som utledet.
+     */
+    const skrevet = normaliserNettside(rens(data.get("nettside"), "nettside"));
+    const utledet = skrevet.ok ? null : nettsideFraEpost(epost);
+
+    const lead: Lead = {
       navn: rens(data.get("navn"), "navn"),
-      epost: rens(data.get("epost"), "epost"),
+      epost,
       bedrift: rens(data.get("bedrift"), "bedrift"),
-      telefon: rens(data.get("telefon"), "telefon"),
+      telefon: mobil.ok ? mobil.visning : råtelefon,
       melding: rens(data.get("melding"), "melding"),
       side: rens(data.get("side"), "side") || "ukjent",
+      nettside: skrevet.ok ? skrevet.url : (utledet ?? ""),
+      nettsideUtledet: !skrevet.ok && utledet !== null,
       kilde: rens(data.get("kilde"), "kilde"),
     };
 
@@ -90,6 +121,18 @@ export async function POST(req: NextRequest) {
     } catch (feil) {
       console.error("[lead] Sending feilet:", feil);
     }
+
+    /*
+     * BEKREFTELSEN TIL INNSENDEREN, lagt til 04.10.2026.
+     *
+     * DEN VENTES IKKE PÅ. Varselet til Pål er hovedkanalen og er allerede
+     * sendt; denne er en høflighet til den som fylte ut skjemaet, og
+     * ingenting skal stå og vente på den. `sendBekreftelse` kaster aldri —
+     * se lib/lead.ts — så `void` er trygt her.
+     *
+     * Den legges i samme `after()` som HubSpot under, slik at Vercel holder
+     * invokasjonen i live til den er ferdig.
+     */
 
     /*
      * HUBSPOT, LAGT TIL 02.10.2026. Se lib/hubspot.ts for hvorfor leadet
@@ -124,11 +167,16 @@ export async function POST(req: NextRequest) {
      * kallet bli avbrutt når svaret sendes, og det er et dårligere utfall
      * enn `after()` — men et mye bedre utfall enn en 500.
      */
+    const etterpa = async () => {
+      await sendBekreftelse(lead);
+      await sendLeadTilHubspot(lead, hutk, basis);
+    };
+
     try {
-      after(() => sendLeadTilHubspot(lead, hutk, basis));
+      after(etterpa);
     } catch (feil) {
       console.error("[hubspot] after() var ikke tilgjengelig:", feil);
-      void sendLeadTilHubspot(lead, hutk, basis);
+      void etterpa();
     }
   }
 
