@@ -86,3 +86,62 @@ Målebrowseren mangler H.264. Den spiller derfor ingen av mp4-filene, og
 «spiller klippet?» kan ikke besvares i den. Det som ER kontrollert: begge de
 nye filene dekoder uten feil, de har samme format og lengde som før, og
 sidene laster dem fra riktig sti.
+
+## Mediegjennomgang, hele siden (04.10.2026)
+
+Bestilt av Pål: komprimer bilder og video på alle sider til den størrelsen de
+faktisk vises i, uten at noe blir grynete.
+
+**Bildene var allerede i orden, og det er verdt å vite hvorfor.** Alle bilder
+går gjennom Next.js' bildeoptimalisering: de leveres som AVIF, skalert til
+flaten de vises i. Målt på `/eventfotograf-eventvideo`, en av de tyngste
+sidene: 26 bilder, 393 kB til sammen. Kildefilene i repoet kan være på
+900 kB uten at noen laster dem ned. Å komprimere dem ville ikke endret ett
+byte for besøkende.
+
+**Video har ingen slik optimalisering.** Fila som ligger der, er fila som
+lastes ned. Det er der jobben lå.
+
+### Metoden
+
+Hver eneste video på alle 34 sider ble målt i nettleseren, i to
+skjermbredder, med den faktiske flatestørrelsen i CSS-piksler. Målhøyden ble
+satt til det dobbelte av flaten (for skjermer med dobbel pikseltetthet), og
+aldri høyere enn kilden. Deretter er hver fil kodet om og kontrollert ved å
+hente samme bilderute fra gammel og ny fil, skalert og beskåret til nøyaktig
+den flaten klippet vises i.
+
+### Resultat
+
+**52,0 → 31,9 MB.** 20 MB spart over 22 filer. De største:
+
+| Fil | Før | Etter | Vises i |
+|---|---|---|---|
+| kjeder-format-9x16 | 5,0 MB | 1,5 MB | 165×208 |
+| kjeder-format-4x5 | 4,5 MB | 1,5 MB | 165×208 |
+| kjeder-format-16x9 | 4,1 MB | 1,2 MB | 362×204 |
+| peppes-reklamefilm | 7,7 MB | 5,6 MB | 1104×621 |
+| kjeder-peppes | 5,1 MB | 3,1 MB | 672×378 |
+| kjeder-egon | 4,0 MB | 2,7 MB | 672×378 |
+
+De tre formatklippene på `/kjeder` lå i full oppløsning og ble vist i ruter
+på 165 px. Det er der de store prosentene kommer fra.
+
+### Det som ble latt i fred
+
+**`retail24-sandefjord.mp4`, 16,5 MB.** Den er 1 minutt og 43 sekunder, har
+lyd, og spilles bare når noen trykker på play. Et forsøk på omkoding ga en
+STØRRE fil — originalen er allerede effektivt kodet på 1 234 kbit/s for
+720p. Å presse den ned ville kostet synlig kvalitet på den ene filmen som
+faktisk vises som en film.
+
+**Omtalefilmene** (Soulcake, 720×900) — se avsnittet over: 9 % gevinst, og
+innbrent teksting taper seg først.
+
+**Plakatbildene.** De lastes rått, uten optimalisering, og ble skalert til
+flatestørrelse: 1 339 → 1 239 kB. Lite å hente — de var stort sett riktig
+dimensjonert fra før. Bare filer som ble minst 10 % mindre, ble skrevet.
+
+**`/video/hero.mp4` og `/video/hero-mobil.mp4`, 2,8 MB til sammen.** Ingen
+referanser noe sted i koden. De lastes aldri ned av noen, men de ligger i
+repoet. Ikke slettet — det er Påls avgjørelse.
