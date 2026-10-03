@@ -162,6 +162,13 @@ forespørsler per IP per 600 sekunder, svar 429. Den teller på tvers av alle
 serverinstanser og stopper trafikken FØR den når koden. Det er den som
 faktisk holder mot en flom.
 
+**Verifisert 04.10.2026:** åtte forespørsler over samme forbindelse ga
+405, 405, 405, 405, 405, 429, 429, 429. Grensen treffer på sjette.
+
+Merk hvordan den må testes: hver nye forbindelse herfra går ut fra en ny
+adresse, så enkeltkall etter hverandre blir aldri talt i samme bøtte. Første
+forsøk viste tretten kall uten stopp, og regelen så ut til å ikke virke.
+
 **Telleren i `skjemavern.ts` står igjen som gulv.** Den ligger i minnet til
 én instans, og fanger opp én maskin som sender om og om igjen hvis
 brannmurregelen en dag blir slettet. Over den grensen svarer ruta **som ved
