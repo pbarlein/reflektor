@@ -6,7 +6,7 @@ import {
   normaliserMobil,
   normaliserNettside,
 } from "@/lib/kontaktfelt";
-import { sendBekreftelse, sendLeadPaEpost, type Lead } from "@/lib/lead";
+import { sendLeadPaEpost, type Lead } from "@/lib/lead";
 import { basisUrl } from "@/lib/miljo";
 import { foroftig, klientnokkel, rens } from "@/lib/skjemavern";
 
@@ -123,18 +123,6 @@ export async function POST(req: NextRequest) {
     }
 
     /*
-     * BEKREFTELSEN TIL INNSENDEREN, lagt til 04.10.2026.
-     *
-     * DEN VENTES IKKE PÅ. Varselet til Pål er hovedkanalen og er allerede
-     * sendt; denne er en høflighet til den som fylte ut skjemaet, og
-     * ingenting skal stå og vente på den. `sendBekreftelse` kaster aldri —
-     * se lib/lead.ts — så `void` er trygt her.
-     *
-     * Den legges i samme `after()` som HubSpot under, slik at Vercel holder
-     * invokasjonen i live til den er ferdig.
-     */
-
-    /*
      * HUBSPOT, LAGT TIL 02.10.2026. Se lib/hubspot.ts for hvorfor leadet
      * også skal gå denne veien.
      *
@@ -167,10 +155,7 @@ export async function POST(req: NextRequest) {
      * kallet bli avbrutt når svaret sendes, og det er et dårligere utfall
      * enn `after()` — men et mye bedre utfall enn en 500.
      */
-    const etterpa = async () => {
-      await sendBekreftelse(lead);
-      await sendLeadTilHubspot(lead, hutk, basis);
-    };
+    const etterpa = () => sendLeadTilHubspot(lead, hutk, basis);
 
     try {
       after(etterpa);

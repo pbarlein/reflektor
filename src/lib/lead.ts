@@ -18,7 +18,9 @@
  * Nøkkelen ligger i Vercel-miljøvariabler, aldri i repoet (brief 8.1.2).
  */
 
-import { rensEnLinje, serUtSomEpost } from "./skjemavern";
+import { avbrytLenke } from "./avbrytsignatur";
+import { faarPaaminnelse, paaminnelseTekst } from "./paaminnelse";
+import { serUtSomEpost } from "./skjemavern";
 
 export type Lead = {
   navn: string;
@@ -45,9 +47,6 @@ const MOTTAKER = process.env.LEAD_MOTTAKER ?? "pal@reflektor.no";
  */
 const AVSENDER =
   process.env.LEAD_AVSENDER ?? "Reflektor <onboarding@resend.dev>";
-
-/** Påls egen adresse. Svar på bekreftelsen skal gå hit. */
-const SVAR_TIL = "pal@reflektor.no";
 
 /**
  * Emnet på varselet. Fast streng, bestilt av Pål 03.10.2026.
@@ -89,7 +88,10 @@ const TOM = "–";
  * feltet som kan være langt, og `white-space: pre-wrap` er det som gjør at
  * avsnitt forblir avsnitt.
  */
-export function varsel(lead: Lead): { tekst: string; html: string } {
+export function varsel(
+  lead: Lead,
+  sendt: Date = new Date(),
+): { tekst: string; html: string } {
   const nettside = lead.nettside
     ? lead.nettside + (lead.nettsideUtledet ? " (fra e-post)" : "")
     : TOM;
@@ -126,10 +128,44 @@ export function varsel(lead: Lead): { tekst: string; html: string } {
 
   const behov = lead.melding || TOM;
 
+  /*
+    OPPFØLGINGEN, LAGT TIL 04.10.2026.
+
+    HubSpot sender nå selv en e-post med presentasjon og bookinglenke med én
+    gang leadet kommer inn, og en påminnelse neste hverdag kl. 09:00. Pål
+    skal se tidspunktet her, fordi det er fristen hans: rekker han å ringe
+    før den går, booker han møtet selv i stedet for å la en automatisk
+    e-post gjøre det.
+
+    STÅR IKKE FOR INTERNE ADRESSER. Arbeidsflyten hopper over
+    @reflektor.no, og et varsel som lover en påminnelse som aldri kommer, er
+    verre enn ingen opplysning. Se lib/paaminnelse.ts.
+
+    KNAPPEN KAN MANGLE. Den krever en signatur, og uten hemmeligheten i
+    miljøet lages ingen lenke — se lib/avbrytsignatur.ts. Da står de to
+    første linjene alene, og varselet er ellers som før.
+  */
+  const oppfolging = faarPaaminnelse(lead.epost)
+    ? {
+        linje: `Generisk Canva-presentasjon og møtelink sendt. Påminnelse sendes ${paaminnelseTekst(sendt)}.`,
+        ring: "Ring ASAP for å booke møte personlig.",
+        lenke: avbrytLenke(lead.epost),
+      }
+    : null;
+
   const tekst = [
     ...rader.map(([navn, verdi]) => `${navn}: ${verdi}`),
     "Behov:",
     behov,
+    ...(oppfolging
+      ? [
+          "",
+          oppfolging.linje,
+          "",
+          oppfolging.ring,
+          ...(oppfolging.lenke ? ["", `Avbryt påminnelse: ${oppfolging.lenke}`] : []),
+        ]
+      : []),
   ].join("\n");
 
   const html = [
@@ -142,89 +178,31 @@ export function varsel(lead: Lead): { tekst: string; html: string } {
     "</table>",
     '<p style="margin:20px 0 4px;color:#6b6258">Behov:</p>',
     `<p style="white-space:pre-wrap;margin:0">${esc(behov)}</p>`,
+    ...(oppfolging
+      ? [
+          `<p style="margin:24px 0 0">${esc(oppfolging.linje)}</p>`,
+          `<p style="margin:16px 0 0"><strong>${esc(oppfolging.ring)}</strong></p>`,
+          ...(oppfolging.lenke
+            ? [
+                /*
+                  KNAPPEN ER EN LENKE SOM SER UT SOM EN KNAPP, og det er
+                  ikke en forenkling: e-postklienter kjører ikke skript, og
+                  en <button> i en e-post gjør ingenting. Padding og
+                  bakgrunn på en <a> er den eneste knappen som finnes her.
+
+                  MÅLET ER TOMMELEN PÅ EN TELEFON. 14 px loddrett padding
+                  gir en flate på rundt 46 px, som er over Apples
+                  anbefalte 44.
+                */
+                `<p style="margin:20px 0 0"><a href="${esc(oppfolging.lenke)}" style="display:inline-block;padding:14px 22px;background:#d8441f;color:#fff;text-decoration:none;border-radius:8px;font-weight:600">Avbryt påminnelse</a></p>`,
+              ]
+            : []),
+        ]
+      : []),
     "</div>",
   ].join("");
 
   return { tekst, html };
-}
-
-/**
- * Bekreftelsen til den som sendte skjemaet.
- *
- * LAGT TIL 04.10.2026. Fram til nå fikk innsenderen ingenting — ikke en
- * kvittering, ikke en bekreftelse på at noe var mottatt. Nettsiden lover
- * svar innen tre virkedager; i tre dager visste ikke avsenderen om
- * henvendelsen i det hele tatt kom fram.
- *
- * DEN GJENTAR IKKE NOE AV DET BRUKEREN SKREV. Bare fornavnet, trimmet og
- * escapet. Grunnen er ikke estetikk: en bekreftelse som gjengir
- * brukerinnhold er en vei til å få vårt domene til å sende tekst noen andre
- * har skrevet, til en adresse de selv har valgt. Fornavnet er nok til at
- * e-posten føles personlig, og kort nok til at det ikke kan bære et budskap.
- *
- * LENKEN GÅR TIL /book, ikke rett til HubSpot. Den omdirigeringen finnes
- * fra før, brukes i e-poster, og gjør at kalenderadressen kan byttes ett
- * sted.
- */
-export const BEKREFTELSE_EMNE = "Takk for henvendelsen – Reflektor";
-
-export function bekreftelse(navn: string): { tekst: string; html: string } {
-  const fornavn = rensEnLinje(navn ?? "")
-    .trim()
-    .split(/\s+/)[0]
-    ?.slice(0, 40);
-
-  const hilsen = fornavn ? `Hei ${fornavn}!` : "Hei!";
-  const bok = "https://www.reflektor.no/book";
-
-  const tekst = [
-    hilsen,
-    "",
-    "Takk for at du tok kontakt. Vi ser på bedriften deres og sender deg et konkret strategiforslag for sosiale medier innen tre virkedager.",
-    "",
-    `Vil du heller ta en prat med en gang? Book 30 minutter her: ${bok}`,
-    "",
-    "Vennlig hilsen",
-    "Pål Barlein",
-    "Reflektor · +47 476 05 070 · reflektor.no",
-  ].join("\n");
-
-  const html = [
-    '<div style="font-family:system-ui,-apple-system,Segoe UI,sans-serif;font-size:16px;line-height:1.6;color:#2a2521">',
-    `<p style="margin:0 0 16px">${esc(hilsen)}</p>`,
-    '<p style="margin:0 0 16px">Takk for at du tok kontakt. Vi ser på bedriften deres og sender deg et konkret strategiforslag for sosiale medier innen tre virkedager.</p>',
-    `<p style="margin:0 0 16px">Vil du heller ta en prat med en gang? <a href="${bok}">Book 30 minutter her</a>.</p>`,
-    '<p style="margin:0;color:#6b6258">Vennlig hilsen<br>Pål Barlein<br>Reflektor · <a href="tel:+4747605070" style="color:#6b6258">+47 476 05 070</a> · <a href="https://www.reflektor.no" style="color:#6b6258">reflektor.no</a></p>',
-    "</div>",
-  ].join("");
-
-  return { tekst, html };
-}
-
-/**
- * Hvor ofte samme adresse kan få en bekreftelse.
- *
- * SAMME FORBEHOLD SOM `foroftig` I skjemavern.ts: tilstanden ligger i minnet
- * til én lambda-instans, og Vercel kjører flere. Den stopper den som sender
- * skjemaet fem ganger på rad fordi hun er usikker på om det gikk gjennom.
- * Den stopper ikke en fordelt flom.
- *
- * Det er godt nok her, og grunnen er at konsekvensen er mild: det verste
- * som skjer er at noen får bekreftelsen to ganger. Varselet til Pål og
- * innsendingen til HubSpot er ikke berørt uansett.
- */
-const BEKREFTELSE_VINDU_MS = 10 * 60_000;
-const BEKREFTELSE_MAKS_SPOR = 2_000;
-const sendtTil = new Map<string, number>();
-
-export function harFattBekreftelse(epost: string, na = Date.now()): boolean {
-  const n = epost.trim().toLowerCase();
-  if (!n) return true;
-  if (sendtTil.size > BEKREFTELSE_MAKS_SPOR) sendtTil.clear();
-  const forrige = sendtTil.get(n);
-  if (forrige !== undefined && na - forrige < BEKREFTELSE_VINDU_MS) return true;
-  sendtTil.set(n, na);
-  return false;
 }
 
 /** Ett sted for selve utsendingen, så feilhåndteringen er lik for begge. */
@@ -285,25 +263,4 @@ export async function sendLeadPaEpost(lead: Lead): Promise<void> {
     html,
     svarTil: lead.epost,
   });
-}
-
-/**
- * Bekreftelsen. Kaster aldri — den skal aldri kunne stoppe varselet til Pål
- * eller innsendingen til HubSpot, og den er det minst viktige av de tre.
- */
-export async function sendBekreftelse(lead: Lead): Promise<void> {
-  try {
-    if (!serUtSomEpost(lead.epost)) return;
-    if (harFattBekreftelse(lead.epost)) return;
-    const { tekst, html } = bekreftelse(lead.navn);
-    await send({
-      til: lead.epost,
-      emne: BEKREFTELSE_EMNE,
-      tekst,
-      html,
-      svarTil: SVAR_TIL,
-    });
-  } catch (feil) {
-    console.error("[lead] Bekreftelsen feilet:", feil);
-  }
 }

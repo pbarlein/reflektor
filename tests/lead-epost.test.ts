@@ -3,8 +3,6 @@ import test from "node:test";
 
 import {
   VARSEL_EMNE,
-  bekreftelse,
-  harFattBekreftelse,
   varsel,
   type Lead,
 } from "@/lib/lead";
@@ -40,18 +38,21 @@ test("emnet er fast", () => {
 });
 
 test("rekkefølgen i varselet er Påls, ordrett", () => {
+  // Oppfølgingslinjene kommer etter feltene og testes for seg under.
   const { tekst } = varsel(lead());
-  assert.equal(
-    tekst,
-    [
+  assert.ok(
+    tekst.startsWith(
+      [
       "Avsender: Marisol Sand",
       "Mobilnummer: +47 966 84 028",
       "E-post: marisol@lamexicana.no",
       "Bedrift: La Mexicana AS",
       "Nettside: https://lamexicana.no",
-      "Behov:",
-      "Vi trenger film til Instagram.",
-    ].join("\n"),
+        "Behov:",
+        "Vi trenger film til Instagram.",
+      ].join("\n"),
+    ),
+    tekst,
   );
 });
 
@@ -62,7 +63,7 @@ test("tomme felt vises som tankestrek, ikke som tomrom", () => {
   for (const linje of ["Mobilnummer: –", "Bedrift: –", "Nettside: –"]) {
     assert.ok(tekst.includes(linje), `mangler «${linje}»`);
   }
-  assert.ok(tekst.endsWith("Behov:\n–"));
+  assert.ok(tekst.includes("Behov:\n–"));
 });
 
 test("mobil, e-post og nettside er lenker i HTML-en", () => {
@@ -118,54 +119,6 @@ test("brukerinnhold slipper ikke ut av HTML-en", () => {
   assert.ok(html.includes("a &amp; b &lt; c &quot;d&quot;"));
 });
 
-/* ───────────────────────────── BEKREFTELSEN ───────────────────────────── */
-
-test("bekreftelsen bruker bare fornavnet", () => {
-  const { tekst } = bekreftelse("Marisol Sand Hansen");
-  assert.ok(tekst.startsWith("Hei Marisol!"));
-  assert.ok(!tekst.includes("Sand"), "etternavnet skal ikke med");
-});
-
-test("bekreftelsen tåler tomt navn", () => {
-  assert.ok(bekreftelse("").tekst.startsWith("Hei!"));
-});
-
-/**
- * BEKREFTELSEN GJENGIR INGEN ANNEN BRUKERTEKST. En e-post fra vårt domene
- * som bærer tekst en fremmed har skrevet, til en adresse hun selv har
- * valgt, er en vei til misbruk. Fornavnet er kort nok til ikke å bære et
- * budskap, og det kuttes og escapes.
- */
-test("fornavnet kuttes og escapes", () => {
-  const { tekst, html } = bekreftelse(`${"x".repeat(80)} <b>hei</b>`);
-  assert.ok(!html.includes("<b>"));
-  const hilsen = tekst.split("\n")[0];
-  assert.ok(hilsen.length <= 46, `hilsenen var ${hilsen.length} tegn`);
-});
-
-test("bekreftelsen lenker til /book og lover tre virkedager", () => {
-  const { tekst } = bekreftelse("Marisol");
-  assert.ok(tekst.includes("https://www.reflektor.no/book"));
-  assert.ok(tekst.includes("tre virkedager"));
-});
-
-test("samme adresse får bare én bekreftelse per ti minutter", () => {
-  const na = Date.now();
-  const e = `test-${na}@example.com`;
-  assert.equal(harFattBekreftelse(e, na), false, "første gang skal gå");
-  assert.equal(harFattBekreftelse(e, na + 1000), true, "andre gang stoppes");
-  assert.equal(
-    harFattBekreftelse(e, na + 11 * 60_000),
-    false,
-    "etter vinduet går det igjen",
-  );
-  assert.equal(
-    harFattBekreftelse(`annen-${na}@example.com`, na + 1000),
-    false,
-    "en annen adresse er ikke berørt",
-  );
-});
-
 /* ──────────────────────────── NAVN TIL HUBSPOT ────────────────────────── */
 
 /**
@@ -194,4 +147,52 @@ test("ett ord gir tomt etternavn, ikke et mellomrom", () => {
     fornavn: "Marisol",
     etternavn: "",
   });
+});
+
+/* ──────────────────────── OPPFØLGINGEN I VARSELET ───────────────────── */
+
+/**
+ * De tre linjene som kom til 04.10.2026.
+ *
+ * HubSpot sender nå selv presentasjon og bookinglenke med én gang, og en
+ * påminnelse neste hverdag kl. 09:00. Pål skal se tidspunktet, fordi det er
+ * fristen hans for å ringe først. Regelen for tidspunktet er testet for seg
+ * i paaminnelse.test.ts; her testes at det faktisk havner i e-posten.
+ */
+test("varselet sier når påminnelsen går, og hvorfor han bør ringe først", () => {
+  const { tekst, html } = varsel(lead(), new Date("2026-10-09T08:00:00+02:00"));
+  assert.ok(
+    tekst.includes(
+      "Generisk Canva-presentasjon og møtelink sendt. Påminnelse sendes mandag 12. oktober kl. 09:00.",
+    ),
+    tekst,
+  );
+  assert.ok(tekst.includes("Ring ASAP for å booke møte personlig."));
+  assert.ok(html.includes("Påminnelse sendes mandag 12. oktober kl. 09:00."));
+  assert.ok(html.includes("Ring ASAP for å booke møte personlig."));
+});
+
+/**
+ * INTERNE ADRESSER FÅR INGEN PÅMINNELSE, og da skal varselet heller ikke
+ * love en. Det er testinnsendingene våre egne som ellers hadde fått Pål til
+ * å tro at oppfølgingen virket.
+ */
+test("ingen oppfølgingslinjer for @reflektor.no", () => {
+  const { tekst, html } = varsel(lead({ epost: "pal+test@reflektor.no" }));
+  assert.ok(!tekst.includes("Påminnelse sendes"));
+  assert.ok(!tekst.includes("Ring ASAP"));
+  assert.ok(!html.includes("Avbryt påminnelse"));
+});
+
+/**
+ * UTEN HEMMELIGHET, INGEN KNAPP — men varselet skal fortsatt komme fram.
+ * Testen kjører uten `PAAMINNELSE_HEMMELIGHET` satt, som er nøyaktig det
+ * som skjer hvis variabelen forsvinner fra Vercel.
+ */
+test("knappen utelates når lenken ikke kan signeres", () => {
+  const { tekst, html } = varsel(lead());
+  assert.ok(!tekst.includes("Avbryt påminnelse:"));
+  assert.ok(!html.includes("/paaminnelse/avbryt"));
+  assert.ok(tekst.includes("Ring ASAP for å booke møte personlig."));
+  assert.ok(tekst.includes("Mobilnummer: +47 966 84 028"));
 });
