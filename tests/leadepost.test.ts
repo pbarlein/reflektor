@@ -12,7 +12,7 @@ import {
   STOPPSTADIER,
   type Kandidat,
 } from "@/lib/leadepost.ts";
-import { byggMime } from "@/lib/gmail.ts";
+import { byggMime, kodetHode } from "@/lib/gmail.ts";
 
 /**
  * De to e-postene leadet får fra Pål.
@@ -99,7 +99,7 @@ test("svaret peker tilbake på den første e-posten", () => {
   assert.ok(mime.includes("In-Reply-To: <abc@reflektor.no>"));
   assert.ok(mime.includes("References: <abc@reflektor.no>"));
   assert.ok(mime.includes("Message-ID: <def@reflektor.no>"));
-  assert.ok(mime.includes("From: Pål Barlein <pal@reflektor.no>"));
+  assert.ok(mime.includes("From: =?UTF-8?B?UMOlbCBCYXJsZWlu?= <pal@reflektor.no>"));
 });
 
 test("en første e-post har ingenting å svare på", () => {
@@ -112,20 +112,145 @@ test("en første e-post har ingenting å svare på", () => {
 });
 
 /**
- * ÆØÅ I EMNET MÅ KODES. «Nordvik Interiør» i en rå overskrift blir
- * tegnsalat i de fleste e-postklienter.
+ * ÆØÅ I HEADERNE MÅ KODES ETTER RFC 2047.
+ *
+ * Headere er ASCII. «Pål Barlein» rått i `From` ble vist som «PÃƒÂ¥l
+ * Barlein» i Gmail 03.10.2026 — det er denne feilen testene under vokter.
  */
-test("emnet kodes når det har norske tegn", () => {
+
+/** Dekoder en header slik en mottakerklient gjør det. */
+function dekodHode(hode: string): string {
+  return hode
+    .replace(/\?=\r\n =\?UTF-8\?B\?/g, "") // brettede ord er ett ord
+    .replace(/=\?UTF-8\?B\?([^?]*)\?=/g, (_, b64: string) =>
+      Buffer.from(b64, "base64").toString("utf8"),
+    );
+}
+
+function hentHode(mime: string, navn: string): string {
+  const fra = mime.indexOf(`${navn}: `);
+  assert.notEqual(fra, -1, `fant ikke ${navn}`);
+  /* En header slutter ved CRLF som IKKE følges av mellomrom (bretting). */
+  const rest = mime.slice(fra + navn.length + 2);
+  const slutt = rest.search(/\r\n(?![ \t])/);
+  return rest.slice(0, slutt === -1 ? undefined : slutt);
+}
+
+test("avsendernavnet kodes, og dekoder tilbake til Pål Barlein", () => {
+  const mime = byggMime(
+    { til: "a@b.no", emne: "Noe", tekst: "t", html: "<p>t</p>" },
+    "<x@reflektor.no>",
+  );
+  const fra = hentHode(mime, "From");
+  assert.equal(fra, "=?UTF-8?B?UMOlbCBCYXJsZWlu?= <pal@reflektor.no>");
+  assert.equal(dekodHode(fra), "Pål Barlein <pal@reflektor.no>");
+  /* Rå «å» i headeren er nøyaktig feilen vi rettet. */
+  assert.ok(!fra.includes("å"));
+});
+
+test("emnet kodes når det har norske tegn, og ikke når det ikke har", () => {
   const mime = byggMime(
     { til: "a@b.no", emne: "Nordvik Interiør + Reflektor", tekst: "t", html: "<p>t</p>" },
     "<x@reflektor.no>",
   );
-  assert.ok(mime.includes("Subject: =?UTF-8?B?"));
+  assert.ok(hentHode(mime, "Subject").startsWith("=?UTF-8?B?"));
+  assert.equal(
+    dekodHode(hentHode(mime, "Subject")),
+    "Nordvik Interiør + Reflektor",
+  );
+
   const ren = byggMime(
     { til: "a@b.no", emne: "Reflektor", tekst: "t", html: "<p>t</p>" },
     "<x@reflektor.no>",
   );
-  assert.ok(ren.includes("Subject: Reflektor"));
+  assert.equal(hentHode(ren, "Subject"), "Reflektor");
+});
+
+test("et langt emne med æøå dekoder helt, også når det brettes", () => {
+  const emne = emne1("Bedrift Ålesund AS");
+  const mime = byggMime(
+    { til: "a@b.no", emne, tekst: "t", html: "<p>t</p>" },
+    "<x@reflektor.no>",
+  );
+  const hode = hentHode(mime, "Subject");
+  assert.equal(dekodHode(hode), emne);
+
+  /* Hvert kodet ord skal holde seg innenfor RFC 2047 sine 75 tegn. */
+  for (const ord of hode.split("\r\n ")) {
+    assert.ok(ord.length <= 75, `for langt kodet ord: ${ord.length}`);
+  }
+});
+
+test("påminnelsens emne dekoder likt, Re- og alt", () => {
+  const emne = emne2("Bedrift Ålesund AS");
+  const mime = byggMime(
+    { til: "a@b.no", emne, tekst: "t", html: "<p>t</p>", svarPa: "<a@b.no>" },
+    "<x@reflektor.no>",
+  );
+  assert.equal(dekodHode(hentHode(mime, "Subject")), emne);
+  assert.ok(emne.startsWith("Re: "));
+});
+
+test("en ASCII-tekst kodes ikke, så ingenting dobbeltkodes", () => {
+  assert.equal(kodetHode("Reflektor AS"), "Reflektor AS");
+  assert.equal(kodetHode(kodetHode("Reflektor AS")), "Reflektor AS");
+});
+
+/**
+ * BRØDTEKSTEN. Begge delene skal si UTF-8 og være base64, ellers blir æøå
+ * feil uansett hvor riktig headeren er.
+ */
+test("begge meldingsdelene er UTF-8 og base64, og æøå kommer helt fram", () => {
+  const brev = epost1("øystein", "Bedrift Ålesund AS");
+  const mime = byggMime(
+    { til: "a@b.no", emne: brev.emne, tekst: brev.tekst, html: brev.html },
+    "<x@reflektor.no>",
+  );
+  assert.ok(mime.includes("Content-Type: text/plain; charset=UTF-8"));
+  assert.ok(mime.includes("Content-Type: text/html; charset=UTF-8"));
+  assert.equal(
+    (mime.match(/Content-Transfer-Encoding: base64/g) ?? []).length,
+    2,
+  );
+
+  /* Ren tekst først, HTML sist: klienten viser den siste den forstår. */
+  assert.ok(
+    mime.indexOf("text/plain") < mime.indexOf("text/html"),
+    "ren tekst må ligge først",
+  );
+
+  /* Dekod delene og sjekk at teksten er uskadd. */
+  const deler = mime.split(/\r\n--g[0-9a-f]+(?:--)?\r\n?/).slice(1);
+  const dekodet = deler
+    .filter((d) => d.includes("base64"))
+    .map((d) =>
+      Buffer.from(d.split("\r\n\r\n")[1]!.replace(/\r\n/g, ""), "base64").toString(
+        "utf8",
+      ),
+    );
+  assert.equal(dekodet.length, 2);
+  assert.ok(dekodet[0]!.includes("Hei Øystein!"));
+  assert.ok(dekodet[1]!.includes("Pål Barlein // CEO // Reflektor AS"));
+
+  /* Ingen base64-linje over 76 tegn, som RFC 2045 krever. */
+  for (const linje of mime.split("\r\n")) {
+    assert.ok(linje.length <= 998, "ingen linje over SMTP-grensen");
+  }
+});
+
+/**
+ * SIGNATUREN SKAL VÆRE REN TEKST. En mailto-lenke på adressen og
+ * telefonnummeret får e-posten til å se maskinskrevet ut. Bare Canva og
+ * /book skal være lenker.
+ */
+test("signaturen har ingen mailto-lenke", () => {
+  for (const brev of [epost1("henrik", "Bedrift AS"), epost2("henrik", "Bedrift AS")]) {
+    assert.ok(!brev.html.includes("mailto:"));
+    assert.ok(!brev.html.includes("tel:"));
+    assert.ok(brev.html.includes("pal@reflektor.no"));
+    assert.ok(brev.html.includes("47605070"));
+    assert.ok(brev.html.includes('<a href="https://www.reflektor.no/book">'));
+  }
 });
 
 /* ─────────────────────────── NÅR SENDES DE ──────────────────────────── */

@@ -145,15 +145,59 @@ async function tilgangsnokkel(): Promise<string | null> {
 }
 
 /**
- * Koder en overskrift som kan inneholde æ, ø og å.
- *
- * E-postoverskrifter er ASCII. «Nordvik Interiør + Reflektor» uten koding
- * blir til tegnsalat i de fleste klienter.
+ * Navnet som står som avsender. Ikke adressen — den er `gmailAvsender()`.
  */
-function kodetHode(tekst: string): string {
-  return /^[\x00-\x7F]*$/.test(tekst)
-    ? tekst
-    : `=?UTF-8?B?${Buffer.from(tekst, "utf8").toString("base64")}?=`;
+const AVSENDERNAVN = "Pål Barlein";
+
+/*
+  RFC 2047: et kodet ord kan være 75 tegn i alt. «=?UTF-8?B?» og «?=» tar
+  tolv, så det er plass til 63 tegn base64 — altså 45 byte, som er det
+  største tallet delelig på tre som holder seg innenfor.
+*/
+const BYTE_PER_ORD = 45;
+
+/**
+ * Koder en overskrift som kan inneholde æ, ø og å, etter RFC 2047.
+ *
+ * E-POSTHEADERE ER ASCII. Står «Pål Barlein» rått i `From`, leser mottakerens
+ * klient byte-ene som Latin-1 og viser «PÃ¥l» — eller «PÃƒÂ¥l», hvis den
+ * gjetter feil to ganger. Målt i Gmail 03.10.2026 på en ekte sending.
+ *
+ * LANGE OVERSKRIFTER DELES I FLERE ORD. Ett kodet ord på 200 tegn er ikke
+ * gyldig, og en klient som følger standarden har lov å vise det rått.
+ * Delingen skjer på tegngrense, aldri midt i en «å»: fortsettelsesbyte i
+ * UTF-8 begynner med bitene 10, og da må vi et hakk tilbake.
+ *
+ * ALDRI DOBBELTKODET. Er teksten allerede ASCII, går den urørt gjennom.
+ */
+export function kodetHode(tekst: string): string {
+  if (/^[\x00-\x7F]*$/.test(tekst)) return tekst;
+
+  const b = Buffer.from(tekst, "utf8");
+  const ord: string[] = [];
+  let i = 0;
+  while (i < b.length) {
+    let slutt = Math.min(i + BYTE_PER_ORD, b.length);
+    while (slutt > i + 1 && slutt < b.length && (b[slutt] & 0xc0) === 0x80) {
+      slutt -= 1;
+    }
+    ord.push(`=?UTF-8?B?${b.subarray(i, slutt).toString("base64")}?=`);
+    i = slutt;
+  }
+  /* Brettes med CRLF + mellomrom, som er måten en header fortsetter. */
+  return ord.join("\r\n ");
+}
+
+/**
+ * Base64 for en meldingsdel, brettet på 76 tegn.
+ *
+ * RFC 2045 setter grensen, og en del eldre mottakere kutter eller forkaster
+ * linjer som er lengre. Gmail tar imot én lang linje, men det er flaks vi
+ * ikke trenger å være avhengige av.
+ */
+function brettetBase64(tekst: string): string {
+  const b64 = Buffer.from(tekst, "utf8").toString("base64");
+  return (b64.match(/.{1,76}/g) ?? []).join("\r\n");
 }
 
 export type Epost = {
@@ -183,7 +227,7 @@ export type Sendt = { tradId: string; meldingsId: string };
 export function byggMime(e: Epost, meldingsId: string): string {
   const grense = `g${randomUUID().replace(/-/g, "")}`;
   const linjer = [
-    `From: Pål Barlein <${gmailAvsender()}>`,
+    `From: ${kodetHode(AVSENDERNAVN)} <${gmailAvsender()}>`,
     `To: ${e.til}`,
     `Subject: ${kodetHode(e.emne)}`,
     `Message-ID: ${meldingsId}`,
@@ -192,15 +236,15 @@ export function byggMime(e: Epost, meldingsId: string): string {
     `Content-Type: multipart/alternative; boundary="${grense}"`,
     "",
     `--${grense}`,
-    'Content-Type: text/plain; charset="UTF-8"',
+    "Content-Type: text/plain; charset=UTF-8",
     "Content-Transfer-Encoding: base64",
     "",
-    Buffer.from(e.tekst, "utf8").toString("base64"),
+    brettetBase64(e.tekst),
     `--${grense}`,
-    'Content-Type: text/html; charset="UTF-8"',
+    "Content-Type: text/html; charset=UTF-8",
     "Content-Transfer-Encoding: base64",
     "",
-    Buffer.from(e.html, "utf8").toString("base64"),
+    brettetBase64(e.html),
     `--${grense}--`,
     "",
   ];

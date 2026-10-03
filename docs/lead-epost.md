@@ -113,3 +113,21 @@ timer tilbake. Slås bryteren på i dag, får de tre siste leadene e-posten
 med én gang — og de har allerede fått HubSpots versjon. Skal de slippe,
 må `lead_epost1_sendt` og `lead_epost2_sendt` settes på dem i HubSpot før
 bryteren snus. Venter man to døgn, faller de ut av vinduet selv.
+
+## Avsendernavnet, rettet 04.10.2026
+
+Første ekte sending viste avsenderen som «PÃƒÂ¥l Barlein» i Gmail. Årsaken
+var at navnet sto rått i `From`-headeren. E-postheadere er ASCII; en klient
+som møter en «å» der, leser byte-ene som Latin-1 og viser tegnsalat.
+
+Nå kodes alle headere med ikke-ASCII etter RFC 2047 — `=?UTF-8?B?…?=` —
+både `From` og `Subject`, også «Re:»-utgaven i påminnelsen. Lange
+overskrifter deles i flere kodede ord på 75 tegn, slik standarden krever, og
+delingen skjer aldri midt i et tegn. ASCII-tekst går urørt gjennom, så
+ingenting kan bli dobbeltkodet.
+
+Brødteksten var riktig fra før: begge MIME-delene sier `charset=UTF-8` og
+`Content-Transfer-Encoding: base64`. Base64-en brettes nå på 76 tegn, som
+RFC 2045 krever. Signaturen har ingen `mailto:`-lenke — adressen og
+telefonnummeret er ren tekst, og bare Canva-lenken og `/book` er lenker.
+Verifisert med en uavhengig RFC 2047-dekoder, ikke bare med vår egen.
