@@ -129,6 +129,31 @@ export function varsel(
   const behov = lead.melding || TOM;
 
   /*
+    «SKRIV TIL <FORNAVN>», bestilt av Cowork 03.10.2026.
+
+    E-postadressen står allerede som en mailto-lenke i feltlista. Denne
+    knappen gjør to ting den ikke gjør: den fyller ut emnet, og den er stor
+    nok til å treffes med tommelen. Pål svarer leads fra telefonen, og et
+    emne han slipper å finne på selv er ett ledd mindre mellom henvendelsen
+    og svaret.
+
+    EMNET ER FAST og formulert fra leadets side — «Henvendelsen din til
+    Reflektor» — så den som får svaret kjenner igjen hva det gjelder uten å
+    åpne e-posten.
+
+    FORNAVNET ER FØRSTE ORD, kappet og escapet, som i delNavn i hubspot.ts.
+    Mangler navnet, står det «Skriv til leadet»: en knapp som sier «Skriv
+    til » og ingenting mer, ser ødelagt ut.
+  */
+  const fornavn = lead.navn.trim().split(/\s+/)[0]?.slice(0, 40) ?? "";
+  const skriv = serUtSomEpost(lead.epost)
+    ? {
+        tekst: fornavn ? `Skriv til ${fornavn}` : "Skriv til leadet",
+        lenke: `mailto:${lead.epost}?subject=${encodeURIComponent("Henvendelsen din til Reflektor")}`,
+      }
+    : null;
+
+  /*
     OPPFØLGINGEN, LAGT TIL 04.10.2026.
 
     HubSpot sender nå selv en e-post med presentasjon og bookinglenke med én
@@ -157,6 +182,9 @@ export function varsel(
     ...rader.map(([navn, verdi]) => `${navn}: ${verdi}`),
     "Behov:",
     behov,
+    ...(skriv
+      ? ["", `${skriv.tekst}: ${lead.epost} (emne: Henvendelsen din til Reflektor)`]
+      : []),
     ...(oppfolging
       ? [
           "",
@@ -178,6 +206,16 @@ export function varsel(
     "</table>",
     '<p style="margin:20px 0 4px;color:#6b6258">Behov:</p>',
     `<p style="white-space:pre-wrap;margin:0">${esc(behov)}</p>`,
+    ...(skriv
+      ? [
+          /*
+            SEKUNDÆR KNAPP, med ramme og uten fyll. Den primære handlingen i
+            denne e-posten er å RINGE — det står med fete typer lenger nede —
+            og to like knapper ville sagt at de to er like viktige.
+          */
+          `<p style="margin:20px 0 0"><a href="${esc(skriv.lenke)}" style="display:inline-block;padding:13px 20px;border:1px solid #d6cfc6;border-radius:8px;color:#2a2521;text-decoration:none">${esc(skriv.tekst)}</a></p>`,
+        ]
+      : []),
     ...(oppfolging
       ? [
           `<p style="margin:24px 0 0">${esc(oppfolging.linje)}</p>`,

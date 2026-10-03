@@ -196,3 +196,53 @@ test("knappen utelates når lenken ikke kan signeres", () => {
   assert.ok(tekst.includes("Ring ASAP for å booke møte personlig."));
   assert.ok(tekst.includes("Mobilnummer: +47 966 84 028"));
 });
+
+/* ────────────────────────── «SKRIV TIL <FORNAVN>» ───────────────────── */
+
+/**
+ * Knappen som åpner et svar med emnet ferdig utfylt, bestilt 03.10.2026.
+ *
+ * E-postadressen står allerede som mailto i feltlista. Det denne gjør i
+ * tillegg, er å sette emnet og å være stor nok for en tommel.
+ */
+test("knappen åpner et svar til leadet med fast emne", () => {
+  const { tekst, html } = varsel(lead());
+  assert.ok(tekst.includes("Skriv til Marisol: marisol@lamexicana.no"));
+  assert.ok(tekst.includes("Henvendelsen din til Reflektor"));
+  assert.ok(
+    html.includes(
+      "mailto:marisol@lamexicana.no?subject=Henvendelsen%20din%20til%20Reflektor",
+    ),
+    html,
+  );
+  assert.ok(html.includes(">Skriv til Marisol</a>"));
+});
+
+test("bare fornavnet brukes, også med tre navn", () => {
+  const { html } = varsel(lead({ navn: "Marisol Sand Hansen" }));
+  assert.ok(html.includes(">Skriv til Marisol</a>"));
+});
+
+/**
+ * UTEN NAVN STÅR DET «Skriv til leadet». En knapp som sier «Skriv til » og
+ * ingenting mer, ser ødelagt ut — og navnet er ikke påkrevd i skjemaet for
+ * en POST som kommer utenfra.
+ */
+test("uten navn får knappen en tekst som står på egne bein", () => {
+  const { html } = varsel(lead({ navn: "" }));
+  assert.ok(html.includes(">Skriv til leadet</a>"));
+});
+
+/**
+ * Uten brukbar adresse er det ingenting å skrive til.
+ *
+ * MERK at feltlista fortsatt lager en mailto-lenke av det som ble skrevet
+ * — den viser det leadet faktisk oppga. Testen ser derfor etter KNAPPEN,
+ * ikke etter «mailto», som første utgave gjorde og som slo ut på feil ting.
+ */
+test("ingen knapp når e-posten ikke er en adresse", () => {
+  const { tekst, html } = varsel(lead({ epost: "ikke en adresse" }));
+  assert.ok(!tekst.includes("Skriv til"));
+  assert.ok(!html.includes("Skriv til"));
+  assert.ok(!html.includes("subject="));
+});

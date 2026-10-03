@@ -42,6 +42,19 @@ står, og sommertid/vintertid er dekket av tester.
 Linjene står ikke for @reflektor.no-adresser. Arbeidsflyten hopper over dem,
 og et varsel som lover en påminnelse som aldri kommer, er verre enn ingenting.
 
+## «Skriv til <fornavn>»
+
+Lagt til 04.10.2026, bestilt av Cowork. En knapp i varselet som åpner et
+svar til leadet med emnet «Henvendelsen din til Reflektor» ferdig utfylt.
+
+E-postadressen står allerede som en lenke i feltlista. Knappen gjør to ting
+den ikke gjør: den setter emnet, og den er stor nok for en tommel. Den er
+sekundær — med ramme, uten fyll — fordi den primære handlingen i varselet er
+å ringe.
+
+Mangler navnet, står det «Skriv til leadet». Er adressen ubrukelig, står
+knappen ikke der i det hele tatt.
+
 ## «Avbryt påminnelse»
 
 **Knappen** i varselet går til `/paaminnelse/avbryt?e=<e-post>&s=<signatur>`.
