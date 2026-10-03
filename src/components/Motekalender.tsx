@@ -123,13 +123,27 @@ export function Motekalender() {
       DEN STARTER SKJULT, ikke synlig. Motsatt vei ville vist en knapp i tre
       sekunder på hver eneste lasting og så fjernet den igjen — en side som
       retter seg selv foran øynene på folk ser ødelagt ut.
+
+      OBSERVATØREN KOM TIL 04.10.2026, etter en kontroll på mobil mot live:
+      der brukte kalenderen mer enn tre sekunder på å komme opp, og da sto
+      BÅDE kalenderen og reserveknappen på siden. En tidsgrense alene kan
+      ikke skille «kommer aldri» fra «kommer sent» — den må kunne ombestemme
+      seg. Kommer rammen etter at knappen er vist, forsvinner knappen igjen.
     */
     const t = setTimeout(() => {
       settReserve(!node.querySelector("iframe"));
     }, 3000);
 
+    const vakt = new MutationObserver(() => {
+      if (!node.querySelector("iframe")) return;
+      settReserve(false);
+      vakt.disconnect();
+    });
+    vakt.observe(node, { childList: true, subtree: true });
+
     return () => {
       clearTimeout(t);
+      vakt.disconnect();
       s.remove();
     };
   }, []);
