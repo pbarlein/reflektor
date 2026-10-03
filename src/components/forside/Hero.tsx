@@ -109,10 +109,16 @@ export function Hero() {
             VEKT: dette klippet er LCP-elementet, siden det maler før H1
             rekker det. Målt gikk LCP fra 996 ms (H1) til 1 232 ms da det
             kom inn, og førstelasten fra 0,99 til 2,72 MB. Derfor er det
-            kodet hardere enn de andre — CRF 33 og åtte sekunder — etter at
+            kodet hardere enn de andre — CRF 36 og åtte sekunder — etter at
             samme bilderute ved faktisk visningsstørrelse viste ingen
             synlig forskjell mot CRF 31. Endres dette klippet, må LCP
             måles på nytt.
+
+            CRF 33 → 36 den 04.10.2026: 1 011 → 738 kB. Dette er det ene
+            klippet HVER besøkende laster ned, så prosentene her teller mer
+            enn i galleriet lenger nede. Samme bilderute i 364×416 — flaten
+            klippet faktisk vises i på mobil — er ikke til å skille fra
+            CRF 33. LCP er målt på nytt etter endringen.
           */}
             {/*
             Klippet ligger ABSOLUTT inne i figuren. Uten det bestemmer

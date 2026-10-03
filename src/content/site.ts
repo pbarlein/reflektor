@@ -97,7 +97,15 @@ export const utenomAbonnementet = {
         "Film til TV, nett og sosiale medier. Vi har laget TV-reklame for Peppes Pizza og Vitusapotek.",
       pris: "Fra 40 000 kr",
       sti: "/reklamefilm",
-      medie: { slag: "film", sti: "/reels/peppes-reklamefilm" },
+      /*
+        EGEN KOPI FOR KORTET, lagt til 04.10.2026. Kortflaten er et kvadrat
+        på 272–390 px. Originalen er 1920×1080 på 4 Mbit/s og veier
+        7,7 MB — den er en reklamefilm som skal kunne vises som film på
+        /reklamefilm, og den filen er uendret. Her lastes en 960×540-kopi
+        uten lydspor på 1,2 MB. Samme bilderute ved faktisk flatestørrelse
+        er ikke til å skille fra originalen.
+      */
+      medie: { slag: "film", sti: "/reels/peppes-reklamefilm-kort" },
       alt: "Klipp fra en reklamefilm",
     },
     {
