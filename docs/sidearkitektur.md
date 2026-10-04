@@ -378,3 +378,58 @@ varighet på det. Et samlet anslag ville vært et tall vi ikke har.
 egen etter korreksjonen 30.09.2026, og oppgir allerede nøyaktig de tre
 faktorene bestillingen ba om. Å skrive den om ville vært å røre en
 formulering han selv har rettet.
+
+## Internlenkene fra bloggen (04.10.2026)
+
+Bestilt av Pål etter at Search Console-tallene ble lagt fram. Målingen
+01.09–04.10.2026, visninger per måned:
+
+| Side | Visninger | Plassering |
+|---|---|---|
+| `/blogg/markedsforing-i-sosiale-medier-some` | 2 514 | 26 |
+| `/blogg/hva-er-innholdsproduksjon` | 1 587 | 15 |
+| `/blogg/hva-er-innholdsmarkedsforing` | 864 | 27 |
+| `/blogg/hva-er-videomarkedsfring` | 761 | 23 |
+| `/blogg/hva-gjr-en-innholdsprodusent` | 566 | 46 |
+| `/innholdsproduksjon` | 397 | 32 |
+| `/reklamefilm` | 306 | 31 |
+| `/videoproduksjon-i-oslo` | 34 | 45 |
+| `/employer-branding-video-oslo` | 3 | 6 |
+
+**Bloggen er det eneste som er synlig, og tjenestesidene er usynlige.** Alle
+klikk nettstedet får, kommer på merkenavnet: «reflektor» 53 klikk,
+«reflektor as» 16. På kjøpsordene står vi på side 2–4 — «sosiale medier
+byrå» plass 20, «some byrå» 25, «reklamefilm» 30, «videoproduksjon oslo» 34
+— og får null klikk.
+
+Derfor skal bloggen sende både lesere og autoritet videre. Internlenker fra
+blogg til salgsside, talt i brødteksten: **21 før dagen i dag, 33 nå.**
+
+**Ankerteksten sier hva målsiden er.** «Les mer» på
+`hva-er-employer-branding` ble byttet til «employer branding-video», og
+«uten bindingstid» på den mest synlige artikkelen av alle ble byttet til
+«SoMe-byrå i Oslo». En lenke fra en side med 2 514 visninger er den mest
+verdifulle internlenken nettstedet har; ankerteksten på den kan ikke være
+innholdsløs.
+
+`tests/internlenker.test.ts` vokter fire ting: at hver lenkefrase står
+ordrett og nøyaktig én gang i avsnittet sitt (står den to ganger, blir begge
+til lenker; står den ikke, forsvinner lenken uten feilmelding), at ingen
+side lenkes to ganger fra samme avsnitt, at de sju mest synlige artiklene
+lenker til en salgsside i selve teksten og ikke bare i «Les videre», og at
+ankerteksten ikke er «les mer» eller «her».
+
+### Search Console ER koblet til
+
+AGENTS.md sier at GSC ikke er koblet til Ahrefs-prosjektet. Det stemmer
+ikke lenger — tallene over er hentet derfra 04.10.2026. Punktet i AGENTS.md
+bør rettes neste gang noen er innom fila.
+
+### Det som ikke er gjort, og som betyr mer
+
+Internlenker flytter noe, men ikke fra plass 30 til plass 5. Anbefalingen
+som står igjen er **Google-bedriftsprofilen**: på «videoproduksjon oslo»,
+«eventfotograf» og «reklamefilm oslo» ligger det et kart over de organiske
+treffene. Reflektor står allerede på plass 9–10 organisk på «videograf» og
+«event fotograf», men er ikke i kartet. Det er utenfor koden, og ligger hos
+Pål.

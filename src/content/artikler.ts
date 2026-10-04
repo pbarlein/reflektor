@@ -590,7 +590,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Hva er SoMe, og hvordan markedsfører en bedrift seg i sosiale medier? Kanaler, innhold, organisk mot betalt, og hvordan dere holder det gående over tid.",
     publisert: "2025-02-12",
-    oppdatert: "2026-10-02",
+    oppdatert: "2026-10-04",
     blokker: [
       {
         type: "avsnitt",
@@ -654,7 +654,10 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "De fleste bedrifter trenger ikke være overalt. Det er bedre å gjøre én eller to kanaler skikkelig enn fire halvveis. Samme video kan ofte brukes i flere kanaler hvis den er filmet stående.",
+          "De fleste bedrifter trenger ikke være overalt. Det er bedre å gjøre én eller to kanaler skikkelig enn fire halvveis. Samme video kan ofte brukes i flere kanaler hvis den er filmet stående, som i reels-produksjon.",
+        lenker: [
+          { frase: "reels-produksjon", sti: "/reels-produksjon" },
+        ],
       },
       {
         type: "overskrift",
@@ -734,8 +737,9 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Det finnes tre måter å få det gjort på: en ansatt SoMe-ansvarlig, en frilanser eller et byrå. Vi har regnet på hva hvert alternativ koster, både i regnestykket for SoMe-ansvarlig mot byrå og i oversikten over hva et SoMe-byrå koster.",
+          "Det finnes tre måter å få det gjort på: en ansatt SoMe-ansvarlig, en frilanser eller et byrå. Vi har regnet på hva hvert alternativ koster, både i regnestykket for SoMe-ansvarlig mot byrå og i oversikten over hva et SoMe-byrå koster. Felles for alle tre er at noen må stå for selve innholdsproduksjonen.",
         lenker: [
+          { frase: "innholdsproduksjonen", sti: "/innholdsproduksjon" },
           {
             frase: "regnestykket for SoMe-ansvarlig mot byrå",
             sti: "/blogg/some-ansvarlig-eller-byra",
@@ -749,8 +753,14 @@ export const artikler: Artikkel[] = [
       { type: "overskrift", niva: 2, tekst: "Slik gjør vi det" },
       {
         type: "avsnitt",
-        tekst: `Reflektor filmer hos dere én dag i måneden og lager ${tilbud.videoerPerManed} videoer av det. Vi publiserer to ganger i uka på Instagram og Facebook, hele året. Det koster ${kr(tilbud.prisPerManed)} kr/mnd, uten bindingstid.`,
-        lenker: [{ frase: "uten bindingstid", sti: "/" }],
+        tekst: `Reflektor filmer hos dere én dag i måneden og lager ${tilbud.videoerPerManed} videoer av det. Vi publiserer to ganger i uka på Instagram og Facebook, hele året. Det koster ${kr(tilbud.prisPerManed)} kr/mnd, uten bindingstid. Det er hele tjenesten vi leverer som SoMe-byrå i Oslo.`,
+        /*
+          ANKERTEKSTEN VAR «uten bindingstid», og den sa ingenting om hva
+          siden er. Byttet 04.10.2026: denne artikkelen har 2 514 visninger
+          i måneden og er den mest synlige siden på hele nettstedet, så
+          lenken herfra er den mest verdifulle internlenken vi har.
+        */
+        lenker: [{ frase: "SoMe-byrå i Oslo", sti: "/" }],
       },
       {
         type: "avsnitt",
@@ -806,7 +816,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Innholdsproduksjon er å lage tekst, foto og video som en bedrift bruker i markedsføringen. Hva det omfatter, hvem som gjør det, og hvordan dere kommer i gang.",
     publisert: "2024-08-09",
-    oppdatert: "2026-10-02",
+    oppdatert: "2026-10-04",
     blokker: [
       {
         type: "avsnitt",
@@ -831,7 +841,11 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Den samme produksjonen kan gi mye av dette på én gang. En dag med opptak kan gi videoer til sosiale medier, bilder til nettsiden og en kortversjon til annonser.",
+          "Den samme produksjonen kan gi mye av dette på én gang. En dag med opptak kan gi videoer til sosiale medier, bilder til nettsiden og en kortversjon til annonser. Skal filmen vises mot betaling, er det reklamefilm; skal den ligge på deres egne flater, er det videoproduksjon.",
+        lenker: [
+          { frase: "reklamefilm", sti: "/reklamefilm" },
+          { frase: "videoproduksjon", sti: "/videoproduksjon-i-oslo" },
+        ],
       },
       {
         type: "overskrift",
@@ -898,7 +912,10 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Mange bedrifter starter med et enkeltprosjekt og ser at det de egentlig trenger, er jevn produksjon.",
+          "Mange bedrifter starter med et enkeltprosjekt og ser at det de egentlig trenger, er jevn produksjon. Den jevne produksjonen er SoMe-abonnementet, til fast månedspris.",
+        lenker: [
+          { frase: "SoMe-abonnementet", sti: "/" },
+        ],
       },
       {
         type: "overskrift",
@@ -983,7 +1000,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Innholdsmarkedsføring (content marketing) er å tiltrekke kunder med nyttig innhold i stedet for rene salgsbudskap. Definisjon, eksempler og slik kommer dere i gang.",
     publisert: "2024-08-08",
-    oppdatert: "2026-10-02",
+    oppdatert: "2026-10-04",
     blokker: [
       {
         type: "avsnitt",
@@ -1044,8 +1061,9 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Grensene er flytende. En video laget for egen Instagram-konto er innholdsmarkedsføring. Betaler dere for å vise den til flere, blir den en annonse. Les mer om hva innholdsproduksjon er og hva reklame er.",
+          "Grensene er flytende. En video laget for egen Instagram-konto er innholdsmarkedsføring. Betaler dere for å vise den til flere, blir den en annonse. Er den laget for betalte flater fra starten, er det reklamefilm. Les mer om hva innholdsproduksjon er og hva reklame er.",
         lenker: [
+          { frase: "reklamefilm", sti: "/reklamefilm" },
           {
             frase: "hva innholdsproduksjon er",
             sti: "/blogg/hva-er-innholdsproduksjon",
@@ -1330,7 +1348,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Employer branding er arbeidet med å bli en arbeidsplass folk vil søke seg til. Hva det er, hvorfor det lønner seg, og hvordan video kan brukes.",
     publisert: "2024-06-12",
-    oppdatert: "2026-10-02",
+    oppdatert: "2026-10-04",
     blokker: [
       {
         type: "avsnitt",
@@ -1434,8 +1452,17 @@ export const artikler: Artikkel[] = [
       },
       {
         type: "avsnitt",
-        tekst: `Hos Reflektor starter enkeltprosjekter på ${kr(tilbud.fraPrisProsjekt)} kr. Vi filmer hos dere, med de ansatte dere har, og leverer filmen i formater til stillingsannonser, karriereside og sosiale medier. Les mer.`,
-        lenker: [{ frase: "Les mer", sti: "/employer-branding-video-oslo" }],
+        tekst: `Hos Reflektor starter enkeltprosjekter på ${kr(tilbud.fraPrisProsjekt)} kr. Vi filmer hos dere, med de ansatte dere har, og leverer filmen i formater til stillingsannonser, karriereside og sosiale medier. Se hele leveransen på siden om employer branding-video.`,
+        /*
+          ANKERTEKSTEN VAR «Les mer», som bærer null relevans videre.
+          Byttet 04.10.2026 til det siden faktisk heter.
+        */
+        lenker: [
+          {
+            frase: "employer branding-video",
+            sti: "/employer-branding-video-oslo",
+          },
+        ],
       },
     ],
     lesVidere: [
@@ -1475,7 +1502,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "En innholdsprodusent planlegger og lager foto, video og tekst til en bedrifts kanaler. Hva rollen innebærer, og når det lønner seg å leie inn.",
     publisert: "2024-06-28",
-    oppdatert: "2026-10-02",
+    oppdatert: "2026-10-04",
     blokker: [
       {
         type: "avsnitt",
@@ -1577,8 +1604,9 @@ export const artikler: Artikkel[] = [
       },
       {
         type: "avsnitt",
-        tekst: `Hos Reflektor koster løpende produksjon ${kr(tilbud.prisPerManed)} kr/mnd. Det inkluderer én produksjonsdag, ${tilbud.videoerPerManed} videoer og publisering to ganger i uka. Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Se også hva et SoMe-byrå koster i Norge.`,
+        tekst: `Hos Reflektor koster løpende produksjon ${kr(tilbud.prisPerManed)} kr/mnd. Det inkluderer én produksjonsdag, ${tilbud.videoerPerManed} videoer og publisering to ganger i uka. Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Begge delene står på siden om innholdsproduksjon. Se også hva et SoMe-byrå koster i Norge.`,
         lenker: [
+          { frase: "innholdsproduksjon", sti: "/innholdsproduksjon" },
           {
             frase: "hva et SoMe-byrå koster i Norge",
             sti: "/blogg/hva-koster-et-some-byra",
