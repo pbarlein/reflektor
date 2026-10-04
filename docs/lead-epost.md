@@ -155,3 +155,77 @@ Google nei på hele nøkkelen hvis en administrator ikke har gitt
 kallene skilt: sending ber om `gmail.send` alene.
 
 Kallet henter bare `From`-headeren, ikke innholdet i meldingene.
+
+## 04.10.2026: de første ekte leadene, og fire feil
+
+Kl. 06:38 kom et Meta-lead. Kl. 06:39 booket samme person møte via
+reflektor.no/book — med en annen e-postadresse. HubSpot laget to kontakter.
+Kl. 06:40 sendte jobben presentasjon og «book her» til begge, og den ene
+åpnet med «Hei Bakst!» til en person som heter Munirat og driver «Bakst &
+Ro | Hjemmebakt i Asker».
+
+Fire regler kom ut av det.
+
+**Bare skjemaleads får e-post 1.** Konverteringen må være nettskjemaet eller
+Meta-skjemaet. En booking gir konverteringen «Meetings Link:
+paal-barlein/intro», og den kontakten skal ingen automatisk e-post til.
+
+**Et booket møte stopper begge e-postene.** Her sto det før at et møte
+booket FØR e-post 1 var «gammelt» og ikke skulle stoppe påminnelsen. Det er
+snudd: har personen et møte i HubSpot, skal maskinen ikke mase.
+
+**Samme person under en annen adresse kjennes igjen** på telefonnummerets
+siste åtte sifre eller på bedriftsnavnet uten selskapsform og tegn. Finner
+vi en annen kontakt som har booket, sendes ingenting.
+
+Feltet `engagements_last_meeting_booked` er **møtetidspunktet, ikke
+bookingtidspunktet**. På kontakten fra 04.10 sto det 16.10. Et filter på
+«siste fjorten dager» ville derfor bommet på nettopp dette tilfellet, så
+vinduet er «fra fjorten dager tilbake og framover»: det fanger både møtet
+som var i forrige uke og møtet som skal være neste uke.
+
+**Meta-leads venter tre minutter.** Nok til at en booking rett etter
+skjemaet rekker å bli en kontakt. Nettsideleads venter ikke — de sendes fra
+skjemaruta, og den som booker på `/takk` har alt fått e-posten.
+
+**Hilsenen bruker fornavn bare når det ser ut som et navn.** `&`, `|`,
+selskapsformen «AS» som eget ord, sifre, eller at fornavnet ligger i
+bedriftsnavnet, gir «Hei!». Vi heller mot «Hei!» i tvil: et generisk «Hei!»
+er umerkelig, et galt fornavn er det ikke.
+
+### Varselet for Meta-leads kommer nå fra jobben
+
+HubSpot-arbeidsflyten varslet med fast tekst om «neste hverdag kl. 09:00»,
+uten avbryt-knapp, og med Metas rå verdier («nei,\_ikke\_nå») rett i
+e-posten. Nå er malen den samme som for nettsideleads: emnet «NYTT LEAD fra
+Meta», feltene Avsender, Mobilnummer, E-post, Bedrift, Antall ansatte,
+Passer 30 000 kr/mnd og Oppstart, eksakt dato for påminnelsen, «Ring ASAP»,
+og begge knappene. Svar går til leadet.
+
+Har personen booket, sier varselet det i stedet: «Har allerede booket møte
+<dato kl.>. Ingen automatisk e-post sendt.» Da finnes det ingen påminnelse
+å avbryte, og knappen står ikke der.
+
+**Markøren er `paminnelse_avbrutt`.** Jobben setter den selv når ingen
+e-post skal sendes, og kontakten faller ut av kandidatlisten. Uten den ville
+varselet gått ut på nytt hvert femte minutt.
+
+**Rekkefølgen er ikke tilfeldig.** For den som har booket sendes varselet
+FØR merkingen: feiler Resend, prøver neste kjøring igjen. Når e-post 1 er
+sendt, varsles det ETTER merkingen: e-posten til kunden kan ikke sendes om
+igjen bare for å få varselet ut.
+
+### Det Pål må gjøre
+
+Slå av de to HubSpot-varslene i arbeidsflyten «Nytt lead – inbound»
+(handling 2 og 4), ellers kommer Meta-varselet i to utgaver.
+
+### Kanter som står igjen
+
+Et nettsidelead som booker innen fem minutter har alt fått varselet med
+«Påminnelse sendes <dato>». Jobben stopper e-postene, men varselet er
+allerede sendt. Knappen for å avbryte står der, så Pål er ikke lurt — men
+linjen stemmer ikke for den ene.
+
+Et Meta-lead som er `customer` eller har en @reflektor.no-adresse får ingen
+e-post, og dermed heller ikke noe varsel herfra.

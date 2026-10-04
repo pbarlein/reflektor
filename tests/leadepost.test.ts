@@ -7,6 +7,11 @@ import {
   epost1,
   epost2,
   fornavn,
+  hilsenNavn,
+  leadkilde,
+  normalisertBedrift,
+  sammePerson,
+  sisteSifre,
   skalHaEpost1,
   skalHaEpost2,
   STOPPSTADIER,
@@ -253,6 +258,121 @@ test("signaturen har ingen mailto-lenke", () => {
   }
 });
 
+/* ───────────────────────── HILSENEN (04.10.2026) ────────────────────── */
+
+/**
+ * META GIR OSS SIDENAVNET, IKKE ET NAVN. 04.10.2026 åpnet e-posten med «Hei
+ * Bakst!» til en som heter Munirat og driver «Bakst & Ro | Hjemmebakt i
+ * Asker». Det er verre enn ingen hilsen.
+ */
+test("et bedriftsnavn i navnefeltet gir Hei! og ikke et fornavn", () => {
+  assert.equal(
+    hilsenNavn("Bakst & Ro | Hjemmebakt i Asker", "BAKST & RO"),
+    "",
+  );
+  assert.equal(hilsenNavn("Claudia Bergheim", "Bergheim"), "Claudia");
+});
+
+test("de fire tegnene på at dette ikke er et navn", () => {
+  assert.equal(hilsenNavn("Nordvik & Sønner", "Noe helt annet"), "");
+  assert.equal(hilsenNavn("Bakeri | Asker", "Noe helt annet"), "");
+  assert.equal(hilsenNavn("Nordvik AS", "Noe helt annet"), "");
+  assert.equal(hilsenNavn("Bedrift 24", "Noe helt annet"), "");
+  /* «Lasse» inneholder «as», men ikke som eget ord. */
+  assert.equal(hilsenNavn("Lasse Hansen", "Noe helt annet"), "Lasse");
+});
+
+test("fornavnet som ligger i bedriftsnavnet gir Hei!", () => {
+  assert.equal(hilsenNavn("Bakst", "Bakst og Ro AS"), "");
+  assert.equal(hilsenNavn("henrik", "Nordvik Interiør"), "Henrik");
+  assert.equal(hilsenNavn("", "Nordvik"), "");
+});
+
+test("e-postene bruker den strenge hilsenen", () => {
+  const b = epost1("Bakst & Ro | Hjemmebakt i Asker", "BAKST & RO");
+  assert.ok(b.tekst.startsWith("Hei!"), b.tekst.slice(0, 30));
+  assert.ok(!b.tekst.includes("Hei Bakst"));
+
+  const p2 = epost2("Bakst & Ro | Hjemmebakt i Asker", "BAKST & RO");
+  assert.ok(p2.tekst.startsWith("Hei igjen!"), p2.tekst.slice(0, 30));
+
+  assert.ok(epost1("Claudia Bergheim", "Bergheim").tekst.startsWith("Hei Claudia!"));
+});
+
+test("bedriftsnavn normaliseres uten selskapsform og tegn", () => {
+  assert.equal(normalisertBedrift("BAKST & RO"), "bakstro");
+  assert.equal(normalisertBedrift("Bakst og Ro AS"), "bakstro");
+  assert.equal(normalisertBedrift("Nordvik Interiør AS"), "nordvikinteriør");
+  assert.equal(normalisertBedrift(""), "");
+});
+
+/* ──────────────────── HVOR LEADET KOM FRA (04.10.2026) ──────────────── */
+
+test("bare de to skjemaene er skjemaleads", () => {
+  assert.equal(leadkilde("/kontaktoss: reflektor.no – kontaktskjema"), "nettside");
+  assert.equal(
+    leadkilde("Facebook Lead Ads: Reflektor SoMe-abonnement Untitled form"),
+    "meta",
+  );
+  /* Denne er grunnen til at regelen finnes. */
+  assert.equal(leadkilde("Meetings Link: paal-barlein/intro"), "annet");
+  assert.equal(leadkilde(""), "annet");
+  assert.equal(leadkilde("Import 04.10.2026"), "annet");
+});
+
+/* ───────────────── SAMME PERSON, NY ADRESSE (04.10.2026) ────────────── */
+
+test("telefonnummeret kjennes igjen uansett hvordan det er skrevet", () => {
+  assert.equal(sisteSifre("+4797744426"), "97744426");
+  assert.equal(sisteSifre("977 44 426"), "97744426");
+  assert.equal(sisteSifre("97744426"), "97744426");
+  /* For kort til å kunne sammenlignes trygt. */
+  assert.equal(sisteSifre("4426"), "");
+});
+
+const spor = (e: string, t: string, b: string) => ({
+  epost: e,
+  telefon: t,
+  bedrift: b,
+});
+
+test("samme telefon eller samme bedrift er samme person", () => {
+  /* Dette er Bakst & Ro-saken, med de faktiske verdiene. */
+  const meta = spor("lolademunirat@yahoo.com", "+4797744426", "BAKST & RO");
+  const booking = spor("bakstogro@outlook.com", "", "BAKST & RO");
+  assert.equal(sammePerson(meta, booking), true);
+
+  const bareTelefon = spor("annen@example.no", "977 44 426", "");
+  assert.equal(sammePerson(meta, bareTelefon), true);
+});
+
+test("samme adresse er én kontakt, ikke to personer", () => {
+  const a = spor("en@example.no", "+4797744426", "BAKST & RO");
+  assert.equal(sammePerson(a, { ...a }), false);
+});
+
+test("ingen felles spor er ikke samme person", () => {
+  assert.equal(
+    sammePerson(
+      spor("en@example.no", "+4791122334", "Nordvik"),
+      spor("to@example.no", "+4799887766", "Soulcake"),
+    ),
+    false,
+  );
+});
+
+test("tomme felter kobler ikke tilfeldige kontakter sammen", () => {
+  assert.equal(
+    sammePerson(spor("en@example.no", "", ""), spor("to@example.no", "", "")),
+    false,
+  );
+  /* Et bedriftsnavn på to tegn er for tynt. */
+  assert.equal(
+    sammePerson(spor("en@example.no", "", "Ab"), spor("to@example.no", "", "AB")),
+    false,
+  );
+});
+
 /* ─────────────────────────── NÅR SENDES DE ──────────────────────────── */
 
 const kandidat = (endringer: Partial<Kandidat> = {}): Kandidat => ({
@@ -261,6 +381,9 @@ const kandidat = (endringer: Partial<Kandidat> = {}): Kandidat => ({
   epost1Sendt: "",
   epost2Sendt: "",
   avbrutt: "",
+  hendelse: "/kontaktoss: reflektor.no – kontaktskjema",
+  konvertert: "2026-10-05T06:00:00Z",
+  booketAnnetSted: false,
   moteBooket: "",
   dealstadier: [],
   harSvart: false,
@@ -268,26 +391,28 @@ const kandidat = (endringer: Partial<Kandidat> = {}): Kandidat => ({
 });
 
 test("e-post 1: interne adresser og kunder får ingenting", () => {
-  assert.equal(skalHaEpost1(kandidat()), true);
-  assert.equal(skalHaEpost1(kandidat({ epost: "pal@reflektor.no" })), false);
+  assert.equal(skalHaEpost1(kandidat(), NA), true);
+  assert.equal(skalHaEpost1(kandidat({ epost: "pal@reflektor.no" }), NA), false);
   assert.equal(
-    skalHaEpost1(kandidat({ epost: "pal+test@Reflektor.no" })),
+    skalHaEpost1(kandidat({ epost: "pal+test@Reflektor.no" }), NA),
     false,
   );
-  assert.equal(skalHaEpost1(kandidat({ lifecycle: "customer" })), false);
-  assert.equal(skalHaEpost1(kandidat({ epost: "" })), false);
+  assert.equal(skalHaEpost1(kandidat({ lifecycle: "customer" }), NA), false);
+  assert.equal(skalHaEpost1(kandidat({ epost: "" }), NA), false);
 });
 
 /** ALDRI TO GANGER. Datoen i HubSpot er det eneste som teller. */
 test("e-post 1 sendes aldri to ganger", () => {
   assert.equal(
-    skalHaEpost1(kandidat({ epost1Sendt: "2026-10-05T07:00:00Z" })),
+    skalHaEpost1(kandidat({ epost1Sendt: "2026-10-05T07:00:00Z" }), NA),
     false,
   );
 });
 
 const sendt = "2026-10-05T07:00:00Z"; // mandag 09:00 norsk tid
 const na = (iso: string) => new Date(iso);
+/* Lenge nok etter konverteringen at Meta-ventetiden er ute. */
+const NA = new Date("2026-10-05T06:30:00Z");
 
 test("påminnelsen går tirsdag 09:00, ikke før", () => {
   const k = kandidat({ epost1Sendt: sendt });
@@ -371,14 +496,87 @@ test("fikk vi ikke lest tråden, sendes påminnelsen likevel", () => {
   );
 });
 
-/** Et møte booket FØR e-posten sier ingenting om denne henvendelsen. */
-test("gammelt møte stopper ikke påminnelsen", () => {
+/**
+ * ET MØTE STOPPER PÅMINNELSEN UANSETT NÅR DET BLE BOOKET.
+ *
+ * Her sto det motsatte: et møte booket FØR e-post 1 var «gammelt» og skulle
+ * ikke stoppe noe. Bestilt endret av Pål 04.10.2026, etter at en som hadde
+ * booket fikk «book her» likevel. Har personen et møte i HubSpot, skal
+ * maskinen ikke mase.
+ */
+test("et møte stopper påminnelsen, også et gammelt", () => {
   assert.equal(
     skalHaEpost2(
       kandidat({ epost1Sendt: sendt, moteBooket: "2026-09-01T10:00:00Z" }),
       na("2026-10-06T07:30:00Z"),
     ),
+    false,
+  );
+});
+
+/**
+ * ALT SOM SKAL STOPPE E-POST 1, STOPPER DEN.
+ *
+ * Fire av dem er nye 04.10.2026, og alle fire kom av samme hendelse: en
+ * som hadde booket fikk «book her».
+ */
+test("alt som skal stoppe e-post 1, stopper den", () => {
+  const grunner: Partial<Kandidat>[] = [
+    { epost: "pal@reflektor.no" },
+    { epost: "" },
+    { lifecycle: "customer" },
+    { epost1Sendt: "2026-10-05T07:00:00Z" },
+    { hendelse: "Meetings Link: paal-barlein/intro" },
+    { hendelse: "" },
+    { moteBooket: "2026-10-16T09:00:00Z" },
+    { booketAnnetSted: true },
+  ];
+  for (const g of grunner) {
+    assert.equal(skalHaEpost1(kandidat(g), NA), false, JSON.stringify(g));
+  }
+  assert.equal(skalHaEpost1(kandidat(), NA), true);
+});
+
+/**
+ * TRE MINUTTER FOR META-LEADS. 04.10.2026 kom leadet 06:38 og bookingen
+ * 06:39. Jobben rakk ikke å se bookingen fordi den sendte straks.
+ */
+test("Meta-leads venter tre minutter, nettsideleads venter ikke", () => {
+  const meta = {
+    hendelse: "Facebook Lead Ads: Reflektor SoMe-abonnement",
+    konvertert: "2026-10-04T06:38:00Z",
+  };
+  assert.equal(
+    skalHaEpost1(kandidat(meta), new Date("2026-10-04T06:39:00Z")),
+    false,
+    "ett minutt er for tidlig",
+  );
+  assert.equal(
+    skalHaEpost1(kandidat(meta), new Date("2026-10-04T06:41:30Z")),
     true,
+    "tre og et halvt minutt er nok",
+  );
+
+  /* Nettsideleadet sendes med én gang, fra skjemaruta. */
+  assert.equal(
+    skalHaEpost1(
+      kandidat({ konvertert: "2026-10-04T06:38:00Z" }),
+      new Date("2026-10-04T06:38:05Z"),
+    ),
+    true,
+  );
+});
+
+test("et Meta-lead uten konverteringsdato sendes ikke", () => {
+  assert.equal(
+    skalHaEpost1(
+      kandidat({
+        hendelse: "Facebook Lead Ads: Reflektor SoMe-abonnement",
+        konvertert: "",
+      }),
+      NA,
+    ),
+    false,
   );
 });
 
@@ -389,7 +587,11 @@ const kontakt = {
   epost: "henrik@example.no",
   navn: "Henrik Dale",
   bedrift: "Nordvik",
+  telefon: "+4791122334",
   lifecycle: "lead",
+  hendelse: "/kontaktoss: reflektor.no – kontaktskjema",
+  konvertert: "2026-10-05T06:00:00Z",
+  metasvar: [],
   epost1Sendt: "",
   epost2Sendt: "",
   tradId: "",

@@ -211,11 +211,32 @@ export const EPOST_FELT = {
   meldingsId: "lead_epost1_message_id",
 } as const;
 
+/**
+ * Svarene fra Meta-skjemaet, med etikettene Pål skal se i varselet.
+ *
+ * NAVNENE ER HUBSPOTS EGNE, kontrollert mot kontakten 04.10.2026. De er
+ * laget av Facebook-integrasjonen og ser ut som de gjør fordi de er avledet
+ * av spørsmålsteksten i annonsen — ikke gjett på dem, les dem.
+ *
+ * VERDIENE KOMMER MED UNDERSTREK FOR MELLOMROM: «kanskje,_vi_vil_vite_mer».
+ * Det er Metas egne nøkler, og de skal vaskes før de vises.
+ */
+export const METAFELT = [
+  { navn: "hvor_mange_jobber_i_bedriften", etikett: "Antall ansatte" },
+  {
+    navn: "prisen_er_30_000_krmnd_passer_det_for_dere",
+    etikett: "Passer 30 000 kr/mnd",
+  },
+  { navn: "nr_vil_dere_starte", etikett: "Oppstart" },
+] as const;
+
 const LESEFELT = [
   "email",
   "firstname",
   "lastname",
   "company",
+  "phone",
+  "mobilephone",
   "lifecyclestage",
   "engagements_last_meeting_booked",
   "recent_conversion_event_name",
@@ -225,6 +246,7 @@ const LESEFELT = [
   EPOST_FELT.to,
   EPOST_FELT.trad,
   EPOST_FELT.meldingsId,
+  ...METAFELT.map((f) => f.navn),
 ];
 
 export type Leadkontakt = {
@@ -232,13 +254,20 @@ export type Leadkontakt = {
   epost: string;
   navn: string;
   bedrift: string;
+  telefon: string;
   lifecycle: string;
+  /** `recent_conversion_event_name`: hvilket skjema leadet kom fra. */
+  hendelse: string;
+  /** `recent_conversion_date`. */
+  konvertert: string;
   epost1Sendt: string;
   epost2Sendt: string;
   tradId: string;
   meldingsId: string;
   avbrutt: string;
   moteBooket: string;
+  /** Svarene fra Meta-skjemaet, etikett → verdi. Tom for nettsideleads. */
+  metasvar: { etikett: string; verdi: string }[];
 };
 
 function somLeadkontakt(r: {
@@ -251,13 +280,24 @@ function somLeadkontakt(r: {
     epost: p.email ?? "",
     navn: [p.firstname, p.lastname].filter(Boolean).join(" ").trim(),
     bedrift: p.company ?? "",
+    /* Mobilnummeret først: det er det Pål ringer. */
+    telefon: p.mobilephone || p.phone || "",
     lifecycle: p.lifecyclestage ?? "",
+    hendelse: p.recent_conversion_event_name ?? "",
+    konvertert: p.recent_conversion_date ?? "",
     epost1Sendt: p[EPOST_FELT.en] ?? "",
     epost2Sendt: p[EPOST_FELT.to] ?? "",
     tradId: p[EPOST_FELT.trad] ?? "",
     meldingsId: p[EPOST_FELT.meldingsId] ?? "",
     avbrutt: p[AVBRUTT_FELT] ?? "",
     moteBooket: p.engagements_last_meeting_booked ?? "",
+    metasvar: METAFELT.flatMap((f) => {
+      const verdi = (p[f.navn] ?? "").trim();
+      /* Understrek er Metas mellomrom. «innen_3_måneder» → «innen 3 måneder». */
+      return verdi
+        ? [{ etikett: f.etikett, verdi: verdi.replace(/_/g, " ") }]
+        : [];
+    }),
   };
 }
 
@@ -331,6 +371,13 @@ export async function nyeLeadsUtenEpost(): Promise<Leadkontakt[] | null> {
         },
         { propertyName: EPOST_FELT.en, operator: "NOT_HAS_PROPERTY" },
         { propertyName: "lifecyclestage", operator: "NEQ", value: "customer" },
+        /*
+          AVBRUTT BETYR FERDIG BEHANDLET. Jobben setter feltet selv på de
+          som har booket møte, og da skal kontakten ut av listen — ellers
+          ville varselet om at hun har booket gått ut på nytt hvert femte
+          minutt. Det er også feltet Pål trykker på i varselet.
+        */
+        { propertyName: AVBRUTT_FELT, operator: "NEQ", value: "true" },
       ],
     },
   ]);
@@ -345,6 +392,39 @@ export async function venterPaaPaaminnelse(): Promise<Leadkontakt[] | null> {
         { propertyName: EPOST_FELT.to, operator: "NOT_HAS_PROPERTY" },
         { propertyName: AVBRUTT_FELT, operator: "NEQ", value: "true" },
         { propertyName: "lifecyclestage", operator: "NEQ", value: "customer" },
+      ],
+    },
+  ]);
+}
+
+/* ──────────────── SAMME PERSON UNDER EN ANNEN ADRESSE ───────────────── */
+
+/** Hvor langt tilbake et booket møte teller som ferskt. */
+const BOOKINGVINDU_MS = 14 * 24 * 60 * 60 * 1000;
+
+/**
+ * Kontaktene som har booket møte i vinduet.
+ *
+ * FELTET ER MØTETIDSPUNKTET, IKKE BOOKINGTIDSPUNKTET. Det er lett å lese
+ * feil: `engagements_last_meeting_booked` på kontakten fra 04.10.2026 sto
+ * til 16.10 — møtet, ikke bookingen. Et filter på «siste fjorten dager»
+ * ville derfor bommet på nettopp det tilfellet dette er bygget for. Vinduet
+ * er «fra fjorten dager tilbake og framover»: det fanger både møtet som var
+ * i forrige uke og møtet som skal være neste uke.
+ *
+ * HUBSPOT KAN IKKE SØKE PÅ «SLUTTER MED», så telefonnummer kan ikke
+ * filtreres bort i søket. Vi henter dem som har booket — en kort liste — og
+ * sammenligner her.
+ */
+export async function booketNylig(): Promise<Leadkontakt[] | null> {
+  return sok([
+    {
+      filters: [
+        {
+          propertyName: "engagements_last_meeting_booked",
+          operator: "GTE",
+          value: String(Date.now() - BOOKINGVINDU_MS),
+        },
       ],
     },
   ]);

@@ -140,7 +140,18 @@ export function paaminnelseTidspunkt(sendt: Date): Date {
  * skjult bak en hardkodet streng.
  */
 export function paaminnelseTekst(sendt: Date): string {
-  const t = paaminnelseTidspunkt(sendt);
+  return osloTekst(paaminnelseTidspunkt(sendt));
+}
+
+/**
+ * «torsdag 16. oktober kl. 09:00» — et tidspunkt slik Pål skal lese det.
+ *
+ * Samme form overalt. Her sto formateringen inne i `paaminnelseTekst` og
+ * gjaldt bare påminnelsen; fra 04.10.2026 skal også møtetidspunktet i
+ * varselet skrives likt, og da kan det ikke være to utgaver av samme
+ * format som kan gli fra hverandre.
+ */
+export function osloTekst(t: Date): string {
   const dato = new Intl.DateTimeFormat("nb-NO", {
     timeZone: SONE,
     weekday: "long",
