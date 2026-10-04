@@ -8,6 +8,7 @@ import { Merkelapp } from "@/components/Eyebrow";
 import { Klipp } from "@/components/Klipp";
 import { utenomAbonnementet as u } from "@/content/site";
 import { useSpillNarSynlig } from "@/lib/videosynlighet";
+import { SEKSJONSLUFT } from "./rytme";
 
 /**
  * «Utenom abonnementet»: fire kort ut til tjenestesidene.
@@ -32,7 +33,7 @@ export function UtenomAbonnementet() {
   const fest = useSpillNarSynlig();
 
   return (
-    <section className="pb-20 sm:pb-24">
+    <section className={SEKSJONSLUFT}>
       <Container>
         <Merkelapp som="p">{u.merkelapp}</Merkelapp>
         <h2 className="mt-4 max-w-2xl text-3xl text-balance sm:text-4xl">

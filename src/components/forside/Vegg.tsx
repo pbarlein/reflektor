@@ -1,5 +1,6 @@
 import { Arbeidsvegg } from "@/components/Arbeidsbilder";
 import { veggrader } from "@/content/arbeid";
+import { SEKSJONSLUFT } from "./rytme";
 
 /**
  * Arbeidsveggen i full bredde.
@@ -15,7 +16,7 @@ export function Vegg() {
       tekstbredden leser som en illustrasjon, en som går ut av skjermen
       leser som en strøm. Se arbeid.ts og globals.css.
     */}
-      <section className="pb-14 sm:pb-20" aria-label="Utvalg fra arbeidet">
+      <section className={SEKSJONSLUFT} aria-label="Utvalg fra arbeidet">
         <Arbeidsvegg rader={veggrader} />
       </section>
     </>

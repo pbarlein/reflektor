@@ -5,6 +5,7 @@ import { TbdMarkor, hentTekst } from "@/components/Slot";
 
 import { front } from "@/content/sider/front";
 import { tilbud } from "@/content/site";
+import { SEKSJONSLUFT } from "./rytme";
 
 /**
  * Heroen: posisjonering i øvre halvdel av første skjerm.
@@ -19,7 +20,7 @@ export function Hero() {
         Rytmen varierer bevisst mellom seksjonene: jevn vertikal padding
         overalt er et malsignal. Forholdet mellom største og minste
         seksjonsrytme her er omtrent 3:1. */}
-      <section className="pt-16 pb-24 sm:pt-24 sm:pb-36">
+      <section className={`pt-16 sm:pt-24 ${SEKSJONSLUFT}`}>
         <Container>
           {/*
           Tekst og klipp side om side, begge innenfor containeren, så

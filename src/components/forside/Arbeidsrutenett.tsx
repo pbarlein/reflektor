@@ -1,5 +1,6 @@
 import { Arbeidskolonner } from "@/components/Arbeidsbilder";
 import { arbeidskolonner } from "@/content/arbeid";
+import { SEKSJONSLUFT } from "./rytme";
 
 /**
  * Stillbildene fra produksjonsdager.
@@ -44,7 +45,7 @@ export function Arbeidsrutenett() {
         pusterom mellom to seksjoner i stedet for som en seksjon som henger
         løsere nedover enn oppover. Priskortet over har samme verdi.
       */}
-      <section className="pb-20" aria-label="Arbeid fra produksjonsdager">
+      <section className={SEKSJONSLUFT} aria-label="Arbeid fra produksjonsdager">
         <Arbeidskolonner kolonner={arbeidskolonner} />
       </section>
     </>

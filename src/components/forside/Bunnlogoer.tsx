@@ -28,10 +28,11 @@ export function Bunnlogoer() {
       som allerede har rullet forbi.
     */}
       {/*
-      Ingen egen bunnmarg. Kontaktseksjonen over har pb-24 og bunnteksten
-      har mt-24, altså 96 px på hver side. La raden også ha padding under,
-      og luften ble 96 over mot 192 under — raden ville lest som en hale
-      på kontaktseksjonen i stedet for å stå mellom de to.
+      Ingen egen bunnmarg. Kontaktseksjonen over har forsidens felles luft
+      (96 px på skjerm) og bunnteksten har mt-24, altså 96 px på hver side.
+      La raden også ha padding under, og luften ble 96 over mot 192 under —
+      raden ville lest som en hale på kontaktseksjonen i stedet for å stå
+      mellom de to.
     */}
       <Logorad dekorativ />
     </>

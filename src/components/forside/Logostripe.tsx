@@ -1,4 +1,5 @@
 import { Logorad } from "@/components/Logorad";
+import { SEKSJONSLUFT } from "./rytme";
 
 /**
  * Logoraden mellom heroen og arbeidsseksjonen.
@@ -23,7 +24,7 @@ export function Logostripe() {
       hvorfor raden ikke har overskrift.
     */}
       <section
-        className="pb-24 sm:pb-32"
+        className={SEKSJONSLUFT}
         aria-label="Kunder Reflektor har produsert foto og video for"
       >
         <Logorad />

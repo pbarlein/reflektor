@@ -6,6 +6,7 @@ import { TbdMarkor, hentTekst } from "@/components/Slot";
 import { klarerteAnmeldelser } from "@/content/anmeldelser";
 import { hentCase } from "@/content/caser";
 import { front } from "@/content/sider/front";
+import { SEKSJONSLUFT } from "./rytme";
 
 /**
  * Google-anmeldelsene.
@@ -146,16 +147,13 @@ export function Anmeldelsesseksjon() {
         panelet.
       */}
       {/*
-        LUFTA ER STRAMMET INN 02.10.2026, bestilt av Pål: «litt for mye
-        spacing over arbeid». Her sto `pb-24 sm:pb-32`, altså 96 px på mobil
-        og 128 på desktop ned til «Slik ser det ut når vi filmer hos andre».
-
-        Avstanden kom av en rettelse dagen før — seksjonen hadde 0 px under
-        seg og måtte få luft som alle andre — og den ble satt én hakk for
-        romslig. `pb-16 sm:pb-24` gir 64 og 96, som er samme verdi som
-        seksjonen over betaler på toppen.
+        LUFTEN UNDER ER NÅ FELLES FOR HELE FORSIDEN, se SEKSJONSLUFT i
+        rytme.ts. Her sto `pb-16 sm:pb-24` skrevet ut, satt 02.10.2026 etter
+        Påls «litt for mye spacing over arbeid». Verdien er den samme — det
+        er den som ble gjort gjeldende for alle seksjonene 04.10.2026 — men
+        den står ett sted nå, ikke ti.
       */}
-      <section className="pb-16 sm:pb-24">
+      <section className={SEKSJONSLUFT}>
         <Anmeldelsesrad
           eyebrow={hentTekst(front, "front.reviews.eyebrow")}
           overskrift={

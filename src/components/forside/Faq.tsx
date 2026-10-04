@@ -3,6 +3,7 @@ import { Merkelapp } from "@/components/Eyebrow";
 
 import { Container } from "@/components/Container";
 import { faqSporsmal, forsidensSporsmal } from "@/content/faq";
+import { SEKSJONSLUFT } from "./rytme";
 
 export function Faq() {
   return (
@@ -35,7 +36,7 @@ export function Faq() {
       <details> er trygt her og en JavaScript-løsning ikke ville vært det:
       språkmodeller klikker ikke.
     */}
-      <section className="pb-24 sm:pb-32">
+      <section className={SEKSJONSLUFT}>
         <Container>
           <div className="grid gap-x-10 gap-y-8 lg:grid-cols-[9rem_1fr]">
             <Merkelapp className="lg:pt-3">Spørsmål</Merkelapp>

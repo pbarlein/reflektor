@@ -4,6 +4,7 @@ import { ReelVegg } from "@/components/ReelVegg";
 import { TbdMarkor, hentTekst } from "@/components/Slot";
 import { reels } from "@/content/reels";
 import { front } from "@/content/sider/front";
+import { SEKSJONSLUFT } from "./rytme";
 
 /**
  * Arbeidet: reel-raden, produktet vist før det forklares.
@@ -30,11 +31,12 @@ export function Arbeidet() {
         avstanden blitt dobbel.
 
         FORSIDENS RYTME, for den som lurer: hver seksjon betaler for luften
-        UNDER seg, ingen har luft over. Legges det inn en ny seksjon med
-        egen bakgrunnsfarge, må den fargede flaten være innfelt og luften
-        ligge utenfor den — ellers oppstår nøyaktig den samme feilen igjen.
+        UNDER seg, ingen har luft over, og verdien er den samme overalt —
+        se SEKSJONSLUFT i rytme.ts. Legges det inn en ny seksjon med egen
+        bakgrunnsfarge, må den fargede flaten være innfelt og luften ligge
+        utenfor den — ellers oppstår nøyaktig den samme feilen igjen.
       */}
-      <section className="pb-28 sm:pb-36">
+      <section className={SEKSJONSLUFT}>
         <Container>
           <Eyebrow>{hentTekst(front, "front.work.eyebrow")}</Eyebrow>
           <h2 className="mt-4 max-w-2xl text-3xl sm:text-4xl">

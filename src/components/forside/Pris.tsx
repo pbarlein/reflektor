@@ -6,6 +6,7 @@ import { TbdMarkor, hentTekst } from "@/components/Slot";
 
 import { front } from "@/content/sider/front";
 import { tilbud } from "@/content/site";
+import { SEKSJONSLUFT } from "./rytme";
 
 /**
  * Prisen: ett tilbudskort, og ett ord.
@@ -99,7 +100,7 @@ export function Pris() {
        19.09.2026 og satt til `pb-20` på begge sider. Rutenettet skal lese
        som ett pusterom mellom to kort, og det krever lik luft over og
        under. */
-    <section id="pris" className="scroll-mt-4 pb-20">
+    <section id="pris" className={`scroll-mt-4 ${SEKSJONSLUFT}`}>
       <Container>
         <div className="glassflate rounded-medie px-6 py-10 text-pa-dyp sm:px-10 sm:py-12 lg:px-14 lg:py-14">
           <Merkelapp variant="dyp" som="h2">

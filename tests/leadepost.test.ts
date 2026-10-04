@@ -623,6 +623,16 @@ async function medMiljo(
  * ikke gå ut ÉN e-post herfra — ellers får leadet alt i dobbelt i vinduet
  * før Pål rekker å slå av arbeidsflyten.
  */
+/*
+  TIDSPUNKTET ER FASTSATT, ikke hentet fra klokka. Rettet 04.10.2026.
+
+  Testene under kalte `sendEpost1(kontakt)` uten tidspunkt, og fikk da
+  `new Date()`. Da sendevinduet 07–21 kom til tidligere samme dag, begynte
+  de å avhenge av når på døgnet testene kjørte: grønne om formiddagen, røde
+  etter kl. 21. Det ble oppdaget kl. 21:09.
+*/
+const I_VINDUET = new Date("2026-10-05T10:00:00+02:00");
+
 test("bryteren av: ingenting sendes, ingenting nås på nett", async () => {
   const opprinnelig = globalThis.fetch;
   let kall = 0;
@@ -634,7 +644,7 @@ test("bryteren av: ingenting sendes, ingenting nås på nett", async () => {
         return new Response("{}", { status: 200 });
       };
       const { sendEpost1 } = await import("@/lib/leadutsending.ts");
-      assert.equal(await sendEpost1(kontakt), "ville-sendt");
+      assert.equal(await sendEpost1(kontakt, I_VINDUET), "ville-sendt");
     },
   );
   globalThis.fetch = opprinnelig;
@@ -662,7 +672,7 @@ test("bryteren av, men testadressen slipper gjennom", async () => {
       };
       const { sendEpost1 } = await import("@/lib/leadutsending.ts");
       // Uten Google-nøkkel feiler sendingen, men den SKAL ha blitt forsøkt.
-      const utfall = await sendEpost1(kontakt);
+      const utfall = await sendEpost1(kontakt, I_VINDUET);
       assert.ok(["feilet", "sendt"].includes(utfall), utfall);
     },
   );
@@ -675,7 +685,10 @@ test("en kontakt som allerede har fått e-posten, røres ikke av bryteren", asyn
   await medMiljo({ LEAD_EPOST_AKTIV: "true" }, async () => {
     const { sendEpost1 } = await import("@/lib/leadutsending.ts");
     assert.equal(
-      await sendEpost1({ ...kontakt, epost1Sendt: "2026-10-05T07:00:00Z" }),
+      await sendEpost1(
+        { ...kontakt, epost1Sendt: "2026-10-05T07:00:00Z" },
+        I_VINDUET,
+      ),
       "hoppet-over",
     );
   });

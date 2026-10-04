@@ -5,6 +5,7 @@ import { Kontaktskjema } from "@/components/Kontaktskjema";
 import { TbdMarkor, hentTekst } from "@/components/Slot";
 import { front } from "@/content/sider/front";
 import { site } from "@/content/site";
+import { SEKSJONSLUFT } from "./rytme";
 
 /**
  * Kontaktseksjonen med skjemaet.
@@ -46,7 +47,7 @@ export function Kontakt() {
       på siden. Samme regel som i arbeidsrutenettet: et navn på siden
       skal komme fra en kilde, ikke fra at filene lå i samme mappe.
     */}
-      <section id="kontakt" className="pb-24">
+      <section id="kontakt" className={SEKSJONSLUFT}>
         <Container>
           <div className="rounded-flate bg-dyp px-8 py-14 text-pa-dyp sm:px-14">
             <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-stretch lg:gap-20">

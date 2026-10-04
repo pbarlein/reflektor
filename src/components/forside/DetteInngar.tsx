@@ -4,6 +4,7 @@ import { Omtalevideo } from "@/components/Omtalevideo";
 import { TbdMarkor, hentTekst, slotsISeksjon } from "@/components/Slot";
 import { front } from "@/content/sider/front";
 import { tilbud } from "@/content/site";
+import { SEKSJONSLUFT } from "./rytme";
 
 /**
  * Leveransen: hva vi gjør, i rekkefølge, og hva som ligger i den.
@@ -79,7 +80,7 @@ export function DetteInngar() {
   const steg = slotsISeksjon(front, 3).filter((s) => s.id.includes("steps"));
 
   return (
-    <section id="inngar" className="scroll-mt-4 pb-20 sm:pb-28">
+    <section id="inngar" className={`scroll-mt-4 ${SEKSJONSLUFT}`}>
       <Container>
         {/*
           INGEN `overflow-hidden` PÅ KORTET. Det ser ut som en detalj og er
