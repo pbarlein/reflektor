@@ -27,8 +27,23 @@ export const front: Side = {
       navn: "Metadata",
       jobb: "Avgjør om noen klikker i søkeresultatet.",
       slots: {
+        /*
+         * BYTTET 04.10.2026, bestilt av Pål. Her sto «Sosiale medier
+         * nesten på autopilot. Fast pris, ingen binding».
+         *
+         * Tittelen solgte løftet, men inneholdt ikke ordet folk søker på.
+         * «some byrå» har 100 søk i måneden i Norge og «sosiale medier
+         * byrå» 50, begge med lav konkurranse, og ingen av dem sto i en
+         * tittel noe sted på nettstedet. Løftet står fortsatt, nå bak
+         * ordet som gjør at noen finner det.
+         *
+         * DE TO ORDENE EIES AV FORSIDEN ALENE. Ingen andre sider skal ha
+         * «SoMe-byrå» eller «sosiale medier byrå» i tittel eller
+         * overskrift — /reels-produksjon lenker hit med ordet som
+         * ankertekst i stedet. Se søkeordkartet i docs/sidearkitektur.md.
+         */
         "front.meta.title": tekst(
-          "Sosiale medier nesten på autopilot. Fast pris, ingen binding",
+          "SoMe-byrå i Oslo – sosiale medier nesten på autopilot",
           { maksTegn: 60 },
         ),
         "front.meta.description": tekst(
@@ -72,10 +87,25 @@ export const front: Side = {
          * fra oppramsingen foran. Rett inn ble setningen 191 av 180 tegn,
          * og ordet sto nå to ganger i samme avsnitt. Uten det: 178.
          */
+        /*
+         * ÉN SETNING LAGT FORAN 04.10.2026, bestilt av Pål og ordrett hans:
+         * «Reflektor er et SoMe-byrå i Oslo som filmer hos dere og
+         * publiserer for dere.»
+         *
+         * DEN STÅR FØRST, ikke sist. Hovedsøkeordet skal stå i tittelen og
+         * i første setning under H1 — står det til slutt i et avsnitt, er
+         * det ikke lenger første setning, og en språkmodell som siterer de
+         * første linjene får ikke med hva Reflektor er.
+         *
+         * GRENSEN ER HEVET FRA 180 TIL 260 TEGN. Det er to linjer mer på en
+         * telefon, og det er prisen for å ha ordet over folden. Påls egen
+         * setning fra 16.09.2026 står ellers uendret — se begrunnelsen
+         * under for hvorfor rekkefølgen i den er som den er.
+         */
         "front.hero.sub": tekst(
-          "Én produksjonsdag hos dere i måneden. Reflektor gjør resten: idé, opptak og klipp. 8–10 videoer. Publisering 2 ganger per uke til Instagram og Facebook. Fast pris, ingen binding.",
+          "Reflektor er et SoMe-byrå i Oslo som filmer hos dere og publiserer for dere. Én produksjonsdag hos dere i måneden. Reflektor gjør resten: idé, opptak og klipp. 8–10 videoer. Publisering 2 ganger per uke til Instagram og Facebook. Fast pris, ingen binding.",
           {
-            maksTegn: 180,
+            maksTegn: 260,
             jobb: "Arbeidsmengden for kunden. Den er innvendingen, ikke prisen.",
           },
         ),

@@ -41,7 +41,13 @@ import { basisUrl } from "@/lib/miljo";
  */
 
 export const metadata: Metadata = {
-  title: "Ofte stilte spørsmål – SoMe-byrå og fast pris",
+  /*
+   * «SoMe-byrå» ER TATT UT AV TITTELEN 04.10.2026. Ordet eies av forsiden
+   * alene — se søkeordkartet i docs/sidearkitektur.md. To sider som
+   * kjemper om samme ord taper begge, og en FAQ-side skal ikke konkurrere
+   * med forsiden om kjøpsordet.
+   */
+  title: "Ofte stilte spørsmål om abonnementet og prisen",
   description:
     "Svar på de vanligste spørsmålene om Reflektors SoMe-abonnement: pris (30 000 kr/mnd), hva som er inkludert, Instagram og Facebook, bindingstid og oppstart.",
   alternates: { canonical: `${basisUrl()}/faq` },
@@ -71,8 +77,15 @@ export default function Faq() {
 
       <section className="pt-16 pb-16 sm:pt-24 sm:pb-20">
         <Container>
+          {/*
+            «SoMe-byrå» ER TATT UT AV H1-EN 04.10.2026, samtidig som den ble
+            tatt ut av tittelen. Ordet eies av forsiden alene — se
+            søkeordkartet i docs/sidearkitektur.md. Siden svarer på
+            spørsmålene om abonnementet; den skal ikke konkurrere med
+            forsiden om kjøpsordet.
+          */}
           <h1 className="max-w-3xl text-4xl text-balance sm:text-5xl lg:text-6xl">
-            Ofte stilte spørsmål om SoMe-byrå og fast pris
+            Ofte stilte spørsmål om abonnementet og prisen
           </h1>
 
           <div className="mt-12 grid gap-12 lg:mt-16 lg:grid-cols-[16rem_1fr] lg:gap-16">

@@ -247,7 +247,23 @@ export type Tjenesteside = {
    */
   seksjonstittel?: string;
   seksjoner: Seksjon[];
-  faq: { sporsmal: string; svar: string }[];
+  /*
+   * FAQ-SVAR MED LENKE, lagt til 04.10.2026.
+   *
+   * To av de nye spørsmålene er definisjonsspørsmål — «Hva er
+   * innholdsproduksjon?», «Hva er employer branding?» — og svaret på dem
+   * eies av en bloggartikkel. Et kort svar her og en lenke dit er riktig
+   * både for leseren og mot kannibalisering: tjenestesiden svarer uten å
+   * kjempe om søket.
+   *
+   * Uten feltet måtte lenken enten stått som rå tekst i svaret, eller
+   * artikkelen ville vært unådd fra siden den hører til.
+   */
+  faq: {
+    sporsmal: string;
+    svar: string;
+    lenker?: { sti: string; tekst: string }[];
+  }[];
   /** Fra-pris som tekst, eller null når den ikke er oppgitt. */
   pris: string | null;
   /**
@@ -302,13 +318,24 @@ const KONTAKT = { sti: "/#kontakt", tekst: "Få et forslag" };
 
 export const reklamefilm: Tjenesteside = {
   sti: "/reklamefilm",
-  tittel: "Reklamefilm for TV, nett og sosiale medier",
-  beskrivelse:
-    "Reflektor produserer reklamefilm for TV, nettannonser og sosiale medier. Vi lager filmen. Vi kjøper ikke sendetid. Oslo, for hele Norge.",
+  /*
+   * SPISSET 04.10.2026. «Reklamefilm» har 200 søk i måneden, «reklamefilm
+   * produksjon» 80 og «lage reklamefilm» 150 — alle med vanskelighet under
+   * 20. Tittelen sa «for TV, nett og sosiale medier», altså flatene, og
+   * ikke at vi PRODUSERER. Ordet «produksjon» sto ikke i tittelen i det
+   * hele tatt.
+   *
+   * ORDET EIES AV DENNE SIDEN. /kjeder beholder «reklamefilm for kjeder»,
+   * som er et annet søk. Ingen andre sider skal ha «reklamefilm» i tittel,
+   * H1 eller en seksjonsoverskrift. Se søkeordkartet i
+   * docs/sidearkitektur.md.
+   */
+  tittel: "Reklamefilm – produksjon for TV, nett og sosiale medier",
+  beskrivelse: `Reklamefilmproduksjon i Oslo for hele Norge. Vi lager reklamefilm for TV, nettannonser og sosiale medier – fra idé til ferdig film. Fra ${kr(tilbud.fraPrisProsjekt)} kr.`,
   h1: "Reklamefilm",
   merkelapp: "Produksjon",
   tjenestetype: "Produksjon av reklamefilm for betalte flater",
-  svar: "En reklamefilm er laget for å vises mot betaling: på TV, som nettannonse eller i sosiale medier. Reflektor står for produksjonen: idé, manus, opptak, klipp, lyd og fargekorrigering. Vi produserer filmen. Vi kjøper ikke sendetid eller annonseplass.",
+  svar: "Reflektor er et produksjonshus i Oslo, og produksjon av reklamefilm er det vi gjør for bedrifter i hele Norge: idé, manus, opptak, klipp, lyd og fargekorrigering. En reklamefilm er laget for å vises mot betaling — på TV, som nettannonse eller i sosiale medier. Vi produserer filmen. Vi kjøper ikke sendetid eller annonseplass.",
   avgrensning: [
     "Reklamefilm er film dere betaler for å få vist. Skal den i stedet ligge på nettsiden deres eller på en skjerm i butikken, er det ",
     { sti: "/videoproduksjon-i-oslo", tekst: "video til egne flater" },
@@ -325,7 +352,14 @@ export const reklamefilm: Tjenesteside = {
       svar: "Nei. Reflektor er et produksjonshus, ikke et mediebyrå. Vi lager filmen, og dere eller mediebyrået deres kjøper flaten den skal vises på. Det er verdt å vite før dere ber om pris: et tilbud fra oss dekker produksjonen, ikke visningene. Skal filmen på TV, må dere regne med en kostnad til for sendetiden.",
     },
     {
-      sporsmal: "Hva koster en reklamefilm?",
+      /*
+       * OVERSKRIFTEN HET «Hva koster en reklamefilm?» til 04.10.2026.
+       * Det søket eier /blogg/hva-koster-reklamefilm, og to sider som
+       * kjemper om samme spørsmål taper begge. Innholdet er uendret —
+       * bare overskriften er flyttet ut av veien, og lenken under peker
+       * dit svaret hører hjemme.
+       */
+      sporsmal: "Pris",
       svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster, avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nDere kan påvirke tallet selv. Holder dere lokasjon og eventuelle statister eller skuespillere, går prisen ned, og på en reklamefilm er det ofte de to postene som veier mest.`,
       /*
         LENKENE TIL DE TO ARTIKLENE, lagt til 02.10.2026.
@@ -344,6 +378,39 @@ export const reklamefilm: Tjenesteside = {
         },
       ],
     },
+    /*
+     * NY SEKSJON 04.10.2026. «reklamefilm bedrift» og de lange variantene
+     * av søket handler om hvilken film man egentlig trenger, og det sto
+     * ingenting om det på siden. De tre variantene er ikke nye produkter —
+     * de er de tre måtene filmene vi alt har laget er brukt.
+     */
+    {
+      sporsmal: "Reklamefilm for bedrifter – hva passer dere?",
+      svar: "Det avhenger av hvor filmen skal vises og hvor lenge dere trenger den. Tre former dekker nesten alt vi produserer.",
+      delblokker: [
+        {
+          tittel: "Kort film til sosiale medier",
+          tekst:
+            "Femten sekunder eller mindre, stående eller kvadratisk, laget for å stoppe skrollingen. De første to sekundene avgjør om resten blir sett. Peppes-filmen på denne siden er femten sekunder.",
+        },
+        {
+          tittel: "Lengre film til nett og TV",
+          tekst:
+            "En TV-reklame kjøpes i faste lengder, oftest 15 eller 30 sekunder. Samme opptak klippes gjerne i flere lengder, slik at filmen dekker både TV og nettannonser.",
+        },
+        {
+          tittel: "Serie av filmer",
+          tekst:
+            "Flere filmer fra samme produksjon, til en kampanje som skal vare eller til flere avdelinger. Det er billigere å planlegge alle versjonene før opptaksdagen enn å klippe om etterpå.",
+        },
+      ],
+      lenker: [
+        {
+          sti: "/kjeder",
+          tekst: "Reklamefilm for kjeder, med flere avdelinger",
+        },
+      ],
+    },
     {
       sporsmal: "Hva skiller en reklamefilm fra en vanlig bedriftsvideo?",
       svar: "Hvem som ser den, og hvorfor. En reklamefilm vises for folk som ikke lette etter dere. Den må fange oppmerksomhet den ikke har fått på forhånd, og den betales per visning. En bedriftsvideo på deres egen nettside møter noen som allerede er der og allerede er interessert. Det første krever en idé som stopper skrollingen. Det andre krever klarhet.",
@@ -353,8 +420,13 @@ export const reklamefilm: Tjenesteside = {
       ],
     },
     {
-      sporsmal: "Hvordan foregår en produksjon?",
-      svar: "Sju steg, og dere er med på alle de avgjørende. Vi begynner med et introduksjonsmøte, og dere får et løsningsforslag med pris før noe settes i gang.",
+      /*
+       * OVERSKRIFTEN HET «Hvordan foregår en produksjon?». Byttet
+       * 04.10.2026: «lage reklamefilm» har 150 søk i måneden, og det er
+       * nøyaktig det denne seksjonen beskriver. Stegene er uendret.
+       */
+      sporsmal: "Slik lager vi en reklamefilm",
+      svar: "Å lage en reklamefilm er sju steg, og dere er med på alle de avgjørende. Vi begynner med et introduksjonsmøte, og dere får et løsningsforslag med pris før noe settes i gang. Filmen klippes til slutt i de lengdene flatene krever: en TV-reklame kjøpes i faste lengder, en annonse i sosiale medier har ingen.",
       punkter: [
         "Introduksjonsmøte: hva skal filmen gjøre?",
         "Løsningsforslag fra oss, med pris",
@@ -364,6 +436,8 @@ export const reklamefilm: Tjenesteside = {
         "Opptaksdag",
         "Etterarbeid og korrigeringer",
       ],
+      etterord:
+        "Dere trenger ikke manus når dere tar kontakt. De fleste kommer med et mål — en lansering, en sesong, en kampanje — og idé og manus er en del av produksjonen. Vil dere påvirke prisen, er lokasjon og medvirkende de to postene som veier mest på en reklamefilm.",
     },
     /*
      * KAMPANJENE ER LAGT TIL 29.09.2026, og de er ikke ny copy. Setningen
@@ -384,6 +458,40 @@ export const reklamefilm: Tjenesteside = {
     },
   ],
   faq: [
+    /*
+     * TRE NYE SPØRSMÅL 04.10.2026. Alle tre er svar som fram til nå bare
+     * sto i /blogg/hva-koster-reklamefilm, og som den som vurderer å
+     * bestille stiller før de leser en artikkel.
+     *
+     * «KJØPER DERE SENDETID?» BLE IKKE LAGT TIL, selv om bestillingen ba om
+     * det: spørsmålet er allerede en egen seksjon lenger opp på siden, med
+     * et fyldigere svar. To like spørsmål på samme side er nøyaktig den
+     * feilen fire dupliserte FAQ-spørsmål ble ryddet for 21.09.2026.
+     */
+    {
+      sporsmal: "Hva er forskjellen på reklamefilm og annen innholdsproduksjon?",
+      svar: "Hvor filmen skal vises. En reklamefilm vises på en flate dere betaler for, og møter folk som ikke lette etter dere. Annet innhold ligger på egne flater — nettsiden, skjermen i butikken, kanalene deres — og møter noen som allerede er interessert. Det første krever en idé som stopper skrollingen, det andre krever klarhet.",
+      lenker: [
+        {
+          sti: "/innholdsproduksjon",
+          tekst: "Innholdsproduksjon: hele oversikten",
+        },
+      ],
+    },
+    {
+      sporsmal: "Må vi bruke skuespillere?",
+      svar: "Nei. Mange reklamefilmer bruker produktene, lokalene og folkene som alt er der. Velger dere skuespillere, betaler dere ikke bare for opptaksdagen, men også for retten til å vise filmen i en bestemt periode og i bestemte kanaler. Det kalles buyout, og det bør avtales før opptak.",
+      lenker: [
+        {
+          sti: "/blogg/hva-koster-reklamefilm",
+          tekst: "Hva koster en reklamefilm? Hele regnestykket",
+        },
+      ],
+    },
+    {
+      sporsmal: "Hvem klarerer musikken?",
+      svar: "Kjent musikk må klareres særskilt, og det kan både koste og ta tid. De fleste reklamefilmer for bedrifter bruker derfor lisensiert produksjonsmusikk eller musikk laget til filmen. Spør alltid om musikken er klarert og om det er med i prisen — hos oss avtales det før produksjonen settes i gang.",
+    },
     {
       sporsmal: "Hvor lang bør en reklamefilm være?",
       svar: "Det avhenger av flaten. En TV-reklame kjøpes i faste lengder, oftest 15 eller 30 sekunder. En annonse i sosiale medier har ingen fast lengde, men de første to sekundene avgjør om resten blir sett. Vi klipper som regel filmen i flere lengder, slik at samme opptak dekker flere flater.",
@@ -583,6 +691,28 @@ export const videoproduksjon: Tjenesteside = {
         },
       ],
     },
+    /*
+     * TO NYE SEKSJONER 04.10.2026. «Bedriftsfilm» har 50 søk i måneden og
+     * «filmproduksjon» 200, og begge ordene sto bare inne i en delblokk —
+     * aldri som en overskrift siden kunne rangere på.
+     *
+     * DE LAGER INGEN NYE TJENESTER. Bedriftsfilm er den samme filmen som
+     * står under «Hva slags video trenger dere?», beskrevet for den som
+     * søkte på ordet. Seksjonen om filmproduksjon sier hva vi er og hva vi
+     * ikke er, og sender folk videre til riktig side.
+     */
+    {
+      sporsmal: "Bedriftsfilm",
+      svar: "En bedriftsfilm presenterer bedriften: hvem dere er, hva dere gjør og hvorfor noen skal velge dere. Den brukes på nettsiden, på messer og i salgsmøter, og den lever lenger enn en kampanje. Vi filmer som regel hos dere, der folkene, produktene og lokalene er — det er det som gjør filmen gjenkjennelig. En hovedfilm til nettsiden fungerer ofte best på ett til to minutter, og fra samme opptak klipper vi kortere versjoner på 15–60 sekunder til sosiale medier. Teksting og fargekorrigering er inkludert, fordi de fleste ser film uten lyd første gang.",
+    },
+    {
+      sporsmal: "Filmproduksjon for bedrifter i Oslo",
+      svar: "Reflektor er et produksjonshus, ikke et mediebyrå. Filmproduksjon er hele veien fra idé til ferdige filer: manus, kjøreplan, opptak, klipp, lyd, teksting og fargekorrigering. Vi holder til i Oslo og produserer for bedrifter i hele Norge. Skal filmen vises på en flate dere betaler for, er det reklamefilm, og den har sin egen side. Vi kjøper ikke sendetid eller annonseplass.",
+      lenker: [
+        { sti: "/reklamefilm", tekst: "Reklamefilm for betalte flater" },
+        { sti: "/om-oss", tekst: "Folkene som gjør jobben" },
+      ],
+    },
     {
       /*
        * BEVISET, OG DET ER TO TYPER. Videoen er kunden i egne ord; tallene
@@ -601,7 +731,12 @@ export const videoproduksjon: Tjenesteside = {
       },
     },
     {
-      sporsmal: "Hva koster videoproduksjon?",
+      /*
+       * OVERSKRIFTEN HET «Hva koster videoproduksjon?» til 04.10.2026. Det
+       * søket eier /blogg/hva-koster-videoproduksjon, og lenken under
+       * peker dit. Innholdet er uendret.
+       */
+      sporsmal: "Pris",
       svar: `Enkeltprosjekter hos oss starter på ${kr(tilbud.fraPrisProsjekt)} kr. Hvor prosjektet lander, avhenger av tre ting: antall opptaksdager, hvor mange som må være på settet og hvor mye etterarbeid filmen krever. Holder dere lokasjon og medvirkende selv, går prisen ned.\n\nTrenger dere video hver måned og ikke én gang, er løpende produksjon ${kr(tilbud.prisPerManed)} kr/mnd for én produksjonsdag og ${tilbud.videoerPerManed} ferdige videoer.`,
       lenker: [
         {
@@ -621,6 +756,21 @@ export const videoproduksjon: Tjenesteside = {
     },
   ],
   faq: [
+    /*
+     * NYTT SPØRSMÅL 04.10.2026. Formuleringen unngår «hva koster» med
+     * vilje: ordlyden er bloggpostens, og to sider som stiller samme
+     * spørsmål tar oppmerksomhet fra hverandre.
+     */
+    {
+      sporsmal: "Hva er prisen på et videoprosjekt?",
+      svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Hvor prosjektet lander, avhenger av antall opptaksdager, hvor mange som må være på settet og hvor mye etterarbeid filmen krever. Vi bruker ikke timepriser, så prisen avtales før vi begynner.`,
+      lenker: [
+        {
+          sti: "/blogg/hva-koster-videoproduksjon",
+          tekst: "Hva koster videoproduksjon? Prisene bak et videoprosjekt",
+        },
+      ],
+    },
     {
       sporsmal: "Kan vi bruke filmen i annonser senere?",
       svar: "Ja. Alt innhold Reflektor produserer er deres, med fri bruk i annonser, på nettsider, skjermer og i presentasjoner. En film laget til nettsiden kan brukes som annonse uten at dere må tilbake til oss for rettigheter.",
@@ -714,7 +864,12 @@ export const employerBranding: Tjenesteside = {
   h1: "Employer branding-video",
   merkelapp: "Produksjon",
   tjenestetype: "Produksjon av film for arbeidsgivermerkevare og rekruttering",
-  svar: "Employer branding-video er film som skal få folk til å søke jobb hos dere. Den vises i stillingsannonser, på karrieresiden og i rekrutteringskanaler, ikke til kundene deres, men til dem dere vil ansette. Reflektor filmer hos dere, med de ansatte dere faktisk har.",
+  /*
+   * ÉN SETNING LAGT TIL I INGRESSEN 04.10.2026. «employer branding» har 400
+   * søk i måneden, og ordet sto i H1 og tittel men ikke i første setning
+   * under dem. «Rekrutteringsfilm» sto bare i et FAQ-svar lenger nede.
+   */
+  svar: "Employer branding-video er film som skal få folk til å søke jobb hos dere. En rekrutteringsfilm er employer branding i praksis: den vises i stillingsannonser, på karrieresiden og i rekrutteringskanaler, ikke til kundene deres, men til dem dere vil ansette. Reflektor filmer hos dere i Oslo og hele Norge, med de ansatte dere faktisk har.",
   avgrensning: [
     "Her handler det om filmen. Vil dere heller lese om ",
     {
@@ -727,7 +882,14 @@ export const employerBranding: Tjenesteside = {
   ],
   seksjoner: [
     {
-      sporsmal: "Hvorfor film, og ikke bare en god stillingsannonse?",
+      /*
+       * OVERSKRIFTEN HET «Hvorfor film, og ikke bare en god
+       * stillingsannonse?». Byttet 04.10.2026: «rekrutteringsfilm» er ett
+       * av de to ordene siden eier, og det sto ikke i en eneste overskrift.
+       * Spørsmålet og svaret er ellers uendret.
+       */
+      sporsmal:
+        "Hvorfor rekrutteringsfilm, og ikke bare en god stillingsannonse?",
       svar: "En stillingsannonse kan beskrive oppgavene, men ikke lokalet, tempoet eller menneskene man skal jobbe sammen med. For mange kandidater er det akkurat det de lurer mest på, og det er lettere å vise enn å skrive.",
     },
     {
@@ -741,7 +903,12 @@ export const employerBranding: Tjenesteside = {
       },
     },
     {
-      sporsmal: "Hva koster en employer branding-video?",
+      /*
+       * OVERSKRIFTEN HET «Hva koster en employer branding-video?» til
+       * 04.10.2026. «Hva koster»-søkene eies av bloggpostene; innholdet er
+       * uendret.
+       */
+      sporsmal: "Pris",
       svar: `Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden. Hva et prosjekt faktisk koster, avhenger av omfanget, antall produksjonsdager og hvor mye etterarbeid filmen krever.\n\nÉn film dekker én stilling. Skal dere fremstå som en attraktiv arbeidsgiver over tid, må folk se dere også i periodene dere ikke lyser ut noe. Kontinuitet er nøkkelen her, og mange velger derfor et løpende samarbeid framfor en enkeltproduksjon.`,
     },
     {
@@ -756,6 +923,21 @@ export const employerBranding: Tjenesteside = {
     },
   ],
   faq: [
+    /*
+     * DEFINISJONSSPØRSMÅLET, lagt til 04.10.2026. Svaret er kort med vilje:
+     * søket «hva er employer branding» eies av artikkelen, og lenken under
+     * sender den som vil ha hele forklaringen dit.
+     */
+    {
+      sporsmal: "Hva er employer branding?",
+      svar: "Employer branding er arbeidet med hvordan dere oppfattes som arbeidsgiver — av dem som jobber hos dere i dag, og av dem dere vil ansette. Film er ett av virkemidlene, og det som viser lokalet, tempoet og menneskene en kandidat skal jobbe sammen med.",
+      lenker: [
+        {
+          sti: "/blogg/hva-er-employer-branding",
+          tekst: "Hva er employer branding? Hele forklaringen",
+        },
+      ],
+    },
     {
       sporsmal: "Må de ansatte snakke til kamera?",
       svar: "Nei. Mange av de beste rekrutteringsfilmene har ingen som snakker, bare folk som jobber og tekst som forklarer. Vi avtaler formen på forhånd, og ingen blir satt foran et kamera uten å vite om det.",
@@ -941,36 +1123,6 @@ export const event: Tjenesteside = {
       svar: "Materiale som lever lenger enn dagen. Bildene og klippene fra en konferanse er det som selger neste års konferanse, og de fyller kanalene i ukene etterpå. Et arrangement uten dekning er en investering som forsvinner samme kveld.",
     },
     {
-      /*
-       * LEVERANSELISTA ER LAGT TIL 30.09.2026, bestilt i copyen til
-       * prisguiden for eventfoto. De to sidene svarte på det samme
-       * spørsmålet med ulik presisjon: bloggen listet hva som faktisk
-       * kommer ut av dagen, mens denne siden bare oppga prisen. En leser
-       * som sammenligner dem skulle ikke lure på om det er to tilbud.
-       *
-       * Setningen om produksjonsdagen står også begge steder nå. Den er
-       * poenget for kunder med noen arrangementer i året: da bestiller de
-       * ikke eventdekning per gang.
-       *
-       * KVELDSARBEID ER IKKE LENGER OPPGITT SOM DEN VANLIGSTE ÅRSAKEN til
-       * at prisen stiger. Rettet 30.09.2026 etter Påls korreksjon: «vi kan
-       * også si 50K for et event der vi ikke jobber kveld, så bastant
-       * påstand om at det er den vanligste årsaken til prisøkning må vekk.»
-       *
-       * Setningen står nå med de tre faktorene som faktisk avgjør, uten å
-       * rangere dem. Å peke ut én driver som den vanligste er dessuten et
-       * tall vi ikke har.
-       */
-      sporsmal: "Hva koster eventfotograf?",
-      svar: `Eventdekning hos oss starter på ${kr(tilbud.fraPrisProsjekt)} kr. Da filmer vi og tar bilder på samme arrangement: eventvideo, kortere klipp til sosiale medier og 50+ ferdig redigerte bilder. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden, og produksjonsdagen kan legges til et arrangement.\n\nDet som flytter prisen, er hvor lenge vi er der, hvor mange som må være til stede samtidig, og hvor mye som skal klippes etterpå.`,
-      lenker: [
-        {
-          sti: "/blogg/hva-koster-eventfotograf",
-          tekst: "Hva koster en eventfotograf i Oslo? Se prisene i markedet",
-        },
-      ],
-    },
-    {
       sporsmal: "Når får vi materialet?",
       svar: "Som regel innen to uker. Må deler av leveransen ut samme kveld eller dagen etter, får vi som regel til det. Si fra i planleggingen, så legger vi opp dagen etter det.",
     },
@@ -997,6 +1149,60 @@ export const event: Tjenesteside = {
         "Produktlanseringer og åpninger",
         "Messer og stands",
         "Prisutdelinger og jubileer",
+      ],
+    },
+    /*
+     * NY SEKSJON 04.10.2026. «eventvideo» har 60 søk i måneden, og ordet
+     * sto bare i et FAQ-svar og inne i leveranselista. Tallene er de samme
+     * som alt står på siden — 30–60 sekunder, oppsummering, korte klipp,
+     * innen to uker — satt sammen som en overskrift siden kan rangere på.
+     */
+    {
+      sporsmal: "Eventvideo",
+      svar: "En eventvideo er en kort film på 30–60 sekunder som oppsummerer arrangementet: folkene, høydepunktene og det som ble sagt. Den brukes til å fortelle om dagen i sosiale medier, og til å invitere til neste gang. I tillegg til oppsummeringsfilmen klipper vi kortere klipp i stående format, slik at samme opptaksdag dekker både en post og flere stories. Materialet er som regel klart innen to uker.",
+    },
+    {
+      /*
+       * LEVERANSELISTA ER LAGT TIL 30.09.2026, bestilt i copyen til
+       * prisguiden for eventfoto. De to sidene svarte på det samme
+       * spørsmålet med ulik presisjon: bloggen listet hva som faktisk
+       * kommer ut av dagen, mens denne siden bare oppga prisen. En leser
+       * som sammenligner dem skulle ikke lure på om det er to tilbud.
+       *
+       * Setningen om produksjonsdagen står også begge steder nå. Den er
+       * poenget for kunder med noen arrangementer i året: da bestiller de
+       * ikke eventdekning per gang.
+       *
+       * KVELDSARBEID ER IKKE LENGER OPPGITT SOM DEN VANLIGSTE ÅRSAKEN til
+       * at prisen stiger. Rettet 30.09.2026 etter Påls korreksjon: «vi kan
+       * også si 50K for et event der vi ikke jobber kveld, så bastant
+       * påstand om at det er den vanligste årsaken til prisøkning må vekk.»
+       *
+       * Setningen står nå med de tre faktorene som faktisk avgjør, uten å
+       * rangere dem. Å peke ut én driver som den vanligste er dessuten et
+       * tall vi ikke har.
+       */
+      /*
+       * OVERSKRIFTEN HET «Hva koster eventfotograf?», og seksjonen sto som
+       * nummer fire av sju. Byttet og flyttet bakerst 04.10.2026.
+       *
+       * «eventfotograf pris» har 60 søk i måneden, men «hva koster
+       * eventfotograf» eies av bloggposten — to sider med samme spørsmål
+       * tar oppmerksomhet fra hverandre. «Pris og pakke» dekker søket uten
+       * å kopiere artikkelens overskrift, og sier samtidig hva som er med.
+       *
+       * SETNINGEN OM DE TRE PRISDRIVERNE ER URØRT. Den er Påls egen etter
+       * korreksjonen 30.09.2026, og den oppgir allerede nøyaktig de tre
+       * faktorene bestillingen ba om. Å skrive den om ville vært å røre en
+       * formulering han selv har rettet.
+       */
+      sporsmal: "Pris og pakke",
+      svar: `Eventdekning hos oss starter på ${kr(tilbud.fraPrisProsjekt)} kr. Da filmer vi og tar bilder på samme arrangement: eventvideo, kortere klipp til sosiale medier og 50+ ferdig redigerte bilder. Løpende samarbeid er ${kr(tilbud.prisPerManed)} kr i måneden, og produksjonsdagen kan legges til et arrangement.\n\nDet som flytter prisen, er hvor lenge vi er der, hvor mange som må være til stede samtidig, og hvor mye som skal klippes etterpå.`,
+      lenker: [
+        {
+          sti: "/blogg/hva-koster-eventfotograf",
+          tekst: "Hva koster en eventfotograf i Oslo? Se prisene i markedet",
+        },
       ],
     },
   ],
@@ -1111,13 +1317,31 @@ export const innholdsproduksjon: Tjenesteside = {
    * Kommer det et egnet bilde, settes `bilde` tilbake — feltet er valgfritt.
    */
   sti: "/innholdsproduksjon",
-  tittel: "Innholdsproduksjon | Foto og video for bedrifter",
-  beskrivelse:
-    "Innholdsproduksjon fra Reflektor: reklamefilm, video til egne flater, employer branding og eventdekning, som prosjekt eller fast månedspris.",
-  h1: "Innholdsproduksjon",
+  /*
+   * TITTEL OG INGRESS SPISSET 04.10.2026, bestilt av Pål.
+   *
+   * «Innholdsproduksjon» har 450 søk i måneden i Norge og en vanskelighet
+   * på under 20 — det er det største søket Reflektor kan ta uten å slåss
+   * med noen. Tittelen sa ordet, men ikke stedet, og «innholdsbyrå» og
+   * «content byrå» (150 søk) sto ikke noe sted på hele nettstedet.
+   *
+   * DE TO ORDENE EIES AV DENNE SIDEN ALENE. Se søkeordkartet i
+   * docs/sidearkitektur.md: «innholdsbyrå» og «content byrå» skal ikke stå
+   * i tittel, H1 eller en seksjonsoverskrift noe annet sted. To sider som
+   * kjemper om samme ord taper begge.
+   */
+  tittel: "Innholdsproduksjon i Oslo – foto og video for bedrifter",
+  beskrivelse: `Innholdsproduksjon for bedrifter i Oslo og hele Norge. Innholdsbyrå som lager foto og video til nettside, sosiale medier og rekruttering – som prosjekt fra ${kr(tilbud.fraPrisProsjekt)} kr eller fast månedspris.`,
+  h1: "Innholdsproduksjon for bedrifter",
   merkelapp: "Oversikt",
   tjenestetype: "Produksjon av foto og video for bedrifter",
-  svar: "Innholdsproduksjon er arbeidet med å lage foto og video en bedrift kan bruke: til annonser, til nettsiden, til rekruttering og til sosiale medier. Reflektor gjør det på to måter: som enkeltprosjekter, eller som løpende produksjon til fast månedspris. Hvilken av dem som passer, avhenger av om behovet er en kampanje eller en kalender.",
+  /*
+   * SVARET BEGYNNER NÅ MED HVA REFLEKTOR ER, ikke med hva ordet betyr.
+   * Definisjonen står i bloggartikkelen som eier søket «hva er
+   * innholdsproduksjon»; her er leseren en kjøper, og da er det første
+   * spørsmålet hvem dette er og hva de får.
+   */
+  svar: `Reflektor er et innholdsbyrå i Oslo som lager foto og video for bedrifter i hele Norge. Dere får ferdig innhold til nettside, sosiale medier, rekruttering og reklame – som enkeltprosjekt eller fast avtale. Et prosjekt starter på ${kr(tilbud.fraPrisProsjekt)} kr. Løpende produksjon er ${kr(tilbud.prisPerManed)} kr/mnd.`,
   /*
    * FJERNET 27.09.2026. Her sto «Denne siden er oversikten. Hver tjeneste
    * har sin egen side …». Rett under står eikene — fire kort som viser
@@ -1167,10 +1391,135 @@ export const innholdsproduksjon: Tjenesteside = {
      * prosjektprisen varierer og abonnementsprisen ikke gjør det. Den
      * forskjellen sto ingensteds, og den er det en kjøper vil vite.
      */
+    /*
+     * FIRE NYE SEKSJONER, BESTILT 04.10.2026.
+     *
+     * Siden var en ren nav-side på 620 ord. Den rangerte ikke for ordet den
+     * er oppkalt etter, fordi den ikke sa noe om det: alt sto ett klikk unna,
+     * på hver sin undersider.
+     *
+     * INGEN NYE FAKTA. Hvert tall under står allerede i `tilbud` eller på en
+     * annen side: 40 000, 30 000, 8–10, én produksjonsdag, publisering to
+     * ganger i uka, levering innen to uker. Prosessen er den samme seks
+     * stegene som står på /videoproduksjon-i-oslo, kortet til fem — ikke en
+     * ny prosess, og ikke en kopi.
+     *
+     * «HVA KOSTER»-OVERSKRIFTEN ER MED VILJE UNNGÅTT. Det søket eier
+     * bloggpostene. Overskriften her heter «Pris», og seksjonen lenker dit.
+     */
     {
-      sporsmal: "Hva avgjør prisen på et prosjekt?",
+      sporsmal: "Innholdsproduksjon til sosiale medier",
+      svar: `Trenger dere noe nytt å publisere hver uke, er dette den løpende formen: én produksjonsdag hos dere i måneden, ${tilbud.videoerPerManed} ferdig redigerte videoer som produksjonsmål, og publisering ${tilbud.posterPerUke} ganger i uka til ${tilbud.kanaler.join(" og ")}. Prisen er ${kr(tilbud.prisPerManed)} kr/mnd, og det er hele prisen — ingen timepriser og ingen bindingstid utover oppsigelsesfristen. ${tilbud.videoerPerManed} er et produksjonsmål og ikke en garanti.`,
+      etterord: `Dere trenger ikke levere manus eller ideer. Før opptak avtaler vi hva måneden skal handle om, og dere får et strategiforslag innen ${tilbud.strategiforslagVirkedager} virkedager etter første møte. Stillbilder tas ved behov, men er ikke en fast leveranse — kapasiteten tas da noe fra video, og det er derfor ${tilbud.videoerPerManed} er et mål og ikke et løfte.`,
+      lenker: [
+        { sti: "/", tekst: "SoMe-abonnementet, med pris og leveranse" },
+        { sti: "/reels-produksjon", tekst: "Reels-produksjon til fast pris" },
+      ],
+    },
+    {
+      sporsmal: "Innholdsproduksjon som prosjekt",
+      svar: `Har behovet en start og en slutt — en lansering, en kampanje, en stilling som skal fylles — er det et prosjekt. Omfanget avtales før vi begynner, og prisen er fast. Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr. De fire typene under er sortert etter hvor innholdet skal vises, fordi det er flaten som avgjør lengde, tone og hva filmen må få til.`,
+      delblokker: [
+        {
+          tittel: "Reklamefilm",
+          tekst:
+            "Filmen dere betaler for å få vist, på TV, som nettannonse eller i sosiale medier. Den må fange folk som ikke lette etter dere. Vi produserer filmen; vi kjøper ikke sendetid.",
+        },
+        {
+          tittel: "Bedriftsfilm og video til nettsiden",
+          tekst:
+            "Filmen som forklarer, til folk som allerede har funnet dere. Den kan være lengre enn en annonse, fordi den som ser den har bestemt seg for å se.",
+        },
+        {
+          tittel: "Employer branding-video",
+          tekst:
+            "Filmen som gjør at folk søker jobb hos dere. Vi filmer de ansatte dere faktisk har, mens de gjør jobben sin, og bruker ikke skuespillere.",
+        },
+        {
+          tittel: "Eventfotograf og eventvideo",
+          tekst:
+            "Foto og film fra noe som skjer én gang: en konferanse, en lansering, en messe. Materialet skal kunne brukes i ukene etterpå, og til å invitere neste gang.",
+        },
+      ],
+      etterord: `Alle fire kan også gjøres innenfor et løpende samarbeid, der produksjonsdagen i måneden brukes på det som er viktigst akkurat da. En ekstra produksjonsdag utover den som inngår, koster ${kr(tilbud.ekstraProduksjonsdag)} kr.`,
+      lenker: [
+        { sti: "/reklamefilm", tekst: "Reklamefilm" },
+        { sti: "/videoproduksjon-i-oslo", tekst: "Videoproduksjon i Oslo" },
+        {
+          sti: "/employer-branding-video-oslo",
+          tekst: "Employer branding-video",
+        },
+        {
+          sti: "/eventfotograf-eventvideo",
+          tekst: "Eventfotograf og eventvideo",
+        },
+      ],
+    },
+    {
+      sporsmal: "Slik foregår en produksjon hos oss",
+      svar: "Fem steg, og dere er med på de avgjørende. Dere trenger ikke manus eller ideer før første møte — et mål holder.",
+      nummerert: true,
+      delblokker: [
+        {
+          tittel: "Kort møte",
+          tekst:
+            "Hva skal innholdet få til, for hvem, og hvor skal det vises? Dere får et løsningsforslag med fast pris innen tre virkedager.",
+        },
+        {
+          tittel: "Vi planlegger",
+          tekst:
+            "Kjøreplan, lokasjon, medvirkende og hvilke formater dere trenger, avtalt før opptaksdagen.",
+        },
+        {
+          tittel: "Én filmdag hos dere",
+          tekst:
+            "Som regel der folkene og produktene er. Vi har med kamera, lys og lyd. Folk gjør jobben sin som vanlig.",
+        },
+        {
+          tittel: "Redigering",
+          tekst:
+            "Dere ser et utkast og gir tilbakemelding før vi ferdigstiller. Teksting og fargekorrigering er inkludert.",
+        },
+        {
+          tittel: "Levering i riktig format",
+          tekst:
+            "Ferdige filer i formatene dere trenger, som regel innen to uker etter opptaksdagen. Alt er deres, med fri bruk.",
+        },
+      ],
+      lenker: [
+        {
+          sti: "/blogg/hva-er-en-produksjonsdag",
+          tekst: "Hva er en produksjonsdag? Timeplanen fra morgen til kveld",
+        },
+      ],
+    },
+    /*
+     * PRISSEKSJONEN HET «Hva avgjør prisen på et prosjekt?» til 04.10.2026,
+     * og sto som nummer to på siden. To endringer:
+     *
+     * OVERSKRIFTEN ER NÅ «Pris». Spørsmålsformen var riktig for AEO, men
+     * den konkurrerte med bloggpostene som eier «hva koster»-søkene. En
+     * tjenesteside som stiller samme spørsmål som artikkelen, tar
+     * oppmerksomhet fra den uten å kunne svare like fyldig.
+     *
+     * DEN STÅR NÅ SIST. Prisen leses etter at man vet hva man kjøper, og de
+     * to seksjonene over forklarer nettopp det. Innholdet er uendret;
+     * lenkene til de to prisartiklene er nye.
+     */
+    {
+      sporsmal: "Pris",
       svar: `Et prosjekt starter på ${kr(tilbud.fraPrisProsjekt)} kr, og hvor det lander, avgjøres av tre ting. Vi bruker ikke timepriser, så prisen avtales før vi begynner. Abonnementet har ingen slik variasjon: ${kr(tilbud.prisPerManed)} kr/mnd er prisen hver måned, for én produksjonsdag, ${tilbud.videoerPerManed} ferdig redigerte videoer som produksjonsmål og publisering ${tilbud.posterPerUke} ganger i uka.`,
       punkter: [...tilbud.prisdrivere],
+      lenker: [
+        {
+          sti: "/blogg/hva-koster-videoproduksjon",
+          tekst: "Hva koster videoproduksjon? Prisene bak et videoprosjekt",
+        },
+        {
+          sti: "/blogg/hva-koster-et-some-byra",
+          tekst: "Hva koster et SoMe-byrå? Tre modeller og hva de dekker",
+        },
+      ],
     },
     {
       sporsmal: "Hvem produserer Reflektor for?",
@@ -1184,6 +1533,38 @@ export const innholdsproduksjon: Tjenesteside = {
     },
   ],
   faq: [
+    /*
+     * TO NYE SPØRSMÅL, 04.10.2026. Det første er definisjonsspørsmålet, som
+     * en kjøper også stiller — men svaret er kort og peker videre til
+     * artikkelen som eier søket «hva er innholdsproduksjon». Det andre er
+     * stedsspørsmålet: «innholdsproduksjon oslo» har 80 søk, og mange lurer
+     * på om et Oslo-byrå kommer til dem.
+     */
+    {
+      sporsmal: "Hva er innholdsproduksjon?",
+      svar: "Innholdsproduksjon er arbeidet med å lage foto og video en bedrift kan bruke: i annonser, på nettsiden, i rekruttering og i sosiale medier. Det dekker idé, opptak, klipp, teksting og levering i de formatene flatene krever.",
+      lenker: [
+        {
+          sti: "/blogg/hva-er-innholdsproduksjon",
+          tekst: "Hva er innholdsproduksjon? Den lange forklaringen",
+        },
+      ],
+    },
+    {
+      sporsmal: "Leverer dere innholdsproduksjon utenfor Oslo?",
+      svar: `Ja. Reflektor holder til i ${site.kontakt.adresse} og produserer for bedrifter i hele Norge, blant annet for Retail24 i Sandefjord og for kjeder med avdelinger over hele landet.`,
+    },
+    {
+      sporsmal: "Hva er forskjellen på et innholdsbyrå og et SoMe-byrå?",
+      svar: "I praksis hvor langt ansvaret går. Et innholdsbyrå lager materialet. Et SoMe-byrå tar også ansvar for at det blir publisert og for hvordan kanalene drives over tid. Reflektor er begge: vi produserer for alle, og for abonnementskundene planlegger og publiserer vi også.",
+      lenker: [
+        { sti: "/", tekst: "SoMe-abonnementet, med pris og leveranse" },
+      ],
+    },
+    {
+      sporsmal: "Kan vi få både foto og video på samme produksjonsdag?",
+      svar: `Ja. Som regel dekker én produsent begge deler, og det er det vanligste oppsettet hos oss. Stillbilder er likevel ikke en fast leveranse i abonnementet: kapasiteten tas da noe fra video, og derfor er ${tilbud.videoerPerManed} videoer et produksjonsmål og ikke en garanti. Skal mange ting skje samtidig, setter vi på flere folk, og da blir jobben større.`,
+    },
     {
       sporsmal: "Hva er forskjellen på innholdsproduksjon og markedsføring?",
       svar: "Innholdsproduksjon er å lage materialet. Markedsføring er å bestemme hvor det skal vises og betale for det. Reflektor produserer, og for abonnementskundene publiserer vi også i sosiale medier. Vi kjøper ikke annonseplass og styrer ikke annonsebudsjetter.",
@@ -1373,6 +1754,19 @@ export const reelsproduksjon: Tjenesteside = {
         },
       ],
     },
+    /*
+     * NY SEKSJON 04.10.2026. «reels videoer» og «reels for bedrifter» er
+     * søkene siden skal eie, og de sto ikke som en overskrift noe sted.
+     *
+     * INGEN BYRÅ-ORD HER. «SoMe-byrå» og «sosiale medier byrå» eies av
+     * forsiden alene — se søkeordkartet. Lenken under bruker ordet som
+     * ankertekst, som er den riktige måten å peke på eieren.
+     */
+    {
+      sporsmal: "Reels for bedrifter – hva vi leverer",
+      svar: `Dere får ferdige reels videoer, klare til å legges ut: filmet hos dere på én produksjonsdag, klippet, tekstet og eksportert i stående format. ${tilbud.videoerPerManed} videoer i måneden er produksjonsmålet, og publisering skjer ${tilbud.posterPerUke} ganger i uka. Dere trenger ikke levere ideer eller manus — vi planlegger hva måneden skal handle om før opptak. Filene er deres, med fri bruk, og kan brukes videre på TikTok og YouTube Shorts.`,
+      lenker: [{ sti: "/", tekst: "SoMe-byrå" }],
+    },
     {
       sporsmal: "Én film, flere formater",
       svar: "Vi filmer med tanke på gjenbruk. Det samme opptaket kan bli en Reel, en kortere versjon til annonser og et stillbilde til feeden. Dere får mer ut av dagen uten å betale for flere dager.",
@@ -1486,6 +1880,10 @@ export const reelsproduksjon: Tjenesteside = {
     {
       sporsmal: "Hvor raskt kommer de første videoene ut?",
       svar: "Vanligvis innen en uke etter første produksjonsdag. Dere trenger bare å gi oss tilgang til kontoene og godkjenne materialet.",
+    },
+    {
+      sporsmal: "Lager dere reels for bedrifter utenfor Oslo?",
+      svar: "Ja. Reflektor holder til i Oslo og produserer for bedrifter i hele Norge, blant annet for kjeder med avdelinger over hele landet.",
     },
     {
       sporsmal: "Hvor lang bør en Reel være?",

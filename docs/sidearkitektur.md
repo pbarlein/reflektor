@@ -286,3 +286,95 @@ Funnet under gjennomgangen, ikke rettet:
 
 Begge er ufarlige i dag. De står oppført her slik at neste tekniske
 gjennomgang slipper å finne dem på nytt.
+
+## Søkeordkartet (04.10.2026)
+
+Bestilt av Pål. Grunnlaget er Ahrefs-tall for Norge, søk per måned:
+innholdsproduksjon 450, employer branding 400, filmproduksjon 200,
+reklamefilm 200, content marketing byrå 200, videoproduksjon 150,
+videoproduksjon oslo 150, content byrå 150, lage reklamefilm 150, some byrå
+100, innholdsproduksjon oslo 80, eventfotograf 80, reklamefilm produksjon
+80, eventfotograf pris 60, eventvideo 60, bedriftsfilm 50, sosiale medier
+byrå 50, hva koster videoproduksjon bedrift 50. Vanskelighet 0–20 på alle
+unntatt «filmproduksjon oslo» (54).
+
+**Én side eier ett søkeord.** Andre sider kan bruke ordet i løpende tekst og
+lenke til eieren, men ikke i tittel, H1 eller en seksjonsoverskrift.
+
+| Side | Eier |
+|---|---|
+| Forsiden | some byrå, sosiale medier byrå |
+| `/innholdsproduksjon` | innholdsproduksjon, innholdsproduksjon oslo, content byrå, innholdsbyrå |
+| `/reklamefilm` | reklamefilm, reklamefilm produksjon, lage reklamefilm |
+| `/videoproduksjon-i-oslo` | videoproduksjon, videoproduksjon oslo, bedriftsfilm, filmproduksjon |
+| `/eventfotograf-eventvideo` | eventfotograf, eventvideo |
+| `/employer-branding-video-oslo` | employer branding video, rekrutteringsfilm |
+| `/reels-produksjon` | reels produksjon, reels videoer, reels for bedrifter |
+| `/kjeder` | innhold for kjeder, reklamefilm for kjeder (sekundært) |
+| `/blogg/hva-koster-*` | «hva koster X», «X pris» |
+| `/blogg/hva-er-*` | «hva er X» |
+
+**«Hva koster» er bloggens.** Fire tjenestesider hadde en overskrift som
+stilte nøyaktig det spørsmålet artikkelen eier. De heter nå «Pris» eller
+«Pris og pakke», og lenker til artikkelen. En tjenesteside som stiller samme
+spørsmål som artikkelen, tar oppmerksomhet fra den uten å kunne svare like
+fyldig.
+
+### To kollisjoner ble funnet i bygget, ikke i kilden
+
+`/faq` het «Ofte stilte spørsmål – SoMe-byrå og fast pris» og `/om-oss` het
+«Om oss – SoMe-byrået Reflektor i Oslo». Begge konkurrerte med forsiden om
+ordet forsiden skal eie. De ble ikke funnet av den første utgaven av
+`tests/sokeord.test.ts`, som bare leste `tjenestesider` — de kom fram da
+alle titler ble lest ut av det ferdige bygget. Testen dekker nå hele
+nettstedet.
+
+`/en` hadde dessuten «| Reflektor» i selve tittelstrengen, og malen i
+`layout.tsx` legger det på selv. Den bygde siden het «… | Reflektor |
+Reflektor». Rettet, og testet.
+
+### Delblokker er ikke overskrifter
+
+Titlene i `delblokker` rendres som `<p>` med halvfet vekt inne i et
+listepunkt. Et listepunkt som heter «Reklamefilm» inne i en oversikt
+konkurrerer ikke med `/reklamefilm`; en H2 ville gjort det. Første utgave av
+kannibaliseringstesten tok dem med og slo ut på en delblokk som har stått
+der siden 01.10.
+
+### Ordtall, målt i `<main>` på det ferdige bygget
+
+| Side | Før | Etter |
+|---|---|---|
+| `/innholdsproduksjon` | 559 | 1281 |
+| `/reklamefilm` | 630 | 1026 |
+| `/videoproduksjon-i-oslo` | 1016 | 1232 |
+| `/reels-produksjon` | 1078 | 1184 |
+| `/eventfotograf-eventvideo` | 660 | 727 |
+| `/employer-branding-video-oslo` | 509 | 572 |
+
+«Før» er hentet fra den levende siden før pushen, ikke regnet ut av kilden.
+
+### Det som ikke ble gjort, og hvorfor
+
+**Canonical og brødsmuler var der fra før.** Bestillingen sa at alle
+bloggposter manglet `<link rel="canonical">` og at `BreadcrumbList` måtte
+legges til. Begge sto allerede: canonical i `generateMetadata` i
+`/blogg/[slug]`, brødsmulene i `BrodsmuleSchema` på tjenestesider,
+bloggposter, bloggoversikten og kundecasene. `tests/markering.test.ts` er
+derfor en vakt mot at de forsvinner, ikke en ny funksjon.
+
+**«Kjøper dere sendetid?» ble ikke lagt til i FAQ-en på `/reklamefilm`.**
+Spørsmålet er allerede en egen seksjon lenger opp på siden, med et fyldigere
+svar. To like spørsmål på samme side er nøyaktig den feilen fire dupliserte
+FAQ-spørsmål ble ryddet for 21.09.2026.
+
+**«Hvor lang tid tar det å produsere en reklamefilm?» ble droppet.**
+Bestillingen sa «svar bare hvis det finnes tall på siden eller bloggen».
+Leveringstiden etter opptaksdagen står (to uker), men en reklamefilm har
+også idé, manus og koordinering foran seg, og det finnes ingen oppgitt
+varighet på det. Et samlet anslag ville vært et tall vi ikke har.
+
+**Setningen om de tre prisdriverne på eventsiden er urørt.** Den er Påls
+egen etter korreksjonen 30.09.2026, og oppgir allerede nøyaktig de tre
+faktorene bestillingen ba om. Å skrive den om ville vært å røre en
+formulering han selv har rettet.

@@ -46,7 +46,12 @@ export type Ansatt = {
 };
 
 export const omoss = {
-  metaTittel: "Om oss – SoMe-byrået Reflektor i Oslo",
+  /*
+   * «SoMe-byrået» ER TATT UT 04.10.2026. Ordet eies av forsiden alene — se
+   * søkeordkartet i docs/sidearkitektur.md. Siden handler om folkene, og
+   * det er det tittelen sier nå.
+   */
+  metaTittel: "Om oss – folkene bak Reflektor i Oslo",
   metaBeskrivelse:
     "Reflektor er et SoMe-byrå i Oslo. Én produksjonsdag i måneden, publisering to ganger i uka på Instagram og Facebook – innhold som kan brukes på alle flater.",
 

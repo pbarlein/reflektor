@@ -29,7 +29,12 @@ import { basisUrl } from "@/lib/miljo";
  * dermed ett sted for hele nettstedet, uansett språk.
  */
 export const metadata: Metadata = {
-  title: "Social media agency in Oslo – fixed monthly price | Reflektor",
+  /*
+   * «| Reflektor» ER FJERNET FRA STRENGEN 04.10.2026. Malen i layout.tsx
+   * legger det på selv, og tittelen ble derfor «… | Reflektor | Reflektor»
+   * i den bygde siden. Fanget da alle titler ble lest ut av bygget.
+   */
+  title: "Social media agency in Oslo – fixed monthly price",
   description:
     "Reflektor films at your company one day a month and publishes 8–10 videos on Instagram and Facebook. NOK 30,000 per month, no lock-in.",
   alternates: {

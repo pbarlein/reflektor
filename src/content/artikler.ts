@@ -298,12 +298,13 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Hva koster det å sette bort sosiale medier? Hva prisen består av, sju spørsmål du bør stille før du signerer, og hva vi selv tar: 30 000 kr/mnd.",
     publisert: "2026-08-13",
-    oppdatert: "2026-09-30",
+    oppdatert: "2026-10-04",
     blokker: [
       {
         type: "avsnitt",
         tekst:
-          "De fleste byråer oppgir ikke pris før du har vært i et møte. Det gjør det vanskelig å vite om et tilbud er dyrt eller billig. Her er hva prisen består av, hva du bør spørre om før du signerer, og hva vi selv tar.",
+          "De fleste byråer oppgir ikke pris før du har vært i et møte. Det gjør det vanskelig å vite om et tilbud er dyrt eller billig. Her er hva prisen består av, hva du bør spørre om før du signerer, og hva vi selv tar som SoMe-byrå.",
+        lenker: [{ frase: "SoMe-byrå", sti: "/" }],
       },
       {
         type: "overskrift",
@@ -1334,7 +1335,13 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Employer branding er hvordan en bedrift fremstår som arbeidsgiver, og arbeidet med å bli et sted folk vil jobbe. Det handler om hva nåværende og fremtidige ansatte vet og mener om bedriften. Det vises i stillingsannonser, på karrieresiden, i sosiale medier og gjennom de ansatte selv.",
+          "Employer branding er hvordan en bedrift fremstår som arbeidsgiver, og arbeidet med å bli et sted folk vil jobbe. Det handler om hva nåværende og fremtidige ansatte vet og mener om bedriften. Det vises i stillingsannonser, på karrieresiden, i sosiale medier og gjennom de ansatte selv — ofte som en employer branding-video.",
+        lenker: [
+          {
+            frase: "employer branding-video",
+            sti: "/employer-branding-video-oslo",
+          },
+        ],
       },
       {
         type: "overskrift",
@@ -1959,6 +1966,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Tre norske prisguider oppgir helt ulike tall. Her er hva de faktisk sier, hva som driver prisen, og hva vi selv tar: fra 40 000 kr per prosjekt.",
     publisert: "2026-09-29",
+    oppdatert: "2026-10-04",
     blokker: [
       {
         type: "avsnitt",
@@ -1967,7 +1975,13 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Det er det korte svaret. Det lange er mer nyttig, for tallene over er hentet fra prisguider som er uenige med hverandre, og uenigheten forteller dere mer om markedet enn noen av tallene gjør alene.",
+          "Det er det korte svaret. Det lange er mer nyttig, for tallene over er hentet fra prisguider som er uenige med hverandre, og uenigheten forteller dere mer om markedet enn noen av tallene gjør alene. Skal dere rett til leveransen, ligger den på siden om videoproduksjon i Oslo.",
+        lenker: [
+          {
+            frase: "videoproduksjon i Oslo",
+            sti: "/videoproduksjon-i-oslo",
+          },
+        ],
       },
       {
         type: "overskrift",
@@ -3135,11 +3149,18 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Fire Oslo-fotografer oppgir åpne priser på eventfoto. Her er tallene, hva som driver prisen, når video er verdt det, og hva vi selv tar.",
     publisert: "2026-09-30",
+    oppdatert: "2026-10-04",
     blokker: [
       {
         type: "avsnitt",
         tekst:
-          "En eventfotograf i Oslo koster som regel 2 500–9 000 kr for én til tre timer, 6 000–16 000 kr for en halv dag og 10 000–35 000 kr for en hel dag. Skal dere ha både foto og film fra arrangementet, blir det flere folk og mer etterarbeid, og prisen stiger deretter.",
+          "En eventfotograf i Oslo koster som regel 2 500–9 000 kr for én til tre timer, 6 000–16 000 kr for en halv dag og 10 000–35 000 kr for en hel dag. Skal dere ha både foto og film fra arrangementet, blir det flere folk og mer etterarbeid, og prisen stiger deretter. Vår egen pakke for eventfotograf og eventvideo står på tjenestesiden.",
+        lenker: [
+          {
+            frase: "eventfotograf og eventvideo",
+            sti: "/eventfotograf-eventvideo",
+          },
+        ],
       },
       {
         type: "overskrift",
@@ -3451,6 +3472,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Produksjonen er bare den første regningen. Her er hva skuespillere, musikk og visning koster i tillegg, med norske eksempler og tall.",
     publisert: "2026-10-02",
+    oppdatert: "2026-10-04",
     blokker: [
       {
         type: "avsnitt",
@@ -3460,7 +3482,8 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "En reklamefilm har tre kostnader som ofte kommer fra tre ulike steder:",
+          "En reklamefilm har tre kostnader som ofte kommer fra tre ulike steder. Vi produserer filmen; de to andre postene kommer fra andre enn oss:",
+        lenker: [{ frase: "produserer filmen", sti: "/reklamefilm" }],
       },
       {
         type: "tabell",

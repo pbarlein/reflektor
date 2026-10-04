@@ -608,6 +608,29 @@ export function Tjenestelayout({
                     <p className="pr-8 pb-6 leading-relaxed text-pretty text-blekk-dempet">
                       <Tekst>{f.svar}</Tekst>
                     </p>
+                    {/*
+                      LENKE I FAQ-SVARET, lagt til 04.10.2026.
+                      Definisjonsspørsmålene svares kort her og utdypes i
+                      artikkelen som eier søket. Uten lenken ville svaret
+                      vært en blindvei.
+                    */}
+                    {f.lenker && (
+                      <ul className="flex flex-wrap gap-x-7 gap-y-2 pr-8 pb-6">
+                        {f.lenker.map((l) => (
+                          <li key={l.sti}>
+                            <Link
+                              href={l.sti}
+                              className="inline-flex min-h-6 items-center gap-2 text-[0.9375rem] underline decoration-transparent underline-offset-4 transition-colors hover:decoration-aksent motion-reduce:transition-none"
+                            >
+                              {l.tekst}
+                              <span aria-hidden className="text-aksent">
+                                →
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </details>
                 ))}
               </div>
