@@ -229,3 +229,73 @@ linjen stemmer ikke for den ene.
 
 Et Meta-lead som er `customer` eller har en @reflektor.no-adresse får ingen
 e-post, og dermed heller ikke noe varsel herfra.
+
+## Sendevinduet 07–21 (bestilt 04.10.2026)
+
+E-posten ser ut som en Pål skrev selv, fra hans egen Gmail. Da kan den ikke
+komme kl. 03:12.
+
+**Vinduet er 07:00–21:00 i Oslo.** Kommer leadet innenfor, sendes e-post 1
+som før, innen fem minutter. Kommer det utenom, holdes den til **neste
+morgen kl. 08:00**, og jobben sender da alt som ligger i kø.
+
+**Åtte om morgenen, ikke sju.** Vinduet åpner 07:00, men køen tømmes 08:00:
+et lead som kom kl. 02 skal ikke ligge først i innboksen når kunden slår på
+telefonen.
+
+**Helg teller som vanlig dag.** Lead lørdag kl. 23 → søndag kl. 08. Her
+skiller sendevinduet seg fra påminnelsen, som venter til nærmeste hverdag.
+Presentasjonen er svaret på en henvendelse personen nettopp har sendt, og
+den tåler ikke å ligge til mandag.
+
+**Varselet til Pål går med en gang, uansett klokkeslett** — men det sier da
+«Presentasjon og møtelink sendes <dag> kl. 08:00» i stedet for «sendt». En
+linje som lover noe som ikke har skjedd, er verre enn ingen linje.
+
+**Påminnelsen regnes fra den faktiske sendetiden.** Lead søndag kl. 23 →
+e-post mandag kl. 08 → påminnelse tirsdag. Regnet fra søndag ville
+påminnelsen gått mandag, altså før e-posten den minner om.
+
+Oversiktssiden `/paaminnelse` viser «Presentasjon sendes …» for leads som
+venter. `/api/skjema` gjør ingenting utenom vinduet — regelen ville stoppet
+e-posten uansett, men da hadde vi brukt et HubSpot-oppslag på å få vite det.
+
+## Avtalen flyttes til «Møte booket» (bestilt 04.10.2026)
+
+HubSpot setter `engagements_last_meeting_booked` når noen booker via
+møtelenken, men flytter ikke avtalen. Pål måtte dra kortet selv, og et
+stadium som ikke stemmer er et stadium han ikke kan styre etter.
+
+Jobben gjør det nå, hver kjøring, for kontakter med booking de siste fjorten
+dagene.
+
+**Stadie-ID-en slås opp, den er ikke hardkodet.** ID-ene i denne porteføljen
+er en blanding av HubSpots standardnavn (`presentationscheduled` heter «Møte
+booket») og et rent tall (`6002758898` heter «Hviler»). Skriver noen om
+pipelinen, skal koden følge etter.
+
+**Bare framover.** En avtale flyttes bare hvis den står i et tidligere
+stadium enn «Møte booket», målt på rekkefølgen pipelinen selv oppgir. Da er
+Tilbud sendt, Vunnet, Hviler og Tapt trygge uten at noen liste må holdes
+oppdatert. Et stadium som ikke finnes i pipelinen hører til et annet oppsett
+og røres ikke.
+
+**Finner vi ingen avtale på kontakten, leter vi etter samme person.** Det
+var tilfellet 04.10.2026: bookingen laget en ny kontakt uten avtale, mens
+avtalen hang på Meta-kontakten med en annen e-postadresse. Bookingkontakten
+hadde ikke telefonnummer i det hele tatt — det var bedriftsnavnet som bandt
+dem sammen. Samme normalisering som dublettsjekken.
+
+**Flyttingen går uavhengig av bryteren og av Gmail.** Det er en opprydding i
+CRM-et, ikke en e-post til en kunde. Feiler den, går resten av jobben som
+normalt, og hver flytting logges.
+
+Krever `crm.objects.deals.write` på HubSpot-tokenet. Mangler den, svarer
+HubSpot 403, og logglinjen sier det rett ut.
+
+### Stadienavnene i prompten stemmer ikke med porteføljen
+
+Prompten ba om «fra «Ny»/«Kontaktet» → «Møte booket»». De to stadiene finnes
+ikke i «Reflektor – salg». Stadiet alle nye leads havner i heter
+**Interessert**, og det er det som flyttes. Testene bruker de faktiske
+navnene.

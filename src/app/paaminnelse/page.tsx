@@ -5,7 +5,11 @@ import { Container } from "@/components/Container";
 import { Knapp } from "@/components/Knapp";
 import { signer } from "@/lib/avbrytsignatur";
 import { harToken, hentPlanlagte } from "@/lib/hubspotcrm";
-import { PAAMINNELSE_KAPSEL, paaminnelseTekst } from "@/lib/paaminnelse";
+import {
+  osloTekst,
+  PAAMINNELSE_KAPSEL,
+  paaminnelseTekst,
+} from "@/lib/paaminnelse";
 
 export const metadata: Metadata = {
   title: "Påminnelser",
@@ -78,7 +82,14 @@ export default async function Paaminnelser() {
                   <p className="mt-1 text-blekk-dempet">
                     {[l.bedrift, l.kilde].filter(Boolean).join(" · ")}
                   </p>
-                  <p className="mt-3 text-[0.9375rem] text-blekk-dempet">
+                  {l.planlagtEpost1 ? (
+                    <p className="mt-3 text-[0.9375rem] text-blekk-dempet">
+                      Presentasjon sendes {osloTekst(l.planlagtEpost1)}
+                    </p>
+                  ) : null}
+                  <p
+                    className={`${l.planlagtEpost1 ? "mt-1" : "mt-3"} text-[0.9375rem] text-blekk-dempet`}
+                  >
                     Påminnelse sendes {paaminnelseTekst(l.sendtInn)}
                   </p>
                   <form

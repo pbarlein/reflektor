@@ -12,6 +12,7 @@
  */
 
 import { paaminnelseTidspunkt } from "./paaminnelse";
+import { planlagtSending, venterPaaVinduet } from "./sendevindu";
 
 const BASIS = "https://api.hubapi.com";
 const TIDSTAK_MS = 8000;
@@ -86,6 +87,15 @@ export type Planlagt = {
   bedrift: string;
   kilde: "Nettside" | "Meta";
   sendtInn: Date;
+  /**
+   * Når e-post 1 går ut, hvis den ennå ikke har gått.
+   *
+   * Null betyr at den er sendt. Satt betyr at leadet kom utenom
+   * sendevinduet og ligger i kø — se lib/sendevindu.ts. Pål skal kunne se
+   * på denne siden at e-posten ikke har gått ennå, ikke bare at det kommer
+   * en påminnelse en gang.
+   */
+  planlagtEpost1: Date | null;
 };
 
 /**
@@ -157,7 +167,7 @@ export async function hentPlanlagte(): Promise<Planlagt[] | null> {
       results?: { properties: Record<string, string | null> }[];
     };
 
-    const na = Date.now();
+    const na = new Date();
 
     return (data.results ?? [])
       .map((r) => {
@@ -178,8 +188,21 @@ export async function hentPlanlagte(): Promise<Planlagt[] | null> {
             Mangler den — Meta-leads som ennå ikke er plukket opp — er
             innsendingstidspunktet det nærmeste vi har.
           */
+          /*
+            VENTER E-POST 1 PÅ SENDEVINDUET, regnes påminnelsen fra den
+            PLANLAGTE sendetiden og ikke fra innsendingen. Et lead som kom
+            lørdag kl. 23 får e-posten søndag kl. 08 og påminnelsen mandag
+            — ikke søndag.
+          */
+          planlagtEpost1:
+            !p.lead_epost1_sendt && venterPaaVinduet(na)
+              ? planlagtSending(na)
+              : null,
           sendtInn: new Date(
-            p.lead_epost1_sendt ?? p.recent_conversion_date ?? Date.now(),
+            p.lead_epost1_sendt ??
+              (venterPaaVinduet(na)
+                ? planlagtSending(na).toISOString()
+                : (p.recent_conversion_date ?? Date.now())),
           ),
         };
       })
@@ -189,7 +212,9 @@ export async function hentPlanlagte(): Promise<Planlagt[] | null> {
         verdi, og React-kompilatoren avviser den med rette — to rendringer av
         samme data ville gitt to forskjellige lister.
       */
-      .filter((l) => l.epost && paaminnelseTidspunkt(l.sendtInn).getTime() > na);
+      .filter(
+        (l) => l.epost && paaminnelseTidspunkt(l.sendtInn).getTime() > na.getTime(),
+      );
   } catch (feil) {
     console.error("[paaminnelse] Søket i HubSpot feilet.", feil);
     return null;
@@ -430,46 +455,13 @@ export async function booketNylig(): Promise<Leadkontakt[] | null> {
   ]);
 }
 
-/** Stadiene på avtalene som henger på kontakten. Tom liste ved feil. */
+/**
+ * Stadiene på avtalene som henger på kontakten. Tom liste ved feil.
+ *
+ * Bygger på `avtalerFor`, så det finnes bare én vei til avtalene.
+ */
 export async function dealstadier(kontaktId: string): Promise<string[]> {
-  if (!harToken()) return [];
-  try {
-    const kobling = await fetch(
-      `${BASIS}/crm/v4/objects/contacts/${kontaktId}/associations/deals?limit=20`,
-      { headers: hoder(), signal: AbortSignal.timeout(TIDSTAK_MS) },
-    );
-    if (!kobling.ok) {
-      console.error(
-        `[leadepost] Fikk ikke avtalene til kontakt ${kontaktId} (${kobling.status}). Mangler tokenet crm.objects.deals.read?`,
-      );
-      return [];
-    }
-    const ider = (
-      (await kobling.json()) as { results?: { toObjectId: string }[] }
-    ).results?.map((r) => r.toObjectId);
-    if (!ider?.length) return [];
-
-    const avtaler = await fetch(`${BASIS}/crm/v3/objects/deals/batch/read`, {
-      method: "POST",
-      headers: hoder(),
-      body: JSON.stringify({
-        properties: ["dealstage"],
-        inputs: ider.map((id) => ({ id })),
-      }),
-      signal: AbortSignal.timeout(TIDSTAK_MS),
-    });
-    if (!avtaler.ok) return [];
-    return (
-      (await avtaler.json()) as {
-        results?: { properties: { dealstage?: string } }[];
-      }
-    ).results
-      ?.map((d) => d.properties.dealstage ?? "")
-      .filter(Boolean) ?? [];
-  } catch (feil) {
-    console.error("[leadepost] Oppslag av avtaler feilet.", feil);
-    return [];
-  }
+  return (await avtalerFor(kontaktId)).map((a) => a.stadium);
 }
 
 /** Skriver tilbake at e-posten er sendt. Returnerer om det gikk. */
@@ -562,4 +554,207 @@ export async function loggEpost(
       /* neste forsøk */
     }
   }
+}
+
+/* ──────────── AVTALEN FLYTTES TIL «MØTE BOOKET» (04.10.2026) ─────────── */
+
+/**
+ * Pipelinen og stadiet vi flytter til, slått opp i HubSpot.
+ *
+ * IKKE HARDKODET, og det er et poeng. Stadie-ID-ene i denne porteføljen er
+ * en blanding av HubSpots standardnavn (`presentationscheduled` heter «Møte
+ * booket») og et rent tall (`6002758898` heter «Hviler»). Skriver noen om
+ * pipelinen, skal koden følge etter — ikke flytte avtaler til et stadium
+ * som ikke finnes lenger.
+ *
+ * REKKEFØLGEN KOMMER OGSÅ FRA API-ET, og det er den som avgjør hva som er
+ * «et tidligere stadium». Da trenger vi ingen liste over hvilke stadier
+ * som IKKE skal røres: Tilbud sendt, Vunnet, Hviler og Tapt ligger alle
+ * etter Møte booket, og regelen «bare framover» dekker alle fire.
+ */
+export type Stadiekart = {
+  /** ID-en til «Møte booket». */
+  maal: string;
+  /** Stadie-ID → rekkefølge i pipelinen. */
+  ordre: Map<string, number>;
+};
+
+/** Navnet på pipelinen og stadiet, slik de står i HubSpot. */
+const PIPELINE_NAVN = "Reflektor – salg";
+const MAALSTADIUM = "Møte booket";
+
+/** Tegnvask før sammenligning: «–» og «-» skal regnes som samme strek. */
+function likNavn(a: string, b: string): boolean {
+  const vask = (t: string) =>
+    t
+      .toLocaleLowerCase("nb-NO")
+      .replace(/[‐-―]/g, "-")
+      .replace(/\s+/g, " ")
+      .trim();
+  return vask(a) === vask(b);
+}
+
+/**
+ * Henter stadiekartet.
+ *
+ * ETT OPPSLAG PER KJØRING, OG INGEN MELLOMLAGRING. Den som kaller, henter
+ * kartet én gang og bruker det på alle kontaktene. Her sto en cache på
+ * modulnivå; den gjorde koden umulig å teste ærlig — én test fylte
+ * cachen, og de neste testet aldri oppslaget. Et GET hvert femte minutt er
+ * en billigere pris enn en test som later som.
+ */
+export async function hentStadiekart(): Promise<Stadiekart | null> {
+  if (!harToken()) return null;
+
+  try {
+    const svar = await fetch(`${BASIS}/crm/v3/pipelines/deals`, {
+      headers: hoder(),
+      signal: AbortSignal.timeout(TIDSTAK_MS),
+    });
+    if (!svar.ok) {
+      console.error(
+        `[avtale] Fikk ikke pipelinene (${svar.status}). ${await svar.text().catch(() => "")}`,
+      );
+      return null;
+    }
+
+    const data = (await svar.json()) as {
+      results?: {
+        label?: string;
+        stages?: { id?: string; label?: string; displayOrder?: number }[];
+      }[];
+    };
+
+    const pipeline =
+      data.results?.find((p) => likNavn(p.label ?? "", PIPELINE_NAVN)) ??
+      /* Finnes bare én, er det den. Navnet kan være endret. */
+      (data.results?.length === 1 ? data.results[0] : undefined);
+
+    if (!pipeline?.stages?.length) {
+      console.error(`[avtale] Fant ikke pipelinen «${PIPELINE_NAVN}».`);
+      return null;
+    }
+
+    const maal = pipeline.stages.find((s) => likNavn(s.label ?? "", MAALSTADIUM));
+    if (!maal?.id) {
+      console.error(`[avtale] Fant ikke stadiet «${MAALSTADIUM}».`);
+      return null;
+    }
+
+    const ordre = new Map<string, number>();
+    for (const s of pipeline.stages) {
+      if (s.id) ordre.set(s.id, s.displayOrder ?? 0);
+    }
+
+    return { maal: maal.id, ordre };
+  } catch (feil) {
+    console.error("[avtale] Oppslaget av pipelinene feilet.", feil);
+    return null;
+  }
+}
+
+export type Avtale = { id: string; stadium: string };
+
+/** Avtalene som henger på kontakten, med id og stadium. Tom ved feil. */
+export async function avtalerFor(kontaktId: string): Promise<Avtale[]> {
+  if (!harToken()) return [];
+  try {
+    const kobling = await fetch(
+      `${BASIS}/crm/v4/objects/contacts/${kontaktId}/associations/deals?limit=20`,
+      { headers: hoder(), signal: AbortSignal.timeout(TIDSTAK_MS) },
+    );
+    if (!kobling.ok) {
+      console.error(
+        `[avtale] Fikk ikke avtalene til kontakt ${kontaktId} (${kobling.status}). Mangler tokenet crm.objects.deals.read?`,
+      );
+      return [];
+    }
+    const ider = (
+      (await kobling.json()) as { results?: { toObjectId: string }[] }
+    ).results?.map((r) => r.toObjectId);
+    if (!ider?.length) return [];
+
+    const avtaler = await fetch(`${BASIS}/crm/v3/objects/deals/batch/read`, {
+      method: "POST",
+      headers: hoder(),
+      body: JSON.stringify({
+        properties: ["dealstage"],
+        inputs: ider.map((id) => ({ id })),
+      }),
+      signal: AbortSignal.timeout(TIDSTAK_MS),
+    });
+    if (!avtaler.ok) return [];
+    return (
+      (
+        (await avtaler.json()) as {
+          results?: { id: string; properties: { dealstage?: string } }[];
+        }
+      ).results
+        ?.filter((d) => d.properties.dealstage)
+        .map((d) => ({ id: d.id, stadium: d.properties.dealstage! })) ?? []
+    );
+  } catch (feil) {
+    console.error("[avtale] Oppslag av avtaler feilet.", feil);
+    return [];
+  }
+}
+
+/**
+ * Flytter én avtale til et nytt stadium.
+ *
+ * KREVER `crm.objects.deals.write`. Mangler den, svarer HubSpot 403, og da
+ * sier logglinjen det rett ut — det er den ene feilen som ikke retter seg
+ * selv.
+ */
+export async function flyttAvtale(
+  avtaleId: string,
+  stadium: string,
+): Promise<boolean> {
+  if (!harToken()) return false;
+  try {
+    const svar = await fetch(`${BASIS}/crm/v3/objects/deals/${avtaleId}`, {
+      method: "PATCH",
+      headers: hoder(),
+      body: JSON.stringify({ properties: { dealstage: stadium } }),
+      signal: AbortSignal.timeout(TIDSTAK_MS),
+    });
+    if (svar.ok) return true;
+    console.error(
+      `[avtale] Klarte ikke flytte avtale ${avtaleId} (${svar.status})${svar.status === 403 ? " — mangler tokenet crm.objects.deals.write?" : ""}. ${await svar.text().catch(() => "")}`,
+    );
+    return false;
+  } catch (feil) {
+    console.error("[avtale] Flyttingen feilet.", feil);
+    return false;
+  }
+}
+
+/**
+ * Kontakter som kan være samme person som `k`, slått opp på telefon eller
+ * bedrift.
+ *
+ * SØKET ER BREDT, FILTERET ER SMALT. HubSpot kan ikke søke på «slutter
+ * med», så vi ber om eksakte treff på de tre feltene og lar
+ * `sammePerson` i lib/leadepost.ts avgjøre. Det var bedriftsnavnet som
+ * bandt de to kontaktene sammen 04.10.2026 — bookingkontakten hadde ikke
+ * telefonnummer i det hele tatt.
+ */
+export async function mulighetsmakker(
+  k: Leadkontakt,
+): Promise<Leadkontakt[] | null> {
+  const grupper: { filters: Record<string, string>[] }[] = [];
+  const telefon = k.telefon.trim();
+  if (telefon) {
+    grupper.push({ filters: [{ propertyName: "phone", operator: "EQ", value: telefon }] });
+    grupper.push({
+      filters: [{ propertyName: "mobilephone", operator: "EQ", value: telefon }],
+    });
+  }
+  if (k.bedrift.trim()) {
+    grupper.push({
+      filters: [{ propertyName: "company", operator: "EQ", value: k.bedrift.trim() }],
+    });
+  }
+  if (!grupper.length) return [];
+  return sok(grupper, 20);
 }

@@ -1,13 +1,17 @@
 import { harSvarITrad, sendGmail, harGmail } from "./gmail";
 import {
   AVBRUTT_FELT,
+  avtalerFor,
   booketNylig,
   dealstadier,
+  flyttAvtale,
+  hentStadiekart,
   EPOST_FELT,
   harToken,
   hentLeadkontakt,
   loggEpost,
   merkSendt,
+  mulighetsmakker,
   nyeLeadsUtenEpost,
   venterPaaPaaminnelse,
   type Leadkontakt,
@@ -314,9 +318,94 @@ export async function sendEpost1TilNyttLead(epost: string): Promise<Utfall> {
   return sendEpost1(k, new Date(), await booketListe());
 }
 
+/* ────────────── AVTALEN FLYTTES VED BOOKING (04.10.2026) ─────────────── */
+
+export type Avtaletelling = {
+  flyttet: number;
+  "hoppet-over": number;
+  feilet: number;
+};
+
+/**
+ * Flytter avtalene til kontaktene som har booket møte.
+ *
+ * HVORFOR DET MÅ GJØRES HER. HubSpot setter
+ * `engagements_last_meeting_booked` når noen booker via møtelenken, men
+ * flytter ikke avtalen. Pål måtte dra kortet selv, og et stadium som ikke
+ * stemmer er et stadium han ikke kan styre etter.
+ *
+ * BARE FRAMOVER. Vi flytter en avtale bare hvis den står i et TIDLIGERE
+ * stadium enn «Møte booket», målt på rekkefølgen pipelinen selv oppgir. Da
+ * er Tilbud sendt, Vunnet, Hviler og Tapt trygge uten at noen liste må
+ * holdes oppdatert.
+ *
+ * FINNER VI INGEN AVTALE PÅ KONTAKTEN, LETER VI ETTER SAMME PERSON. Det var
+ * tilfellet 04.10.2026: bookingen laget en ny kontakt uten avtale, mens
+ * avtalen hang på Meta-kontakten med en annen e-postadresse.
+ */
+export async function flyttAvtalerForBookede(
+  booket: Leadkontakt[],
+): Promise<Avtaletelling> {
+  const telling: Avtaletelling = { flyttet: 0, "hoppet-over": 0, feilet: 0 };
+  if (!booket.length) return telling;
+
+  const kart = await hentStadiekart();
+  if (!kart) {
+    console.error(
+      "[avtale] Uten stadiekart flyttes ingen avtaler. Resten av jobben går som normalt.",
+    );
+    return telling;
+  }
+
+  const maalOrdre = kart.ordre.get(kart.maal) ?? 0;
+
+  for (const k of booket) {
+    if (!k.moteBooket) continue;
+
+    let avtaler = await avtalerFor(k.id);
+    let via = "";
+
+    if (!avtaler.length) {
+      const makkere = (await mulighetsmakker(k)) ?? [];
+      for (const m of makkere) {
+        if (!sammePerson(k, m)) continue;
+        const hennes = await avtalerFor(m.id);
+        if (hennes.length) {
+          avtaler = hennes;
+          via = ` (avtalen hang på ${m.epost})`;
+          break;
+        }
+      }
+    }
+
+    for (const a of avtaler) {
+      const ordre = kart.ordre.get(a.stadium);
+      /*
+        UKJENT STADIUM RØRES IKKE. Står avtalen i en annen pipeline, er den
+        ikke vår å flytte.
+      */
+      if (ordre === undefined || ordre >= maalOrdre) {
+        telling["hoppet-over"] += 1;
+        continue;
+      }
+      if (await flyttAvtale(a.id, kart.maal)) {
+        telling.flyttet += 1;
+        console.info(
+          `[avtale] Flyttet avtale ${a.id} til «Møte booket» for ${k.epost}${via}.`,
+        );
+      } else {
+        telling.feilet += 1;
+      }
+    }
+  }
+
+  return telling;
+}
+
 export type Jobbsvar = {
   epost1: Record<Utfall, number>;
   epost2: Record<Utfall, number>;
+  avtaler: Avtaletelling;
   aktiv: boolean;
 };
 
@@ -332,17 +421,30 @@ export async function kjorLeadepostjobb(na = new Date()): Promise<Jobbsvar> {
   const svar: Jobbsvar = {
     epost1: tomTeller(),
     epost2: tomTeller(),
+    avtaler: { flyttet: 0, "hoppet-over": 0, feilet: 0 },
     aktiv: aktiv(),
   };
 
-  if (!harToken() || !harGmail()) {
-    console.error(
-      "[leadepost] Mangler HubSpot-token eller Google-nøkkel. Jobben gjorde ingenting.",
-    );
+  if (!harToken()) {
+    console.error("[leadepost] Mangler HubSpot-token. Jobben gjorde ingenting.");
     return svar;
   }
 
   const booket = await booketListe();
+
+  /*
+    AVTALENE FLYTTES FØRST, OG UAVHENGIG AV BRYTEREN OG AV GMAIL. Det er en
+    opprydding i CRM-et, ikke en e-post til en kunde — den skal gå selv om
+    utsendingen står av. Feiler den, går resten av jobben som normalt.
+  */
+  svar.avtaler = await flyttAvtalerForBookede(booket);
+
+  if (!harGmail()) {
+    console.error(
+      "[leadepost] Mangler Google-nøkkel. Ingen e-post, men avtalene er ryddet.",
+    );
+    return svar;
+  }
 
   const nye = (await nyeLeadsUtenEpost()) ?? [];
   for (const k of nye.slice(0, MAKS_PER_KJORING)) {

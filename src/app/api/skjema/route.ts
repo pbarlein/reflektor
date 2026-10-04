@@ -9,6 +9,7 @@ import {
 import { sendLeadPaEpost, type Lead } from "@/lib/lead";
 import { sendEpost1TilNyttLead } from "@/lib/leadutsending";
 import { basisUrl } from "@/lib/miljo";
+import { innenforVinduet } from "@/lib/sendevindu";
 import { foroftig, klientnokkel, rens } from "@/lib/skjemavern";
 
 /**
@@ -195,7 +196,12 @@ export async function POST(req: NextRequest) {
 
         BRYTEREN STÅR AV til Pål slår den på. Se lib/leadutsending.ts.
       */
-      await sendEpost1TilNyttLead(lead.epost);
+      /*
+        UTENOM SENDEVINDUET GJØR VI INGENTING HER. Regelen ville stoppet
+        e-posten uansett, men da hadde vi brukt et oppslag mot HubSpot på å
+        få vite det. Jobben tømmer køen kl. 08:00. Se lib/sendevindu.ts.
+      */
+      if (innenforVinduet(new Date())) await sendEpost1TilNyttLead(lead.epost);
     };
 
     try {

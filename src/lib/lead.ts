@@ -20,6 +20,7 @@
 
 import { avbrytLenke } from "./avbrytsignatur";
 import { faarPaaminnelse, osloTekst, paaminnelseTekst } from "./paaminnelse";
+import { planlagtSending, venterPaaVinduet } from "./sendevindu";
 import { serUtSomEpost } from "./skjemavern";
 
 export type Lead = {
@@ -232,7 +233,21 @@ export function varsel(
       }
     : faarPaaminnelse(lead.epost)
       ? {
-          linje: `Generisk Canva-presentasjon og møtelink sendt. Påminnelse sendes ${paaminnelseTekst(sendt)}.`,
+          /*
+            LINJEN SIER HVA SOM FAKTISK SKJER, OGSÅ OM NATTEN. Fra
+            04.10.2026 sendes e-posten bare mellom 07 og 21; kommer leadet
+            utenom, ligger den i kø til neste morgen kl. 08:00. Da skal det
+            ikke stå «sendt» her. Pål leser denne linjen for å vite hvor
+            lang tid han har på å ringe først, og en linje som lover noe
+            som ikke har skjedd, er verre enn ingen linje.
+
+            PÅMINNELSEN REGNES FRA DEN FAKTISKE SENDETIDEN, ikke fra
+            innsendingen. Et lead som kommer lørdag kl. 23 får e-posten
+            søndag kl. 08, og påminnelsen mandag — ikke søndag.
+          */
+          linje: venterPaaVinduet(sendt)
+            ? `Presentasjon og møtelink sendes ${osloTekst(planlagtSending(sendt))}. Påminnelse sendes ${paaminnelseTekst(planlagtSending(sendt))}.`
+            : `Generisk Canva-presentasjon og møtelink sendt. Påminnelse sendes ${paaminnelseTekst(sendt)}.`,
           ring: "Ring ASAP for å booke møte personlig.",
           lenke: avbrytLenke(lead.epost),
         }

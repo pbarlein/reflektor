@@ -1,4 +1,5 @@
 import { paaminnelseTidspunkt } from "./paaminnelse";
+import { innenforVinduet } from "./sendevindu";
 
 /**
  * De to e-postene leadet får fra Pål.
@@ -300,6 +301,10 @@ export const STOPPSTADIER = [
 /**
  * E-post 1: presentasjonen.
  *
+ * BARE MELLOM 07 OG 21. E-posten ser ut som en Pål skrev selv, og da kan
+ * den ikke komme kl. 03:12. Kommer leadet om natten, ligger det i kø til
+ * kl. 08:00. Se lib/sendevindu.ts.
+ *
  * BARE SKJEMALEADS. Er konverteringen noe annet enn de to skjemaene — en
  * booking, en nedlasting, en import — vet vi ikke hva personen har bedt om,
  * og da skal ingen automatisk e-post gå ut. Bestilt av Pål 04.10.2026.
@@ -324,6 +329,13 @@ export function skalHaEpost1(k: Kandidat, na: Date): boolean {
     if (Number.isNaN(inn.getTime())) return false;
     if (na.getTime() - inn.getTime() < META_VENT_MS) return false;
   }
+
+  /*
+    INGEN E-POST OM NATTEN. Sist av alle sjekkene, fordi den er den eneste
+    som går over av seg selv: leadet blir liggende, og jobben tar det kl.
+    08:00. Se lib/sendevindu.ts.
+  */
+  if (!innenforVinduet(na)) return false;
 
   return true;
 }

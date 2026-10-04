@@ -31,7 +31,7 @@ const SONE = "Europe/Oslo";
 export const PAAMINNELSE_KAPSEL = "rfl_paaminnelse";
 
 /** Delene av et tidspunkt, slik de ser ut i Oslo. */
-function osloDeler(t: Date): {
+export function osloDeler(t: Date): {
   ar: number;
   maned: number;
   dag: number;
@@ -77,7 +77,7 @@ function osloDeler(t: Date): {
  * påminnelse mandag 26. kl. 09:00 — som er et annet antall timer unna enn
  * det samme tilfellet uken før.
  */
-function osloTidspunkt(
+export function osloTidspunkt(
   ar: number,
   maned: number,
   dag: number,
