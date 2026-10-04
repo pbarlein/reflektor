@@ -18,6 +18,8 @@
  * Nøkkelen ligger i Vercel-miljøvariabler, aldri i repoet (brief 8.1.2).
  */
 
+import { randomUUID } from "node:crypto";
+
 import { avbrytLenke } from "./avbrytsignatur";
 import { faarPaaminnelse, osloTekst, paaminnelseTekst } from "./paaminnelse";
 import { planlagtSending, venterPaaVinduet } from "./sendevindu";
@@ -90,6 +92,28 @@ export type Varselvalg = {
    */
   moteBooket?: Date | null;
 };
+
+/**
+ * Emnet, med leadet i det.
+ *
+ * GMAIL TRÅDET VARSLENE SAMMEN. Alle hadde samme emne, og da legger Gmail
+ * dem i én samtale og skjuler linjene som er like forrige melding bak «…»
+ * på mobil. Linjen om presentasjon og påminnelse — den Pål leser for å vite
+ * hvor lang tid han har på å ringe — var nettopp en slik linje.
+ *
+ * PREFIKSET STÅR URØRT FØRST. Leadsjekken søker på det, og et emne som
+ * begynner et annet sted ville gjort søket blindt.
+ *
+ * NAVN, SÅ BEDRIFT I PARENTES. Mangler bedriften, står navnet alene;
+ * mangler navnet, står e-postadressen. Et emne som slutter med « – ()» ser
+ * ødelagt ut, og et emne uten noe å skille på tråder igjen.
+ */
+export function varselEmne(prefiks: string, lead: Lead): string {
+  const navn = lead.navn.trim() || lead.epost.trim();
+  const bedrift = lead.bedrift.trim();
+  if (!navn) return prefiks;
+  return `${prefiks} – ${navn}${bedrift ? ` (${bedrift})` : ""}`;
+}
 
 /** Escaper de fire tegnene som kan bryte ut av HTML-en i e-posten. */
 function esc(tekst: string): string {
@@ -378,7 +402,20 @@ async function send(opp: {
     return;
   }
 
-  const forsok = () =>
+  /*
+    EGEN MESSAGE-ID, OG INGEN In-Reply-To ELLER References.
+
+    Varslene skal ALDRI havne i samme tråd. Emnet er nå unikt per lead, og
+    det er hovedgrepet — men en egen Message-ID gjør det eksplisitt i stedet
+    for å stole på at Resend setter en.
+
+    HEADEREN DROPPES HVIS RESEND IKKE VIL HA DEN. Et varsel som ikke kommer
+    fram er verre enn et varsel i feil tråd, så avviser Resend forsendelsen
+    med en 4xx, prøves den på nytt uten egne headere. Se under.
+  */
+  const meldingsId = `<${randomUUID()}@reflektor.no>`;
+
+  const forsok = (medHodet: boolean) =>
     fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -388,6 +425,15 @@ async function send(opp: {
       body: JSON.stringify({
         from: AVSENDER,
         to: [opp.til],
+        ...(medHodet
+          ? {
+              headers: {
+                "Message-ID": meldingsId,
+                /* Gmail bruker denne til å holde meldinger fra hverandre. */
+                "X-Entity-Ref-ID": meldingsId,
+              },
+            }
+          : {}),
         /*
          * `reply_to` utelates når adressen ikke ser ut som en adresse:
          * e-posten skal komme fram uansett, og en ugyldig verdi gir 422 fra
@@ -402,16 +448,28 @@ async function send(opp: {
       }),
     });
 
+  let avvisteHodet = false;
   try {
-    const forste = await forsok();
+    const forste = await forsok(true);
     if (forste.ok) return;
+    /*
+      4xx BETYR AT RESEND IKKE LIKTE DET VI SENDTE, og det eneste nye her er
+      headerne. Da er neste forsøk uten dem — og logglinjen sier det, så
+      ingen leter etter en nettverksfeil som ikke finnes.
+    */
+    if (forste.status >= 400 && forste.status < 500) {
+      avvisteHodet = true;
+      console.error(
+        `[lead] Resend avviste egne headere (${forste.status}). Prøver uten.`,
+      );
+    }
   } catch {
     // Nettverksfeil teller som et mislykket forsøk. Vi prøver igjen under.
   }
 
   await new Promise((r) => setTimeout(r, NYTT_FORSOK_MS));
 
-  const andre = await forsok();
+  const andre = await forsok(!avvisteHodet);
   if (andre.ok) return;
 
   const detaljer = await andre.text().catch(() => "");
@@ -438,7 +496,7 @@ export async function sendLeadPaEpost(
   try {
     await send({
       til: MOTTAKER,
-      emne: VARSEL_EMNE,
+      emne: varselEmne(VARSEL_EMNE, lead),
       tekst,
       html,
       svarTil: lead.epost,
@@ -499,7 +557,7 @@ export async function sendMetaVarsel(opp: {
   try {
     await send({
       til: MOTTAKER,
-      emne: META_VARSEL_EMNE,
+      emne: varselEmne(META_VARSEL_EMNE, lead),
       tekst,
       html,
       svarTil: opp.epost,

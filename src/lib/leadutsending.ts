@@ -1,11 +1,14 @@
 import { harSvarITrad, sendGmail, harGmail } from "./gmail";
 import {
+  arkiverAvtale,
   AVBRUTT_FELT,
   avtalerFor,
   booketNylig,
   dealstadier,
   flyttAvtale,
+  harEgenAktivitet,
   hentStadiekart,
+  knyttKontaktTilAvtale,
   EPOST_FELT,
   harToken,
   hentLeadkontakt,
@@ -14,7 +17,9 @@ import {
   mulighetsmakker,
   nyeLeadsUtenEpost,
   venterPaaPaaminnelse,
+  type Avtale,
   type Leadkontakt,
+  type Stadiekart,
 } from "./hubspotcrm";
 import { sendMetaVarsel } from "./lead";
 import {
@@ -322,12 +327,61 @@ export async function sendEpost1TilNyttLead(epost: string): Promise<Utfall> {
 
 export type Avtaletelling = {
   flyttet: number;
+  arkivert: number;
   "hoppet-over": number;
   feilet: number;
 };
 
+/** Hvor gammel en auto-opprettet avtale får være for å kunne arkiveres. */
+const ARKIVGRENSE_MS = 24 * 60 * 60 * 1000;
+
 /**
- * Flytter avtalene til kontaktene som har booket møte.
+ * Avtalene til kontakten, og til den som er samme person.
+ *
+ * ETT OPPSLAG PER KONTAKT, og makkeren finnes bare hvis den trengs.
+ */
+async function avtalebildet(k: Leadkontakt): Promise<{
+  egne: Avtale[];
+  makker: Leadkontakt | null;
+  hennes: Avtale[];
+}> {
+  const egne = await avtalerFor(k.id);
+
+  const makkere = (await mulighetsmakker(k)) ?? [];
+  for (const m of makkere) {
+    if (!sammePerson(k, m)) continue;
+    const hennes = await avtalerFor(m.id);
+    if (hennes.length) return { egne, makker: m, hennes };
+  }
+
+  return { egne, makker: null, hennes: [] };
+}
+
+/**
+ * Kan denne avtalen arkiveres?
+ *
+ * TRE KRAV, OG ALLE TRE MÅ HOLDE: under 24 timer gammel, i Interessert
+ * eller Møte booket, og ingen har gjort noe med den etter at den ble laget.
+ * Da er den en avtale arbeidsflyten laget og ingen har tatt i.
+ */
+async function kanArkiveres(
+  a: Avtale,
+  kart: Stadiekart,
+  na: Date,
+): Promise<boolean> {
+  const maalOrdre = kart.ordre.get(kart.maal) ?? 0;
+  const ordre = kart.ordre.get(a.stadium);
+  if (ordre === undefined || ordre > maalOrdre) return false;
+
+  const laget = new Date(a.opprettet).getTime();
+  if (Number.isNaN(laget) || na.getTime() - laget > ARKIVGRENSE_MS) return false;
+
+  /* `null` betyr at vi ikke fikk sjekket. Da står avtalen. */
+  return (await harEgenAktivitet(a.id, a.opprettet)) === false;
+}
+
+/**
+ * Flytter avtalene til kontaktene som har booket møte, og rydder dubletten.
  *
  * HVORFOR DET MÅ GJØRES HER. HubSpot setter
  * `engagements_last_meeting_booked` når noen booker via møtelenken, men
@@ -339,14 +393,26 @@ export type Avtaletelling = {
  * er Tilbud sendt, Vunnet, Hviler og Tapt trygge uten at noen liste må
  * holdes oppdatert.
  *
- * FINNER VI INGEN AVTALE PÅ KONTAKTEN, LETER VI ETTER SAMME PERSON. Det var
- * tilfellet 04.10.2026: bookingen laget en ny kontakt uten avtale, mens
- * avtalen hang på Meta-kontakten med en annen e-postadresse.
+ * DUBLETTEN, LAGT TIL 04.10.2026. Booker noen med en annen e-postadresse,
+ * lager HubSpot en ny kontakt, og arbeidsflyten lager en ny avtale på den.
+ * Testen samme dag ga to avtaler på samme person: den opprinnelige sto
+ * igjen i Interessert mens den nye ble flyttet til Møte booket. Nå flyttes
+ * den OPPRINNELIGE, bookingkontakten knyttes til den, og den nye arkiveres
+ * — hvis den er fersk, urørt og står tidlig nok.
+ *
+ * FINNES INGEN MAKKER, er det en helt ny person som booket direkte. Da er
+ * avtalen arbeidsflyten laget den eneste som finnes, og den flyttes som før.
  */
 export async function flyttAvtalerForBookede(
   booket: Leadkontakt[],
+  na = new Date(),
 ): Promise<Avtaletelling> {
-  const telling: Avtaletelling = { flyttet: 0, "hoppet-over": 0, feilet: 0 };
+  const telling: Avtaletelling = {
+    flyttet: 0,
+    arkivert: 0,
+    "hoppet-over": 0,
+    feilet: 0,
+  };
   if (!booket.length) return telling;
 
   const kart = await hentStadiekart();
@@ -359,39 +425,83 @@ export async function flyttAvtalerForBookede(
 
   const maalOrdre = kart.ordre.get(kart.maal) ?? 0;
 
+  /** Flytter én avtale framover, hvis den står tidligere enn målet. */
+  const flytt = async (a: Avtale, hvem: string, via: string) => {
+    const ordre = kart.ordre.get(a.stadium);
+    /*
+      UKJENT STADIUM RØRES IKKE. Står avtalen i en annen pipeline, er den
+      ikke vår å flytte.
+    */
+    if (ordre === undefined || ordre >= maalOrdre) {
+      telling["hoppet-over"] += 1;
+      return;
+    }
+    if (await flyttAvtale(a.id, kart.maal)) {
+      telling.flyttet += 1;
+      console.info(
+        `[avtale] Flyttet avtale ${a.id} til «Møte booket» for ${hvem}${via}.`,
+      );
+    } else {
+      telling.feilet += 1;
+    }
+  };
+
   for (const k of booket) {
     if (!k.moteBooket) continue;
 
-    let avtaler = await avtalerFor(k.id);
-    let via = "";
+    const { egne, makker, hennes } = await avtalebildet(k);
 
-    if (!avtaler.length) {
-      const makkere = (await mulighetsmakker(k)) ?? [];
-      for (const m of makkere) {
-        if (!sammePerson(k, m)) continue;
-        const hennes = await avtalerFor(m.id);
-        if (hennes.length) {
-          avtaler = hennes;
-          via = ` (avtalen hang på ${m.epost})`;
-          break;
-        }
-      }
+    if (!makker) {
+      /* Ingen makker: avtalene på kontakten selv er de eneste som finnes. */
+      for (const a of egne) await flytt(a, k.epost, "");
+      continue;
     }
 
-    for (const a of avtaler) {
-      const ordre = kart.ordre.get(a.stadium);
-      /*
-        UKJENT STADIUM RØRES IKKE. Står avtalen i en annen pipeline, er den
-        ikke vår å flytte.
-      */
-      if (ordre === undefined || ordre >= maalOrdre) {
+    /*
+      MAKKEREN EIER DEN OPPRINNELIGE AVTALEN. Står alle hennes avtaler
+      ETTER «Møte booket» — hun har alt fått tilbud, eller saken er lukket —
+      rører vi ingenting. To avtaler er da en avgjørelse et menneske har
+      tatt, ikke noe maskinen skal rydde i.
+    */
+    const aapne = hennes.filter((a) => {
+      const o = kart.ordre.get(a.stadium);
+      return o !== undefined && o <= maalOrdre;
+    });
+
+    if (!aapne.length) {
+      telling["hoppet-over"] += 1;
+      console.info(
+        `[avtale] ${k.epost} er samme person som ${makker.epost}, men avtalen hennes står for langt framme. Ingenting rørt.`,
+      );
+      continue;
+    }
+
+    const via = ` (avtalen hang på ${makker.epost})`;
+    for (const a of aapne) await flytt(a, k.epost, via);
+
+    /* Bookingen skal vises på avtalen som blir stående. */
+    const beholdt = aapne[0]!;
+    await knyttKontaktTilAvtale(beholdt.id, k.id);
+
+    /*
+      DUBLETTEN ARKIVERES TIL SLUTT, etter at den opprinnelige er flyttet og
+      koblet. Feiler noe underveis, står begge avtalene igjen — det er til å
+      leve med. Motsatt rekkefølge kunne slettet den nye før den gamle var
+      på plass.
+    */
+    for (const a of egne) {
+      if (a.id === beholdt.id) continue;
+      if (!(await kanArkiveres(a, kart, na))) {
         telling["hoppet-over"] += 1;
+        console.info(
+          `[avtale] Avtale ${a.id} på ${k.epost} er en dublett, men er ikke fersk og urørt. Arkiveres ikke.`,
+        );
         continue;
       }
-      if (await flyttAvtale(a.id, kart.maal)) {
-        telling.flyttet += 1;
+      if (await arkiverAvtale(a.id)) {
+        telling.arkivert += 1;
         console.info(
-          `[avtale] Flyttet avtale ${a.id} til «Møte booket» for ${k.epost}${via}.`,
+          `[avtale] Arkiverte dublettavtale ${a.id} på ${k.epost}. Den opprinnelige er ${beholdt.id}.`,
         );
       } else {
         telling.feilet += 1;
@@ -421,7 +531,7 @@ export async function kjorLeadepostjobb(na = new Date()): Promise<Jobbsvar> {
   const svar: Jobbsvar = {
     epost1: tomTeller(),
     epost2: tomTeller(),
-    avtaler: { flyttet: 0, "hoppet-over": 0, feilet: 0 },
+    avtaler: { flyttet: 0, arkivert: 0, "hoppet-over": 0, feilet: 0 },
     aktiv: aktiv(),
   };
 
@@ -437,7 +547,7 @@ export async function kjorLeadepostjobb(na = new Date()): Promise<Jobbsvar> {
     opprydding i CRM-et, ikke en e-post til en kunde — den skal gå selv om
     utsendingen står av. Feiler den, går resten av jobben som normalt.
   */
-  svar.avtaler = await flyttAvtalerForBookede(booket);
+  svar.avtaler = await flyttAvtalerForBookede(booket, na);
 
   if (!harGmail()) {
     console.error(

@@ -653,7 +653,12 @@ export async function hentStadiekart(): Promise<Stadiekart | null> {
   }
 }
 
-export type Avtale = { id: string; stadium: string };
+export type Avtale = {
+  id: string;
+  stadium: string;
+  /** Når avtalen ble opprettet. Styrer 24-timersgrensen for arkivering. */
+  opprettet: string;
+};
 
 /** Avtalene som henger på kontakten, med id og stadium. Tom ved feil. */
 export async function avtalerFor(kontaktId: string): Promise<Avtale[]> {
@@ -678,7 +683,7 @@ export async function avtalerFor(kontaktId: string): Promise<Avtale[]> {
       method: "POST",
       headers: hoder(),
       body: JSON.stringify({
-        properties: ["dealstage"],
+        properties: ["dealstage", "createdate"],
         inputs: ider.map((id) => ({ id })),
       }),
       signal: AbortSignal.timeout(TIDSTAK_MS),
@@ -687,11 +692,18 @@ export async function avtalerFor(kontaktId: string): Promise<Avtale[]> {
     return (
       (
         (await avtaler.json()) as {
-          results?: { id: string; properties: { dealstage?: string } }[];
+          results?: {
+            id: string;
+            properties: { dealstage?: string; createdate?: string };
+          }[];
         }
       ).results
         ?.filter((d) => d.properties.dealstage)
-        .map((d) => ({ id: d.id, stadium: d.properties.dealstage! })) ?? []
+        .map((d) => ({
+          id: d.id,
+          stadium: d.properties.dealstage!,
+          opprettet: d.properties.createdate ?? "",
+        })) ?? []
     );
   } catch (feil) {
     console.error("[avtale] Oppslag av avtaler feilet.", feil);
@@ -757,4 +769,143 @@ export async function mulighetsmakker(
   }
   if (!grupper.length) return [];
   return sok(grupper, 20);
+}
+
+/* ────────── DUBLETTAVTALEN VED BOOKING (04.10.2026) ─────────────────── */
+
+/** Aktivitetstypene som betyr at noen har jobbet med avtalen. */
+const AKTIVITETER = ["notes", "calls", "emails", "tasks"] as const;
+
+/**
+ * Har noen gjort noe med avtalen etter at den ble opprettet?
+ *
+ * HVORFOR IKKE BARE «HAR DEN NOTATER». Arbeidsflyten legger selv et notat
+ * på avtalen i samme øyeblikk den lages — kontrollert på de to avtalene fra
+ * 04.10.2026, begge hadde ett notat. En regel om «ingen notater» ville
+ * derfor aldri slått til, og nettopp den avtalen vi vil rydde bort hadde
+ * stått igjen.
+ *
+ * GRENSEN ER TI MINUTTER ETTER OPPRETTELSEN. Alt som kom med i selve
+ * opprettelsen, regnes som maskinens eget. Skriver Pål et notat etterpå, er
+ * avtalen hans — og da røres den ikke.
+ *
+ * `null` BETYR AT VI IKKE FIKK SVAR, og den som spør skal da la avtalen
+ * stå. Å slette noe vi ikke klarte å sjekke, er den ene feilen som ikke kan
+ * rettes med et nytt kall.
+ */
+export async function harEgenAktivitet(
+  avtaleId: string,
+  opprettet: string,
+): Promise<boolean | null> {
+  if (!harToken()) return null;
+  const grense = new Date(opprettet).getTime() + 10 * 60 * 1000;
+  if (Number.isNaN(grense)) return null;
+
+  try {
+    const svar = await fetch(
+      `${BASIS}/crm/v3/objects/deals/${avtaleId}?associations=${AKTIVITETER.join(",")}`,
+      { headers: hoder(), signal: AbortSignal.timeout(TIDSTAK_MS) },
+    );
+    if (!svar.ok) {
+      console.error(
+        `[avtale] Fikk ikke aktivitetene på avtale ${avtaleId} (${svar.status}).`,
+      );
+      return null;
+    }
+
+    const data = (await svar.json()) as {
+      associations?: Record<string, { results?: { id: string }[] }>;
+    };
+
+    for (const type of AKTIVITETER) {
+      const ider = data.associations?.[type]?.results?.map((r) => r.id) ?? [];
+      if (!ider.length) continue;
+
+      const les = await fetch(`${BASIS}/crm/v3/objects/${type}/batch/read`, {
+        method: "POST",
+        headers: hoder(),
+        body: JSON.stringify({
+          properties: ["hs_createdate"],
+          inputs: ider.slice(0, 50).map((id) => ({ id })),
+        }),
+        signal: AbortSignal.timeout(TIDSTAK_MS),
+      });
+      if (!les.ok) return null;
+
+      const poster = (
+        (await les.json()) as {
+          results?: { properties: { hs_createdate?: string } }[];
+        }
+      ).results;
+
+      for (const a of poster ?? []) {
+        const laget = new Date(a.properties.hs_createdate ?? "").getTime();
+        /* Mangler tidspunktet, regner vi den som noens eget arbeid. */
+        if (Number.isNaN(laget) || laget > grense) return true;
+      }
+    }
+
+    return false;
+  } catch (feil) {
+    console.error("[avtale] Oppslag av aktiviteter feilet.", feil);
+    return null;
+  }
+}
+
+/**
+ * Arkiverer en avtale.
+ *
+ * SLETTINGEN ER GJENOPPRETTBAR. HubSpot flytter avtalen til papirkurven og
+ * holder den der i nitti dager, så en feil her kan rettes i grensesnittet.
+ * Det er grunnen til at dette i det hele tatt kan gjøres av en maskin.
+ */
+export async function arkiverAvtale(avtaleId: string): Promise<boolean> {
+  if (!harToken()) return false;
+  try {
+    const svar = await fetch(`${BASIS}/crm/v3/objects/deals/${avtaleId}`, {
+      method: "DELETE",
+      headers: hoder(),
+      signal: AbortSignal.timeout(TIDSTAK_MS),
+    });
+    if (svar.ok || svar.status === 204) return true;
+    console.error(
+      `[avtale] Klarte ikke arkivere avtale ${avtaleId} (${svar.status})${svar.status === 403 ? " — mangler tokenet crm.objects.deals.write?" : ""}.`,
+    );
+    return false;
+  } catch (feil) {
+    console.error("[avtale] Arkiveringen feilet.", feil);
+    return false;
+  }
+}
+
+/**
+ * Knytter en kontakt til en avtale.
+ *
+ * SÅ BOOKINGEN VISES DER DEN HØRER HJEMME. Arkiverer vi avtalen bookingen
+ * laget, må kontakten som booket henge på avtalen som blir stående —
+ * ellers forsvinner sporet av møtet fra den.
+ */
+export async function knyttKontaktTilAvtale(
+  avtaleId: string,
+  kontaktId: string,
+): Promise<boolean> {
+  if (!harToken()) return false;
+  try {
+    const svar = await fetch(
+      `${BASIS}/crm/v4/objects/deals/${avtaleId}/associations/default/contacts/${kontaktId}`,
+      {
+        method: "PUT",
+        headers: hoder(),
+        signal: AbortSignal.timeout(TIDSTAK_MS),
+      },
+    );
+    if (svar.ok) return true;
+    console.error(
+      `[avtale] Klarte ikke knytte kontakt ${kontaktId} til avtale ${avtaleId} (${svar.status}).`,
+    );
+    return false;
+  } catch (feil) {
+    console.error("[avtale] Koblingen feilet.", feil);
+    return false;
+  }
 }

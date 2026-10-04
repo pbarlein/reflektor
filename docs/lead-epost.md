@@ -299,3 +299,63 @@ Prompten ba om «fra «Ny»/«Kontaktet» → «Møte booket»». De to stadiene
 ikke i «Reflektor – salg». Stadiet alle nye leads havner i heter
 **Interessert**, og det er det som flyttes. Testene bruker de faktiske
 navnene.
+
+## Unikt emne på varslene (bestilt 04.10.2026)
+
+Alle varslene hadde samme emne, og Gmail la dem i én samtale. Da skjuler
+Gmail på mobil linjene som er like forrige melding bak «…» — og det var
+nettopp linjen om presentasjon og påminnelse, den Pål leser for å vite hvor
+lang tid han har på å ringe.
+
+Emnet er nå `NYTT LEAD fra reflektor.no – <Navn> (<Bedrift>)`, og tilsvarende
+for Meta. Uten bedrift står navnet alene, uten navn står e-postadressen.
+**Prefikset står urørt først**, fordi leadsjekken søker på det.
+
+Hvert varsel får i tillegg sin egen `Message-ID`, og det sendes ingen
+`In-Reply-To` eller `References`. **Avviser Resend de egne headerne, sendes
+varselet på nytt uten dem.** Et varsel som ikke kommer fram er verre enn et
+varsel i feil tråd, og headerne er det eneste nye i forsendelsen — så en 4xx
+på første forsøk betyr at de skal bort.
+
+## Ingen dobbel avtale ved booking (bestilt 04.10.2026)
+
+Testen 04.10: «Kristine Haugland» sendte skjemaet og fikk kontakt og avtale.
+Så booket hun møte med en feilstavet e-postadresse. HubSpot laget en ny
+kontakt, arbeidsflyten laget en ny avtale på den, og jobben flyttet **den
+nye** til «Møte booket» — mens den opprinnelige sto igjen i «Interessert».
+To avtaler på samme person.
+
+Nå flyttes **den opprinnelige**, bookingkontakten knyttes til den, og den
+nye arkiveres.
+
+**Arkivering er gjenopprettbar.** HubSpot flytter avtalen til papirkurven og
+holder den der i nitti dager. Det er grunnen til at dette i det hele tatt
+kan gjøres av en maskin.
+
+Tre krav må alle holde før en avtale arkiveres: under 24 timer gammel, i
+«Interessert» eller «Møte booket», og ingen har gjort noe med den etter at
+den ble laget.
+
+### «Ingen notater» måtte bli «ingen eget arbeid»
+
+Bestillingen ba om at avtalen ikke skulle ha noen aktiviteter eller notater.
+Begge avtalene fra 04.10.2026 hadde **ett notat hver** — lagt på av
+arbeidsflyten i samme øyeblikk avtalen ble laget. En regel om «ingen
+notater» ville derfor aldri slått til, og nettopp den avtalen vi vil rydde
+bort hadde stått igjen.
+
+Grensen er derfor **ti minutter etter opprettelsen**: alt som kom med i
+selve opprettelsen regnes som maskinens eget, mens et notat Pål skriver
+etterpå gjør avtalen hans og beskytter den.
+
+Fikk vi ikke sjekket aktivitetene, står avtalen. Å slette noe vi ikke klarte
+å kontrollere er den ene feilen som ikke kan rettes med et nytt kall.
+
+### Når ingenting røres
+
+Finnes ingen makker, er det en helt ny person som booket direkte. Da er
+avtalen arbeidsflyten laget den eneste som finnes, og den flyttes som før.
+
+Står makkerens avtale forbi «Møte booket» — tilbud sendt, vunnet, hviler
+eller tapt — rører vi ingenting. To avtaler er da en avgjørelse et menneske
+har tatt.

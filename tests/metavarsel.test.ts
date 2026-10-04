@@ -68,8 +68,15 @@ test("Meta-varselet har samme felter og knapper som nettsidevarselet", async () 
 
   assert.equal(sendt.length, 1);
   const e = sendt[0]!;
-  assert.equal(e.subject, META_VARSEL_EMNE);
-  assert.equal(e.subject, "NYTT LEAD fra Meta");
+  /*
+    PREFIKSET STÅR URØRT FØRST — leadsjekken søker på det — og navnet og
+    bedriften kommer etter, så Gmail ikke tråder varslene sammen.
+  */
+  assert.ok(String(e.subject).startsWith(META_VARSEL_EMNE));
+  assert.equal(
+    e.subject,
+    "NYTT LEAD fra Meta – Bakst & Ro | Hjemmebakt i Asker (BAKST & RO)",
+  );
   /* Svar går til leadet, ikke til Resend. */
   assert.equal(e.reply_to, "lolademunirat@yahoo.com");
 

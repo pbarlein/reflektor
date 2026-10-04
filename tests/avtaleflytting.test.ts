@@ -32,6 +32,11 @@ const PIPELINE = {
   ],
 };
 
+/** Tidspunktet testene later som er «nå». */
+const NA = new Date("2026-10-04T09:15:00Z");
+/** Opprettet for et kvarter siden: fersk nok til å kunne arkiveres. */
+const FERSK = "2026-10-04T09:00:00Z";
+
 const kontakt = (endringer: Record<string, unknown> = {}) => ({
   id: "882425783540",
   epost: "bakstogro@outlook.com",
@@ -53,13 +58,20 @@ const kontakt = (endringer: Record<string, unknown> = {}) => ({
 
 type Oppsett = {
   /** Avtaler per kontakt-ID. */
-  avtaler: Record<string, { id: string; stadium: string }[]>;
+  avtaler: Record<
+    string,
+    { id: string; stadium: string; opprettet?: string }[]
+  >;
+  /** Aktiviteter per avtale-ID, med opprettelsestidspunkt. */
+  aktiviteter?: Record<string, string[]>;
   /** Kontakter søket på telefon og bedrift skal finne. */
   makkere?: ReturnType<typeof kontakt>[];
   /** Svar HubSpot gir på PATCH av en avtale. */
   patchStatus?: number;
   /** Status på oppslaget av pipelinene. */
   pipelineStatus?: number;
+  /** Svar HubSpot gir på DELETE av en avtale. */
+  slettStatus?: number;
 };
 
 /** Kjører flyttingen mot en falsk HubSpot og returnerer hva som ble flyttet. */
@@ -72,6 +84,8 @@ async function medHubspot(
   const logg = console.info;
   const feil = console.error;
   const flyttet: { avtale: string; stadium: string }[] = [];
+  const arkivert: string[] = [];
+  const koblet: { avtale: string; kontakt: string }[] = [];
 
   process.env.HUBSPOT_TOKEN = "test";
   console.info = () => {};
@@ -104,8 +118,46 @@ async function medHubspot(
       return Response.json({
         results: alle
           .filter((a) => bedt.includes(a.id))
-          .map((a) => ({ id: a.id, properties: { dealstage: a.stadium } })),
+          .map((a) => ({
+            id: a.id,
+            properties: {
+              dealstage: a.stadium,
+              createdate: a.opprettet ?? FERSK,
+            },
+          })),
       });
+    }
+
+    /* Aktivitetene på en avtale: notater, samtaler, e-poster, oppgaver. */
+    const medAktiviteter = url.match(/\/objects\/deals\/(\d+)\?associations=/);
+    if (medAktiviteter) {
+      const tider = oppsett.aktiviteter?.[medAktiviteter[1]!] ?? [];
+      return Response.json({
+        id: medAktiviteter[1],
+        associations: {
+          notes: { results: tider.map((_, i) => ({ id: `n${i}` })) },
+        },
+      });
+    }
+
+    if (url.includes("/objects/notes/batch/read")) {
+      const bedt = (JSON.parse(String(init?.body)) as { inputs: { id: string }[] })
+        .inputs.map((i) => i.id);
+      const alle = Object.values(oppsett.aktiviteter ?? {}).flat();
+      return Response.json({
+        results: bedt.map((id) => ({
+          id,
+          properties: { hs_createdate: alle[Number(id.slice(1))] },
+        })),
+      });
+    }
+
+    const kobling2 = url.match(
+      /\/objects\/deals\/(\d+)\/associations\/default\/contacts\/(\d+)$/,
+    );
+    if (kobling2 && metode === "PUT") {
+      koblet.push({ avtale: kobling2[1]!, kontakt: kobling2[2]! });
+      return Response.json({});
     }
 
     const patch = url.match(/\/objects\/deals\/(\d+)$/);
@@ -118,6 +170,14 @@ async function medHubspot(
       };
       flyttet.push({ avtale: patch[1]!, stadium: kropp.properties.dealstage });
       return Response.json({ id: patch[1] });
+    }
+
+    if (patch && metode === "DELETE") {
+      if (oppsett.slettStatus) {
+        return new Response("nei", { status: oppsett.slettStatus });
+      }
+      arkivert.push(patch[1]!);
+      return new Response(null, { status: 204 });
     }
 
     /* Søket etter samme person. */
@@ -144,9 +204,15 @@ async function medHubspot(
     const telling = await (
       flyttAvtalerForBookede as (
         b: ReturnType<typeof kontakt>[],
-      ) => Promise<{ flyttet: number; "hoppet-over": number; feilet: number }>
-    )(booket);
-    return { telling, flyttet };
+        na: Date,
+      ) => Promise<{
+        flyttet: number;
+        arkivert: number;
+        "hoppet-over": number;
+        feilet: number;
+      }>
+    )(booket, NA);
+    return { telling, flyttet, arkivert, koblet };
   } finally {
     globalThis.fetch = opprinnelig;
     console.info = logg;
@@ -287,4 +353,202 @@ test("en kontakt uten booking røres ikke", async () => {
   );
   assert.equal(telling.flyttet, 0);
   assert.deepEqual(flyttet, []);
+});
+
+/* ──────────── DUBLETTAVTALEN VED BOOKING (04.10.2026) ───────────────── */
+
+/**
+ * TESTEN SOM AVDEKKET DET. «Kristine Haugland» sendte skjemaet og fikk
+ * kontakt og avtale. Så booket hun møte med en feilstavet e-postadresse,
+ * HubSpot laget en ny kontakt, og arbeidsflyten laget en NY avtale på den.
+ * Jobben kjente igjen henne, men flyttet den nye avtalen — så den
+ * opprinnelige sto igjen i Interessert. To avtaler på samme person.
+ */
+
+/** Kontakten som booket, med den feilstavede adressen. */
+const BOOKET = kontakt({
+  id: "900001",
+  epost: "p.barlein@gmeil.com",
+  navn: "Kristine Haugland",
+  bedrift: "Haugland interiør",
+  telefon: "+4791122334",
+});
+
+/** Kontakten fra skjemaet. Samme telefon, samme bedrift. */
+const SKJEMA = kontakt({
+  id: "900002",
+  epost: "p.barlein@gmail.com",
+  navn: "Kristine Haugland",
+  bedrift: "Haugland Interiør AS",
+  telefon: "+4791122334",
+  moteBooket: "",
+});
+
+test("dublett ved booking: den opprinnelige flyttes, den nye arkiveres", async () => {
+  const { telling, flyttet, arkivert, koblet } = await medHubspot(
+    {
+      avtaler: {
+        /* Arbeidsflyten laget denne på bookingkontakten. */
+        "900001": [{ id: "524817129686", stadium: "presentationscheduled" }],
+        /* Den opprinnelige, fra skjemaet. */
+        "900002": [{ id: "524811441361", stadium: "appointmentscheduled" }],
+      },
+      makkere: [SKJEMA],
+    },
+    [BOOKET],
+  );
+
+  /* Den opprinnelige er flyttet, og bare den. */
+  assert.deepEqual(flyttet, [
+    { avtale: "524811441361", stadium: "presentationscheduled" },
+  ]);
+  /* Dubletten er arkivert. */
+  assert.deepEqual(arkivert, ["524817129686"]);
+  /* Bookingen vises på avtalen som står. */
+  assert.deepEqual(koblet, [{ avtale: "524811441361", kontakt: "900001" }]);
+  assert.equal(telling.flyttet, 1);
+  assert.equal(telling.arkivert, 1);
+});
+
+/**
+ * ARBEIDSFLYTENS EGET NOTAT SKAL IKKE BESKYTTE AVTALEN. Begge avtalene fra
+ * 04.10.2026 hadde ett notat fra før — lagt på i samme øyeblikk avtalen ble
+ * laget. En regel om «ingen notater» ville derfor aldri slått til.
+ */
+test("et notat fra opprettelsen stopper ikke arkiveringen", async () => {
+  const { arkivert } = await medHubspot(
+    {
+      avtaler: {
+        "900001": [
+          {
+            id: "524817129686",
+            stadium: "presentationscheduled",
+            opprettet: "2026-10-04T09:00:00Z",
+          },
+        ],
+        "900002": [{ id: "524811441361", stadium: "appointmentscheduled" }],
+      },
+      /* Notatet kom ett minutt etter avtalen: maskinens eget. */
+      aktiviteter: { "524817129686": ["2026-10-04T09:01:00Z"] },
+      makkere: [SKJEMA],
+    },
+    [BOOKET],
+  );
+  assert.deepEqual(arkivert, ["524817129686"]);
+});
+
+/** Har Pål skrevet noe etterpå, er avtalen hans. */
+test("et notat Pål skrev etterpå beskytter avtalen", async () => {
+  const { arkivert, telling } = await medHubspot(
+    {
+      avtaler: {
+        "900001": [
+          {
+            id: "524817129686",
+            stadium: "presentationscheduled",
+            opprettet: "2026-10-04T09:00:00Z",
+          },
+        ],
+        "900002": [{ id: "524811441361", stadium: "appointmentscheduled" }],
+      },
+      /* Et kvarter etter: noen har jobbet med den. */
+      aktiviteter: { "524817129686": ["2026-10-04T09:14:00Z"] },
+      makkere: [SKJEMA],
+    },
+    [BOOKET],
+  );
+  assert.deepEqual(arkivert, []);
+  assert.equal(telling.flyttet, 1, "den opprinnelige flyttes likevel");
+});
+
+test("en avtale eldre enn 24 timer arkiveres ikke", async () => {
+  const { arkivert } = await medHubspot(
+    {
+      avtaler: {
+        "900001": [
+          {
+            id: "524817129686",
+            stadium: "presentationscheduled",
+            opprettet: "2026-10-02T09:00:00Z",
+          },
+        ],
+        "900002": [{ id: "524811441361", stadium: "appointmentscheduled" }],
+      },
+      makkere: [SKJEMA],
+    },
+    [BOOKET],
+  );
+  assert.deepEqual(arkivert, []);
+});
+
+test("en avtale i Tilbud sendt arkiveres ikke, selv som dublett", async () => {
+  const { arkivert } = await medHubspot(
+    {
+      avtaler: {
+        "900001": [{ id: "524817129686", stadium: "decisionmakerboughtin" }],
+        "900002": [{ id: "524811441361", stadium: "appointmentscheduled" }],
+      },
+      makkere: [SKJEMA],
+    },
+    [BOOKET],
+  );
+  assert.deepEqual(arkivert, []);
+});
+
+/**
+ * HELT NY PERSON SOM BOOKER DIREKTE. Ingen makker, så avtalen
+ * arbeidsflyten laget er den eneste som finnes. Den beholdes og flyttes.
+ */
+test("direkte booking uten match: avtalen beholdes og flyttes", async () => {
+  const { telling, flyttet, arkivert } = await medHubspot(
+    {
+      avtaler: {
+        "900001": [{ id: "524817129686", stadium: "appointmentscheduled" }],
+      },
+      makkere: [],
+    },
+    [BOOKET],
+  );
+  assert.deepEqual(flyttet, [
+    { avtale: "524817129686", stadium: "presentationscheduled" },
+  ]);
+  assert.deepEqual(arkivert, []);
+  assert.equal(telling.flyttet, 1);
+});
+
+/**
+ * STÅR MAKKERENS AVTALE FOR LANGT FRAMME, rører vi ingenting. To avtaler er
+ * da en avgjørelse et menneske har tatt.
+ */
+test("er den opprinnelige vunnet, rører vi ingenting", async () => {
+  const { telling, flyttet, arkivert } = await medHubspot(
+    {
+      avtaler: {
+        "900001": [{ id: "524817129686", stadium: "appointmentscheduled" }],
+        "900002": [{ id: "524811441361", stadium: "closedwon" }],
+      },
+      makkere: [SKJEMA],
+    },
+    [BOOKET],
+  );
+  assert.deepEqual(flyttet, []);
+  assert.deepEqual(arkivert, []);
+  assert.equal(telling["hoppet-over"], 1);
+});
+
+/** En sletting som feiler skal ikke kaste, bare telles. */
+test("uten skrivetilgang telles arkiveringen som feilet", async () => {
+  const { telling } = await medHubspot(
+    {
+      avtaler: {
+        "900001": [{ id: "524817129686", stadium: "presentationscheduled" }],
+        "900002": [{ id: "524811441361", stadium: "appointmentscheduled" }],
+      },
+      makkere: [SKJEMA],
+      slettStatus: 403,
+    },
+    [BOOKET],
+  );
+  assert.equal(telling.arkivert, 0);
+  assert.equal(telling.feilet, 1);
 });
