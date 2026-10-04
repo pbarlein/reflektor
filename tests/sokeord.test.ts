@@ -314,3 +314,24 @@ test("ingen tittel har suffikset malen legger på", async () => {
     }
   }
 });
+
+/**
+ * FORSIDEN SKAL OGSÅ HA MERKENAVNET I TITTELEN.
+ *
+ * `title.template` i layout.tsx gjelder bare undersegmenter, og forsiden er
+ * samme segment som rot-layouten. Malen traff den derfor ikke: forsiden sto
+ * uten «| Reflektor» mens alle andre sider hadde det. Det hadde vært slik
+ * hele tiden, og ble synlig først da tittelen ble byttet 04.10.2026.
+ */
+test("forsiden setter merkenavnet selv, siden malen ikke treffer den", async () => {
+  const { readFileSync } = await import("node:fs");
+  const kilde = readFileSync("src/app/page.tsx", "utf8");
+  assert.ok(
+    /title: `\$\{hentTekst\(front, "front\.meta\.title"\)[^`]*\} \| \$\{site\.navn\}`/.test(
+      kilde,
+    ),
+    "forsiden legger ikke på merkenavnet",
+  );
+  /* Og slotten skal fortsatt bare bære den søkbare delen. */
+  assert.ok(!frontTittel.includes("| Reflektor"), frontTittel);
+});

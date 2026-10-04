@@ -7,6 +7,7 @@ import {
   TjenesteSchema,
 } from "@/components/Schema";
 import { hentTekst } from "@/components/Slot";
+import { site } from "@/content/site";
 import { Anmeldelsesseksjon } from "@/components/forside/Anmeldelsesseksjon";
 import { Arbeidet } from "@/components/forside/Arbeidet";
 import { Arbeidsrutenett } from "@/components/forside/Arbeidsrutenett";
@@ -43,7 +44,20 @@ import { basisUrl } from "@/lib/miljo";
  * uavhengig av hverandre.
  */
 export const metadata: Metadata = {
-  title: hentTekst(front, "front.meta.title") ?? undefined,
+  /*
+   * MERKENAVNET LEGGES PÅ HER, ikke av malen. Rettet 04.10.2026.
+   *
+   * `title.template` i layout.tsx («%s | Reflektor») gjelder BARE
+   * undersegmenter. Forsiden er samme segment som rot-layouten, og malen
+   * traff den derfor ikke: tittelen sto uten merkenavn mens alle andre
+   * sider hadde det. Det hadde vært slik hele tiden, og ble synlig først da
+   * tittelen ble byttet og noen leste den.
+   *
+   * SLOTTEN HOLDES PÅ DEN SØKBARE DELEN. Grensen der er 60 tegn, og
+   * merkenavnet er ikke en del av copyen som skal godkjennes — det er en
+   * mekanisk hale resten av nettstedet også får.
+   */
+  title: `${hentTekst(front, "front.meta.title") ?? site.navn} | ${site.navn}`,
   description: hentTekst(front, "front.meta.description") ?? undefined,
   // Absolutt URL fra basisUrl(), ikke hardkodet — se miljo.ts.
   alternates: {
