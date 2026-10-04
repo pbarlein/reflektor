@@ -359,3 +359,14 @@ avtalen arbeidsflyten laget den eneste som finnes, og den flyttes som før.
 Står makkerens avtale forbi «Møte booket» — tilbud sendt, vunnet, hviler
 eller tapt — rører vi ingenting. To avtaler er da en avgjørelse et menneske
 har tatt.
+
+### Søket måtte være bredere enn likhet
+
+Første kjøring live fant ikke dubletten. Bookingkontakten hadde bedriften
+«Haugland interiør», skjemakontakten «Haugland Interiør AS».
+Normaliseringen regner dem som samme bedrift, men søket i HubSpot spurte
+etter likhet — så de to kontaktene ble aldri lagt ved siden av hverandre.
+
+Nå søkes det på **første ord i bedriftsnavnet** («Haugland*»), og
+normaliseringen avgjør til slutt. Et vanlig førsteord gir bare et bredere
+søk, ikke et feil svar: alt som ikke er samme person filtreres bort etterpå.

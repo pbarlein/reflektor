@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { bedriftsord } from "@/lib/hubspotcrm.ts";
+import { sammePerson } from "@/lib/leadepost.ts";
+
 /**
  * Avtalen flyttes til «Møte booket» når leadet booker.
  *
@@ -551,4 +554,77 @@ test("uten skrivetilgang telles arkiveringen som feilet", async () => {
   );
   assert.equal(telling.arkivert, 0);
   assert.equal(telling.feilet, 1);
+});
+
+/* ───────────────── SØKET SOM FINNER SAMME PERSON ────────────────────── */
+
+/**
+ * SØKET MÅ VÆRE BREDERE ENN LIKHET.
+ *
+ * Her sto et eksakt søk på bedriftsnavnet, og det bommet 04.10.2026:
+ * bookingkontakten hadde «Haugland interiør», skjemakontakten «Haugland
+ * Interiør AS». Normaliseringen regner dem som samme bedrift, men et
+ * likhetssøk i HubSpot gjør det ikke — så de to kontaktene ble aldri lagt
+ * ved siden av hverandre, og dubletten sto igjen.
+ */
+test("første ord i bedriftsnavnet er det vi søker på", () => {
+  assert.equal(bedriftsord("Haugland Interiør AS"), "Haugland");
+  assert.equal(bedriftsord("Haugland interiør"), "Haugland");
+  assert.equal(bedriftsord("BAKST & RO"), "BAKST");
+  /* Selskapsformen alene er ikke noe å søke på. */
+  assert.equal(bedriftsord("AS Noe"), "Noe");
+  /* For kort til å søke trygt på. */
+  assert.equal(bedriftsord("Ab"), "");
+  assert.equal(bedriftsord(""), "");
+});
+
+/**
+ * DE TO SKRIVEMÅTENE MÅ GI SAMME SØKEORD, og normaliseringen må regne dem
+ * som samme bedrift. Det er de to leddene som til sammen avgjør om
+ * dubletten blir funnet.
+ */
+test("de to skrivemåtene fra testen møtes i søkeordet", () => {
+  assert.equal(
+    bedriftsord("Haugland interiør"),
+    bedriftsord("Haugland Interiør AS"),
+  );
+  assert.equal(
+    sammePerson(
+      { epost: "p.barlein@gmeil.com", telefon: "", bedrift: "Haugland interiør" },
+      {
+        epost: "p.barlein@gmail.com",
+        telefon: "+47 912 34 567",
+        bedrift: "Haugland Interiør AS",
+      },
+    ),
+    true,
+  );
+});
+
+/** Søket skal bruke et tokensøk på bedriften, ikke et likhetssøk. */
+test("søket spør etter bedrifter som begynner med ordet", async () => {
+  const opprinnelig = globalThis.fetch;
+  const for_ = { ...process.env };
+  process.env.HUBSPOT_TOKEN = "test";
+  let kropp = "";
+
+  globalThis.fetch = (async (inn: string | URL | Request, init?: RequestInit) => {
+    if (String(inn instanceof Request ? inn.url : inn).includes("contacts/search")) {
+      kropp = String(init?.body);
+    }
+    return Response.json({ results: [] });
+  }) as typeof globalThis.fetch;
+
+  try {
+    const { mulighetsmakker } = await import("@/lib/hubspotcrm.ts");
+    await mulighetsmakker(
+      kontakt({ bedrift: "Haugland interiør", telefon: "" }) as never,
+    );
+  } finally {
+    globalThis.fetch = opprinnelig;
+    process.env = for_;
+  }
+
+  assert.ok(kropp.includes("CONTAINS_TOKEN"), kropp);
+  assert.ok(kropp.includes("Haugland*"), kropp);
 });

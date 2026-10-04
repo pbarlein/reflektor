@@ -742,14 +742,36 @@ export async function flyttAvtale(
 }
 
 /**
+ * Første ord i bedriftsnavnet, til et bredt søk i HubSpot.
+ *
+ * «Haugland Interiør AS» → «Haugland». Tomt hvis ordet er for kort til å
+ * søke trygt på.
+ */
+export function bedriftsord(bedrift: string): string {
+  const ord = bedrift
+    .trim()
+    .split(/[\s,.;:/|&-]+/)
+    .map((o) => o.replace(/[^\p{L}\p{N}]/gu, ""))
+    .find((o) => o.length >= 3 && !/^(as|asa|ans|the|den|det)$/i.test(o));
+  return ord ?? "";
+}
+
+/**
  * Kontakter som kan være samme person som `k`, slått opp på telefon eller
  * bedrift.
  *
- * SØKET ER BREDT, FILTERET ER SMALT. HubSpot kan ikke søke på «slutter
- * med», så vi ber om eksakte treff på de tre feltene og lar
- * `sammePerson` i lib/leadepost.ts avgjøre. Det var bedriftsnavnet som
- * bandt de to kontaktene sammen 04.10.2026 — bookingkontakten hadde ikke
- * telefonnummer i det hele tatt.
+ * SØKET ER BREDT, FILTERET ER SMALT. `sammePerson` i lib/leadepost.ts
+ * avgjør til slutt, på normaliserte verdier.
+ *
+ * DERFOR SØKES DET PÅ FØRSTE ORD I BEDRIFTSNAVNET, ikke på hele. Her sto
+ * et eksakt søk, og det bommet: bookingkontakten hadde «Haugland
+ * interiør», skjemakontakten «Haugland Interiør AS». Normaliseringen
+ * regner dem som samme bedrift, men et likhetssøk i HubSpot gjør det ikke —
+ * så de to kontaktene ble aldri lagt ved siden av hverandre, og dubletten
+ * sto igjen. Kontrollert 04.10.2026.
+ *
+ * ET VANLIG FØRSTEORD GIR BARE ET BREDERE SØK, ikke et feil svar: alt som
+ * ikke er samme person filtreres bort etterpå.
  */
 export async function mulighetsmakker(
   k: Leadkontakt,
@@ -762,13 +784,22 @@ export async function mulighetsmakker(
       filters: [{ propertyName: "mobilephone", operator: "EQ", value: telefon }],
     });
   }
-  if (k.bedrift.trim()) {
+
+  const ord = bedriftsord(k.bedrift);
+  if (ord) {
+    grupper.push({
+      filters: [
+        { propertyName: "company", operator: "CONTAINS_TOKEN", value: `${ord}*` },
+      ],
+    });
+  } else if (k.bedrift.trim()) {
     grupper.push({
       filters: [{ propertyName: "company", operator: "EQ", value: k.bedrift.trim() }],
     });
   }
+
   if (!grupper.length) return [];
-  return sok(grupper, 20);
+  return sok(grupper, 50);
 }
 
 /* ────────── DUBLETTAVTALEN VED BOOKING (04.10.2026) ─────────────────── */
