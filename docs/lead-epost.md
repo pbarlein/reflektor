@@ -540,3 +540,27 @@ påminnelsesoversikten.
 - **Dobbel e-post hvis HubSpot-arbeidsflyten fortsatt sender e-post 1 og 2.**
   Vår egen utsending står på (`aktiv: true` i jobbloggen). Om arbeidsflyten
   i HubSpot er slått av, kan ikke sjekkes herfra — det må gjøres i HubSpot.
+
+### De tre funnene, gjort ferdig 06.10.2026
+
+**1. `/takk` lovte en telefon der kalenderen gir et videomøte.** Setningen er
+byttet til Påls egen formulering fra e-post 1: «Vi ringer deg så snart vi kan.
+Vil du heller velge tid selv, kan du booke et møte under.» Da sier siden og
+e-posten det samme, og rekkefølgen er riktig — telefonen skjer uansett,
+kalenderen er for den som vil styre selv.
+
+**2. Påminnelseslisten viste rader som aldri kom til å få påminnelse.**
+De seks stoppene er skilt ut i `paaminnelseStoppet`, delt av jobben og
+oversikten. HubSpot kan bare søke på tre av dem (avbrutt, booket møte, kunde);
+de tre siste krever et oppslag per lead — avtalestadiet, møtet på en
+dublettkontakt, og svaret i tråden. Oversikten gjør nå de oppslagene, på opptil
+25 rader, og luker ut resten med en logglinje som sier hvilken grunn det var.
+`hentPlanlagte` går gjennom samme søk som alt annet, så raden bærer hele
+kontakten — uten id-en og tråd-id-en kunne siden ikke stille spørsmålene.
+
+**3. Dobbel e-post: ingen funnet.** Markedsførings-e-poster fra HubSpot ble
+sendt 03.10 (2) og 04.10 (1), og **ingen etter det** — mens vår egen utsending
+har vært aktiv siden 04.10 og sendte e-post 2 den 05.10. Testleadene 03.10 fikk
+begge deler, som forventet før byttet. Det er ikke et bevis med mange leads bak
+seg, men det peker entydig på at arbeidsflytens e-poster er slått av. Den som
+vil være helt sikker, åpner arbeidsflyten «Nytt lead – inbound» i HubSpot.

@@ -340,6 +340,39 @@ export function skalHaEpost1(k: Kandidat, na: Date): boolean {
   return true;
 }
 
+/** Hvorfor påminnelsen ikke skal sendes. `null` betyr at den skal det. */
+export type Stoppgrunn =
+  | "avbrutt"
+  | "svart"
+  | "kunde"
+  | "avtale"
+  | "mote"
+  | "mote-annen-adresse";
+
+/**
+ * DE SEKS GRUNNENE TIL AT EN PÅMINNELSE IKKE SKAL GÅ.
+ *
+ * SKILT UT 06.10.2026 FORDI TO STEDER SPURTE OM DET SAMME og svarte
+ * forskjellig. Jobben sjekket alle seks; oversikten på /paaminnelse sjekket
+ * tre av dem, og viste derfor leads som aldri kom til å få noen påminnelse.
+ * Sidens egen dokumentasjon sier at en slik liste er «verre enn ingen
+ * liste» — den får Pål til å avbryte noe som ikke fantes, og til å stole på
+ * en oversikt som ikke stemmer.
+ *
+ * REKKEFØLGEN ER FRA BILLIGST TIL DYREST Å FINNE UT AV, slik at den som
+ * spør kan stoppe tidlig: de fire første står på kontakten vi allerede har
+ * lest, mens avtalestadiene og svaret i tråden krever hvert sitt oppslag.
+ */
+export function paaminnelseStoppet(k: Kandidat): Stoppgrunn | null {
+  if (k.avbrutt === "true") return "avbrutt";
+  if (k.lifecycle.toLowerCase() === "customer") return "kunde";
+  if (k.moteBooket) return "mote";
+  if (k.booketAnnetSted) return "mote-annen-adresse";
+  if (k.dealstadier.some((s) => STOPPSTADIER.includes(s))) return "avtale";
+  if (k.harSvart === true) return "svart";
+  return null;
+}
+
 /**
  * Påminnelsen, med alle forbeholdene.
  *
@@ -359,12 +392,7 @@ export function skalHaEpost1(k: Kandidat, na: Date): boolean {
  */
 export function skalHaEpost2(k: Kandidat, na: Date): boolean {
   if (!k.epost1Sendt || k.epost2Sendt) return false;
-  if (k.avbrutt === "true") return false;
-  if (k.harSvart === true) return false;
-  if (k.lifecycle.toLowerCase() === "customer") return false;
-  if (k.dealstadier.some((s) => STOPPSTADIER.includes(s))) return false;
-  if (k.moteBooket) return false;
-  if (k.booketAnnetSted) return false;
+  if (paaminnelseStoppet(k)) return false;
 
   const sendt = new Date(k.epost1Sendt);
   if (Number.isNaN(sendt.getTime())) return false;

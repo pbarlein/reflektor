@@ -23,6 +23,7 @@ import {
   mulighetsmakker,
   nyeLeadsUtenEpost,
   venterPaaPaaminnelse,
+  type Planlagt,
   type Avtale,
   type Leadkontakt,
   type Stadiekart,
@@ -32,6 +33,7 @@ import {
   epost1,
   epost2,
   leadkilde,
+  paaminnelseStoppet,
   sammePerson,
   skalHaEpost1,
   skalHaEpost2,
@@ -717,4 +719,72 @@ export async function kjorLeadepostjobb(na = new Date()): Promise<Jobbsvar> {
   }
 
   return svar;
+}
+
+/* ────────── OVERSIKTEN SKAL VISE DET SOM FAKTISK SKJER (06.10.2026) ──── */
+
+/**
+ * Taket på hvor mange rader som kontrolleres mot HubSpot og Gmail.
+ *
+ * HVER RAD KOSTER TRE OPPSLAG i verste fall. Listen er allerede begrenset
+ * til fire døgn og femti treff, og i praksis er den en håndfull — men en
+ * side som åpner seg skal ikke kunne bli stående og vente på hundre kall.
+ */
+const MAKS_I_OVERSIKTEN = 25;
+
+/**
+ * Luker ut leadene som ikke kommer til å få påminnelse likevel.
+ *
+ * HVORFOR DEN MÅ FINNES. `hentPlanlagte` filtrerer på det HubSpot kan søke
+ * på: avbrutt, booket møte, kunde. De tre siste stoppene kom til
+ * 04.10.2026 og kan ikke søkes på — de krever et oppslag per lead:
+ *
+ *   1. avtalen står i et stadium som betyr at saken er i gang
+ *   2. møtet er booket på en annen kontakt som er samme person
+ *   3. leadet har svart i tråden
+ *
+ * Uten dem viser oversikten rader Pål kan avbryte, for påminnelser som
+ * aldri var på vei. Sidens egen dokumentasjon sier at en slik liste er
+ * «verre enn ingen liste», og det er riktig: han slutter å stole på den.
+ *
+ * BILLIGST FØRST. Dublettsjekken deler ett søk på hele listen, og de
+ * dyre oppslagene gjøres bare for rader som ikke alt er luket ut.
+ */
+export async function utenStoppede(liste: Planlagt[]): Promise<Planlagt[]> {
+  if (!liste.length) return liste;
+
+  const booket = await booketListe();
+  const ut: Planlagt[] = [];
+
+  for (const l of liste.slice(0, MAKS_I_OVERSIKTEN)) {
+    const k = l.kontakt;
+    const dublett = Boolean(booketAnnetSted(k, booket));
+
+    let grunn = paaminnelseStoppet(somKandidat(k, { dublett }));
+
+    if (!grunn) {
+      const stadier = await dealstadier(k.id);
+      /*
+        SVARET LESES FRA DA E-POST 1 GIKK UT. Har den ikke gått ennå,
+        finnes det ingenting å ha svart på, og sjekken hoppes over.
+      */
+      const sendt = new Date(k.epost1Sendt);
+      const harSvart = Number.isNaN(sendt.getTime())
+        ? null
+        : await harSvarITrad(k.tradId, sendt);
+      grunn = paaminnelseStoppet(
+        somKandidat(k, { dublett, dealstadier: stadier, harSvart }),
+      );
+    }
+
+    if (grunn) {
+      console.info(
+        `[paaminnelse] ${k.epost} får ingen påminnelse (${grunn}) og vises ikke i oversikten.`,
+      );
+      continue;
+    }
+    ut.push(l);
+  }
+
+  return ut;
 }

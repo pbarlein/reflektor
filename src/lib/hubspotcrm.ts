@@ -241,6 +241,15 @@ export type Planlagt = {
   navn: string;
   bedrift: string;
   kilde: "Nettside" | "Meta";
+  /**
+   * Hele kontakten.
+   *
+   * LAGT TIL 06.10.2026 FORDI OVERSIKTEN MÅ KUNNE STILLE DE SAMME
+   * SPØRSMÅLENE SOM JOBBEN. Uten id-en kan den ikke slå opp avtalene, og
+   * uten tråd-id-en kan den ikke se om leadet har svart — og da viser den
+   * leads som aldri kommer til å få noen påminnelse.
+   */
+  kontakt: Leadkontakt;
   sendtInn: Date;
   /**
    * Når e-post 1 går ut, hvis den ennå ikke har gått.
@@ -279,8 +288,15 @@ export async function hentPlanlagte(): Promise<Planlagt[] | null> {
     { propertyName: "lifecyclestage", operator: "NEQ", value: "customer" },
   ];
 
-  const kropp = {
-    filterGroups: [SKJEMANAVN.nettside, SKJEMANAVN.meta].map((navn) => ({
+  /*
+    SØKET GÅR GJENNOM `sok()` som alt annet. Her sto et eget kall med sin
+    egen, kortere liste over egenskaper — og det var grunnen til at
+    oversikten ikke kunne stille de samme spørsmålene som jobben: den
+    manglet både kontakt-id-en og tråd-id-en. Sorteringen er flyttet hit
+    ned; den var det eneste `sok()` ikke gjorde.
+  */
+  const treff = await sok(
+    [SKJEMANAVN.nettside, SKJEMANAVN.meta].map((navn) => ({
       filters: [
         ...felles,
         {
@@ -290,100 +306,56 @@ export async function hentPlanlagte(): Promise<Planlagt[] | null> {
         },
       ],
     })),
-    properties: [
-      "email",
-      "firstname",
-      "lastname",
-      "company",
-      "recent_conversion_date",
-      "recent_conversion_event_name",
-      "lead_epost1_sendt",
-    ],
-    sorts: [{ propertyName: "recent_conversion_date", direction: "DESCENDING" }],
-    limit: 50,
-  };
+    50,
+  );
+  if (!treff) return null;
 
-  try {
-    const svar = await fetch(`${BASIS}/crm/v3/objects/contacts/search`, {
-      method: "POST",
-      headers: hoder(),
-      body: JSON.stringify(kropp),
-      signal: AbortSignal.timeout(TIDSTAK_MS),
-    });
-    if (!svar.ok) {
-      console.error(
-        `[paaminnelse] Søket i HubSpot svarte ${svar.status}. ${await svar
-          .text()
-          .catch(() => "")}`,
-      );
-      return null;
-    }
-    const data = (await svar.json()) as {
-      results?: { properties: Record<string, string | null> }[];
-    };
+  const na = new Date();
 
-    const na = new Date();
-
-    return (data.results ?? [])
-      .map((r) => {
-        const p = r.properties;
-        const navn = [p.firstname, p.lastname].filter(Boolean).join(" ").trim();
-        const hendelse = p.recent_conversion_event_name ?? "";
-        return {
-          epost: p.email ?? "",
-          navn,
-          bedrift: p.company ?? "",
-          kilde: hendelse.includes(SKJEMANAVN.meta)
-            ? ("Meta" as const)
-            : ("Nettside" as const),
-          /*
-            TIDSPUNKTET REGNES FRA E-POST 1 NÅR DEN ER SENDT, ellers fra
-            innsendingen. Fra 04.10.2026 er det e-post 1 som starter
-            klokka: påminnelsen er et svar på den, ikke på skjemaet.
-            Mangler den — Meta-leads som ennå ikke er plukket opp — er
-            innsendingstidspunktet det nærmeste vi har.
-          */
-          /*
-            VENTER E-POST 1 PÅ SENDEVINDUET, regnes påminnelsen fra den
-            PLANLAGTE sendetiden og ikke fra innsendingen. Et lead som kom
-            lørdag kl. 23 får e-posten søndag kl. 08 og påminnelsen mandag
-            — ikke søndag.
-          */
-          planlagtEpost1:
-            !p.lead_epost1_sendt && venterPaaVinduet(na)
-              ? planlagtSending(na)
-              : null,
-          sendtInn: new Date(
-            p.lead_epost1_sendt ??
-              (venterPaaVinduet(na)
-                ? planlagtSending(na).toISOString()
-                : (p.recent_conversion_date ?? Date.now())),
-          ),
-        };
-      })
+  return treff
+    .map((k) => ({
+      epost: k.epost,
+      navn: k.navn,
+      bedrift: k.bedrift,
+      kilde: k.hendelse.includes(SKJEMANAVN.meta)
+        ? ("Meta" as const)
+        : ("Nettside" as const),
+      kontakt: k,
       /*
-        PÅMINNELSER SOM ALLEREDE HAR GÅTT, ER IKKE NOE Å AVBRYTE. Filteret
-        ligger her og ikke i siden: `Date.now()` under rendring er en uren
-        verdi, og React-kompilatoren avviser den med rette — to rendringer av
-        samme data ville gitt to forskjellige lister.
+        TIDSPUNKTET REGNES FRA E-POST 1 NÅR DEN ER SENDT, ellers fra
+        innsendingen. Fra 04.10.2026 er det e-post 1 som starter klokka:
+        påminnelsen er et svar på den, ikke på skjemaet. Mangler den —
+        Meta-leads som ennå ikke er plukket opp — er innsendingstidspunktet
+        det nærmeste vi har.
+
+        VENTER E-POST 1 PÅ SENDEVINDUET, regnes påminnelsen fra den
+        PLANLAGTE sendetiden. Et lead som kom lørdag kl. 23 får e-posten
+        søndag kl. 08 og påminnelsen mandag — ikke søndag.
       */
-      .filter(
-        (l) => l.epost && paaminnelseTidspunkt(l.sendtInn).getTime() > na.getTime(),
-      );
-  } catch (feil) {
-    console.error("[paaminnelse] Søket i HubSpot feilet.", feil);
-    return null;
-  }
+      planlagtEpost1:
+        !k.epost1Sendt && venterPaaVinduet(na) ? planlagtSending(na) : null,
+      sendtInn: new Date(
+        k.epost1Sendt ||
+          (venterPaaVinduet(na)
+            ? planlagtSending(na).toISOString()
+            : k.konvertert || new Date().toISOString()),
+      ),
+    }))
+    /*
+      PÅMINNELSER SOM ALLEREDE HAR GÅTT, ER IKKE NOE Å AVBRYTE. Filteret
+      ligger her og ikke i siden: `Date.now()` under rendring er en uren
+      verdi, og React-kompilatoren avviser den med rette — to rendringer av
+      samme data ville gitt to forskjellige lister.
+    */
+    .filter(
+      (l) =>
+        l.epost &&
+        !l.kontakt.epost2Sendt &&
+        paaminnelseTidspunkt(l.sendtInn).getTime() > na.getTime(),
+    )
+    .sort((a, b) => b.sendtInn.getTime() - a.sendtInn.getTime());
 }
 
-/* ───────────────────── LEAD-E-POSTENE FRA PÅLS GMAIL ────────────────── */
-
-/**
- * Egenskapene Cowork opprettet 04.10.2026 for å holde styr på de to
- * e-postene. De er sannheten om hva som er sendt — ikke en liste i minnet,
- * ikke en logg. En jobb som kjører hvert femte minutt må kunne krasje midt
- * i og starte på nytt uten å sende noe to ganger.
- */
 export const EPOST_FELT = {
   en: "lead_epost1_sendt",
   to: "lead_epost2_sendt",

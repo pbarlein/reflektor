@@ -5,6 +5,7 @@ import { Container } from "@/components/Container";
 import { Knapp } from "@/components/Knapp";
 import { signer } from "@/lib/avbrytsignatur";
 import { harToken, hentPlanlagte } from "@/lib/hubspotcrm";
+import { utenStoppede } from "@/lib/leadutsending";
 import {
   avbrytBeskjed,
   osloTekst,
@@ -54,8 +55,15 @@ export default async function Paaminnelser({
     );
   }
 
-  // Listen er allerede renset for påminnelser som har gått, se hubspotcrm.ts.
-  const venter = await hentPlanlagte();
+  /*
+    TO RENSINGER, OG DE GJØR HVER SIN JOBB. `hentPlanlagte` filtrerer på
+    det HubSpot kan søke på og tar bort påminnelser som alt har gått.
+    `utenStoppede` tar de tre stoppene som krever et oppslag per lead:
+    avtalestadiet, møtet på en dublettkontakt, og svaret i tråden. Uten den
+    siste viste siden rader for påminnelser som aldri var på vei.
+  */
+  const funnet = await hentPlanlagte();
+  const venter = funnet === null ? null : await utenStoppede(funnet);
 
   /*
     UTFALLET AV «AVBRYT», lagt til 06.10.2026.

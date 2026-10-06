@@ -7,6 +7,7 @@ import {
   paaminnelseTekst,
   paaminnelseTidspunkt,
 } from "@/lib/paaminnelse.ts";
+import { paaminnelseStoppet } from "@/lib/leadepost.ts";
 
 /**
  * Tidspunktet for HubSpot-påminnelsen.
@@ -154,4 +155,66 @@ test("hvert utfall som ikke gikk bra er merket som feil", () => {
  */
 test("en ukjent feil sier rett ut at påminnelsen ikke er avbrutt", () => {
   assert.match(avbrytBeskjed("feil")!.tekst, /IKKE avbrutt/);
+});
+
+/* ────────── DE SEKS STOPPENE, DELT AV JOBBEN OG OVERSIKTEN ──────────── */
+
+/**
+ * Oversikten på /paaminnelse sjekket tre av seks grunner, og viste derfor
+ * leads som aldri kom til å få noen påminnelse. Nå spør begge det samme
+ * spørsmålet, gjennom `paaminnelseStoppet`.
+ */
+const kandidat = (endringer: Record<string, unknown> = {}) => ({
+  epost: "kari@eksempel.no",
+  lifecycle: "lead",
+  hendelse: "/kontaktoss: reflektor.no – kontaktskjema",
+  konvertert: "2026-10-05T06:00:00Z",
+  booketAnnetSted: false,
+  epost1Sendt: "2026-10-05T08:00:00Z",
+  epost2Sendt: "",
+  avbrutt: "",
+  moteBooket: "",
+  dealstadier: [] as string[],
+  harSvart: null as boolean | null,
+  ...endringer,
+});
+
+test("et lead uten noe i veien får påminnelse", () => {
+  assert.equal(paaminnelseStoppet(kandidat()), null);
+});
+
+test("hver av de seks grunnene stopper påminnelsen", () => {
+  const tilfeller: [string, Record<string, unknown>][] = [
+    ["avbrutt", { avbrutt: "true" }],
+    ["kunde", { lifecycle: "customer" }],
+    ["mote", { moteBooket: "2026-10-16T09:00:00Z" }],
+    ["mote-annen-adresse", { booketAnnetSted: true }],
+    ["avtale", { dealstadier: ["decisionmakerboughtin"] }],
+    ["svart", { harSvart: true }],
+  ];
+
+  for (const [grunn, endring] of tilfeller) {
+    assert.equal(paaminnelseStoppet(kandidat(endring)), grunn, grunn);
+  }
+});
+
+/**
+ * «INTERESSERT» SKAL IKKE STOPPE NOE. Det er stadiet alle nye leads havner
+ * i, og en regel som stoppet på det ville tatt hver eneste påminnelse.
+ */
+test("avtalen i Interessert stopper ingenting", () => {
+  assert.equal(
+    paaminnelseStoppet(kandidat({ dealstadier: ["appointmentscheduled"] })),
+    null,
+  );
+});
+
+/**
+ * ET UBESVART SPØRSMÅL ER IKKE ET SVAR. Når Gmail-oppslaget feiler, er
+ * `harSvart` null — og da skal påminnelsen gå. Å stoppe den ville betydd
+ * at et nede Gmail stilnet all oppfølging uten at noen så det.
+ */
+test("et mislykket svaroppslag stopper ikke påminnelsen", () => {
+  assert.equal(paaminnelseStoppet(kandidat({ harSvart: null })), null);
+  assert.equal(paaminnelseStoppet(kandidat({ harSvart: false })), null);
 });

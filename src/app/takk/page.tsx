@@ -51,9 +51,20 @@ export default function Takk() {
             Takk! Vi har fått henvendelsen.
           </h1>
 
+          {/*
+            «SÅ RINGER VI DEG» VAR FEIL, rettet 06.10.2026. Bookingen i
+            HubSpot lager et videomøte med Google Meet-lenke, ikke en
+            telefonsamtale — så setningen lovet noe kalenderen ikke leverer.
+
+            FORMULERINGEN ER PÅLS EGEN, hentet fra e-post 1: «Jeg ringer deg
+            så snart jeg kan … Vil du heller velge tid selv, kan du booke
+            her.» Da sier siden og e-posten det samme, og rekkefølgen er
+            riktig: telefonen er det som skjer uansett, kalenderen er for
+            den som vil styre selv.
+          */}
           <p className="mt-6 text-lg leading-relaxed text-pretty text-blekk-dempet">
-            Vil du ta en prat med en gang? Velg et tidspunkt som passer, så
-            ringer vi deg.
+            Vi ringer deg så snart vi kan. Vil du heller velge tid selv, kan du
+            booke et møte under.
           </p>
         </div>
 
