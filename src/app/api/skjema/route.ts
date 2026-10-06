@@ -10,7 +10,12 @@ import { sendLeadPaEpost, type Lead } from "@/lib/lead";
 import { sendEpost1TilNyttLead } from "@/lib/leadutsending";
 import { basisUrl } from "@/lib/miljo";
 import { innenforVinduet } from "@/lib/sendevindu";
-import { foroftig, klientnokkel, rens } from "@/lib/skjemavern";
+import {
+  foroftig,
+  klientnokkel,
+  rens,
+  serUtSomEpost,
+} from "@/lib/skjemavern";
 
 /**
  * Skjemainnsending.
@@ -115,6 +120,32 @@ export async function POST(req: NextRequest) {
      */
     const råtelefon = rens(data.get("telefon"), "telefon");
     const mobil = normaliserMobil(råtelefon);
+
+    /*
+     * INGEN MÅTE Å SVARE PÅ ER INGEN HENVENDELSE. Lagt til 06.10.2026.
+     *
+     * HENDELSEN: kl. 15:08 kom en POST der bare det skjulte feltet «side»
+     * var fylt ut. Navn, e-post, telefon, bedrift og melding var tomme. En
+     * nettleser slipper ikke gjennom tomme påkrevde felt, så innsendingen
+     * kom fra et skript — og den slapp gjennom begge vaktene vi hadde:
+     * honningkrukka var tom, og fartssjekken hopper over når «lastet»
+     * mangler. Pål fikk et leadvarsel med «–» i alle feltene.
+     *
+     * KRAVET ER LAVT MED VILJE: ENTEN en e-post som ser ut som en adresse,
+     * ELLER noe som helst i telefonfeltet. Et ekte lead med skrivefeil i
+     * det ene skal fortsatt komme fram. Det vi stopper, er innsendingen
+     * som ikke har noen av delene — og den kan ingen svare på uansett.
+     *
+     * SVARET ER SOM ELLERS, 303 til /takk. Se regelen i fila hodet: et
+     * annet svar for bot enn for menneske forteller boten hva som avslørte
+     * den.
+     */
+    if (!serUtSomEpost(epost) && !råtelefon) {
+      console.warn(
+        `[skjema] Innsending fra ${rens(data.get("side"), "side") || "ukjent"} uten e-post og telefon. Behandlet som bot, IKKE sendt videre.`,
+      );
+      return svar(req);
+    }
 
     /*
      * NETTSIDEN: skrevet inn hvis den finnes, ellers utledet av

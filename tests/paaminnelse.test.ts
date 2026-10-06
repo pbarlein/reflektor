@@ -95,3 +95,20 @@ test("interne adresser får ingen påminnelse", () => {
   assert.equal(faarPaaminnelse("marisol@example.no"), true);
   assert.equal(faarPaaminnelse("noen@ikkereflektor.no"), true);
 });
+
+/**
+ * INGEN ADRESSE, INGEN PÅMINNELSE.
+ *
+ * 06.10.2026 kom en POST til /api/skjema der alt unntatt det skjulte
+ * «side»-feltet var tomt. Varselet til Pål sto med «–» i hver linje, og
+ * lovet likevel at presentasjonen var sendt og at påminnelsen kom. Det
+ * finnes ingen mottaker å sende noe til.
+ */
+test("tom eller ugyldig adresse får ingen påminnelse", () => {
+  assert.equal(faarPaaminnelse(""), false);
+  assert.equal(faarPaaminnelse("   "), false);
+  assert.equal(faarPaaminnelse("ikke-en-adresse"), false);
+  assert.equal(faarPaaminnelse("mangler@domene"), false);
+  /* Og en helt vanlig adresse slipper fortsatt gjennom. */
+  assert.equal(faarPaaminnelse("kristine@haugland.no"), true);
+});

@@ -185,6 +185,39 @@ test("ingen oppfølgingslinjer for @reflektor.no", () => {
 });
 
 /**
+ * KOM LEADET IKKE INN I HUBSPOT, SKJER INGENTING AUTOMATISK. Arbeidsflyten
+ * starter på en kontakt som aldri ble opprettet, så verken presentasjonen,
+ * møtelenken eller påminnelsen går ut. Varselet skal da ikke love noen av
+ * dem — det er den advarselen øverst som er beskjeden, og Pål må gjøre
+ * resten selv.
+ */
+test("ingen lovnad om møtelink eller påminnelse når HubSpot feilet", () => {
+  const { tekst, html } = varsel(
+    lead(),
+    new Date("2026-10-09T08:00:00+02:00"),
+    true,
+  );
+  assert.ok(!tekst.includes("møtelink"), tekst);
+  assert.ok(!tekst.includes("Påminnelse"), tekst);
+  assert.ok(!html.includes("møtelink"), html);
+  assert.ok(!html.includes("Påminnelse"), html);
+  // Advarselen og feltene står fortsatt.
+  assert.ok(tekst.includes("IKKE lagret i HubSpot"));
+  assert.ok(tekst.includes("Mobilnummer: +47 966 84 028"));
+});
+
+/**
+ * INGEN ADRESSE, INGEN OPPFØLGING. En innsending uten brukbar e-post når
+ * ikke HubSpot-arbeidsflyten, og varselet skal ikke si at noe er sendt.
+ */
+test("ingen oppfølgingslinjer uten brukbar e-postadresse", () => {
+  const { tekst, html } = varsel(lead({ epost: "" }));
+  assert.ok(!tekst.includes("møtelink"));
+  assert.ok(!tekst.includes("Påminnelse"));
+  assert.ok(!html.includes("Avbryt påminnelse"));
+});
+
+/**
  * UTEN HEMMELIGHET, INGEN KNAPP — men varselet skal fortsatt komme fram.
  * Testen kjører uten `PAAMINNELSE_HEMMELIGHET` satt, som er nøyaktig det
  * som skjer hvis variabelen forsvinner fra Vercel.

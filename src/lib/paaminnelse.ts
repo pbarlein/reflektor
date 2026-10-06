@@ -25,6 +25,8 @@
  * `getDay()` på en Date.
  */
 
+import { serUtSomEpost } from "./skjemavern";
+
 const SONE = "Europe/Oslo";
 
 /** Navnet på informasjonskapselen som gir tilgang til oversiktssiden. */
@@ -174,7 +176,14 @@ export function osloTekst(t: Date): string {
  * varselet heller ikke love en påminnelse som aldri kommer. Interne
  * testinnsendinger er nettopp de som ellers ville fått Pål til å tro at
  * oppfølgingen virket.
+ *
+ * INGEN ADRESSE, INGEN PÅMINNELSE. Lagt til 06.10.2026. En tom eller
+ * ugyldig e-post har ingen mottaker, og varselet sto likevel og lovet at
+ * presentasjonen var sendt. Det er ikke `skjemavern` som er streng her:
+ * `serUtSomEpost` er bevisst grov, og slipper gjennom alt som i det hele
+ * tatt ligner en adresse.
  */
 export function faarPaaminnelse(epost: string): boolean {
+  if (!serUtSomEpost(epost.trim())) return false;
   return !epost.trim().toLowerCase().endsWith("@reflektor.no");
 }

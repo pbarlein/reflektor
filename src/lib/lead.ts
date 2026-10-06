@@ -255,9 +255,16 @@ export function varsel(
         ring: "Ring ASAP for å booke møte personlig.",
         lenke: null,
       }
-    : faarPaaminnelse(lead.epost)
+    : !hubspotFeilet && faarPaaminnelse(lead.epost)
       ? {
           /*
+            INGEN KONTAKT, INGEN OPPFØLGING. `!hubspotFeilet` kom til
+            06.10.2026. Feilet innsendingen til HubSpot, finnes det ingen
+            kontakt for arbeidsflyten å starte på — og da sto varselet og
+            lovet «presentasjon og møtelink sendt» rett under advarselen om
+            at leadet IKKE ble lagret. To motstridende påstander i samme
+            e-post, der den ene er usann.
+
             LINJEN SIER HVA SOM FAKTISK SKJER, OGSÅ OM NATTEN. Fra
             04.10.2026 sendes e-posten bare mellom 07 og 21; kommer leadet
             utenom, ligger den i kø til neste morgen kl. 08:00. Da skal det
