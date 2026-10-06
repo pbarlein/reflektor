@@ -477,3 +477,25 @@ kjører hvert femte minutt og ser fjorten dager fram og tilbake; uten et slikt
 holdepunkt ville samme varsel gått tusenvis av ganger. Prisen er at en booking
 på en sak som alt står i «Møte booket», «Tilbud sendt» eller «Vunnet» ikke
 varsles herfra — der er HubSpots eget varsel fortsatt dekningen.
+
+### Rettet samme kveld: møtevarselet snakket som et leadvarsel
+
+Første utgave arvet hele oppfølgingsblokken fra leadvarselet. Pål fanget det
+med én gang: **«Ring ASAP for å booke møte personlig»** i en e-post om et møte
+som alt var booket. Gjennomgangen fant tre ting til:
+
+- **«Avsender»** → **«Booket av»**. Ingen har sendt noe. Feltrekkefølgen er
+  den samme i begge varslene, så det er fortsatt ett format å lese.
+- **«Har allerede booket møte … Ingen automatisk e-post sendt.»** →
+  **«Møte torsdag 15. oktober kl. 11:15.»** Den første formuleringen hører
+  hjemme i et leadvarsel, der poenget er at leadet rakk å booke før Pål rakk
+  å ringe. I et møtevarsel er den støy om noe som aldri skulle skjedd.
+- **Svaremnet på «Skriv til»-knappen** var «Henvendelsen din til Reflektor»
+  til en som ikke har sendt noen henvendelse. Nå «Møtet vårt».
+
+**Den samme feilen sto i leadvarselet** når leadet alt hadde booket:
+«Ring ASAP for å booke møte personlig» under en linje som sa at møtet var
+booket. Linjen finnes for å slå den automatiske e-posten i tid — rekker Pål å
+ringe først, booker han møtet selv — og det løpet er over i det øyeblikket
+møtet står i kalenderen. Den er tatt ut begge steder. En test som sa
+«Ringe skal han fortsatt» er rettet med begrunnelsen.

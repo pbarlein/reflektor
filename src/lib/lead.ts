@@ -91,6 +91,16 @@ export type Varselvalg = {
    * finnes ingen påminnelse å avbryte.
    */
   moteBooket?: Date | null;
+  /**
+   * Gjør varselet til et MØTEVARSEL i stedet for et leadvarsel.
+   *
+   * FORSKJELLEN ER HVA SOM ALT HAR SKJEDD. Et leadvarsel handler om noen
+   * som har tatt kontakt og som Pål bør rekke å ringe. Et møtevarsel
+   * handler om et møte som ER avtalt — da er «Avsender» feil ord, «har
+   * allerede booket» en merkelig måte å si det på, og en oppfordring om å
+   * ringe for å booke rent tøv.
+   */
+  moteVarsel?: boolean;
 };
 
 /**
@@ -162,8 +172,15 @@ export function varsel(
     ? lead.nettside + (lead.nettsideUtledet ? " (fra e-post)" : "")
     : TOM;
 
+  /*
+    «AVSENDER» ER PÅLS ORD OG STÅR URØRT PÅ LEADVARSELET. I et møtevarsel
+    har ingen sendt noe — noen har booket — og da er ordet feil. Rekkefølgen
+    på feltene er den samme i begge, så det er fortsatt ett format å lese.
+  */
+  const navneetikett = valg.moteVarsel ? "Booket av" : "Avsender";
+
   const rader: [string, string, string][] = [
-    ["Avsender", lead.navn || TOM, esc(lead.navn || TOM)],
+    [navneetikett, lead.navn || TOM, esc(lead.navn || TOM)],
     [
       "Mobilnummer",
       lead.telefon || TOM,
@@ -220,10 +237,19 @@ export function varsel(
     til » og ingenting mer, ser ødelagt ut.
   */
   const fornavn = lead.navn.trim().split(/\s+/)[0]?.slice(0, 40) ?? "";
+  /*
+    EMNET PASSER TIL HVA SOM HAR SKJEDD. «Henvendelsen din til Reflektor»
+    er riktig til en som nettopp har tatt kontakt, og feil til en som har
+    booket et møte — hun har ikke sendt noen henvendelse.
+  */
+  const svaremne = valg.moteVarsel
+    ? "Møtet vårt"
+    : "Henvendelsen din til Reflektor";
   const skriv = serUtSomEpost(lead.epost)
     ? {
         tekst: fornavn ? `Skriv til ${fornavn}` : "Skriv til leadet",
-        lenke: `mailto:${lead.epost}?subject=${encodeURIComponent("Henvendelsen din til Reflektor")}`,
+        emne: svaremne,
+        lenke: `mailto:${lead.epost}?subject=${encodeURIComponent(svaremne)}`,
       }
     : null;
 
@@ -248,11 +274,24 @@ export function varsel(
     ? {
         /*
           HAR PERSONEN ALT BOOKET, er oppfølgingen ikke bare unødvendig —
-          den er feil. Linjen sier hva som IKKE skjedde, slik at Pål ikke
-          sitter og venter på en påminnelse som aldri kommer.
+          den er feil.
+
+          I ET MØTEVARSEL ER MØTET HELE BESKJEDEN, og da sier linjen bare
+          når det er. «Har allerede booket» hører hjemme i et leadvarsel,
+          der poenget er at personen rakk å booke før Pål rakk å ringe —
+          og der er «ingen automatisk e-post sendt» en opplysning han
+          trenger. I et møtevarsel er den samme setningen støy om noe som
+          aldri skulle skjedd.
+
+          INGEN OPPFORDRING OM Å RINGE FOR Å BOOKE. Den sto her i begge
+          tilfellene og var feil i begge: møtet ER booket. Linjen fantes
+          for å slå den automatiske e-posten i tid, og det løpet er over.
+          Fanget av Pål 06.10.2026.
         */
-        linje: `Har allerede booket møte ${osloTekst(valg.moteBooket)}. Ingen automatisk e-post sendt.`,
-        ring: "Ring ASAP for å booke møte personlig.",
+        linje: valg.moteVarsel
+          ? `Møte ${osloTekst(valg.moteBooket)}.`
+          : `Har allerede booket møte ${osloTekst(valg.moteBooket)}. Ingen automatisk e-post sendt.`,
+        ring: null,
         lenke: null,
       }
     : !hubspotFeilet && faarPaaminnelse(lead.epost)
@@ -279,7 +318,7 @@ export function varsel(
           linje: venterPaaVinduet(sendt)
             ? `Presentasjon og møtelink sendes ${osloTekst(planlagtSending(sendt))}. Påminnelse sendes ${paaminnelseTekst(planlagtSending(sendt))}.`
             : `Generisk Canva-presentasjon og møtelink sendt. Påminnelse sendes ${paaminnelseTekst(sendt)}.`,
-          ring: "Ring ASAP for å booke møte personlig.",
+          ring: "Ring ASAP for å booke møte personlig." as string | null,
           lenke: avbrytLenke(lead.epost),
         }
       : null;
@@ -300,15 +339,14 @@ export function varsel(
     ...(skriv
       ? [
           "",
-          `${skriv.tekst}: ${lead.epost} (emne: Henvendelsen din til Reflektor)`,
+          `${skriv.tekst}: ${lead.epost} (emne: ${skriv.emne})`,
         ]
       : []),
     ...(oppfolging
       ? [
           "",
           oppfolging.linje,
-          "",
-          oppfolging.ring,
+          ...(oppfolging.ring ? ["", oppfolging.ring] : []),
           ...(oppfolging.lenke
             ? ["", `Avbryt påminnelse: ${oppfolging.lenke}`]
             : []),
@@ -348,7 +386,11 @@ export function varsel(
     ...(oppfolging
       ? [
           `<p style="margin:24px 0 0">${esc(oppfolging.linje)}</p>`,
-          `<p style="margin:16px 0 0"><strong>${esc(oppfolging.ring)}</strong></p>`,
+          ...(oppfolging.ring
+            ? [
+                `<p style="margin:16px 0 0"><strong>${esc(oppfolging.ring)}</strong></p>`,
+              ]
+            : []),
           ...(oppfolging.lenke
             ? [
                 /*
@@ -622,6 +664,7 @@ export async function sendMoteVarsel(opp: {
   const { tekst, html } = varsel(lead, opp.sendt ?? new Date(), false, {
     utenNettsideOgBehov: true,
     moteBooket: opp.moteBooket,
+    moteVarsel: true,
   });
 
   try {

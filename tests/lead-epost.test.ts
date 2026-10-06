@@ -279,3 +279,81 @@ test("ingen knapp når e-posten ikke er en adresse", () => {
   assert.ok(!html.includes("Skriv til"));
   assert.ok(!html.includes("subject="));
 });
+
+/* ──────────────── MØTEVARSELET (rettet 06.10.2026) ──────────────────── */
+
+/**
+ * Møtevarselet er ikke et leadvarsel, og skal ikke snakke som ett.
+ *
+ * Første utgave arvet hele oppfølgingsblokken fra leadvarselet, og da sto
+ * det «Ring ASAP for å booke møte personlig» i en e-post som handlet om et
+ * møte som alt var booket. Fanget av Pål samme kveld.
+ */
+const MOTE = new Date("2026-10-15T09:15:00Z");
+
+test("møtevarselet sier når møtet er, og ikke noe om å booke", () => {
+  const { tekst, html } = varsel(lead(), new Date("2026-10-06T21:30:00Z"), false, {
+    utenNettsideOgBehov: true,
+    moteBooket: MOTE,
+    moteVarsel: true,
+  });
+
+  assert.ok(tekst.includes("Møte torsdag 15. oktober kl. 11:15."), tekst);
+  assert.ok(!tekst.includes("Ring ASAP"), tekst);
+  assert.ok(!tekst.includes("booke møte personlig"), tekst);
+  assert.ok(!html.includes("booke møte personlig"), html);
+  /* «Har allerede booket» hører hjemme i leadvarselet, ikke her. */
+  assert.ok(!tekst.includes("Har allerede booket"), tekst);
+  assert.ok(!tekst.includes("Ingen automatisk e-post sendt"), tekst);
+});
+
+/** Ingen har sendt noe — noen har booket. Etiketten må si det. */
+test("møtevarselet sier «Booket av», ikke «Avsender»", () => {
+  const { tekst, html } = varsel(lead(), undefined, false, {
+    utenNettsideOgBehov: true,
+    moteBooket: MOTE,
+    moteVarsel: true,
+  });
+
+  assert.ok(tekst.includes("Booket av: Marisol Sand"), tekst);
+  assert.ok(!tekst.includes("Avsender"), tekst);
+  assert.ok(html.includes("Booket av"), html);
+});
+
+/**
+ * SVAREMNET PASSER TIL HVA SOM HAR SKJEDD. «Henvendelsen din til
+ * Reflektor» til en som har booket et møte er feil: hun har ikke sendt
+ * noen henvendelse.
+ */
+test("knappen i møtevarselet får et emne som stemmer", () => {
+  const { tekst, html } = varsel(lead(), undefined, false, {
+    utenNettsideOgBehov: true,
+    moteBooket: MOTE,
+    moteVarsel: true,
+  });
+
+  assert.ok(html.includes("subject=M%C3%B8tet%20v%C3%A5rt"), html);
+  assert.ok(tekst.includes("(emne: Møtet vårt)"), tekst);
+  assert.ok(!tekst.includes("Henvendelsen din til Reflektor"), tekst);
+});
+
+/** Leadvarselet er uendret: «Avsender», og emnet som før. */
+test("leadvarselet snakker som før", () => {
+  const { tekst } = varsel(lead());
+
+  assert.ok(tekst.includes("Avsender: Marisol Sand"), tekst);
+  assert.ok(tekst.includes("(emne: Henvendelsen din til Reflektor)"), tekst);
+  assert.ok(tekst.includes("Ring ASAP for å booke møte personlig."), tekst);
+});
+
+/**
+ * ET LEAD SOM ALT HAR BOOKET får heller ingen oppfordring om å ringe for å
+ * booke. Linjen finnes for å slå den automatiske e-posten i tid, og det
+ * løpet er over når møtet står i kalenderen.
+ */
+test("leadvarselet dropper ringelinjen når leadet har booket", () => {
+  const { tekst } = varsel(lead(), undefined, false, { moteBooket: MOTE });
+
+  assert.ok(tekst.includes("Har allerede booket møte"), tekst);
+  assert.ok(!tekst.includes("Ring ASAP"), tekst);
+});

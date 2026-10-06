@@ -133,8 +133,17 @@ test("har leadet booket, sier varselet det i stedet", async () => {
   assert.ok(!tekst.includes("Canva-presentasjon"));
   /* Det finnes ingen påminnelse å avbryte. */
   assert.ok(!String(sendt[0]!.html).includes("Avbryt påminnelse"));
-  /* Ringe skal han fortsatt. */
-  assert.ok(tekst.includes("Ring ASAP"));
+  /*
+   * «RING ASAP FOR Å BOOKE MØTE PERSONLIG» STÅR IKKE NÅR MØTET ER BOOKET.
+   *
+   * Her sto det motsatte, med kommentaren «Ringe skal han fortsatt». Den
+   * var feil: linjen finnes for å slå den automatiske e-posten i tid —
+   * rekker Pål å ringe først, booker han møtet selv — og det løpet er over
+   * i det øyeblikket møtet står i kalenderen. Fanget av Pål 06.10.2026 på
+   * møtevarselet, og den samme setningen sto her.
+   */
+  assert.ok(!tekst.includes("Ring ASAP"));
+  assert.ok(!tekst.includes("booke møte personlig"));
 });
 
 /** Nettsidevarselet skal være uendret av at Meta fikk sin variant. */
