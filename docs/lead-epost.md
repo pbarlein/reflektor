@@ -499,3 +499,44 @@ booket. Linjen finnes for å slå den automatiske e-posten i tid — rekker Pål
 ringe først, booker han møtet selv — og det løpet er over i det øyeblikket
 møtet står i kalenderen. Den er tatt ut begge steder. En test som sa
 «Ringe skal han fortsatt» er rettet med begrunnelsen.
+
+## Gjennomgang av alle varsler og bekreftelser (06.10.2026)
+
+Bestilt etter at møtevarselet ble rettet. Gjennomgått: leadvarselet,
+Meta-varselet, møtevarselet, e-post 1 og 2, `/takk`, avbryt-siden og
+påminnelsesoversikten.
+
+### Rettet
+
+- **Avbryt-siden sa at HubSpot sender påminnelsen.** Det var sant da siden
+  ble skrevet. Fra 04.10 går både presentasjonen og påminnelsen fra Påls egen
+  Gmail, gjennom jobben vår.
+- **Avbryt-siden sa at presentasjonen «allerede er sendt».** Kommer leadet
+  utenom sendevinduet 07–21, ligger den i kø til kl. 08:00 neste morgen —
+  oversikten sier det selv med «Presentasjon sendes …». Nå står det at den
+  ikke er berørt, og at den går som planlagt hvis den ikke er sendt.
+- **Oversikten sa ingenting etter «Avbryt påminnelse».** Ruta sendte alt
+  utfallet tilbake i adressen, men siden leste det ikke. Gikk det bra,
+  forsvant raden; gikk det galt, sto raden igjen uten ett ord. En stille feil
+  er den verste sorten her: Pål tror påminnelsen er avbrutt, og den går til
+  et lead han nettopp har snakket med.
+- **De to sidene hadde hver sin formulering** av de samme fire utfallene. Nå
+  én tekst, i `avbrytBeskjed`, med tester.
+- **«Noe gikk galt mot HubSpot. Prøv igjen.»** sa ikke om påminnelsen gikk
+  eller ikke. Nå: «Påminnelsen er IKKE avbrutt.»
+
+### Funnet, ikke rettet — krever en avgjørelse
+
+- **`/takk` sier «så ringer vi deg».** Bookingen lager et videomøte med
+  Google Meet-lenke, ikke en telefonsamtale. Enten bør setningen endres,
+  eller så bør bookingsiden settes til telefon. Dette er Påls copy, så den
+  står til han bestemmer.
+- **Påminnelseslisten viser rader som ikke kommer til å få påminnelse.**
+  Filtrene speiler ikke de tre stoppene som kom til 04.10: leadet har svart
+  i tråden, avtalen står i et stoppstadium, eller møtet er booket på en
+  dublettkontakt. Sidens egen dokumentasjon sier at en slik liste er «verre
+  enn ingen liste». Å sjekke svar i Gmail per rad gjør siden treg, så dette
+  er et valg mellom presis og rask.
+- **Dobbel e-post hvis HubSpot-arbeidsflyten fortsatt sender e-post 1 og 2.**
+  Vår egen utsending står på (`aktiv: true` i jobbloggen). Om arbeidsflyten
+  i HubSpot er slått av, kan ikke sjekkes herfra — det må gjøres i HubSpot.

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  avbrytBeskjed,
   faarPaaminnelse,
   paaminnelseTekst,
   paaminnelseTidspunkt,
@@ -111,4 +112,46 @@ test("tom eller ugyldig adresse får ingen påminnelse", () => {
   assert.equal(faarPaaminnelse("mangler@domene"), false);
   /* Og en helt vanlig adresse slipper fortsatt gjennom. */
   assert.equal(faarPaaminnelse("kristine@haugland.no"), true);
+});
+
+/* ────────── UTFALLET AV «AVBRYT PÅMINNELSE» (06.10.2026) ────────────── */
+
+/**
+ * Oversikten på /paaminnelse leste ikke status-en ruta sendte tilbake.
+ *
+ * Gikk avbrytingen bra, forsvant raden fra listen — det er en slags
+ * beskjed. Gikk den GALT, sto raden igjen uten ett ord om hvorfor, og da
+ * måtte Pål tro at påminnelsen var avbrutt. Den går så til et lead han
+ * nettopp har snakket med.
+ *
+ * TEKSTEN ER NÅ ÉN, DELT AV BEGGE SIDENE. De hadde hver sin formulering av
+ * de samme fire utfallene.
+ */
+test("ingen status, ingen beskjed", () => {
+  assert.equal(avbrytBeskjed(undefined), null);
+  assert.equal(avbrytBeskjed(""), null);
+});
+
+test("en vellykket avbryting sier fra, og er ikke en feil", () => {
+  assert.deepEqual(avbrytBeskjed("ok"), {
+    tekst: "Påminnelsen er avbrutt.",
+    feil: false,
+  });
+});
+
+test("hvert utfall som ikke gikk bra er merket som feil", () => {
+  for (const status of ["ikke-funnet", "ikke-satt-opp", "feil", "ugyldig"]) {
+    const b = avbrytBeskjed(status);
+    assert.ok(b, status);
+    assert.equal(b.feil, true, status);
+    assert.ok(b.tekst.length > 10, status);
+  }
+});
+
+/**
+ * DEN UKJENTE FEILEN MÅ SI AT INGENTING SKJEDDE. Her sto «Prøv igjen», som
+ * ikke sier om påminnelsen gikk eller ikke.
+ */
+test("en ukjent feil sier rett ut at påminnelsen ikke er avbrutt", () => {
+  assert.match(avbrytBeskjed("feil")!.tekst, /IKKE avbrutt/);
 });

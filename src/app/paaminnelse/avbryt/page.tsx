@@ -4,6 +4,7 @@ import { Container } from "@/components/Container";
 import { Knapp } from "@/components/Knapp";
 import { gyldigSignatur } from "@/lib/avbrytsignatur";
 import { harToken } from "@/lib/hubspotcrm";
+import { avbrytBeskjed } from "@/lib/paaminnelse";
 
 export const metadata: Metadata = {
   title: "Avbryt påminnelse",
@@ -29,6 +30,7 @@ export default async function Avbryt({
 }) {
   const { e = "", s = "", status } = await searchParams;
   const gyldig = Boolean(e) && gyldigSignatur(e, s);
+  const beskjed = avbrytBeskjed(status);
 
   return (
     <section className="pt-14 pb-24 sm:pt-20">
@@ -56,18 +58,28 @@ export default async function Avbryt({
               <h1 className="text-3xl text-balance sm:text-4xl">
                 Avbryte påminnelsen til {e}?
               </h1>
+              {/*
+                TO FEIL RETTET 06.10.2026.
+
+                «HubSpot sender ingen påminnelse» var sant da siden ble
+                skrevet. Fra 04.10 går både presentasjonen og påminnelsen
+                fra Påls egen Gmail, gjennom jobben vår — se lib/gmail.ts.
+
+                «E-posten er allerede sendt» var ikke alltid sant. Kommer
+                leadet utenom sendevinduet 07–21, ligger presentasjonen i kø
+                til kl. 08:00 neste morgen, og oversikten på /paaminnelse
+                sier det selv med «Presentasjon sendes …». Setningen her
+                påsto det motsatte.
+              */}
               <p className="mt-5 leading-relaxed text-blekk-dempet">
-                Da sender HubSpot ingen påminnelse om å booke møte. E-posten med
-                presentasjon og bookinglenke er allerede sendt og påvirkes ikke.
+                Da får {e} ingen påminnelse om å booke møte. Presentasjonen og
+                bookinglenken er ikke berørt — er den ikke sendt ennå, går den
+                som planlagt.
               </p>
 
-              {status && status !== "ok" && (
+              {beskjed?.feil && (
                 <p role="alert" className="mt-6 text-aksent">
-                  {status === "ikke-funnet"
-                    ? "Fant ikke kontakten i HubSpot ennå. Prøv igjen om et minutt."
-                    : status === "ikke-satt-opp"
-                      ? "Koblingen til HubSpot er ikke satt opp ennå."
-                      : "Noe gikk galt mot HubSpot. Prøv igjen."}
+                  {beskjed.tekst}
                 </p>
               )}
 

@@ -187,3 +187,36 @@ export function faarPaaminnelse(epost: string): boolean {
   if (!serUtSomEpost(epost.trim())) return false;
   return !epost.trim().toLowerCase().endsWith("@reflektor.no");
 }
+
+/* ─────────── UTFALLET AV «AVBRYT PÅMINNELSE» (06.10.2026) ────────────── */
+
+export type Avbrytbeskjed = { tekst: string; feil: boolean };
+
+/**
+ * Beskjeden som vises etter at noen har trykket «Avbryt påminnelse».
+ *
+ * ÉN TEKST, TO SIDER. Avbryt-siden og oversikten viste tidligere hver sin
+ * formulering av de samme fire utfallene — og oversikten viste ingen i det
+ * hele tatt, fordi den aldri leste status-en ruta sendte tilbake. En stille
+ * feil er den verste sorten her: Pål tror påminnelsen er avbrutt, og den
+ * går til et lead han nettopp har snakket med.
+ *
+ * `null` BETYR AT INGENTING HAR SKJEDD ENNÅ, altså første gang siden åpnes.
+ */
+export function avbrytBeskjed(status: string | undefined): Avbrytbeskjed | null {
+  if (!status) return null;
+  if (status === "ok") return { tekst: "Påminnelsen er avbrutt.", feil: false };
+  if (status === "ikke-funnet") {
+    return {
+      tekst: "Fant ikke kontakten i HubSpot ennå. Prøv igjen om et minutt.",
+      feil: true,
+    };
+  }
+  if (status === "ikke-satt-opp") {
+    return { tekst: "Koblingen til HubSpot er ikke satt opp ennå.", feil: true };
+  }
+  return {
+    tekst: "Noe gikk galt mot HubSpot. Påminnelsen er IKKE avbrutt.",
+    feil: true,
+  };
+}

@@ -6,6 +6,7 @@ import { Knapp } from "@/components/Knapp";
 import { signer } from "@/lib/avbrytsignatur";
 import { harToken, hentPlanlagte } from "@/lib/hubspotcrm";
 import {
+  avbrytBeskjed,
   osloTekst,
   PAAMINNELSE_KAPSEL,
   paaminnelseTekst,
@@ -22,17 +23,24 @@ export const dynamic = "force-dynamic";
 /**
  * Oversikt over leads med en påminnelse på vei.
  *
- * HVORFOR DEN FINNES I TILLEGG TIL KNAPPEN I VARSELET. Leads fra Meta
- * kommer ikke gjennom nettsidens skjema, så Pål får ikke noe varsel med
- * knapp for dem. HubSpot varsler ham, og Cowork legger lenken hit inn i det
- * varselet.
+ * HVORFOR DEN FINNES I TILLEGG TIL KNAPPEN I VARSELET. Den ble laget fordi
+ * Meta-leads ikke gikk gjennom nettsidens skjema og derfor ikke ga noe
+ * varsel med knapp. DET STEMMER IKKE LENGER: fra 04.10.2026 sender vi vårt
+ * eget Meta-varsel med samme mal, og knappen står i det også.
+ *
+ * SIDEN BLIR LIKEVEL STÅENDE. Den svarer på et annet spørsmål enn knappen:
+ * «hvem har en påminnelse på vei akkurat nå», uten å lete i innboksen.
  *
  * BESKYTTELSEN ER EN NØKKEL I EN INFORMASJONSKAPSEL, ikke innlogging. Siden
  * viser navn, bedrift og e-post på leads — det skal ikke ligge åpent — men
  * et påloggingssystem for én bruker er feil verktøy. Nøkkelen byttes mot
  * kapselen i middleware.ts.
  */
-export default async function Paaminnelser() {
+export default async function Paaminnelser({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string }>;
+}) {
   const kapsel = (await cookies()).get(PAAMINNELSE_KAPSEL)?.value;
   const nokkel = process.env.PAAMINNELSE_NOKKEL;
 
@@ -49,6 +57,17 @@ export default async function Paaminnelser() {
   // Listen er allerede renset for påminnelser som har gått, se hubspotcrm.ts.
   const venter = await hentPlanlagte();
 
+  /*
+    UTFALLET AV «AVBRYT», lagt til 06.10.2026.
+
+    Ruta sendte alt status tilbake i adressen, men denne siden leste den
+    ikke. Gikk avbrytingen bra, forsvant raden — det er en slags beskjed.
+    Gikk den GALT, sto raden igjen uten ett ord om hvorfor, og Pål måtte
+    tro at den var avbrutt. En stille feil er den verste sorten her:
+    påminnelsen går til et lead han nettopp har snakket med.
+  */
+  const beskjed = avbrytBeskjed((await searchParams).status);
+
   return (
     <section className="pt-14 pb-24 sm:pt-20">
       <Container>
@@ -58,6 +77,15 @@ export default async function Paaminnelser() {
             Leads som får en automatisk påminnelse om å booke møte. Har du
             allerede avtalt med dem, avbryter du den her.
           </p>
+
+          {beskjed ? (
+            <p
+              role="status"
+              className={`mt-6 ${beskjed.feil ? "text-aksent" : "text-blekk-dempet"}`}
+            >
+              {beskjed.tekst}
+            </p>
+          ) : null}
 
           {!harToken() ? (
             <p className="mt-8 text-aksent">
