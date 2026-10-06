@@ -429,3 +429,51 @@ booking er ikke grunn god nok til å overprøve dem.
 **Fakturagrunnlaget** er avtalene i «Reflektor – salg» med kilde
 `Outbound – Impact Motion` som har vært innom «Møte booket». HubSpot lagrer
 datoen for stadiebyttet selv.
+
+## «NYTT MØTE» med kanalen i emnet (bestilt 06.10.2026)
+
+**Hvorfor.** HubSpot sender alt et varsel når noen booker — «Du har blitt
+booket av: …» — men emnet er fast og sier ingenting om hvor møtet kom fra. Pål
+leser det på mobil og skal se på én linje om det er Impact Motion som har
+skaffet møtet eller om det kom inn av seg selv. Det er også skillet fakturaen
+bygger på. Vi sender derfor vårt eget varsel, med samme mal som leadvarselet.
+
+**To e-poster ved hver booking, og de er ikke det samme.** HubSpot sender
+«Du har blitt booket av: X» til Pål som vert, og «X booket et møte med: Pål
+Barlein» til den som booket. Tester Pål med sin egen adresse, lander begge i
+samme innboks. HubSpots vertsvarsel kan slås av i innstillingene for
+bookingsiden når vårt eget er verifisert.
+
+**Emnet.**
+
+| Situasjon | Emne |
+|---|---|
+| Outbound, e-postverktøy | `NYTT MØTE outbound e-post – Navn (Bedrift)` |
+| Outbound, LinkedIn | `NYTT MØTE outbound LinkedIn – Navn (Bedrift)` |
+| Outbound, ukjent kanal | `NYTT MØTE outbound – Navn (Bedrift)` |
+| Inbound, Meta | `NYTT MØTE inbound Meta – Navn (Bedrift)` |
+| Inbound, nettsiden | `NYTT MØTE inbound reflektor.no – Navn (Bedrift)` |
+
+**Hvordan kanalen bestemmes.** Først bookingsiden: slugen i
+`recent_conversion_event_name` avgjør outbound mot inbound, og den kan ikke
+forsvinne. Så kanalen innenfor:
+
+- **Outbound** leses av `engagements_last_meeting_booked_source` og `_medium`,
+  som fylles av sporingsparameterne på lenken. `instantly` og `masterinbox` gir
+  «e-post», `heyreach` og `linkedin` gir «LinkedIn».
+  **Dette krever at Impact Motion legger parameterne på lenken:**
+  `reflektor.no/booking?utm_source=instantly` for e-post,
+  `?utm_source=heyreach` for LinkedIn. Uten dem står det bare «outbound».
+  Kontrollert 06.10.2026: testbookingen på en lenke uten parametere har
+  feltene tomme.
+- **Inbound** regnes som Meta når noe peker dit — sporingen, første
+  konvertering («Facebook Lead Ads: …»), eller HubSpots egen kanal
+  (`PAID_SOCIAL`). Meta-leadet fra 04.10 har alle tre. Ellers er svaret
+  reflektor.no.
+
+**Når varselet går.** Når en avtale faktisk kommer inn i «Møte booket» —
+flyttet eller nyopprettet. Det skjer nøyaktig én gang per booking. Jobben
+kjører hvert femte minutt og ser fjorten dager fram og tilbake; uten et slikt
+holdepunkt ville samme varsel gått tusenvis av ganger. Prisen er at en booking
+på en sak som alt står i «Møte booket», «Tilbud sendt» eller «Vunnet» ikke
+varsles herfra — der er HubSpots eget varsel fortsatt dekningen.

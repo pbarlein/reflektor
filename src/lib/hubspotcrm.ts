@@ -80,6 +80,107 @@ export function erOutboundBooking(hendelse: string): boolean {
   return bookingslug(hendelse) === BOOKINGLENKER.outbound;
 }
 
+/* ─────────── HVILKEN KANAL MØTET KOM FRA (06.10.2026) ────────────────── */
+
+/**
+ * Kanalen et booket møte kom fra, slik den skal stå i emnefeltet.
+ *
+ * HVORFOR DET MÅ STÅ I EMNET: Pål får varselet på mobil og skal kunne se på
+ * én linje om møtet er noe Impact Motion har skaffet eller noe som kom inn
+ * av seg selv — uten å åpne HubSpot. Det er også det samme skillet som
+ * fakturaen bygger på.
+ */
+export type Motekanal = {
+  gruppe: "outbound" | "inbound";
+  /** «e-post», «LinkedIn», «Meta», «reflektor.no» — eller tom hvis ukjent. */
+  kanal: string;
+};
+
+/**
+ * VERKTØYENE, slik de skrives i `utm_source` eller `utm_medium`.
+ *
+ * Instantly og Masterinbox sender e-post, HeyReach sender meldinger på
+ * LinkedIn. Listene er korte med vilje: står det noe annet der, er svaret
+ * «outbound» uten kanal, og det er bedre enn en gjetning som ser presis ut.
+ */
+const EPOSTVERKTOY = ["instantly", "masterinbox", "email", "epost", "e-post", "mail"];
+const LINKEDINVERKTOY = ["heyreach", "linkedin"];
+
+/** Det som betyr at personen kom fra Meta, uansett hvilket felt det står i. */
+const METAMARKOR = [
+  "facebook lead ads",
+  "reflektor some-abonnement",
+  "paid_social",
+  "meta",
+  "facebook",
+  "instagram",
+];
+
+/** Det som betyr at personen kom fra skjemaet på nettsiden. */
+const NETTSIDEMARKOR = ["reflektor.no – kontaktskjema", "reflektor.no - kontaktskjema"];
+
+function inneholder(tekst: string, markorer: readonly string[]): boolean {
+  const t = tekst.toLocaleLowerCase("nb-NO");
+  return markorer.some((m) => t.includes(m));
+}
+
+/**
+ * Hvor møtet kom fra.
+ *
+ * TO SPØRSMÅL, I REKKEFØLGE. Først hvilken bookingside som ble brukt — det
+ * er det som avgjør outbound mot inbound, og det er det eneste signalet som
+ * ikke kan forsvinne. Så hvilken kanal innenfor den.
+ *
+ * KANALEN INNENFOR OUTBOUND KOMMER FRA SPORINGSPARAMETERNE på lenken:
+ * reflektor.no/booking?utm_source=instantly. Uten dem kan e-post og
+ * LinkedIn ikke skilles, og da står det bare «outbound». Kontrollert
+ * 06.10.2026: testbookingen på en lenke uten parametere har feltene tomme,
+ * mens Meta-leadet fra 04.10 har «meta» og «paid_social» — fordi
+ * Meta-annonsen la dem på.
+ *
+ * INNENFOR INBOUND ER META STANDARDEN Å LETE ETTER, og nettsiden er svaret
+ * ellers. Det er den trygge veien: et Meta-lead kjennes igjen på flere felt
+ * (sporing, første konvertering, HubSpots egen kanal), mens et nettsidelead
+ * bare har skjemanavnet — og det blir overskrevet av møtelenken ved
+ * booking.
+ */
+export function motekanal(k: {
+  hendelse: string;
+  forsteHendelse: string;
+  bookingKilde: string;
+  bookingMedium: string;
+  analysekilde: string;
+}): Motekanal {
+  const sporing = `${k.bookingKilde} ${k.bookingMedium}`;
+
+  if (erOutboundBooking(k.hendelse)) {
+    if (inneholder(sporing, LINKEDINVERKTOY)) {
+      return { gruppe: "outbound", kanal: "LinkedIn" };
+    }
+    if (inneholder(sporing, EPOSTVERKTOY)) {
+      return { gruppe: "outbound", kanal: "e-post" };
+    }
+    return { gruppe: "outbound", kanal: "" };
+  }
+
+  const alt = `${sporing} ${k.forsteHendelse} ${k.hendelse} ${k.analysekilde}`;
+  if (inneholder(alt, METAMARKOR)) return { gruppe: "inbound", kanal: "Meta" };
+  if (inneholder(alt, NETTSIDEMARKOR)) {
+    return { gruppe: "inbound", kanal: "reflektor.no" };
+  }
+  /*
+    INGEN SPOR: nettsiden er svaret. Den som har booket uten at noe peker
+    på Meta, har funnet lenken hos oss — på /takk, i en e-post eller i en
+    signatur. «reflektor.no» er da riktigere enn ingenting.
+  */
+  return { gruppe: "inbound", kanal: "reflektor.no" };
+}
+
+/** Emnet på møtevarselet: «NYTT MØTE outbound e-post». */
+export function moteEmne(kanal: Motekanal): string {
+  return `NYTT MØTE ${kanal.gruppe}${kanal.kanal ? ` ${kanal.kanal}` : ""}`;
+}
+
 export type Utfall =
   | { ok: true }
   | { ok: false; grunn: "ikke-satt-opp" | "ikke-funnet" | "feil" };
@@ -318,7 +419,22 @@ const LESEFELT = [
   "mobilephone",
   "lifecyclestage",
   "engagements_last_meeting_booked",
+  /*
+    HVOR BOOKINGEN KOM FRA. De tre feltene fylles av sporingsparameterne på
+    møtelenken, og er tomme uten dem — kontrollert 06.10.2026: Meta-leadet
+    fra 04.10 har «meta»/«paid_social», mens testbookingen samme kveld, gjort
+    på en lenke uten parametere, har dem tomme.
+  */
+  "engagements_last_meeting_booked_source",
+  "engagements_last_meeting_booked_medium",
   "recent_conversion_event_name",
+  /*
+    FØRSTE KONVERTERING, til å skille Meta fra nettskjemaet. Ved en booking
+    er `recent_conversion_event_name` møtelenken, og da sier den ingenting
+    om hvor personen kom fra i utgangspunktet.
+  */
+  "first_conversion_event_name",
+  "hs_analytics_source",
   "recent_conversion_date",
   AVBRUTT_FELT,
   EPOST_FELT.en,
@@ -337,6 +453,13 @@ export type Leadkontakt = {
   lifecycle: string;
   /** `recent_conversion_event_name`: hvilket skjema leadet kom fra. */
   hendelse: string;
+  /** `first_conversion_event_name`: det aller første skjemaet. */
+  forsteHendelse: string;
+  /** Sporingsparameterne på møtelenken. Tomme uten parametere i lenken. */
+  bookingKilde: string;
+  bookingMedium: string;
+  /** `hs_analytics_source`: HubSpots egen kanal, f.eks. «PAID_SOCIAL». */
+  analysekilde: string;
   /** `recent_conversion_date`. */
   konvertert: string;
   epost1Sendt: string;
@@ -363,6 +486,10 @@ function somLeadkontakt(r: {
     telefon: p.mobilephone || p.phone || "",
     lifecycle: p.lifecyclestage ?? "",
     hendelse: p.recent_conversion_event_name ?? "",
+    forsteHendelse: p.first_conversion_event_name ?? "",
+    bookingKilde: p.engagements_last_meeting_booked_source ?? "",
+    bookingMedium: p.engagements_last_meeting_booked_medium ?? "",
+    analysekilde: p.hs_analytics_source ?? "",
     konvertert: p.recent_conversion_date ?? "",
     epost1Sendt: p[EPOST_FELT.en] ?? "",
     epost2Sendt: p[EPOST_FELT.to] ?? "",

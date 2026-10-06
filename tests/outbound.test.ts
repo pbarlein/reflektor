@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { bookingslug, erOutboundBooking } from "@/lib/hubspotcrm.ts";
+import {
+  bookingslug,
+  erOutboundBooking,
+  moteEmne,
+  motekanal,
+} from "@/lib/hubspotcrm.ts";
 
 /**
  * Outbound-møtene, bestilt 06.10.2026.
@@ -84,6 +89,10 @@ const kontakt = (endringer: Record<string, unknown> = {}) => ({
   telefon: "+47 900 11 222",
   lifecycle: "lead",
   hendelse: OUTBOUND,
+  forsteHendelse: "",
+  bookingKilde: "",
+  bookingMedium: "",
+  analysekilde: "",
   konvertert: "2026-10-06T09:00:00Z",
   epost1Sendt: "",
   epost2Sendt: "",
@@ -124,8 +133,11 @@ async function medHubspot(
   const opprettet: Record<string, string>[] = [];
   const koblet: { avtale: string; type: string; id: string }[] = [];
   const kontaktfelt: { kontakt: string; felt: Record<string, string> }[] = [];
+  const emner: string[] = [];
 
   process.env.HUBSPOT_TOKEN = "test";
+  /* Uten nøkkelen ville `send` gitt seg med én gang, og vi testet ingenting. */
+  process.env.RESEND_API_KEY = "test";
   console.info = () => {};
   console.error = () => {};
 
@@ -133,6 +145,11 @@ async function medHubspot(
     const url = String(inn instanceof Request ? inn.url : inn);
     const metode = init?.method ?? "GET";
     const kropp = init?.body ? JSON.parse(String(init.body)) : undefined;
+
+    if (url.startsWith("https://api.resend.com/")) {
+      emner.push((kropp as { subject: string }).subject);
+      return Response.json({ id: "e1" });
+    }
 
     if (url.includes("/crm/v3/pipelines/deals")) return Response.json(PIPELINE);
 
@@ -236,7 +253,7 @@ async function medHubspot(
       booket as never,
       NA,
     );
-    return { telling, flyttet, kilder, opprettet, koblet, kontaktfelt };
+    return { telling, flyttet, kilder, opprettet, koblet, kontaktfelt, emner };
   } finally {
     globalThis.fetch = opprinnelig;
     console.info = logg;
@@ -433,4 +450,170 @@ test("en avtale som ikke lot seg opprette telles som feil", async () => {
 
   assert.equal(telling.opprettet, 0);
   assert.equal(telling.feilet, 1);
+});
+
+/* ─────────── EMNET PÅ MØTEVARSELET (bestilt 06.10.2026) ─────────────── */
+
+/**
+ * Pål leser varselet på mobil og skal se på én linje hvem som skaffet
+ * møtet. HubSpot sender også sitt eget, men emnet der er fast — «Du har
+ * blitt booket av: …» — og sier ingenting om kanal.
+ *
+ * KANALEN INNENFOR OUTBOUND KOMMER FRA SPORINGSPARAMETERNE på lenken.
+ * Impact Motion må legge dem på: reflektor.no/booking?utm_source=instantly
+ * for e-post, ?utm_source=heyreach for LinkedIn. Uten dem kan de to ikke
+ * skilles, og da står det bare «outbound».
+ */
+test("emnet sier gruppe og kanal", () => {
+  const k = (endringer: Record<string, string>) => ({
+    hendelse: OUTBOUND,
+    forsteHendelse: "",
+    bookingKilde: "",
+    bookingMedium: "",
+    analysekilde: "",
+    ...endringer,
+  });
+
+  assert.equal(
+    moteEmne(motekanal(k({ bookingKilde: "instantly" }))),
+    "NYTT MØTE outbound e-post",
+  );
+  assert.equal(
+    moteEmne(motekanal(k({ bookingKilde: "masterinbox" }))),
+    "NYTT MØTE outbound e-post",
+  );
+  assert.equal(
+    moteEmne(motekanal(k({ bookingKilde: "heyreach" }))),
+    "NYTT MØTE outbound LinkedIn",
+  );
+  assert.equal(
+    moteEmne(motekanal(k({ bookingMedium: "linkedin" }))),
+    "NYTT MØTE outbound LinkedIn",
+  );
+});
+
+/** Uten sporingsparametere står det «outbound» alene, ikke en gjetning. */
+test("outbound uten sporing får ingen påstått kanal", () => {
+  assert.equal(
+    moteEmne(
+      motekanal({
+        hendelse: OUTBOUND,
+        forsteHendelse: "",
+        bookingKilde: "",
+        bookingMedium: "",
+        analysekilde: "",
+      }),
+    ),
+    "NYTT MØTE outbound",
+  );
+});
+
+/**
+ * INBOUND SKILLER META FRA NETTSIDEN. Verdiene er lest ut av portalen
+ * 06.10.2026: Meta-leadet fra 04.10 har «meta»/«paid_social» på bookingen
+ * og PAID_SOCIAL som kanal, fordi annonsen la parameterne på lenken.
+ */
+test("inbound skiller Meta fra reflektor.no", () => {
+  const meta = motekanal({
+    hendelse: INBOUND,
+    forsteHendelse: "Meetings Link: paal-barlein/intro",
+    bookingKilde: "meta",
+    bookingMedium: "paid_social",
+    analysekilde: "PAID_SOCIAL",
+  });
+  assert.equal(moteEmne(meta), "NYTT MØTE inbound Meta");
+
+  const nettside = motekanal({
+    hendelse: INBOUND,
+    forsteHendelse: "/kontaktoss: reflektor.no – kontaktskjema",
+    bookingKilde: "",
+    bookingMedium: "",
+    analysekilde: "DIRECT_TRAFFIC",
+  });
+  assert.equal(moteEmne(nettside), "NYTT MØTE inbound reflektor.no");
+});
+
+/** Et Meta-lead kjennes igjen på skjemanavnet alene, uten sporing. */
+test("Facebook Lead Ads alene er nok til å si Meta", () => {
+  assert.equal(
+    moteEmne(
+      motekanal({
+        hendelse: INBOUND,
+        forsteHendelse: "Facebook Lead Ads: Reflektor SoMe-abonnement okt 2026",
+        bookingKilde: "",
+        bookingMedium: "",
+        analysekilde: "",
+      }),
+    ),
+    "NYTT MØTE inbound Meta",
+  );
+});
+
+/**
+ * VARSELET GÅR NÅR AVTALEN FAKTISK KOMMER INN I «MØTE BOOKET», og navnet
+ * står i emnet så to møter samme dag ikke havner i samme Gmail-tråd.
+ */
+test("varselet sendes med kanalen i emnet", async () => {
+  const { telling, emner } = await medHubspot(
+    { avtaler: { "900100100": [{ id: "9001", stadium: "appointmentscheduled" }] } },
+    [kontakt({ bookingKilde: "heyreach" })],
+  );
+
+  assert.equal(telling.varslet, 1);
+  assert.deepEqual(emner, [
+    "NYTT MØTE outbound LinkedIn – Ingrid Nordlys (Nordlys Bakeri AS)",
+  ]);
+});
+
+test("en ny avtale for et outbound-møte varsles også", async () => {
+  const { telling, emner } = await medHubspot({ avtaler: {} }, [
+    kontakt({ bookingKilde: "instantly" }),
+  ]);
+
+  assert.equal(telling.opprettet, 1);
+  assert.deepEqual(emner, [
+    "NYTT MØTE outbound e-post – Ingrid Nordlys (Nordlys Bakeri AS)",
+  ]);
+});
+
+test("inbound-booking gir varsel med inbound i emnet", async () => {
+  const { emner } = await medHubspot(
+    { avtaler: { "900100100": [{ id: "9001", stadium: "appointmentscheduled" }] } },
+    [
+      kontakt({
+        hendelse: INBOUND,
+        forsteHendelse: "/kontaktoss: reflektor.no – kontaktskjema",
+      }),
+    ],
+  );
+
+  assert.deepEqual(emner, [
+    "NYTT MØTE inbound reflektor.no – Ingrid Nordlys (Nordlys Bakeri AS)",
+  ]);
+});
+
+/**
+ * STÅR AVTALEN ALLEREDE I «MØTE BOOKET», ER MØTET ALT VARSLET OM. Jobben
+ * kjører hvert femte minutt i fjorten dager; uten denne regelen ville Pål
+ * fått det samme varselet rundt fire tusen ganger.
+ */
+test("ingen varsel når avtalen alt står i Møte booket", async () => {
+  const { telling, emner } = await medHubspot(
+    { avtaler: { "900100100": [{ id: "9001", stadium: "presentationscheduled" }] } },
+    [kontakt()],
+  );
+
+  assert.equal(telling.varslet, 0);
+  assert.deepEqual(emner, []);
+});
+
+/** Et møte på en sak i Tilbud sendt flytter ingenting, og varsler ikke. */
+test("ingen varsel når ingenting ble gjort", async () => {
+  const { telling, emner } = await medHubspot(
+    { avtaler: { "900100100": [{ id: "9001", stadium: "decisionmakerboughtin" }] } },
+    [kontakt()],
+  );
+
+  assert.equal(telling.varslet, 0);
+  assert.deepEqual(emner, []);
 });

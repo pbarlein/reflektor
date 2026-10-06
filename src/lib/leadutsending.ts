@@ -10,6 +10,8 @@ import {
   hentStadiekart,
   knyttKontaktTilAvtale,
   erOutboundBooking,
+  moteEmne,
+  motekanal,
   opprettAvtale,
   settAvtalekilde,
   OUTBOUND_KILDE,
@@ -25,7 +27,7 @@ import {
   type Leadkontakt,
   type Stadiekart,
 } from "./hubspotcrm";
-import { sendMetaVarsel } from "./lead";
+import { sendMetaVarsel, sendMoteVarsel } from "./lead";
 import {
   epost1,
   epost2,
@@ -333,6 +335,8 @@ export type Avtaletelling = {
   flyttet: number;
   /** Nye avtaler laget for et outbound-møte som ingen avtale fanget opp. */
   opprettet: number;
+  /** Møtevarsler sendt til Pål. */
+  varslet: number;
   arkivert: number;
   "hoppet-over": number;
   feilet: number;
@@ -416,6 +420,7 @@ export async function flyttAvtalerForBookede(
   const telling: Avtaletelling = {
     flyttet: 0,
     opprettet: 0,
+    varslet: 0,
     arkivert: 0,
     "hoppet-over": 0,
     feilet: 0,
@@ -433,7 +438,7 @@ export async function flyttAvtalerForBookede(
   const maalOrdre = kart.ordre.get(kart.maal) ?? 0;
 
   /** Flytter én avtale framover, hvis den står tidligere enn målet. */
-  const flytt = async (a: Avtale, hvem: string, via: string) => {
+  const flytt = async (a: Avtale, k: Leadkontakt, via: string) => {
     const ordre = kart.ordre.get(a.stadium);
     /*
       UKJENT STADIUM RØRES IKKE. Står avtalen i en annen pipeline, er den
@@ -445,13 +450,23 @@ export async function flyttAvtalerForBookede(
     }
     if (await flyttAvtale(a.id, kart.maal)) {
       telling.flyttet += 1;
+      kommetInn.add(k.id);
       console.info(
-        `[avtale] Flyttet avtale ${a.id} til «Møte booket» for ${hvem}${via}.`,
+        `[avtale] Flyttet avtale ${a.id} til «Møte booket» for ${k.epost}${via}.`,
       );
     } else {
       telling.feilet += 1;
     }
   };
+
+  /*
+    KONTAKTENE SOM FIKK EN AVTALE INN I «MØTE BOOKET» I DENNE RUNDEN.
+    Settet er det som avgjør hvem Pål får varsel om: en avtale går inn der
+    nøyaktig én gang per booking. Jobben kjører hvert femte minutt, og uten
+    et slikt holdepunkt ville varselet gått om igjen så lenge bookingen lå
+    innenfor vinduet på fjorten dager.
+  */
+  const kommetInn = new Set<string>();
 
   /** Står avtalen i Interessert eller Møte booket? */
   const erAapen = (a: Avtale) => {
@@ -495,9 +510,37 @@ export async function flyttAvtalerForBookede(
     });
     if (id) {
       telling.opprettet += 1;
+      kommetInn.add(k.id);
       console.info(
         `[avtale] Opprettet avtale ${id} «${navn}» i «Møte booket» for ${k.epost}. Fakturerbart møte.`,
       );
+    } else {
+      telling.feilet += 1;
+    }
+  };
+
+  /**
+   * Varselet til Pål, med kanalen i emnet.
+   *
+   * EMNET ER DET VIKTIGE: «NYTT MØTE outbound e-post», «NYTT MØTE inbound
+   * Meta». Pål leser det på mobil og skal se på én linje hvem som skaffet
+   * møtet. HubSpot sender også sitt eget varsel, men med et fast emne som
+   * ikke sier noe — det kan slås av i innstillingene for bookingsiden.
+   */
+  const varsleOmMote = async (k: Leadkontakt) => {
+    const emne = moteEmne(motekanal(k));
+    const ok = await sendMoteVarsel({
+      emne,
+      navn: k.navn,
+      epost: k.epost,
+      bedrift: k.bedrift,
+      telefon: k.telefon,
+      moteBooket: moteDato(k.moteBooket),
+      sendt: na,
+    });
+    if (ok) {
+      telling.varslet += 1;
+      console.info(`[avtale] Varslet Pål: «${emne}» for ${k.epost}.`);
     } else {
       telling.feilet += 1;
     }
@@ -528,7 +571,7 @@ export async function flyttAvtalerForBookede(
 
     if (!makker) {
       /* Ingen makker: avtalene på kontakten selv er de eneste som finnes. */
-      for (const a of egne) await flytt(a, k.epost, "");
+      for (const a of egne) await flytt(a, k, "");
 
       if (outbound) {
         await merkOutbound(egne);
@@ -566,7 +609,7 @@ export async function flyttAvtalerForBookede(
     }
 
     const via = ` (avtalen hang på ${makker.epost})`;
-    for (const a of aapne) await flytt(a, k.epost, via);
+    for (const a of aapne) await flytt(a, k, via);
 
     if (outbound) await merkOutbound(aapne);
 
@@ -600,6 +643,15 @@ export async function flyttAvtalerForBookede(
     }
   }
 
+  /*
+    VARSLENE TIL SLUTT, ETTER AT CRM-ET STÅR RIKTIG. Da er det Pål åpner
+    fra e-posten allerede flyttet, og et varsel som feiler har ikke tatt
+    med seg ryddingen.
+  */
+  for (const k of booket) {
+    if (kommetInn.has(k.id)) await varsleOmMote(k);
+  }
+
   return telling;
 }
 
@@ -625,6 +677,7 @@ export async function kjorLeadepostjobb(na = new Date()): Promise<Jobbsvar> {
     avtaler: {
       flyttet: 0,
       opprettet: 0,
+      varslet: 0,
       arkivert: 0,
       "hoppet-over": 0,
       feilet: 0,

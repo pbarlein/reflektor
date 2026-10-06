@@ -578,3 +578,63 @@ export async function sendMetaVarsel(opp: {
     throw feil;
   }
 }
+
+/* ──────────── VARSELET NÅR NOEN BOOKER MØTE (06.10.2026) ────────────── */
+
+/**
+ * Varselet Pål får når noen har booket et møte.
+ *
+ * HVORFOR VI SENDER DET SELV. HubSpot sender alt et varsel — «Du har blitt
+ * booket av: …» — men emnet er fast og sier ingenting om hvor møtet kom
+ * fra. Pål leser dette på mobil og skal se på én linje om det er Impact
+ * Motion som har skaffet møtet eller om det kom inn av seg selv. Det er
+ * også skillet fakturaen bygger på.
+ *
+ * MALEN ER DEN SAMME SOM LEADVARSELET, og det er med vilje: Pål skal lese
+ * ett format. `moteBooket` gjør at oppfølgingsblokken byttes ut med
+ * møtetidspunktet og «ring ASAP» — det er allerede slik varselet ser ut når
+ * et lead har booket.
+ *
+ * KASTER IKKE. Et varsel som ikke kom fram skal ikke stoppe jobben som
+ * rydder avtaler. Logglinjen kan finnes igjen.
+ */
+export async function sendMoteVarsel(opp: {
+  emne: string;
+  navn: string;
+  epost: string;
+  bedrift: string;
+  telefon: string;
+  moteBooket: Date | null;
+  sendt?: Date;
+}): Promise<boolean> {
+  const lead: Lead = {
+    navn: opp.navn,
+    epost: opp.epost,
+    bedrift: opp.bedrift,
+    telefon: opp.telefon,
+    melding: "",
+    side: "booking",
+    nettside: "",
+    nettsideUtledet: false,
+    kilde: opp.emne,
+  };
+
+  const { tekst, html } = varsel(lead, opp.sendt ?? new Date(), false, {
+    utenNettsideOgBehov: true,
+    moteBooket: opp.moteBooket,
+  });
+
+  try {
+    await send({
+      til: MOTTAKER,
+      emne: varselEmne(opp.emne, lead),
+      tekst,
+      html,
+      svarTil: opp.epost,
+    });
+    return true;
+  } catch (feil) {
+    console.error("MØTEVARSEL FEILET", { epost: opp.epost, feil });
+    return false;
+  }
+}
