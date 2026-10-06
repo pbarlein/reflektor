@@ -9,6 +9,10 @@ import {
   harEgenAktivitet,
   hentStadiekart,
   knyttKontaktTilAvtale,
+  erOutboundBooking,
+  opprettAvtale,
+  settAvtalekilde,
+  OUTBOUND_KILDE,
   EPOST_FELT,
   harToken,
   hentLeadkontakt,
@@ -327,6 +331,8 @@ export async function sendEpost1TilNyttLead(epost: string): Promise<Utfall> {
 
 export type Avtaletelling = {
   flyttet: number;
+  /** Nye avtaler laget for et outbound-møte som ingen avtale fanget opp. */
+  opprettet: number;
   arkivert: number;
   "hoppet-over": number;
   feilet: number;
@@ -409,6 +415,7 @@ export async function flyttAvtalerForBookede(
 ): Promise<Avtaletelling> {
   const telling: Avtaletelling = {
     flyttet: 0,
+    opprettet: 0,
     arkivert: 0,
     "hoppet-over": 0,
     feilet: 0,
@@ -446,14 +453,87 @@ export async function flyttAvtalerForBookede(
     }
   };
 
+  /** Står avtalen i Interessert eller Møte booket? */
+  const erAapen = (a: Avtale) => {
+    const o = kart.ordre.get(a.stadium);
+    return o !== undefined && o <= maalOrdre;
+  };
+
+  /*
+    HVA SOM HINDRER AT VI LAGER EN NY AVTALE. Alt som ikke ligger død i
+    «Hviler» eller «Tapt» — også en avtale i et stadium vi ikke kjenner,
+    som betyr at den står i en annen pipeline. Da er saken noens, og en
+    avtale nummer to er ikke vår å lage.
+  */
+  const blokkerer = (a: Avtale) => !kart.hvilende.has(a.stadium);
+
+  /** Setter kilden på de åpne avtalene til et outbound-møte. */
+  const merkOutbound = async (avtaler: Avtale[]) => {
+    for (const a of avtaler) {
+      if (!erAapen(a)) continue;
+      if (await settAvtalekilde(a, OUTBOUND_KILDE)) {
+        console.info(
+          `[avtale] Avtale ${a.id} står som «${OUTBOUND_KILDE}». Fakturerbart møte.`,
+        );
+      }
+    }
+  };
+
+  /*
+    AVTALEN SOM MANGLET. Booker noen fra outbound uten å ha vært innom
+    skjemaet, finnes det ingen kontakt arbeidsflyten har laget en avtale
+    på — og da ville møtet vært booket uten at noe talte det.
+  */
+  const nyAvtale = async (k: Leadkontakt) => {
+    const navn = `${k.bedrift.trim() || k.navn.trim() || k.epost} – outbound`;
+    const id = await opprettAvtale({
+      navn,
+      stadium: kart.maal,
+      pipeline: kart.pipeline,
+      kilde: OUTBOUND_KILDE,
+      kontaktId: k.id,
+    });
+    if (id) {
+      telling.opprettet += 1;
+      console.info(
+        `[avtale] Opprettet avtale ${id} «${navn}» i «Møte booket» for ${k.epost}. Fakturerbart møte.`,
+      );
+    } else {
+      telling.feilet += 1;
+    }
+  };
+
+  /*
+    OUTBOUND-LEADS SKAL IKKE HA INBOUND-E-POSTENE. Presentasjonen og
+    påminnelsen er skrevet til noen som nettopp fylte ut skjemaet vårt.
+    Den som er ringt opp av Impact Motion og har booket, har fått sin
+    kontakt et helt annet sted.
+  */
+  const stoppOppfolging = async (k: Leadkontakt) => {
+    if (k.avbrutt === "true") return;
+    if (await merkSendt(k.id, { [AVBRUTT_FELT]: "true" })) {
+      console.info(
+        `[avtale] ${k.epost} booket via outbound. Oppfølgings-e-postene er slått av.`,
+      );
+    }
+  };
+
   for (const k of booket) {
     if (!k.moteBooket) continue;
 
+    const outbound = erOutboundBooking(k.hendelse);
     const { egne, makker, hennes } = await avtalebildet(k);
+
+    if (outbound) await stoppOppfolging(k);
 
     if (!makker) {
       /* Ingen makker: avtalene på kontakten selv er de eneste som finnes. */
       for (const a of egne) await flytt(a, k.epost, "");
+
+      if (outbound) {
+        await merkOutbound(egne);
+        if (!egne.some(blokkerer)) await nyAvtale(k);
+      }
       continue;
     }
 
@@ -469,6 +549,15 @@ export async function flyttAvtalerForBookede(
     });
 
     if (!aapne.length) {
+      /*
+        LIGGER SAKEN DØD, ER ET NYTT MØTE EN NY SAK. «Hviler» og «Tapt» er
+        ikke «for langt framme» — de er lagt bort. Booker hun på nytt via
+        outbound, skal møtet telles, og da trengs en avtale å telle.
+      */
+      if (outbound && !hennes.some(blokkerer) && !egne.some(blokkerer)) {
+        await nyAvtale(k);
+        continue;
+      }
       telling["hoppet-over"] += 1;
       console.info(
         `[avtale] ${k.epost} er samme person som ${makker.epost}, men avtalen hennes står for langt framme. Ingenting rørt.`,
@@ -478,6 +567,8 @@ export async function flyttAvtalerForBookede(
 
     const via = ` (avtalen hang på ${makker.epost})`;
     for (const a of aapne) await flytt(a, k.epost, via);
+
+    if (outbound) await merkOutbound(aapne);
 
     /* Bookingen skal vises på avtalen som blir stående. */
     const beholdt = aapne[0]!;
@@ -531,7 +622,13 @@ export async function kjorLeadepostjobb(na = new Date()): Promise<Jobbsvar> {
   const svar: Jobbsvar = {
     epost1: tomTeller(),
     epost2: tomTeller(),
-    avtaler: { flyttet: 0, arkivert: 0, "hoppet-over": 0, feilet: 0 },
+    avtaler: {
+      flyttet: 0,
+      opprettet: 0,
+      arkivert: 0,
+      "hoppet-over": 0,
+      feilet: 0,
+    },
     aktiv: aktiv(),
   };
 

@@ -26,6 +26,60 @@ export const SKJEMANAVN = {
   meta: "Reflektor SoMe-abonnement",
 } as const;
 
+/* ─────────── OUTBOUND-BOOKINGER (06.10.2026) ─────────────────────────── */
+
+/**
+ * De to bookingsidene, med sluggen slik den står i adressen.
+ *
+ * HVORFOR TO. Impact Motion får betalt per booket møte fra outbound, og et
+ * fakturagrunnlag som bygger på en manuell kryssjekk er et fakturagrunnlag
+ * ingen stoler på. Outbound-leadene booker derfor på sin egen side, og det
+ * er den siden som avgjør hvilken kilde avtalen får.
+ *
+ * SLUGGEN ER DET SOM STÅR ETTER DOMENET:
+ * meetings-eu1.hubspot.com/reflektor/outbound → «reflektor/outbound».
+ *
+ * HUBSPOT SKRIVER DEN PÅ KONTAKTEN SOM EN KONVERTERING. Lest ut av portalen
+ * 06.10.2026: `recent_conversion_event_name` på de tre kontaktene som har
+ * booket står til «Meetings Link: paal-barlein/intro» — HubSpot regner en
+ * møtelenke som et skjema. Egenskapen er derfor den som skiller de to, og
+ * den er lest, ikke gjettet.
+ */
+export const BOOKINGLENKER = {
+  inbound: "paal-barlein/intro",
+  outbound: "reflektor/outbound",
+} as const;
+
+/** Feltet Kilde på avtalen, og verdien et outbound-møte skal ha. */
+export const KILDE_FELT = "kilde";
+export const OUTBOUND_KILDE = "Outbound – Impact Motion";
+
+/** Slik HubSpot innleder konverteringen for en møtelenke. */
+const MOTELENKE = "meetings link:";
+
+/**
+ * Sluggen til bookingsiden en konvertering kom fra. Tom hvis den ikke er
+ * en møtelenke i det hele tatt — et skjemalead gir «».
+ */
+export function bookingslug(hendelse: string): string {
+  const t = hendelse.trim().toLocaleLowerCase("en-US");
+  if (!t.startsWith(MOTELENKE)) return "";
+  return t.slice(MOTELENKE.length).trim().replace(/^\/+|\/+$/g, "");
+}
+
+/**
+ * Kom bookingen fra outbound-siden?
+ *
+ * STRENGT MED VILJE: bare den ene sluggen gir sant. Et ukjent navn — en
+ * tredje bookingside, eller en slug som er endret i HubSpot — regnes som
+ * inbound, og da skjer det som skjedde før. Å gjette feil vei ville satt
+ * kilden «Outbound» på et møte Impact Motion ikke har skaffet, og det er
+ * en feil som koster penger.
+ */
+export function erOutboundBooking(hendelse: string): boolean {
+  return bookingslug(hendelse) === BOOKINGLENKER.outbound;
+}
+
 export type Utfall =
   | { ok: true }
   | { ok: false; grunn: "ikke-satt-opp" | "ikke-funnet" | "feil" };
@@ -573,15 +627,32 @@ export async function loggEpost(
  * etter Møte booket, og regelen «bare framover» dekker alle fire.
  */
 export type Stadiekart = {
+  /** ID-en til pipelinen. Trengs for å opprette en avtale i den. */
+  pipeline: string;
   /** ID-en til «Møte booket». */
   maal: string;
   /** Stadie-ID → rekkefølge i pipelinen. */
   ordre: Map<string, number>;
+  /**
+   * Stadiene en sak kan ligge død i: «Hviler» og «Tapt».
+   *
+   * HVORFOR DE TRENGER EGNE ID-ER. Rekkefølgen alene holder ikke: «Vunnet»
+   * ligger mellom «Tilbud sendt» og «Hviler», og en vunnet sak skal ikke
+   * behandles likt som en tapt. Derfor slås de to opp på navn, i den
+   * pipelinen HubSpot faktisk svarer med.
+   *
+   * ER SETTET TOMT — navnene er endret — skjer det minst mulig: da regnes
+   * en slik avtale som en avtale, og ingen ny lages. Det er den trygge
+   * veien å bomme på.
+   */
+  hvilende: Set<string>;
 };
 
 /** Navnet på pipelinen og stadiet, slik de står i HubSpot. */
 const PIPELINE_NAVN = "Reflektor – salg";
 const MAALSTADIUM = "Møte booket";
+/** Stadiene der saken ligger død, og en ny booking fortjener en ny avtale. */
+const HVILENDE_STADIER = ["Hviler", "Tapt"];
 
 /** Tegnvask før sammenligning: «–» og «-» skal regnes som samme strek. */
 function likNavn(a: string, b: string): boolean {
@@ -620,6 +691,7 @@ export async function hentStadiekart(): Promise<Stadiekart | null> {
 
     const data = (await svar.json()) as {
       results?: {
+        id?: string;
         label?: string;
         stages?: { id?: string; label?: string; displayOrder?: number }[];
       }[];
@@ -642,11 +714,16 @@ export async function hentStadiekart(): Promise<Stadiekart | null> {
     }
 
     const ordre = new Map<string, number>();
+    const hvilende = new Set<string>();
     for (const s of pipeline.stages) {
-      if (s.id) ordre.set(s.id, s.displayOrder ?? 0);
+      if (!s.id) continue;
+      ordre.set(s.id, s.displayOrder ?? 0);
+      if (HVILENDE_STADIER.some((h) => likNavn(s.label ?? "", h))) {
+        hvilende.add(s.id);
+      }
     }
 
-    return { maal: maal.id, ordre };
+    return { pipeline: pipeline.id ?? "default", maal: maal.id, ordre, hvilende };
   } catch (feil) {
     console.error("[avtale] Oppslaget av pipelinene feilet.", feil);
     return null;
@@ -658,6 +735,13 @@ export type Avtale = {
   stadium: string;
   /** Når avtalen ble opprettet. Styrer 24-timersgrensen for arkivering. */
   opprettet: string;
+  /**
+   * Feltet Kilde. Tom streng hvis det ikke er satt.
+   *
+   * LESES FOR Å KUNNE LA DEN VÆRE. En avtale som alt har en kilde — «Meta»,
+   * «Henvisning» — skal ikke få den overskrevet av en booking.
+   */
+  kilde: string;
 };
 
 /** Avtalene som henger på kontakten, med id og stadium. Tom ved feil. */
@@ -683,7 +767,7 @@ export async function avtalerFor(kontaktId: string): Promise<Avtale[]> {
       method: "POST",
       headers: hoder(),
       body: JSON.stringify({
-        properties: ["dealstage", "createdate"],
+        properties: ["dealstage", "createdate", KILDE_FELT],
         inputs: ider.map((id) => ({ id })),
       }),
       signal: AbortSignal.timeout(TIDSTAK_MS),
@@ -694,7 +778,7 @@ export async function avtalerFor(kontaktId: string): Promise<Avtale[]> {
         (await avtaler.json()) as {
           results?: {
             id: string;
-            properties: { dealstage?: string; createdate?: string };
+            properties: Record<string, string | null | undefined>;
           }[];
         }
       ).results
@@ -703,6 +787,7 @@ export async function avtalerFor(kontaktId: string): Promise<Avtale[]> {
           id: d.id,
           stadium: d.properties.dealstage!,
           opprettet: d.properties.createdate ?? "",
+          kilde: d.properties[KILDE_FELT] ?? "",
         })) ?? []
     );
   } catch (feil) {
@@ -938,5 +1023,145 @@ export async function knyttKontaktTilAvtale(
   } catch (feil) {
     console.error("[avtale] Koblingen feilet.", feil);
     return false;
+  }
+}
+
+/* ────────── AVTALEN FOR ET OUTBOUND-MØTE (06.10.2026) ───────────────── */
+
+/**
+ * Setter Kilde på en avtale — men bare hvis feltet er ledig.
+ *
+ * REGELEN ER SMAL MED VILJE. Står det alt noe annet der — «Meta»,
+ * «Henvisning», «Eksisterende kunde» — er det noen som har bestemt det, og
+ * en booking er ikke grunn god nok til å overprøve dem. Tomt felt, eller
+ * samme verdi som vi skulle satt, er de to tilfellene som skrives.
+ *
+ * `true` BETYR AT FELTET STÅR RIKTIG ETTERPÅ, ikke at vi skrev noe. Står
+ * verdien der fra før, er det ingenting å gjøre, og det er ikke en feil.
+ */
+export async function settAvtalekilde(
+  avtale: Avtale,
+  kilde: string,
+): Promise<boolean> {
+  if (!harToken()) return false;
+  const na = avtale.kilde.trim();
+  if (na === kilde) return true;
+  if (na) {
+    console.info(
+      `[avtale] Avtale ${avtale.id} har alt kilde «${na}». Lar den stå.`,
+    );
+    return false;
+  }
+
+  try {
+    const svar = await fetch(`${BASIS}/crm/v3/objects/deals/${avtale.id}`, {
+      method: "PATCH",
+      headers: hoder(),
+      body: JSON.stringify({ properties: { [KILDE_FELT]: kilde } }),
+      signal: AbortSignal.timeout(TIDSTAK_MS),
+    });
+    if (svar.ok) return true;
+    console.error(
+      `[avtale] Klarte ikke sette kilde på avtale ${avtale.id} (${svar.status}). ${await svar.text().catch(() => "")}`,
+    );
+    return false;
+  } catch (feil) {
+    console.error("[avtale] Skrivingen av kilde feilet.", feil);
+    return false;
+  }
+}
+
+/** Selskapene kontakten henger på. Tom liste ved feil. */
+export async function selskaperFor(kontaktId: string): Promise<string[]> {
+  if (!harToken()) return [];
+  try {
+    const svar = await fetch(
+      `${BASIS}/crm/v4/objects/contacts/${kontaktId}/associations/companies?limit=10`,
+      { headers: hoder(), signal: AbortSignal.timeout(TIDSTAK_MS) },
+    );
+    if (!svar.ok) return [];
+    return (
+      ((await svar.json()) as { results?: { toObjectId: string }[] }).results ??
+      []
+    ).map((r) => r.toObjectId);
+  } catch (feil) {
+    console.error("[avtale] Oppslag av selskap feilet.", feil);
+    return [];
+  }
+}
+
+/** Knytter et selskap til en avtale, så kortet står der det hører hjemme. */
+export async function knyttSelskapTilAvtale(
+  avtaleId: string,
+  selskapId: string,
+): Promise<boolean> {
+  if (!harToken()) return false;
+  try {
+    const svar = await fetch(
+      `${BASIS}/crm/v4/objects/deals/${avtaleId}/associations/default/companies/${selskapId}`,
+      { method: "PUT", headers: hoder(), signal: AbortSignal.timeout(TIDSTAK_MS) },
+    );
+    if (svar.ok) return true;
+    console.error(
+      `[avtale] Klarte ikke knytte selskap ${selskapId} til avtale ${avtaleId} (${svar.status}).`,
+    );
+    return false;
+  } catch (feil) {
+    console.error("[avtale] Koblingen til selskap feilet.", feil);
+    return false;
+  }
+}
+
+/**
+ * Oppretter en avtale, og kobler den til kontakten og selskapet hennes.
+ *
+ * KOBLINGENE ER EGNE KALL, ikke `associations` i opprettelsen. Da er det
+ * samme vei som `knyttKontaktTilAvtale` bruker fra før, og en kobling som
+ * feiler tar ikke med seg avtalen — den finnes, og kan kobles for hånd.
+ *
+ * `null` BETYR AT INGEN AVTALE BLE LAGET. Den som spør teller det som en
+ * feil, og neste kjøring prøver igjen.
+ */
+export async function opprettAvtale(opplysninger: {
+  navn: string;
+  stadium: string;
+  pipeline: string;
+  kilde: string;
+  kontaktId: string;
+}): Promise<string | null> {
+  if (!harToken()) return null;
+
+  try {
+    const svar = await fetch(`${BASIS}/crm/v3/objects/deals`, {
+      method: "POST",
+      headers: hoder(),
+      body: JSON.stringify({
+        properties: {
+          dealname: opplysninger.navn,
+          dealstage: opplysninger.stadium,
+          pipeline: opplysninger.pipeline,
+          [KILDE_FELT]: opplysninger.kilde,
+        },
+      }),
+      signal: AbortSignal.timeout(TIDSTAK_MS),
+    });
+    if (!svar.ok) {
+      console.error(
+        `[avtale] Klarte ikke opprette avtale for kontakt ${opplysninger.kontaktId} (${svar.status})${svar.status === 403 ? " — mangler tokenet crm.objects.deals.write?" : ""}. ${await svar.text().catch(() => "")}`,
+      );
+      return null;
+    }
+
+    const id = ((await svar.json()) as { id?: string }).id;
+    if (!id) return null;
+
+    await knyttKontaktTilAvtale(id, opplysninger.kontaktId);
+    for (const selskap of await selskaperFor(opplysninger.kontaktId)) {
+      await knyttSelskapTilAvtale(id, selskap);
+    }
+    return id;
+  } catch (feil) {
+    console.error("[avtale] Opprettelsen feilet.", feil);
+    return null;
   }
 }

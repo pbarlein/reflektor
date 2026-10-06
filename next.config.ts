@@ -24,6 +24,16 @@ import type { NextConfig } from "next";
  * tests/redirects.test.ts holder kartet på 301, slik at en ny oppføring med
  * `statusCode: 301` ikke sniker inn en 308 igjen.
  */
+/**
+ * Bookingsiden for outbound-møter, laget i HubSpot 06.10.2026.
+ *
+ * EGEN SIDE, IKKE DEN SAMME SOM INBOUND. Innstillingene er like; det som
+ * skiller dem er at bookingen havner under et eget navn i HubSpot, og det
+ * er det navnet fakturagrunnlaget til Impact Motion hviler på. Se
+ * src/lib/hubspotcrm.ts, BOOKINGLENKER.
+ */
+const BOOKING_OUTBOUND = "https://meetings-eu1.hubspot.com/reflektor/outbound";
+
 const redirects: NextConfig["redirects"] = async () => [
   // --- Kontakt: /kontakt og /kontakt-oss er 404, /kontaktoss er den ekte ---
   { source: "/kontakt", destination: "/kontaktoss", statusCode: 301 },
@@ -485,6 +495,39 @@ const redirects: NextConfig["redirects"] = async () => [
     source: "/privacypolicy",
     destination: "/personvern",
     statusCode: 301,
+  },
+
+  /*
+   * ───────────────── /booking: OUTBOUND-MØTENE (06.10.2026) ─────────────
+   *
+   * HVA DEN ER FOR: Impact Motion får betalt per booket møte fra outbound.
+   * Et møte som er booket av dem må derfor kunne skilles fra et møte som
+   * kom inn av seg selv, uten at noen krysser av for hånd. Skillet skjer i
+   * HubSpot, og det er bookingsiden som bærer det — derfor sin egen adresse.
+   *
+   * /book OG /mote ER IKKE RØRT. De er Bulk Redirects i Vercel og peker på
+   * inbound-siden. Denne er en tredje adresse, ikke en endring av dem.
+   *
+   * 302, IKKE 301, OG DET ER ET VALG. Målet er en HubSpot-adresse vi ikke
+   * eier. Byttes bookingsiden ut, skal /booking kunne peke et annet sted
+   * uten at en nettleser sitter med gammel adresse i cachen. En 301 er
+   * nesten umulig å ta tilbake. Adressen har ingen søkeverdi å verne — den
+   * står i e-poster og meldinger, ikke i Google.
+   *
+   * SPORINGSPARAMETERNE FØLGER MED. Next tar med query-strengen når målet
+   * ikke har en selv, og det er hele poenget: HubSpot leser utm-verdiene og
+   * skriver dem på kontakten.
+   *
+   * SKRÅSTREKEN TRENGER INGEN EGEN REGEL. Her sto én, og den var død kode:
+   * Next normaliserer /booking/ til /booking med en 308 FØR kartet leses,
+   * så regelen kunne aldri fyre. Målt på produksjonsbygget — /booking/ gir
+   * 308 til /booking, så 302 videre, og sporingsparameterne overlever
+   * begge hoppene.
+   */
+  {
+    source: "/booking",
+    destination: BOOKING_OUTBOUND,
+    statusCode: 302,
   },
 
   /*

@@ -103,10 +103,23 @@ test("ingen live annonseside er kilde i en redirect", async () => {
   }
 });
 
+/**
+ * ET MÅL UTENFOR SIDEN ER IKKE EN RUTE HOS OSS. Lagt til 06.10.2026, da
+ * /booking kom.
+ *
+ * Testene under sjekker at et mål finnes i src/app. En HubSpot-adresse gjør
+ * aldri det, og en test som krever det ville tvunget fram enten en falsk
+ * rute eller et unntak uten begrunnelse. At den eksterne adressen faktisk
+ * svarer, kan bare kontrolleres med nett — det gjøres for hånd, slik regel
+ * 1 i AGENTS.md krever for alle redirects.
+ */
+const utenfor = (mål: string) => /^https?:\/\//.test(mål);
+
 test("hvert redirect-mål finnes som rute", async () => {
   const finnes = ruter();
 
   for (const r of await kart()) {
+    if (utenfor(r.destination)) continue;
     const mål = r.destination.split(/[?#]/)[0];
     const dynamisk = [...finnes].some((rute) =>
       new RegExp(`^${rute.replace(/\[[^\]]+\]/g, "[^/]+")}$`).test(mål),
@@ -191,8 +204,21 @@ test("/takk finnes som rute", async () => {
   );
 });
 
+/**
+ * UNNTAKET FRA 301-REGELEN, med begrunnelse. Lagt til 06.10.2026.
+ *
+ * /booking peker på en HubSpot-adresse vi ikke eier. Byttes bookingsiden,
+ * skal adressen kunne peke et annet sted samme dag — og en 301 ligger i
+ * nettleserens cache lenge etter at vi har ombestemt oss. Adressen har
+ * ingen søkeverdi å verne: den står i e-poster og meldinger, ikke i Google.
+ *
+ * REGELEN ELLERS STÅR UENDRET. Alt som peker innenfor siden skal være 301.
+ */
+const MIDLERTIDIGE = new Map<string, number>([["/booking", 302]]);
+
 test("hver redirect er en eksplisitt 301", async () => {
   for (const r of await kart()) {
+    const ventet = MIDLERTIDIGE.get(r.source) ?? 301;
     assert.equal(
       "permanent" in r,
       false,
@@ -204,9 +230,10 @@ test("hver redirect er en eksplisitt 301", async () => {
     );
     assert.equal(
       (r as { statusCode?: number }).statusCode,
-      301,
-      `${r.source} har statusCode ${(r as { statusCode?: number }).statusCode}. ` +
-        `Kartet skal være 301 hele veien. Bestemt 27.09.2026.`,
+      ventet,
+      `${r.source} har statusCode ${(r as { statusCode?: number }).statusCode}, ` +
+        `ventet ${ventet}. Kartet skal være 301 hele veien, med de unntakene ` +
+        `som står i MIDLERTIDIGE og hvorfor. Bestemt 27.09.2026.`,
     );
   }
 });
@@ -296,6 +323,93 @@ test("ingen redirect peker på en oversiktsside", async () => {
         `praksis en myk 404 for Google: målet svarer ikke på det kilden ` +
         `het. Pek den på nærmeste side etter tema, eller skriv unntaket ` +
         `inn i OVERSIKTSSIDER med en begrunnelse.`,
+    );
+  }
+});
+
+/* ──────────── /booking: OUTBOUND-MØTENE (06.10.2026) ────────────────── */
+
+/**
+ * Egen bookingadresse for outbound, bestilt 06.10.2026.
+ *
+ * Impact Motion får betalt per booket møte fra outbound. Fakturagrunnlaget
+ * er avtalene som har gått inn i «Møte booket» med kilde «Outbound – Impact
+ * Motion», og det er bookingsiden som setter den kilden. Peker /booking
+ * feil, teller vi feil møter — derfor står adressen her og ikke bare i
+ * kartet.
+ *
+ * DE TO INBOUND-ADRESSENE /book OG /mote ER IKKE KODE. De er Bulk Redirects
+ * i Vercel, og skal ikke flyttes hit: en regel to steder er en regel ingen
+ * vet hvilken av er den gjeldende.
+ */
+const BOOKING_OUTBOUND = "https://meetings-eu1.hubspot.com/reflektor/outbound";
+
+test("/booking går til outbound-bookingsiden", async () => {
+  const treff = (await kart()).filter((r) => r.source === "/booking");
+
+  assert.equal(treff.length, 1, "/booking skal være kilde i presis én regel");
+  assert.equal(treff[0].destination, BOOKING_OUTBOUND);
+  assert.equal(
+    (treff[0] as { statusCode?: number }).statusCode,
+    302,
+    `/booking skal være 302. Målet er en adresse vi ikke eier, og en 301 ` +
+      `kan ikke tas tilbake fra nettleserens cache.`,
+  );
+});
+
+/**
+ * SKRÅSTREKEN HAR INGEN EGEN REGEL, OG SKAL IKKE HA DET.
+ *
+ * Next normaliserer /booking/ til /booking med en 308 før kartet i det
+ * hele tatt leses, så en regel for /booking/ ville aldri fyrt. Målt på
+ * produksjonsbygget 06.10.2026: /booking/?utm_source=instantly ender på
+ * bookingsiden etter to hopp, med parameteren i behold.
+ */
+test("/booking/ har ingen egen regel", async () => {
+  const kilder = new Set((await kart()).map((r) => r.source));
+  assert.ok(
+    !kilder.has("/booking/"),
+    "/booking/ er lagt inn som egen regel. Next normaliserer skråstreken " +
+      "først, så regelen er død kode som ser virksom ut.",
+  );
+});
+
+/**
+ * INGEN REGEL FØR /booking MÅ FANGE DEN. Next bruker den første som
+ * matcher, så en joker lenger oppe ville gjort regelen død uten at noe
+ * sa fra.
+ */
+test("ingen tidligere regel fanger /booking", async () => {
+  const alle = await kart();
+  const vår = alle.findIndex((r) => r.source === "/booking");
+  assert.ok(vår >= 0, "/booking finnes ikke i kartet");
+
+  for (const r of alle.slice(0, vår)) {
+    /* Joker-segmenter: /tjenester/:rest+ og lignende. */
+    const mønster = new RegExp(
+      `^${r.source.replace(/:[^/]+\+/g, ".+").replace(/:[^/]+\*/g, ".*").replace(/:[^/]+/g, "[^/]+")}$`,
+    );
+    assert.ok(
+      !mønster.test("/booking") && !mønster.test("/booking/"),
+      `${r.source} står før /booking og fanger den. Da er /booking død kode.`,
+    );
+  }
+});
+
+/**
+ * /book OG /mote SKAL IKKE FINNES I KODEN. De er Bulk Redirects i Vercel
+ * og peker på inbound-bookingsiden. Legges de inn her også, finnes samme
+ * regel to steder — og den ene av dem er usynlig for den som leser den
+ * andre.
+ */
+test("/book og /mote er fortsatt ikke i kartet", async () => {
+  const kilder = new Set((await kart()).map((r) => r.source));
+
+  for (const sti of ["/book", "/mote"]) {
+    assert.ok(
+      !kilder.has(sti),
+      `${sti} er lagt inn i next.config.ts. Den styres av Vercel Bulk ` +
+        `Redirects, og to regler for samme adresse er verre enn én.`,
     );
   }
 });

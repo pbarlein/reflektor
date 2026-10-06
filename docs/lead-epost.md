@@ -370,3 +370,62 @@ etter likhet — så de to kontaktene ble aldri lagt ved siden av hverandre.
 Nå søkes det på **første ord i bedriftsnavnet** («Haugland*»), og
 normaliseringen avgjør til slutt. Et vanlig førsteord gir bare et bredere
 søk, ikke et feil svar: alt som ikke er samme person filtreres bort etterpå.
+
+## Egen bookinglenke for outbound (bestilt 06.10.2026)
+
+**Hvorfor.** Impact Motion får betalt per booket møte fra outbound (Instantly,
+HeyReach, Masterinbox). Et fakturagrunnlag som bygger på at noen krysser av for
+hånd, er et fakturagrunnlag ingen stoler på. Outbound-leadene booker derfor på
+sin egen side, og det er siden som avgjør hva avtalen blir merket med.
+
+**De to adressene.**
+
+| Adresse | Går til | Hvem |
+|---|---|---|
+| `reflektor.no/book`, `/mote` | `meetings-eu1.hubspot.com/paal-barlein/intro` | Inbound: nettside og Meta |
+| `reflektor.no/booking` | `meetings-eu1.hubspot.com/reflektor/outbound` | Outbound: Impact Motion |
+
+`/book` og `/mote` er Bulk Redirects i Vercel og er ikke rørt. `/booking` er en
+302 i `next.config.ts` — 302 og ikke 301 fordi målet er en HubSpot-adresse vi
+ikke eier, og en 301 ligger i nettleserens cache lenge etter at vi har
+ombestemt oss. Sporingsparameterne følger med; målt på produksjonsbygget
+06.10.2026. `/booking/` med skråstrek trenger ingen egen regel: Next
+normaliserer den til `/booking` med en 308 først, så den ender samme sted.
+
+**Hvordan jobben kjenner igjen et outbound-møte.** HubSpot regner en møtelenke
+som et skjema og skriver den på kontakten i `recent_conversion_event_name`.
+Lest ut av portalen 06.10.2026: de tre kontaktene som har booket står alle med
+`Meetings Link: paal-barlein/intro`. Outbound-siden gir tilsvarende
+`Meetings Link: reflektor/outbound`. Alt annet — en tredje bookingside, en
+tom verdi, et skjemalead — regnes som inbound. Å bomme den veien gir et møte
+for lite på fakturaen; å bomme motsatt vei gir et møte Reflektor skaffet selv,
+fakturert som Impact Motions.
+
+**Egenskapen er «siste konvertering», ikke «siste booking».** Fyller et
+outbound-lead ut kontaktskjemaet vårt etter at møtet er booket, flyttes verdien
+til skjemanavnet. Avtalen er da alt merket, så fakturagrunnlaget står — men en
+ny booking fra samme kontakt ville blitt lest som inbound. Det er den kjente
+svakheten ved å lese dette feltet, og den er valgt framfor å lete i
+møteaktivitetens tekst, som er mye lettere å brekke.
+
+**Hva jobben gjør når den ser et outbound-møte.**
+
+1. Avtale i Interessert → flyttes til Møte booket, og Kilde settes til
+   `Outbound – Impact Motion`.
+2. Ingen åpen avtale → ny avtale i Møte booket med samme kilde, navnet
+   «\<Bedrift\> – outbound», koblet til kontakten og selskapet. Dublettsjekken
+   på telefon og bedriftsnavn kjører først, så samme selskap ikke får avtale
+   nummer to.
+3. Tilbud sendt og Vunnet røres ikke, og får ingen avtale ved siden av. Saken
+   er i gang.
+4. Hviler og Tapt er lagt bort: der lages en ny avtale, og det logges.
+5. `paminnelse_avbrutt` settes på kontakten. Outbound-leads skal aldri ha
+   e-post 1 eller 2 — de er skrevet til noen som nettopp fylte ut skjemaet.
+
+**Kilde overskrives aldri.** Står det alt noe annet der — «Meta»,
+«Henvisning», «Eksisterende kunde» — er det noen som har bestemt det, og en
+booking er ikke grunn god nok til å overprøve dem.
+
+**Fakturagrunnlaget** er avtalene i «Reflektor – salg» med kilde
+`Outbound – Impact Motion` som har vært innom «Møte booket». HubSpot lagrer
+datoen for stadiebyttet selv.
