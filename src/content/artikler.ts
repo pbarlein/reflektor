@@ -3697,6 +3697,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Reklame er betalt kommunikasjon som skal få noen til å kjøpe, velge eller mene noe. Typer, virkemidler, hva loven sier og hva god reklame har til felles.",
     publisert: "2026-10-02",
+    oppdatert: "2026-10-08",
     blokker: [
       {
         type: "avsnitt",
@@ -3773,13 +3774,13 @@ export const artikler: Artikkel[] = [
       {
         type: "avsnitt",
         tekst:
-          "Markedsføringsloven sier at all markedsføring skal utformes og presenteres slik at den tydelig fremstår som markedsføring (§ 3). Forbrukertilsynet fører tilsyn med reglene.",
+          "Markedsføringsloven sier at all markedsføring skal utformes og presenteres slik at den tydelig fremstår som markedsføring (§ 28). Forbrukertilsynet fører tilsyn med reglene.",
       },
       {
         type: "kilde",
         tekst:
-          "Markedsføringsloven § 3: markedsføring skal utformes og presenteres slik at den tydelig framstår som markedsføring.",
-        url: "https://lovdata.no/lov/2009-01-09-2/§3",
+          "Markedsføringsloven § 28: markedsføring skal utformes og presenteres slik at den tydelig framstår som markedsføring.",
+        url: "https://lovdata.no/lov/2009-01-09-2/§28",
         nofollow: true,
       },
       {

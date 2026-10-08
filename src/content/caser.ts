@@ -257,7 +257,7 @@ export const kundecaser: Kundecase[] = [
         navn: "Soulcake om fem år med Reflektor",
         beskrivelse:
           "Ragnhild Gaarde Bucataru i Soulcake forteller om samarbeidet med Reflektor, som har produsert foto og video for bakeriet siden 2022.",
-        publisert: "2026-10-01",
+        publisert: "2026-10-01T12:00:00+02:00",
       },
       innledning:
         "Ragnhild Gaarde Bucataru i Soulcake har jobbet med Reflektor siden 2022. Samarbeidet er inne i sitt femte år. Da vi spurte om hun ville si noen ord på kamera, svarte hun ærlig:",
