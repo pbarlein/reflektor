@@ -9,7 +9,6 @@ import { Dommerke } from "@/components/rapport/Dommerke";
 import { Endringene, Uforklart } from "@/components/rapport/Endringene";
 import { Nedlastingsknapp } from "@/components/rapport/Nedlastingsknapp";
 import { Nokkeltall } from "@/components/rapport/Nokkeltall";
-import { Samtale } from "@/components/rapport/Samtale";
 import { Notatene, Stegene } from "@/components/rapport/Stegene";
 import { Ukegraf, Uketabell } from "@/components/rapport/Ukegraf";
 import { kr, norskTidspunkt, prosent } from "@/lib/rapportformat";
@@ -263,15 +262,6 @@ export default async function Rapportside({ params }: Params) {
                   </div>
                 </section>
               )}
-
-              {/*
-                ── 7b SAMTALEN ─────────────────────────────────────────
-
-                Rett under stegene, fordi det er der kommandoene hører
-                hjemme: «kryss av det andre», «lag listen for opprydding».
-                Se `Samtale` for hvorfor den ikke ligger på en egen side.
-              */}
-              <Samtale type={type} id={id} />
 
               {/* ── 8 FORRIGE UKES STEG ─────────────────────────────────── */}
               {r.previous_steps.length > 0 && (
