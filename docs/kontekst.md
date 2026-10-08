@@ -130,8 +130,8 @@ Du har bare hatt Ahrefs som kilde. Les tallene derfra med disse forbeholdene,
 ellers trekker du feil konklusjon om hva siden skal være.
 
 ### Ahrefs er etterslepende og estimert
-Trafikktallene er estimater, ikke faktiske klikk. GSC er ikke koblet til
-Ahrefs-prosjektet. Nye sider har per definisjon ingen tall ennå — fravær av
+Trafikktallene er estimater, ikke faktiske klikk. ~~GSC er ikke koblet til
+Ahrefs-prosjektet.~~ **RETTET 08.10.2026:** GSC er koblet til, se AGENTS.md. Nye sider har per definisjon ingen tall ennå — fravær av
 data er ikke bevis på fravær av verdi.
 
 ### Bloggen ser verdifull ut fordi den er gammel, ikke fordi den virker

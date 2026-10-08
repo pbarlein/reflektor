@@ -42,7 +42,7 @@ sommeren). Commit-tidspunktene under er omregnet fra UTC til Oslo.
 | `/arbeid/bts-baker-brun` | /reels-produksjon | 2026-09-29T14:22:50+02:00 | første commit |
 | `/arbeid/bts-anton-sport` | /reels-produksjon | 2026-09-29T14:22:50+02:00 | første commit |
 | `/arbeid/retail24-sandefjord` | /eventfotograf-eventvideo | 2026-09-30T23:51:06+02:00 | første commit |
-| `/arbeid/soulcake/soulcake-omtale-ragnhild` | forsiden, /videoproduksjon-i-oslo, /vart-arbeid/soulcake | 2026-10-01 | sto riktig fra før |
+| `/arbeid/soulcake/soulcake-omtale-ragnhild` | forsiden, /videoproduksjon-i-oslo, /vart-arbeid/soulcake | 2026-10-01T12:00:00+02:00 | rettet 08.10.2026: sto som bare dato, og Search Console meldte «missing a time zone» og «invalid datetime» på to elementer |
 
 **Et forbehold som er verdt å kjenne til:** de fire kjedefilmene har datoen
 kunden publiserte dem, ikke datoen de kom på reflektor.no (02.10.2026, ved
