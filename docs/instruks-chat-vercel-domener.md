@@ -80,7 +80,7 @@ Protection»** (`all_except_custom_domains`). Det stengte to av de tre:
 |---|---|---|
 | `reflektor-ny-reflektor.vercel.app` | 200 | 302 til Vercel-innlogging |
 | `reflektor-ny-git-claude-…-reflektor.vercel.app` | 200 | 302 til Vercel-innlogging |
-| `reflektor-ny.vercel.app` | 200 | **fortsatt 200** |
+| `reflektor-ny.vercel.app` | 200 | 308 til www.reflektor.no |
 | `www.reflektor.no` | 200 | 200 — urørt |
 | `reflektor.no` | 308 | 308 — urørt |
 
@@ -90,10 +90,16 @@ Protection»** (`all_except_custom_domains`). Det stengte to av de tre:
 prosjektet, på linje med www.reflektor.no, og går derfor fri. Kontrollert
 med curl flere minutter etter at innstillingen var endret.
 
-**Det som gjenstår, og som må gjøres for hånd:** Vercel → Project
+**Den tredje ble satt for hånd av Pål samme dag**, i Vercel → prosjektet
 `reflektor-ny` → Settings → Domains → `reflektor-ny.vercel.app` → Edit →
-«Redirect to» `www.reflektor.no`, 308. API-et som er tilgjengelig herfra
-kan legge til og liste prosjektdomener, men ikke endre et som finnes.
+«Redirect to Another Domain» → 308 → `www.reflektor.no`. API-et som er
+tilgjengelig herfra kan legge til og liste prosjektdomener, men ikke endre
+et som finnes — derfor måtte den klikkes.
+
+**Kontrollert etterpå:** `reflektor-ny.vercel.app/kontaktoss?x=1` gir 308 til
+`www.reflektor.no/kontaktoss?x=1`, med sporingsparameteren i behold. De to
+genererte aliasene gir 302 til Vercel-innlogging. www.reflektor.no svarer
+200 og reflektor.no 308, som før.
 
 **Ingen risiko for jobben.** Cron-jobben i `vercel.json` kjøres av Vercel
 selv og går utenom Deployment Protection. Den traff allerede en
