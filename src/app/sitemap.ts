@@ -37,15 +37,22 @@ const utelatt = new Set(["sosiale-medier-byra"]);
  * la den stå. Datoen under er den dagen siden sist fikk endret innhold —
  * ikke den dagen noen rørte en fil.
  */
+/*
+ * 08.10.2026: sju sider satt til 08.10. Videomarkeringen på dem ble rettet
+ * samme dag (uploadDate, creator, description), og forsiden og
+ * /videoproduksjon-i-oslo fikk i tillegg tidssone på Soulcake-filmens dato.
+ * Markering er innhold for en søkemotor, og uten ny dato her melder
+ * IndexNow ikke fra om endringen.
+ */
 const SIST_ENDRET: Record<string, string> = {
-  "/": "2026-10-04",
+  "/": "2026-10-08",
   "/innholdsproduksjon": "2026-10-04",
-  "/reklamefilm": "2026-10-04",
-  "/videoproduksjon-i-oslo": "2026-10-04",
-  "/employer-branding-video-oslo": "2026-10-04",
-  "/eventfotograf-eventvideo": "2026-10-04",
-  "/kjeder": "2026-09-29",
-  "/reels-produksjon": "2026-10-04",
+  "/reklamefilm": "2026-10-08",
+  "/videoproduksjon-i-oslo": "2026-10-08",
+  "/employer-branding-video-oslo": "2026-10-08",
+  "/eventfotograf-eventvideo": "2026-10-08",
+  "/kjeder": "2026-10-08",
+  "/reels-produksjon": "2026-10-08",
   "/kontaktoss": "2026-10-02",
   "/vart-arbeid": "2026-09-30",
   "/om-oss": "2026-10-04",
