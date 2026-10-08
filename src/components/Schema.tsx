@@ -152,6 +152,12 @@ export function OrganisasjonSchema() {
       "https://www.instagram.com/reflektor.no/",
       "https://www.linkedin.com/company/reflektor-as",
       "https://ocast.com/no/reflektor",
+      // Lagt til 08.10.2026. Google-bedriftsprofilen (verifisert, eid av
+      // Reflektor AS, Tvetenveien 162) og Proff-profilen (org.nr.
+      // 926 974 270, lenker tilbake til reflektor.no). Begge kontrollert i
+      // nettleseren samme dag. Kart-ID-en er hentet fra profilen selv.
+      "https://maps.google.com/?cid=11039054247036266792",
+      "https://www.proff.no/selskap/reflektor-%7C-some-byr%C3%A5-oslo/oslo/fotografering/IFBW9XA00G3",
     ],
     /*
      * AggregateRating — og la det være helt klart hva den kan og ikke kan.
