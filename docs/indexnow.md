@@ -48,17 +48,25 @@ styrke her — vi spammer ikke Bing med 35 URL-er hver gang en knapp flytter seg
 
 ## Tidspunktet for forrige innsending
 
-Noteres i `.indexnow-sist` og mellomlagres av GitHub Actions mellom
-kjøringene. Skrives bare når innsendingen gikk: feiler den, står det gamle
-tidspunktet, og de samme URL-ene prøves igjen ved neste utrulling. Å notere
-uansett ville gjort én feil til et permanent hull.
+Hentes fra GitHub: når kjørte denne arbeidsflyten sist uten feil. Ingenting
+lagres, og ingenting kan komme i utakt.
 
-Tømmes mellomlageret — det skjer etter en uke uten bruk — sendes alt på nytt
-én gang. Akseptabelt, og langt bedre enn å sende alt hver gang.
+**Her sto `actions/cache` først, og den virket ikke.** Første kjøring
+08.10.2026 logget «The event type deployment_status is not supported because
+it's not tied to a branch or tag ref» — mellomlageret kan ikke skrives på et
+slikt event. Jobben så vellykket ut, men tidspunktet ble aldri lagret, og da
+ville alle 34 URL-ene gått inn på nytt ved hver eneste utrulling. Det er den
+ene tingen IndexNow ber oss la være.
 
-## Feiler aldri noe
+## Når jobben blir rød
 
-Jobben står utenfor CI, og skriptet avslutter med 0 også når IndexNow svarer
-med feil. 200 og 202 er OK; 403 betyr at nøkkelfila ikke stemmer, 422 at en
-URL ikke hører til verten. Begge er feil i oppsettet her, ikke hos Bing, og
-står i jobbloggen.
+Når IndexNow svarte med feil — og da skal den være rød. Neste kjøring leser
+tidspunktet fra forrige *vellykkede* kjøring, så de samme URL-ene prøves om
+igjen. En jobb som alltid ble grønn ville gjort én feil til et permanent
+hull: de sidene ville aldri blitt meldt.
+
+Jobben står utenfor CI, så en rød markering stopper verken bygget eller
+utrullingen. Siden er for lengst ute når dette kjører.
+
+200 og 202 er OK. 403 betyr at nøkkelfila ikke stemmer, 422 at en URL ikke
+hører til verten — begge er feil i oppsettet her, ikke hos Bing.

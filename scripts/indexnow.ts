@@ -16,12 +16,25 @@
  * URL-er hver gang en knapp flytter seg — men det betyr også at en reell
  * innholdsendring ikke blir meldt hvis `SIST_ENDRET` ikke oppdateres.
  *
- * FEILER ALDRI UTRULLINGEN. IndexNow er en hyggelighet, ikke en avhengighet.
- * Svarer endepunktet 4xx eller er nede, logges det og skriptet avslutter
- * med 0.
+ * TIDSPUNKTET FOR FORRIGE INNSENDING KOMMER FRA GITHUB, ikke fra en fil.
+ * Her sto `actions/cache`, og den kan ikke lagre på et
+ * `deployment_status`-event: «The event type deployment_status is not
+ * supported because it's not tied to a branch or tag ref». Jobben så
+ * vellykket ut, men tidspunktet ble aldri lagret — og da ville alle 34
+ * URL-ene gått inn på nytt ved hver eneste utrulling, som er den ene
+ * tingen IndexNow ber oss la være. Fanget i loggen fra første kjøring
+ * 08.10.2026.
+ *
+ * I STEDET SPØR JOBBEN GITHUB om når denne arbeidsflyten sist kjørte uten
+ * feil. Det er den samme opplysningen, uten noe å lagre og uten noe som
+ * kan komme i utakt.
+ *
+ * FEILER ALDRI UTRULLINGEN. IndexNow er en hyggelighet, ikke en
+ * avhengighet. Jobben står utenfor CI, og en rød markering her stopper
+ * verken bygget eller utrullingen — siden er for lengst ute når dette
+ * kjører. Men den SKAL bli rød når innsendingen feiler, slik at neste
+ * kjøring prøver de samme URL-ene om igjen.
  */
-import { writeFileSync } from "node:fs";
-
 import {
   INDEXNOW_ENDEPUNKT,
   INDEXNOW_NOKKEL,
@@ -31,9 +44,6 @@ import {
 
 /** Taket IndexNow setter per innsending. */
 const MAKS_URLER = 10000;
-
-/** Hvor tidspunktet for forrige vellykkede innsending noteres. */
-const TIDSPUNKTFIL = ".indexnow-sist";
 
 /**
  * URL-ene i sitemapet som har endret seg siden sist.
@@ -94,7 +104,6 @@ async function hoved() {
 
   if (!urler.length) {
     console.log("Ingenting å melde. Ferdig.");
-    skrivTidspunkt();
     return;
   }
 
@@ -118,33 +127,25 @@ async function hoved() {
   const tekst = await res.text().catch(() => "");
   if (res.status === 200 || res.status === 202) {
     console.log(`IndexNow svarte ${res.status}. ${urler.length} URL-er sendt.`);
-    skrivTidspunkt();
-  } else {
-    console.error(`IndexNow svarte ${res.status}. ${tekst.slice(0, 300)}`);
+    return;
   }
-}
 
-/**
- * Noterer at innsendingen gikk.
- *
- * SKRIVES BARE VED SUKSESS. Feiler innsendingen, står det gamle
- * tidspunktet, og de samme URL-ene prøves igjen ved neste utrulling. Å
- * notere uansett ville gjort en enkelt feil til et permanent hull: de
- * sidene ville aldri blitt meldt.
- *
- * FILA MELLOMLAGRES AV GITHUB ACTIONS mellom kjøringene. Forsvinner den —
- * cachen tømmes etter en uke uten bruk — sendes alt på nytt én gang. Det
- * er et akseptabelt utfall, og langt bedre enn å sende alt hver gang.
- */
-function skrivTidspunkt() {
-  try {
-    writeFileSync(TIDSPUNKTFIL, new Date().toISOString());
-  } catch (feil) {
-    console.error("Klarte ikke notere tidspunktet:", feil);
-  }
+  /*
+    EN FEILET INNSENDING SKAL MERKES SOM FEILET, og det er derfor dette
+    kaster. Neste kjøring leser tidspunktet fra forrige VELLYKKEDE kjøring
+    av denne jobben — feiler denne, står det gamle tidspunktet, og de samme
+    URL-ene prøves igjen. Å avslutte med 0 uansett ville gjort én feil til
+    et permanent hull: de sidene ville aldri blitt meldt.
+
+    JOBBEN STÅR UTENFOR CI. En rød markering her stopper verken bygget
+    eller utrullingen — siden er for lengst ute når dette kjører.
+  */
+  throw new Error(`IndexNow svarte ${res.status}. ${tekst.slice(0, 300)}`);
 }
 
 if (process.argv[1]?.endsWith("indexnow.ts")) {
-  /* Ingen feil her skal stoppe noe. Se hodet på fila. */
-  await hoved().catch((f) => console.error("IndexNow-innsendingen feilet:", f));
+  await hoved().catch((f: unknown) => {
+    console.error("IndexNow-innsendingen feilet:", f);
+    process.exitCode = 1;
+  });
 }
