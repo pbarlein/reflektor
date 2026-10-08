@@ -48,5 +48,10 @@ jobs:
         run: npm run lenkesjekk
       - name: Bygg
         run: npm run build
+      # Leser det BYGDE HTML-et, og må derfor stå etter bygget. Fanger en
+      # VideoObject uten uploadDate og en @id-peker uten node å peke på —
+      # begge meldt av Search Console 08.10.2026, begge usynlige i kilden.
+      - name: Markeringssjekk
+        run: npm run markering:check
 # TODO (vedlegg A): Lighthouse mot ytelsesbudsjettet i 8.7. Krever en deployet
 # preview-URL som workflowen kan peke på.

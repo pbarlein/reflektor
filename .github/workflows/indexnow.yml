@@ -1,0 +1,45 @@
+# Sier fra til Bing når en side har endret seg.
+#
+# HVORFOR DET ER VERDT NOE: ChatGPT-søk og Copilot henter fra Bings indeks,
+# så raskere indeksering der er synlighet i AI-svar. Google deltar ikke i
+# IndexNow — dette flytter ingenting der.
+#
+# KJØRER ETTER AT UTRULLINGEN ER LIVE, ikke under bygget. Å melde fra om en
+# side før den er ute er verre enn ikke å melde fra: Bing henter den, ser den
+# gamle versjonen, og kommer ikke tilbake med det første. `deployment_status`
+# fra Vercel er det eneste signalet vi har som faktisk betyr «nå er den ute».
+#
+# FEILER ALDRI NOE. Jobben står for seg selv, utenfor CI, og skriptet
+# avslutter med 0 også når IndexNow svarer med feil.
+name: IndexNow
+
+on:
+  deployment_status:
+
+jobs:
+  meld:
+    # Vercel kaller miljøet «Production – reflektor-ny». Forhåndsvisninger
+    # heter «Preview – …» og skal ikke meldes inn noe sted.
+    if: >-
+      github.event.deployment_status.state == 'success' &&
+      startsWith(github.event.deployment_status.environment, 'Production')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Tidspunktet for forrige vellykkede innsending. Uten det sendes alt,
+      # og det skal skje én gang — ikke ved hver utrulling.
+      - name: Hent forrige innsending
+        uses: actions/cache@v4
+        with:
+          path: .indexnow-sist
+          key: indexnow-sist-${{ github.run_id }}
+          restore-keys: indexnow-sist-
+      # Ingen `npm ci`: skriptet importerer bare én fil fra src/lib, og den
+      # har ingen avhengigheter. Jobben tar sekunder.
+      - name: Meld endrede URL-er
+        run: |
+          export INDEXNOW_SIST="$(cat .indexnow-sist 2>/dev/null || true)"
+          node --experimental-strip-types scripts/indexnow.ts

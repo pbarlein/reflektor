@@ -125,6 +125,14 @@ export type Kundecase = {
   /** Klippet fra samarbeidet, i public/reels/. */
   klipp: {
     fil: string;
+    /**
+     * Når klippet ble publisert første gang, ISO 8601 med tidssone.
+     *
+     * PÅKREVD FRA 08.10.2026. Google gir ingen videoresultater uten
+     * `uploadDate`. Datoen er første commit der filmfilen kom inn i
+     * repoet — se docs/videodatoer.md.
+     */
+    publisert: string;
     alt: string;
     attribusjon: string;
     /** Målt med ffmpeg på filen i public/reels/. Til VideoObject. */
@@ -295,6 +303,7 @@ export const kundecaser: Kundecase[] = [
 
     klipp: {
       fil: "soulcake",
+      publisert: "2026-09-16T23:38:36+02:00",
       alt: "Vertikalt klipp fra Soulcake-bakeriet",
       attribusjon: "Filmet og klippet av Reflektor, publisert av Soulcake",
       sekunder: 8,
@@ -457,6 +466,7 @@ export const kundecaser: Kundecase[] = [
 
     klipp: {
       fil: "egon",
+      publisert: "2026-09-16T23:38:36+02:00",
       alt: "Vertikalt klipp fra en Egon-restaurant",
       attribusjon: "Filmet og klippet av Reflektor, publisert av Egon",
       sekunder: 8,

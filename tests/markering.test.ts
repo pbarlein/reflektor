@@ -117,3 +117,61 @@ test("hver tjenesteside har en unik tittel og H1", () => {
   assert.equal(new Set(titler).size, titler.length, "to sider deler tittel");
   assert.equal(new Set(h1er).size, h1er.length, "to sider deler H1");
 });
+
+/* ──────────── VIDEODATOENE (bestilt 08.10.2026) ─────────────────────── */
+
+/**
+ * Hver film må ha en publiseringsdato.
+ *
+ * Google gir ingen videoresultater uten `uploadDate` på VideoObject. Atten
+ * filmer på sju sider sto uten feltet til 08.10.2026, og Search Console
+ * meldte sidene som «URL is on Google, but has issues».
+ *
+ * TYPEN KREVER FELTET NÅ, så en ny film uten dato ikke kompilerer. Denne
+ * testen tar det typen ikke kan: at datoen er en ekte ISO-dato med
+ * tidssone, og ikke ligger fram i tid. En plassholder som «TBD» eller en
+ * dato i 2030 ville passert typesjekken.
+ */
+const ISO_MED_SONE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}([+-]\d{2}:\d{2}|Z)$/;
+
+function alleFilmer() {
+  return tjenestesider.flatMap((side) => [
+    ...(side.filmer ?? []).map((f) => ({ side: side.sti, f })),
+    ...side.seksjoner.flatMap((s) =>
+      (s.filmer ?? []).map((f) => ({ side: side.sti, f })),
+    ),
+  ]);
+}
+
+test("hver film har en publiseringsdato med tidssone", () => {
+  const filmer = alleFilmer();
+  assert.ok(filmer.length >= 16, `fant bare ${filmer.length} filmer`);
+
+  for (const { side, f } of filmer) {
+    assert.match(
+      f.publisert,
+      ISO_MED_SONE,
+      `${side} ${f.sti}: «${f.publisert}» er ikke en ISO 8601-dato med ` +
+        `tidssone. Google leser uploadDate strengt.`,
+    );
+  }
+});
+
+test("ingen film er publisert fram i tid", () => {
+  const na = Date.now();
+  for (const { side, f } of alleFilmer()) {
+    const t = new Date(f.publisert).getTime();
+    assert.ok(
+      Number.isFinite(t) && t <= na,
+      `${side} ${f.sti}: publiseringsdatoen ${f.publisert} ligger fram i tid.`,
+    );
+  }
+});
+
+/** Kundecasenes klipp er like mye VideoObject som filmene på tjenestesidene. */
+test("hvert kundecase-klipp har en publiseringsdato", async () => {
+  const { kundecaser } = await import("@/content/caser.ts");
+  for (const c of kundecaser) {
+    assert.match(c.klipp.publisert, ISO_MED_SONE, c.slug);
+  }
+});

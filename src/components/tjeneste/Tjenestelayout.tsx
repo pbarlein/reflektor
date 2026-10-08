@@ -155,7 +155,17 @@ export function Tjenestelayout({
       {[
         ...(side.filmer ?? []).map((f) => ({ f, beskrivelse: side.svar })),
         ...side.seksjoner.flatMap((s) =>
-          (s.filmer ?? []).map((f) => ({ f, beskrivelse: s.svar })),
+          /*
+            TOM SEKSJONSTEKST FALLER TILBAKE PÅ SIDENS SVAR. Rettet
+            08.10.2026: seksjonen «Slik fungerer det» på /reels-produksjon
+            er en ren liste uten ledesetning — med vilje — og de to
+            BTS-filmene fikk dermed en VideoObject med tom `description`.
+            Et tomt felt er verre enn et generelt: Google regner
+            markeringen som mangelfull, og en språkmodell får ingenting.
+            Sidens eget svar er allerede skrevet, er sant for filmen, og
+            er det samme feltet sidens egne filmer bruker.
+          */
+          (s.filmer ?? []).map((f) => ({ f, beskrivelse: s.svar || side.svar })),
         ),
       ].map(({ f, beskrivelse }) => (
         <FilmSchema
@@ -164,6 +174,7 @@ export function Tjenestelayout({
           beskrivelse={beskrivelse}
           sti={f.sti}
           sekunder={f.sekunder}
+          publisert={f.publisert}
           sidesti={side.sti}
         />
       ))}

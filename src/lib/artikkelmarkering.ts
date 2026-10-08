@@ -18,6 +18,33 @@
 import { basisUrl } from "./miljo";
 
 export const orgId = () => `${basisUrl()}/#organisasjon`;
+
+/**
+ * REFERANSEN TIL REFLEKTOR, med nok i seg til å bety noe alene.
+ *
+ * HER STO `{ "@id": orgId() }` ALENE, femten steder i tre filer. Det er
+ * riktig JSON-LD så lenge noden med den id-en finnes i samme graf — og den
+ * gjør den bare på forsiden, som er den eneste siden som rendrer
+ * `OrganisasjonSchema`. På alle andre sider så Google en peker uten noe å
+ * peke på, altså en tom Thing. Search Console meldte det 08.10.2026 som
+ * feil objekttype på `creator` i videoene; den samme feilen lå i
+ * `provider`, `author`, `publisher`, `isPartOf`, `itemReviewed`, `about` og
+ * `worksFor`.
+ *
+ * `@id` BEHOLDES. Den binder entiteten sammen på tvers av sidene når
+ * forsidens fulle node er med. Det som er lagt til, er typen, navnet og
+ * adressen, slik at referansen også står på egne bein.
+ *
+ * `scripts/markeringssjekk.ts` HOLDER DEN PÅ PLASS: en `@id` uten `@type`
+ * som ikke har en node på samme side, feiler bygget.
+ */
+export const reflektorRef = () =>
+  ({
+    "@type": "Organization",
+    "@id": orgId(),
+    name: "Reflektor",
+    url: basisUrl(),
+  }) as const;
 export const forfatterId = () => `${basisUrl()}/om-oss#pal-barlein`;
 
 /**
@@ -46,7 +73,7 @@ export function forfatterMarkering() {
     name: forfatter.navn,
     jobTitle: "CEO",
     url: `${basisUrl()}${forfatter.sti}`,
-    worksFor: { "@id": orgId() },
+    worksFor: reflektorRef(),
     /* Eneste eksterne stedet identiteten kan bekreftes. Det er det `sameAs` er til for. */
     sameAs: [forfatter.linkedin],
   };
@@ -102,6 +129,6 @@ export function artikkelMarkering({
       organisasjonen: det er den som utgir, og den som eier nettstedet.
     */
     author: { "@id": forfatterId() },
-    publisher: { "@id": orgId() },
+    publisher: reflektorRef(),
   };
 }

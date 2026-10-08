@@ -4,6 +4,7 @@ import { Container } from "@/components/Container";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Knappelenke } from "@/components/Knapp";
 import { site, tilbud, kr } from "@/content/site";
+import { reflektorRef } from "@/lib/artikkelmarkering";
 import { basisUrl } from "@/lib/miljo";
 
 /**
@@ -85,8 +86,8 @@ export default function English() {
     inLanguage: "en",
     description:
       "Reflektor films at your company one day a month and publishes 8–10 videos on Instagram and Facebook.",
-    about: { "@id": `${basisUrl()}/#organisasjon` },
-    isPartOf: { "@id": `${basisUrl()}/#organisasjon` },
+    about: reflektorRef(),
+    isPartOf: reflektorRef(),
   };
 
   return (

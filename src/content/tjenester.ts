@@ -173,6 +173,19 @@ export type Referansefilm = {
   alt: string;
   bildetekst: string;
   sekunder: number;
+  /**
+   * Når filmen ble publisert første gang, ISO 8601 med tidssone.
+   *
+   * PÅKREVD, FORDI GOOGLE KREVER DET. Uten `uploadDate` på VideoObject gir
+   * Google ingen videoresultater i det hele tatt, og atten filmer på sju
+   * sider sto slik til 08.10.2026. Feltet er i typen og ikke bare i
+   * markeringen, så en ny film ikke kan legges inn uten dato.
+   *
+   * KILDEN FOR HVER DATO STÅR I docs/videodatoer.md: står måneden i
+   * bildeteksten, er det den som gjelder; ellers første commit der filen
+   * kom inn i repoet. Gjett aldri.
+   */
+  publisert: string;
   lyd?: boolean;
 };
 
@@ -524,6 +537,7 @@ export const reklamefilm: Tjenesteside = {
       bildetekst:
         "Reklamefilm for Peppes Pizza. 15 sekunder, produsert av Reflektor.",
       sekunder: 15,
+      publisert: "2026-09-27T23:31:43+02:00",
     },
   ],
   /*
@@ -988,6 +1002,7 @@ export const employerBranding: Tjenesteside = {
       bildetekst:
         "Profilfilm for et rådgivningsselskap. 39 sekunder, filmet på kontoret.",
       sekunder: 39,
+      publisert: "2026-09-28T12:00:17+02:00",
       lyd: true,
     },
     {
@@ -997,6 +1012,7 @@ export const employerBranding: Tjenesteside = {
       bildetekst:
         "Kundeomtale, filmet stående for sosiale medier. 22 sekunder.",
       sekunder: 22,
+      publisert: "2026-09-28T12:00:17+02:00",
       lyd: true,
     },
   ],
@@ -1080,6 +1096,7 @@ export const event: Tjenesteside = {
           bildetekst:
             "Eventvideoen fra kvelden. 1 minutt og 43 sekunder, filmet og klippet av Reflektor.",
           sekunder: 103,
+          publisert: "2026-09-30T23:51:06+02:00",
           lyd: true,
         },
       ],
@@ -1738,6 +1755,7 @@ export const reelsproduksjon: Tjenesteside = {
           alt: "Stillbilde fra opptak: kamera på rigg over et bord med kaker.",
           bildetekst: "Baker Brun. Bak kulissene fra en produksjonsdag.",
           sekunder: 23,
+          publisert: "2026-09-29T14:22:50+02:00",
         },
         {
           sti: "/arbeid/bts-anton-sport",
@@ -1745,6 +1763,7 @@ export const reelsproduksjon: Tjenesteside = {
           alt: "Stillbilde fra opptak: filmfotograf med kamera på gimbal ute om høsten.",
           bildetekst: "Anton Sport. Bak kulissene fra en dag på lokasjon.",
           sekunder: 27,
+          publisert: "2026-09-29T14:22:50+02:00",
         },
       ],
       lenker: [
@@ -1777,6 +1796,7 @@ export const reelsproduksjon: Tjenesteside = {
           alt: "Stillbilde fra filmen i 16:9-format: en rett fotografert ovenfra.",
           bildetekst: "16:9",
           sekunder: 23,
+          publisert: "2026-09-29T11:22:43+02:00",
         },
         {
           sti: "/arbeid/kjeder-format-4x5",
@@ -1784,6 +1804,7 @@ export const reelsproduksjon: Tjenesteside = {
           alt: "Stillbilde fra filmen i 4:5-format: en rett fotografert ovenfra.",
           bildetekst: "4:5",
           sekunder: 23,
+          publisert: "2026-09-29T11:22:43+02:00",
         },
         {
           sti: "/arbeid/kjeder-format-9x16",
@@ -1791,6 +1812,7 @@ export const reelsproduksjon: Tjenesteside = {
           alt: "Stillbilde fra filmen i 9:16-format: en rett fotografert ovenfra.",
           bildetekst: "9:16",
           sekunder: 23,
+          publisert: "2026-09-29T11:22:43+02:00",
         },
       ],
     },
@@ -2013,6 +2035,7 @@ export const kjeder: Tjenesteside = {
           bildetekst:
             "Anton Sport, mai 2026. Film fra én produksjonsdag, levert i 16:9 og 9:16.",
           sekunder: 25,
+          publisert: "2026-05-01T12:00:00+02:00",
         },
       ],
       sitat: {
@@ -2044,6 +2067,7 @@ export const kjeder: Tjenesteside = {
           bildetekst:
             "Egon, august 2026. Kampanjefilmen «Min drømmerett», levert i fem formater.",
           sekunder: 19,
+          publisert: "2026-08-01T12:00:00+02:00",
         },
       ],
       lenker: [{ sti: "/vart-arbeid/egon", tekst: "Hele kundecaset for Egon" }],
@@ -2067,6 +2091,7 @@ export const kjeder: Tjenesteside = {
           alt: "Stillbilde fra filmen: to personer spiser pizza i en sofa.",
           bildetekst: "Peppes Pizza, august 2026. Reklamefilm på 15 sekunder.",
           sekunder: 15,
+          publisert: "2026-08-01T12:00:00+02:00",
         },
       ],
     },
@@ -2138,6 +2163,7 @@ export const kjeder: Tjenesteside = {
           bildetekst:
             "Vitusapotek, september 2025. Sponsorvignett for TV 2, levert i seks varianter.",
           sekunder: 4,
+          publisert: "2025-09-01T12:00:00+02:00",
         },
       ],
     },
@@ -2187,6 +2213,7 @@ export const kjeder: Tjenesteside = {
           alt: "Stillbilde fra filmen i 16:9-format: en rett fotografert ovenfra.",
           bildetekst: "16:9",
           sekunder: 23,
+          publisert: "2026-09-29T11:22:43+02:00",
         },
         {
           sti: "/arbeid/kjeder-format-4x5",
@@ -2194,6 +2221,7 @@ export const kjeder: Tjenesteside = {
           alt: "Samme film i 4:5-format.",
           bildetekst: "4:5",
           sekunder: 23,
+          publisert: "2026-09-29T11:22:43+02:00",
         },
         {
           sti: "/arbeid/kjeder-format-9x16",
@@ -2201,6 +2229,7 @@ export const kjeder: Tjenesteside = {
           alt: "Samme film i 9:16-format.",
           bildetekst: "9:16",
           sekunder: 23,
+          publisert: "2026-09-29T11:22:43+02:00",
         },
       ],
     },

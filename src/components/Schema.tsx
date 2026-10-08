@@ -1,10 +1,6 @@
 import { site, tilbud } from "@/content/site";
 import { basisUrl } from "@/lib/miljo";
-import {
-  artikkelMarkering,
-  forfatterMarkering,
-  type Artikkelmarkering,
-} from "@/lib/artikkelmarkering";
+import { artikkelMarkering, forfatterMarkering, reflektorRef, type Artikkelmarkering } from "@/lib/artikkelmarkering";
 import { googleProfil } from "@/content/anmeldelser";
 import { omoss } from "@/content/omoss";
 
@@ -25,11 +21,14 @@ import { omoss } from "@/content/omoss";
  */
 const ORG_ID = `${basisUrl()}/#organisasjon`;
 
+/** Referansen til Reflektor. Én kilde, i lib/artikkelmarkering.ts. */
+const REFLEKTOR = reflektorRef();
+
 /**
  * Forfatteren. Lagt til 02.10.2026.
  *
  * HVORFOR EN PERSON OG IKKE BARE ORGANISASJONEN. Artiklene hadde
- * `author: { "@id": ORG_ID }` — altså «Reflektor AS skrev dette». Det er
+ * `author: REFLEKTOR` — altså «Reflektor AS skrev dette». Det er
  * formelt riktig og praktisk verdiløst: Googles retningslinjer for
  * innholdskvalitet ber om hvem som står bak teksten, og en språkmodell som
  * skal si hvem som mener noe om bransjen har ingenting å gripe fatt i når
@@ -256,7 +255,7 @@ export function TjenesteSchema({
     description: beskrivelse,
     url: `${basisUrl()}${sti}`,
     ...(tjenestetype ? { serviceType: tjenestetype } : {}),
-    provider: { "@id": ORG_ID },
+    provider: REFLEKTOR,
     areaServed: "NO",
     ...(!fraPris
       ? {}
@@ -448,8 +447,8 @@ export function KundecaseSchema({
     description: beskrivelse,
     url: `${basisUrl()}${sti}`,
     inLanguage: "nb-NO",
-    author: { "@id": ORG_ID },
-    publisher: { "@id": ORG_ID },
+    author: REFLEKTOR,
+    publisher: REFLEKTOR,
     about: { "@type": "Organization", name: kunde },
     isPartOf: {
       "@type": "CollectionPage",
@@ -486,12 +485,12 @@ export function TeamSchema() {
     "@type": "AboutPage",
     url: `${basisUrl()}/om-oss`,
     mainEntity: {
-      "@id": ORG_ID,
+      ...REFLEKTOR,
       employee: omoss.team.ansatte.map((a) => ({
         "@type": "Person",
         name: a.navn,
         jobTitle: a.rolle,
-        worksFor: { "@id": ORG_ID },
+        worksFor: REFLEKTOR,
       })),
     },
   };
@@ -547,13 +546,17 @@ export function ArtikkelSchema(props: Artikkelmarkering) {
  * egen tittel — tjue VideoObject-er med alt-tekst som navn er støy, ikke
  * signal, og Google behandler det som det.
  *
- * INGEN uploadDate. Google krever den for video-rich-results, så
- * markeringen her får ikke det. Men vi VET ikke når filmene ble publisert —
- * de nye sidene er ikke live ennå, og produksjonsdatoen er ikke en
- * publiseringsdato. Samme regel som KundecaseSchema og ArtikkelSchema
- * følger: en dato vi ikke kan belegge skrives ikke, heller ikke for
- * maskiner. Resten av feltene leses uansett av språkmodeller, som er der
- * verdien ligger. Får vi en ekte dato ved cutover, legges den inn da.
+ * uploadDate ER PÅKREVD FRA 08.10.2026. Her sto det at vi ikke visste når
+ * filmene ble publisert, og at en dato vi ikke kan belegge ikke skrives.
+ * Regelen står — det var kildene som manglet, ikke datoene. Atten
+ * VideoObject på sju sider gikk uten feltet, og Search Console svarte med
+ * «URL is on Google, but has issues»: uten `uploadDate` gir Google ingen
+ * videoresultater i det hele tatt, og da er resten av markeringen uten
+ * virkning i søk.
+ *
+ * HVER DATO ER BELAGT, ikke gjettet: enten står måneden i teksten på siden,
+ * eller så er det første commit der filmfilen kom inn i repoet. Hvilken som
+ * gjelder for hvilken film står i docs/videodatoer.md.
  *
  * `duration` er målt med ffmpeg på filene i public/, ikke gjettet.
  */
@@ -572,6 +575,20 @@ export function FilmSchema({
   /** Uten filendelse, slik Klipp tar den: «/reels/peppes-reklamefilm». */
   sti: string;
   sekunder: number;
+  /**
+   * Når filmen ble publisert første gang, ISO 8601 med tidssone.
+   *
+   * PÅKREVD FRA 08.10.2026, OG DET ER HELE POENGET MED TYPEN. Her sto
+   * feltet som valgfritt, og atten VideoObject på sju sider havnet ute
+   * uten det. Google krever `uploadDate` for videoresultater, så de atten
+   * sto som «URL is on Google, but has issues» i Search Console og fikk
+   * ingen videotreff. En valgfri dato er en dato noen glemmer.
+   *
+   * DATOEN SKAL KUNNE BELEGGES. Står det en måned i teksten, er det den
+   * som gjelder. Ellers er det første commit der filmfilen kom inn i
+   * repoet. Ingen gjetting — se docs/videodatoer.md.
+   */
+  publisert: string;
   /** Siden filmen står på. Gir språkmodellen veien tilbake til kontekst. */
   sidesti: string;
   /**
@@ -579,13 +596,6 @@ export function FilmSchema({
    * Omtalevideoen bruker `-poster.jpg`, resten bruker `.jpg`.
    */
   plakat?: string;
-  /**
-   * ISO-dato. UNNTAKET FRA REGELEN I KOMMENTAREN OVER, og det er et ekte
-   * unntak: for omtalevideoen VET vi når den ble lagt ut, fordi vi la den
-   * ut. For klippene i kundecasene gjør vi ikke det, og da står feltet
-   * tomt som før.
-   */
-  publisert?: string;
   /** Hele det som blir sagt. Gjør filmen søkbar som tekst. */
   transkripsjon?: string;
 }) {
@@ -600,10 +610,10 @@ export function FilmSchema({
     duration: `PT${sekunder}S`,
     inLanguage: "nb-NO",
     isFamilyFriendly: true,
-    ...(publisert ? { uploadDate: publisert } : {}),
+    uploadDate: publisert,
     ...(transkripsjon ? { transcript: transkripsjon } : {}),
-    creator: { "@id": ORG_ID },
-    productionCompany: { "@id": ORG_ID },
+    creator: REFLEKTOR,
+    productionCompany: REFLEKTOR,
     mainEntityOfPage: { "@type": "WebPage", "@id": `${base}${sidesti}` },
   };
 
@@ -635,7 +645,7 @@ export function KontaktSchema() {
     "@id": `${base}/kontaktoss`,
     name: "Kontakt Reflektor",
     inLanguage: "nb-NO",
-    mainEntity: { "@id": ORG_ID },
+    mainEntity: REFLEKTOR,
   };
 
   return (
@@ -671,7 +681,7 @@ export function OmtaleSchema({
   const data = {
     "@context": "https://schema.org",
     "@type": "Review",
-    itemReviewed: { "@id": ORG_ID },
+    itemReviewed: REFLEKTOR,
     author: { "@type": "Person", name: forfatter },
     reviewBody: tekst,
     inLanguage: "nb-NO",
@@ -720,7 +730,7 @@ export function OversiktSchema({
     name: navn,
     description: beskrivelse,
     inLanguage: "nb-NO",
-    isPartOf: { "@id": ORG_ID },
+    isPartOf: REFLEKTOR,
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: ledd.length,
@@ -779,8 +789,8 @@ export function SideSchema({
     name: navn,
     description: beskrivelse,
     inLanguage: "nb-NO",
-    isPartOf: { "@id": ORG_ID },
-    publisher: { "@id": ORG_ID },
+    isPartOf: REFLEKTOR,
+    publisher: REFLEKTOR,
     ...(handlerOm && handlerOm.length > 0
       ? {
           about: handlerOm.map((navn) => ({

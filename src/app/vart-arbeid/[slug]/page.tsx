@@ -111,6 +111,7 @@ export default async function CaseSide({ params }: Props) {
         beskrivelse={k.klipp.alt}
         sti={`/reels/${k.klipp.fil}`}
         sekunder={k.klipp.sekunder}
+        publisert={k.klipp.publisert}
         sidesti={`/vart-arbeid/${k.slug}`}
       />
       {/*

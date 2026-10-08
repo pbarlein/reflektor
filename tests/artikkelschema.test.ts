@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   artikkelMarkering,
   forfatterMarkering,
+  reflektorRef,
 } from "../src/lib/artikkelmarkering.ts";
 import { artikler } from "../src/content/artikler.ts";
 
@@ -58,12 +59,20 @@ test("hver artikkel har Pål som forfatter, ikke selskapet", () => {
         `forfatter er det Google kaller manglende forfatterinformasjon, ` +
         `og en språkmodell har ingen å sitere.`,
     );
+    /*
+      PEKEREN BÆRER NÅ TYPEN SIN. Rettet 08.10.2026: `{ "@id": ORG_ID }`
+      alene er riktig JSON-LD bare når noden med den id-en finnes i samme
+      graf, og `OrganisasjonSchema` rendres bare på forsiden. På en
+      artikkelside så Google en peker uten noe å peke på — en tom Thing.
+      `@id` står fortsatt, så entiteten henger sammen med forsidens node.
+    */
     assert.deepEqual(
       d.publisher,
-      { "@id": ORG_ID },
-      `${a.slug}: publisher skal fortsatt være organisasjonen. Det er den ` +
-        `som utgir og eier nettstedet.`,
+      reflektorRef(),
+      `${a.slug}: publisher skal fortsatt være organisasjonen, og pekeren ` +
+        `skal bære @type så den også betyr noe alene.`,
     );
+    assert.equal((d.publisher as Record<string, unknown>)["@id"], ORG_ID);
   }
 });
 
@@ -96,7 +105,8 @@ test("personen beskrives én gang, med LinkedIn som sameAs", () => {
   assert.equal(d["@id"], PERSON_ID);
   assert.equal(d.name, "Pål Barlein");
   assert.equal(d.jobTitle, "CEO");
-  assert.deepEqual(d.worksFor, { "@id": ORG_ID });
+  assert.deepEqual(d.worksFor, reflektorRef());
+  assert.equal((d.worksFor as Record<string, unknown>)["@id"], ORG_ID);
   assert.deepEqual(d.sameAs, [
     "https://www.linkedin.com/in/p%C3%A5l-barlein-36131926/",
   ]);
