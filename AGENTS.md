@@ -55,8 +55,11 @@ mot om den gir flere utfylte skjemaer.
 
 ## Ahrefs-data må leses med forbehold
 
-Tallene er estimater og etterslepende, GSC er ikke koblet til, og alt som er
-bygget i 2026 har ennå ingen tall. Fravær av data er ikke bevis på fravær av
+Tallene er estimater og etterslepende, og alt som er bygget i 2026 har
+lite historikk. **Search Console ER koblet til Ahrefs-prosjektet** (rettet
+08.10.2026; her sto det at det ikke var det, og det ga feil grunnlag for
+råd). Ekte visninger, klikk og plasseringer hentes derfra, ikke fra Ahrefs'
+estimater. Fravær av data er ikke bevis på fravær av
 verdi. Bruk Ahrefs til å finne URL-er med lenker som må redirigeres – ikke til
 å avgjøre hva siden skal handle om.
 
