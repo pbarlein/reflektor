@@ -65,3 +65,36 @@ Når du er ferdig, gi Pål:
 
 Punkt 3 er det viktigste du leverer. Det er de verdiene som skal brukes den
 dagen DNS flyttes, og de skal ligge nedskrevet før den dagen.
+
+## vercel.app-adressene, 08.10.2026
+
+Tre vercel.app-adresser serverte hele nettstedet med 200, og GTM, GA4,
+Clarity og Meta-pikselen fyrte der. Besøk — også våre egne tester — havnet
+i statistikken og i Meta-målgruppene.
+
+**Gjort:** Deployment Protection → Vercel Authentication er satt fra «Only
+Preview Deployments and Production Deployment URLs» til **«Standard
+Protection»** (`all_except_custom_domains`). Det stengte to av de tre:
+
+| Adresse | Før | Etter |
+|---|---|---|
+| `reflektor-ny-reflektor.vercel.app` | 200 | 302 til Vercel-innlogging |
+| `reflektor-ny-git-claude-…-reflektor.vercel.app` | 200 | 302 til Vercel-innlogging |
+| `reflektor-ny.vercel.app` | 200 | **fortsatt 200** |
+| `www.reflektor.no` | 200 | 200 — urørt |
+| `reflektor.no` | 308 | 308 — urørt |
+
+**Hvorfor den tredje ikke ble stengt.** «Standard Protection» unntar alle
+*produksjonsdomener* på prosjektet, ikke bare dem på vårt eget domene.
+`reflektor-ny.vercel.app` står som et verifisert produksjonsdomene i
+prosjektet, på linje med www.reflektor.no, og går derfor fri. Kontrollert
+med curl flere minutter etter at innstillingen var endret.
+
+**Det som gjenstår, og som må gjøres for hånd:** Vercel → Project
+`reflektor-ny` → Settings → Domains → `reflektor-ny.vercel.app` → Edit →
+«Redirect to» `www.reflektor.no`, 308. API-et som er tilgjengelig herfra
+kan legge til og liste prosjektdomener, men ikke endre et som finnes.
+
+**Ingen risiko for jobben.** Cron-jobben i `vercel.json` kjøres av Vercel
+selv og går utenom Deployment Protection. Den traff allerede en
+utrullings-URL som var beskyttet før denne endringen, og fortsatte å virke.
