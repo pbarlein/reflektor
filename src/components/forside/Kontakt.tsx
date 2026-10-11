@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { Container } from "@/components/Container";
+import { turnstileSiteKey } from "@/lib/turnstile";
 import { Kontaktskjema } from "@/components/Kontaktskjema";
 import { TbdMarkor, hentTekst } from "@/components/Slot";
 import { front } from "@/content/sider/front";
@@ -131,7 +132,7 @@ export function Kontakt() {
                 bygget på det som faktisk er dokumentert om skjemadesign,
                 og står beskrevet i Kontaktskjema.tsx. */}
               <div className="rounded-flate bg-flate p-6 text-blekk sm:p-8">
-                <Kontaktskjema side="/" />
+                <Kontaktskjema side="/" turnstileSiteKey={turnstileSiteKey()} />
               </div>
             </div>
           </div>

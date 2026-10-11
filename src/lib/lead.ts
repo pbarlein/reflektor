@@ -101,6 +101,14 @@ export type Varselvalg = {
    * ringe for å booke rent tøv.
    */
   moteVarsel?: boolean;
+  /**
+   * Treffene fra spam-scoren, når innsendingen ble flagget (score 1–2).
+   *
+   * EN FLAGGET INNSENDING SLIPPES GJENNOM, men Pål skal se hvorfor den så
+   * rar ut før han ringer. Tom liste eller utelatt betyr at ingenting
+   * slo ut — se lib/spam.ts.
+   */
+  spamTreff?: string[];
 };
 
 /**
@@ -294,7 +302,7 @@ export function varsel(
         ring: null,
         lenke: null,
       }
-    : !hubspotFeilet && faarPaaminnelse(lead.epost)
+    : !hubspotFeilet && !valg.spamTreff?.length && faarPaaminnelse(lead.epost)
       ? {
           /*
             INGEN KONTAKT, INGEN OPPFØLGING. `!hubspotFeilet` kom til
@@ -328,12 +336,25 @@ export function varsel(
     krever en handling av Pål utover å ringe: leadet må legges inn i HubSpot
     for hånd, ellers finnes det bare her.
   */
-  const advarsel = hubspotFeilet
-    ? "⚠ Leadet ble IKKE lagret i HubSpot. Legg det inn manuelt."
-    : null;
+  const advarsler = [
+    /*
+      SPAM-ADVARSELEN STÅR ØVERST, bestilt 11.10.2026. En flagget
+      innsending er sluppet gjennom med vilje — scoren var 1 eller 2, og
+      det er for lite til å kaste en mulig kunde — men Pål skal se hva
+      som så rart ut før han bruker tid på den. Treffene står i klartekst
+      og ikke som et tall: «utenlandsk-telefon» sier noe, «score 2» gjør
+      det ikke.
+    */
+    ...(valg.spamTreff?.length
+      ? [`⚠ Mulig spam (${valg.spamTreff.join(", ")}) – sjekk før oppfølging`]
+      : []),
+    ...(hubspotFeilet
+      ? ["⚠ Leadet ble IKKE lagret i HubSpot. Legg det inn manuelt."]
+      : []),
+  ];
 
   const tekst = [
-    ...(advarsel ? [advarsel, ""] : []),
+    ...(advarsler.length ? [...advarsler, ""] : []),
     ...rader.map(([navn, verdi]) => `${navn}: ${verdi}`),
     ...(behov === null ? [] : ["Behov:", behov]),
     ...(skriv
@@ -356,11 +377,10 @@ export function varsel(
 
   const html = [
     '<div style="font-family:system-ui,-apple-system,Segoe UI,sans-serif;font-size:16px;line-height:1.6;color:#2a2521">',
-    ...(advarsel
-      ? [
-          `<p style="margin:0 0 20px;padding:14px 16px;background:#fdece9;border-left:4px solid #d8441f;border-radius:4px"><strong>${esc(advarsel)}</strong></p>`,
-        ]
-      : []),
+    ...advarsler.map(
+      (a) =>
+        `<p style="margin:0 0 20px;padding:14px 16px;background:#fdece9;border-left:4px solid #d8441f;border-radius:4px"><strong>${esc(a)}</strong></p>`,
+    ),
     '<table cellpadding="0" cellspacing="0" border="0" style="font-size:16px;line-height:1.6">',
     ...rader.map(
       ([navn, , verdi]) =>
@@ -539,9 +559,11 @@ async function send(opp: {
  */
 export async function sendLeadPaEpost(
   lead: Lead,
-  opp: { hubspotFeilet?: boolean } = {},
+  opp: { hubspotFeilet?: boolean; spamTreff?: string[] } = {},
 ): Promise<void> {
-  const { tekst, html } = varsel(lead, new Date(), opp.hubspotFeilet ?? false);
+  const { tekst, html } = varsel(lead, new Date(), opp.hubspotFeilet ?? false, {
+    spamTreff: opp.spamTreff,
+  });
   try {
     await send({
       til: MOTTAKER,

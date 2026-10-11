@@ -1,5 +1,6 @@
 "use client";
 
+import Script from "next/script";
 import { useEffect, useState } from "react";
 
 import { Knapp } from "./Knapp";
@@ -55,7 +56,25 @@ const feltMedFeil = `${felt.replace("border-kant", "border-aksent")}`;
 /** Feltene som valideres i nettleseren utover det HTML-en gjør selv. */
 type Feilfelt = "telefon" | "nettside";
 
-export function Kontaktskjema({ side }: { side: string }) {
+export function Kontaktskjema({
+  side,
+  turnstileSiteKey = "",
+}: {
+  side: string;
+  /**
+   * Cloudflare Turnstile.
+   *
+   * KOMMER INN SOM PROP, ikke fra `process.env` her. Nøkkelen må være
+   * synlig i nettleseren, men den heter `TURNSTILE_SITE_KEY` uten
+   * `NEXT_PUBLIC_`-prefiks — slik Pål har satt den opp. Da kan den bare
+   * leses på serveren, og sidene som rendrer skjemaet sender den hit.
+   *
+   * TOM STRENG BETYR AT TURNSTILE IKKE ER SATT OPP. Da rendres ingen
+   * widget, og skjemaet virker nøyaktig som før. Spam-scoren i
+   * lib/spam.ts er vernet fram til nøklene finnes.
+   */
+  turnstileSiteKey?: string;
+}) {
   /*
     DE SKJULTE FELTENE ER REACT-TILSTAND, IKKE VERDIER SATT PÅ DOM-NODEN.
     Rettet 04.10.2026, etter at kilden sluttet å komme fram til HubSpot.
@@ -352,6 +371,38 @@ export function Kontaktskjema({ side }: { side: string }) {
       >
         {sender ? "Sender …" : "Få et strategiforslag"}
       </Knapp>
+
+      {/*
+        TURNSTILE, lagt til 11.10.2026.
+
+        USYNLIG I PRAKSIS. `interaction-only` gjør at widgeten ikke viser
+        noe så lenge Cloudflare er fornøyd — og det er den for et vanlig
+        menneske i en vanlig nettleser. Dukker den opp, er det fordi noe
+        så rart ut, og da er ett klikk riktig pris. Ingen synlig captcha,
+        ingen ekstra felt å fylle ut.
+
+        SKRIPTET LASTES BARE NÅR NØKKELEN FINNES. Uten den rendres
+        ingenting, og skjemaet er som før.
+
+        IKKE SPORING, OG SKAL IKKE BAK SAMTYKKEBANNERET. Turnstile er
+        nødvendig funksjonalitet på linje med skjemaet selv: uten den kan
+        vi ikke skille et menneske fra en bot. Den lastes derfor direkte
+        her og ikke gjennom GTM.
+      */}
+      {turnstileSiteKey ? (
+        <>
+          <Script
+            src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+            strategy="lazyOnload"
+          />
+          <div
+            className="cf-turnstile"
+            data-sitekey={turnstileSiteKey}
+            data-appearance="interaction-only"
+            data-language="nb"
+          />
+        </>
+      ) : null}
 
       {/*
         Risikodemping ved knappen, ikke 400 px lenger ned.

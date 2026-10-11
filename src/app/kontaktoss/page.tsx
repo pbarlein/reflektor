@@ -4,6 +4,7 @@ import { Logorad } from "@/components/Logorad";
 import Image from "next/image";
 
 import { Container } from "@/components/Container";
+import { turnstileSiteKey } from "@/lib/turnstile";
 import { Eyebrow, Merkelapp } from "@/components/Eyebrow";
 import { Kontaktskjema } from "@/components/Kontaktskjema";
 import { BrodsmuleSchema, KontaktSchema } from "@/components/Schema";
@@ -146,7 +147,7 @@ export default function KontaktOss() {
 
             <div className="rounded-flate bg-dyp p-6 sm:p-8">
               <div className="rounded-flate bg-flate p-6 text-blekk sm:p-8">
-                <Kontaktskjema side="/kontaktoss" />
+                <Kontaktskjema side="/kontaktoss" turnstileSiteKey={turnstileSiteKey()} />
               </div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import { after, NextResponse, type NextRequest } from "next/server";
 
 import { lesHutk, sendLeadTilHubspot } from "@/lib/hubspot";
+import { avbrytPaaminnelse } from "@/lib/hubspotcrm";
 import {
   nettsideFraEpost,
   normaliserMobil,
@@ -16,6 +17,9 @@ import {
   rens,
   serUtSomEpost,
 } from "@/lib/skjemavern";
+import { epostdomene, spamScore } from "@/lib/spam";
+import { erEngangsadresse, manglerMx } from "@/lib/spamoppslag";
+import { TURNSTILE_FELT, verifiserTurnstile } from "@/lib/turnstile";
 
 /**
  * Skjemainnsending.
@@ -86,20 +90,28 @@ export async function POST(req: NextRequest) {
    * varselet til Pål og innsendingen til HubSpot.
    */
   if (foroftig(klientnokkel(req.headers))) {
-    botAktig = true;
     console.warn(
       `[skjema] Over mengdegrensen for ${klientnokkel(req.headers)}. Innsendingen ble IKKE sendt videre.`,
     );
+    return svar(req);
   }
 
   // Honningkrukke: feltet er skjult for mennesker. Utfylt = bot.
   if (data.get("firmanavn")) botAktig = true;
 
-  // Innsending under to sekunder etter lasting er praktisk talt alltid maskinell.
+  /*
+   * Innsending under tre sekunder etter lasting er praktisk talt alltid
+   * maskinell. Grensen sto på to til 11.10.2026.
+   *
+   * GIR IKKE LENGER ET STILLE AVBRUDD. Begge disse to er nå tre poeng i
+   * spam-scoren — se lib/spam.ts — og blokkerer dermed alene, akkurat som
+   * før. Forskjellen er at utfallet havner i den samme logglinja som alt
+   * annet, i stedet for å forsvinne.
+   */
   const lastet = Number(data.get("lastet") ?? 0);
-  if (lastet && Date.now() - lastet < 2000) botAktig = true;
+  if (lastet && Date.now() - lastet < 3000) botAktig = true;
 
-  if (!botAktig) {
+  {
     /*
      * Alt renses og kuttes før det forlater ruta. Uten grenser kunne én
      * POST legge flere megabyte inn i en e-post, og kontrolltegn i et navn
@@ -194,6 +206,21 @@ export async function POST(req: NextRequest) {
     const basis = basisUrl();
 
     /*
+     * HEADERNE LESES HER, av samme grunn som cookien over.
+     *
+     * `x-vercel-ip-country` ER BESØKENDES LAND, og det er den eneste
+     * stedsopplysningen vi har som faktisk stemmer. HubSpot viser
+     * «Ashburn, US» på hvert eneste nettsidelead, også de norske — det er
+     * Vercel-funksjonens egen IP, ikke avsenderens.
+     *
+     * `x-forwarded-for` kan inneholde flere adresser, lagt på av hvert
+     * ledd. Den FØRSTE er besøkende; resten er mellomledd.
+     */
+    const land = req.headers.get("x-vercel-ip-country") ?? "";
+    const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0]!.trim();
+    const turnstiletoken = String(data.get(TURNSTILE_FELT) ?? "");
+
+    /*
      * `after()` KASTER HVIS DEN KALLES UTENFOR EN FORESPØRSELSKONTEKST.
      * Verifisert: «`after` was called outside a request scope.» I en
      * rutehåndterer på Vercel finnes konteksten alltid, så dette skal ikke
@@ -208,11 +235,104 @@ export async function POST(req: NextRequest) {
      * enn `after()` — men et mye bedre utfall enn en 500.
      */
     const etterpa = async () => {
-      const iHubspot = await sendLeadTilHubspot(lead, hutk, basis);
+      /*
+        HELE VURDERINGEN LIGGER I `after()`, ETTER AT SVARET ER SENDT.
+        Den koster et Turnstile-kall, et DNS-oppslag og en liste på 121
+        570 domener — og ingen av delene skal den besøkende vente på.
+        Svaret er 303 til /takk uansett hva vi kommer fram til, så det er
+        ingenting å vente på heller.
+      */
+      const turnstile = await verifiserTurnstile(turnstiletoken, ip);
+
+      const domene = epostdomene(lead.epost);
+      const [engangs, utenMx] = await Promise.all([
+        erEngangsadresse(domene),
+        manglerMx(domene),
+      ]);
+
+      const vurdering = spamScore({
+        telefon: lead.telefon,
+        epost: lead.epost,
+        melding: lead.melding,
+        bedrift: lead.bedrift,
+        land,
+        botAktig,
+        engangsadresse: engangs,
+        manglerMx: utenMx,
+      });
+
+      /*
+        ET AVVIST TURNSTILE-TOKEN BLOKKERER ALENE. Widgeten måler
+        nettleseren, ikke teksten, og den tar derfor botten som skriver
+        feilfritt norsk fra en norsk IP — den scoren aldri ville fanget.
+        Er Turnstile ikke satt opp, eller fikk vi ikke svar fra
+        Cloudflare, bærer scoren alene. Se lib/turnstile.ts.
+      */
+      const blokkert = turnstile === "avvist" || vurdering.utfall === "blokkert";
+      const flagget = !blokkert && vurdering.utfall === "flagget";
+
+      const treff = [
+        ...vurdering.treff,
+        ...(turnstile === "avvist" ? ["turnstile-avvist"] : []),
+      ];
+
+      console.info(
+        `SKJEMA: score=${vurdering.score} treff=[${treff.join(", ")}] resultat=${
+          blokkert ? "blokkert" : flagget ? "flagget" : "ok"
+        }`,
+      );
+
+      if (blokkert) {
+        /*
+          INGENTING SENDES VIDERE. Ingen kontakt i HubSpot, ingen varsel
+          til Pål, ingen e-post til avsenderen. Besøkende fikk 303 til
+          /takk som alle andre — et annet svar for bot enn for menneske
+          forteller boten nøyaktig hva som avslørte den.
+        */
+        console.warn(
+          `SKJEMA BLOKKERT: score=${vurdering.score} treff=${treff.join(",")} epost=${domene || "ukjent"}`,
+        );
+        return;
+      }
+
+      const iHubspot = await sendLeadTilHubspot(lead, hutk, basis, ip);
       try {
-        await sendLeadPaEpost(lead, { hubspotFeilet: !iHubspot });
+        await sendLeadPaEpost(lead, {
+          hubspotFeilet: !iHubspot,
+          spamTreff: flagget ? treff : undefined,
+        });
       } catch {
         // sendLeadPaEpost har allerede logget «LEADVARSEL FEILET».
+      }
+
+      /*
+        EN FLAGGET INNSENDING FÅR INGEN AUTOMATISK OPPFØLGING. Scoren var
+        1 eller 2 — for lite til å kaste en mulig kunde, for mye til å
+        sende presentasjonen og en påminnelse til noen vi ikke vet hvem
+        er. Pål får varselet med ⚠-linja og tar det derfra; knappen
+        «Skriv til <fornavn>» står som før.
+
+        `paminnelse_avbrutt` ER MARKØREN, det samme feltet avbryt-knappen
+        setter. Jobben som kjører hvert femte minutt leser den og hopper
+        over kontakten — se lib/leadepost.ts.
+
+        ETT FORSØK TIL ETTER TRE SEKUNDER. Kontakten lages av Forms API
+        rett før dette, og HubSpot bruker av og til et øyeblikk på å
+        gjøre den søkbar. Et 404 her betyr «ikke ennå», ikke «finnes
+        ikke».
+      */
+      if (flagget) {
+        if (iHubspot) {
+          let utfall = await avbrytPaaminnelse(lead.epost);
+          if (!utfall.ok && utfall.grunn === "ikke-funnet") {
+            await new Promise((f) => setTimeout(f, 3000));
+            utfall = await avbrytPaaminnelse(lead.epost);
+          }
+          console.info(
+            `SKJEMA: flagget lead ${lead.epost} — oppfølging ${utfall.ok ? "slått av" : `IKKE slått av (${utfall.grunn})`}.`,
+          );
+        }
+        return;
       }
 
       /*

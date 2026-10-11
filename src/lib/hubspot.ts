@@ -69,7 +69,24 @@ export type Hubspotfelt = { name: string; value: string };
 
 export type Hubspotinnsending = {
   fields: Hubspotfelt[];
-  context: { hutk?: string; pageUri: string; pageName: string };
+  context: {
+    hutk?: string;
+    pageUri: string;
+    pageName: string;
+    /**
+     * BESØKENDES IP, ikke serverens. Lagt til 11.10.2026.
+     *
+     * HubSpot viste «Ashburn, US» på hvert eneste nettsidelead — også de
+     * norske. Det er ikke besøkende: det er Vercel-funksjonen som sender
+     * innsendingen, og den står i Virginia. Uten dette feltet gjetter
+     * HubSpot på avsenderens IP, og avsenderen er oss.
+     *
+     * Feltet er HubSpots eget i Forms API, og det er det som bestemmer
+     * land og by på kontakten. Verdien er første adresse i
+     * `x-forwarded-for`.
+     */
+    ipAddress?: string;
+  };
 };
 
 /**
@@ -95,6 +112,7 @@ export function byggInnsending(
   hutk: string | undefined,
   basis: string,
   utelat: ReadonlySet<string> = new Set(),
+  ip = "",
 ): Hubspotinnsending {
   const { fornavn, etternavn } = delNavn(lead.navn);
 
@@ -128,6 +146,7 @@ export function byggInnsending(
       .map(([name, value]) => ({ name, value })),
     context: {
       ...(hutk ? { hutk } : {}),
+      ...(ip ? { ipAddress: ip } : {}),
       pageUri: `${basis}${sti}`,
       pageName: sti,
     },
@@ -188,6 +207,7 @@ export async function sendLeadTilHubspot(
   lead: Lead,
   hutk: string | undefined,
   basis: string,
+  ip = "",
 ): Promise<boolean> {
   /*
    * E-post er det ene feltet HubSpot krever. Mangler den, ville kallet gitt
@@ -205,7 +225,7 @@ export async function sendLeadTilHubspot(
     fetch(ENDEPUNKT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(byggInnsending(lead, hutk, basis, utelat)),
+      body: JSON.stringify(byggInnsending(lead, hutk, basis, utelat, ip)),
       signal: AbortSignal.timeout(TIDSTAK_MS),
     });
 

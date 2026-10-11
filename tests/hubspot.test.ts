@@ -11,6 +11,11 @@ import {
 } from "@/lib/hubspot";
 import type { Lead } from "@/lib/lead";
 
+import { varmOppOppslag, ventPaEtterpa } from "./etterpa.ts";
+
+/* Lista lastes før første måling. Se etterpa.ts. */
+await varmOppOppslag();
+
 /**
  * Leadlevering til HubSpot.
  *
@@ -409,9 +414,14 @@ test("ruta sender kilden fra skjemafeltet videre til HubSpot", async () => {
         body: kropp,
       }) as never,
     );
-    // after() kjører utenfor forespørselskonteksten i test: ruta faller
-    // tilbake til et direkte kall, og det er ferdig når POST er det.
-    await new Promise((r) => setTimeout(r, 50));
+    /*
+     * after() kjører utenfor forespørselskonteksten i test: ruta faller
+     * tilbake til et direkte kall UTEN å vente på det. Her sto en pause på
+     * 50 ms og en kommentar om at arbeidet var ferdig når POST var det.
+     * Det var feil, og ble synlig 11.10.2026 da spam-sperra la et oppslag
+     * inn i den samme køen. Se etterpa.ts.
+     */
+    await ventPaEtterpa(() => sendt.length > 0);
   } finally {
     globalThis.fetch = opprinnelig;
   }
