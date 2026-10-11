@@ -64,6 +64,21 @@ koste noen en henvendelse.
 | 882819192046 Marisol, La. MEXICANA As | 0 | ok |
 | 888337466559 Golnaz, Natulahland | 0 | ok |
 
+## To nye falske kom inn natt til 11.10, før sperra var ute
+
+Kl. 03:18 og 03:24 — begge fra `smaqt.com`, amerikansk nummer, generert
+bedriftsnavn og en engelsk melding som ikke henger sammen:
+
+| Innsending | Score | Utfall |
+|---|---|---|
+| Norval Stamm / Koss - Grady / +1 377… | 4 | blokkert |
+| Harvey Johnson / Stamm - Leuschke / +1 302… | 4 | blokkert |
+
+**Dette er ekte data, hentet fra varslene i Påls innboks** — ikke
+rekonstruert. Begge blokkeres på nummer, språk og navn alene, uten at
+IP-poenget trengs. Da det nå er fem falske innsendinger på to døgn, er det
+en pågående kampanje og ikke et enkelttilfelle.
+
 **De tre falske kontaktene var slettet da dette ble bygget.** HubSpot svarer
 `notFound` på alle tre ID-ene (888069876941, 888274653411, 888251445478) —
 Pål ryddet dem først. Radene over er derfor bygget opp fra beskrivelsen i
@@ -151,6 +166,31 @@ tokenet mot Cloudflare før noe annet skjer i `after()`.
 - **Et kall som ikke når fram slipper gjennom.** Er Cloudflare nede, skal
   ikke alle henvendelser forsvinne — da bærer scoren alene, og en logglinje
   sier hva som skjedde.
+
+### Punkt 3 i verifiseringen kan bare Pål gjøre
+
+Bestillingen ba om en reell testinnsending fra nettsiden med norsk nummer,
+der varselet ikke skal ha ⚠-linje. Den ble sendt 11.10 kl. 10:49 og kom
+fram — men **med ⚠-linja**, på `utenlandsk-ip`. Grunnen er at trafikken min
+går ut fra et amerikansk datasenter, så `x-vercel-ip-country` er ikke `NO`
+uansett hva innsendingen inneholder. Regelen gjorde altså jobben sin; det er
+målepunktet som ikke kan nås herfra.
+
+Det som ER verifisert live av den innsendingen: leadet kom fram, varselet
+hadde ⚠-linja med treffet i klartekst, og den automatiske oppfølgingen ble
+slått av (`SKJEMA: flagget lead … oppfølging slått av`).
+
+**En innsending fra Påls egen telefon eller maskin i Norge vil gi score 0 og
+et varsel uten ⚠.** Det er den siste biten som står igjen.
+
+### Et flagget lead får ikke e-post 1
+
+Verdt å vite, fordi det treffer den eneste KPI-en: utenlandsk IP alene er to
+poeng, og to poeng flagger. En norsk kunde som fyller ut skjemaet på reise,
+eller gjennom VPN, kommer fram til Pål — men får ikke presentasjonen og
+bookinglenka automatisk. Vektene er slik bestillingen satte dem. Skal
+utenlandsk IP alene ikke være nok til å flagge, er det ett poeng den må ned
+til; da kreves det to treff, som for alt annet.
 
 ### Nøklene må legges inn, og så må det rulles ut på nytt
 
