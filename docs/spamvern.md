@@ -120,10 +120,25 @@ testet var feil. To uavhengige årsaker:
   testene i `tomskjema.test.ts` delte derfor kvote, og den sjette og sjuende
   ble stoppet av mengdegrensen i stedet for av det de testet. Hver
   innsending får nå sin egen IP.
-- **Pausene som ventet på `after()` var faste, på 50 og 100 ms.** Da
-  engangslista begynte å laste for ekte, tok arbeidet 86 ms mer, og kallene
-  fra én test ble talt i den neste. `tests/etterpa.ts` laster nå lista før
-  målingen begynner og venter på et resultat i stedet for på klokka.
+- **Pausene som ventet på `after()` var faste, på 50, 60, 100 og 120 ms.**
+  Da engangslista begynte å laste for ekte, tok arbeidet 86 ms mer, og
+  kallene fra én test ble talt i den neste. `tests/etterpa.ts` laster nå
+  lista før målingen begynner og venter på et resultat i stedet for på
+  klokka.
+
+En tredje, som den andre gjorde synlig: testen som later som nettet er nede
+la `fetch` tilbake før arbeidet bak svaret var gjort. Kallet gikk da ut på
+det ekte nettet, og landet dessuten midt i neste test — som leste et annet
+leads felter enn sine egne. Tre av åtte kjøringer feilet på det. Testen
+venter nå ut sitt eget arbeid, og den neste venter på feltet den faktisk
+spør om i stedet for på at noe som helst har kommet.
+
+**De to testene som krever en eksakt score bruker vårt eget domene.** Først
+sto det `kari@nordvik.no` og `iver@lokk.no` — ekte kunders domener. Begge har
+MX i dag, kontrollert 11.10.2026, så testene er grønne. Men MX-regelen gir
+to poeng til et domene uten e-post, og den dagen noen av dem flytter
+e-posten sin blir testen rød uten at noe i koden er galt. Hvilket domene
+adressen har betyr ingenting for det de måler.
 
 ## Turnstile
 

@@ -209,9 +209,18 @@ test("nyttelasten sendes som JSON til riktig endepunkt", async () => {
  */
 test("skjemaruta svarer 303 til /takk selv om HubSpot feiler", async () => {
   const opprinnelig = globalThis.fetch;
+  /*
+   * FORSØKENE TELLES FOR Å KUNNE VENTE PÅ DEM. Arbeidet bak svaret ligger
+   * i `after()` og er ikke ferdig når POST er det. Ble `fetch` lagt tilbake
+   * før arbeidet var gjort, gikk kallet ut på det ekte nettet — og landet
+   * dessuten midt i neste test, som da leste et annet leads felter enn
+   * sine egne. Tre av åtte kjøringer feilet på det 11.10.2026.
+   */
+  let forsok = 0;
 
   try {
     globalThis.fetch = async () => {
+      forsok += 1;
       throw new Error("nett nede");
     };
 
@@ -232,6 +241,9 @@ test("skjemaruta svarer 303 til /takk selv om HubSpot feiler", async () => {
 
     assert.equal(svar.status, 303);
     assert.equal(new URL(svar.headers.get("location") ?? "").pathname, "/takk");
+
+    /* Vent ut arbeidet bak svaret før `fetch` legges tilbake. */
+    await ventPaEtterpa(() => forsok > 0);
   } finally {
     globalThis.fetch = opprinnelig;
   }
@@ -421,7 +433,7 @@ test("ruta sender kilden fra skjemafeltet videre til HubSpot", async () => {
      * Det var feil, og ble synlig 11.10.2026 da spam-sperra la et oppslag
      * inn i den samme køen. Se etterpa.ts.
      */
-    await ventPaEtterpa(() => sendt.length > 0);
+    await ventPaEtterpa(() => sendt.some((f) => f.name === "nettside_kilde"));
   } finally {
     globalThis.fetch = opprinnelig;
   }

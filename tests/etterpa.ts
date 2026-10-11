@@ -41,3 +41,12 @@ export async function ventPaEtterpa(ferdig: () => boolean): Promise<void> {
   }
   await new Promise((f) => setTimeout(f, 250));
 }
+
+/**
+ * Venter ut vinduet uten å vente på noe bestemt. For testene som krever at
+ * INGENTING skjedde: der finnes det ikke et resultat å vente på, og
+ * ventingen må være lang nok til at et kall ville kommet.
+ */
+export async function ventUtVinduet(): Promise<void> {
+  await ventPaEtterpa(() => false);
+}

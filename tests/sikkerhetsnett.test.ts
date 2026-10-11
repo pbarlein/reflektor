@@ -3,6 +3,15 @@ import test from "node:test";
 
 import { varsel } from "@/lib/lead.ts";
 
+import {
+  varmOppOppslag,
+  ventPaEtterpa,
+  ventUtVinduet,
+} from "./etterpa.ts";
+
+/* Lista lastes før første måling. Se etterpa.ts. */
+await varmOppOppslag();
+
 /**
  * Sikkerhetsnettet rundt kontaktskjemaet, bestilt 04.10.2026.
  *
@@ -149,13 +158,20 @@ test("over mengdegrensen: 303 til /takk, men ingenting sendes videre", async () 
     };
     console.warn = () => {};
 
+    /*
+     * ARBEIDET BAK SVARET VENTES UT FØR TELLEREN LESES. Her sto to faste
+     * pauser på 60 ms. Arbeidet ligger i `after()` og er ikke ferdig når
+     * POST er det — med spam-sperra fra 11.10.2026 tar det lenger tid enn
+     * det gjorde. Leses telleren for tidlig, vokser den etterpå, og
+     * testen feiler på kall som kom fra de fem første.
+     */
     const ip = "203.0.113.77";
     for (let i = 0; i < 5; i++) await post(ip);
-    await new Promise((r) => setTimeout(r, 60));
+    await ventPaEtterpa(() => kall >= 5);
     const forGrensen = kall;
 
     const svar = await post(ip);
-    await new Promise((r) => setTimeout(r, 60));
+    await ventUtVinduet();
 
     assert.equal(svar.status, 303);
     assert.equal(new URL(svar.headers.get("location") ?? "").pathname, "/takk");
@@ -193,7 +209,7 @@ test("feiler HubSpot, står advarselen i varselet som sendes", async () => {
     console.error = () => {};
 
     await post("198.51.100.5");
-    await new Promise((r) => setTimeout(r, 120));
+    await ventPaEtterpa(() => epostkropp !== "");
   } finally {
     globalThis.fetch = opprinnelig;
     console.error = opprinneligFeil;

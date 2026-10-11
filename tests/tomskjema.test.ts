@@ -180,7 +180,15 @@ test("et enkelt treff flagges: leadet kommer fram, varselet advarer", async () =
       {
         side: "/kontaktoss",
         navn: "Kari Nordmann",
-        epost: "kari@nordvik.no",
+        /*
+         * VÅRT EGET DOMENE, OG DET ER POENGET. Scoren må være nøyaktig to
+         * her, og MX-regelen gir to poeng til et domene uten e-post. Med
+         * en kundes domene i testen ville den blitt rød den dagen noen
+         * andre flyttet sin e-post — en test som avhenger av en
+         * tredjeparts DNS-oppføring. Hvilket domene adressen har betyr
+         * ingenting for det testen faktisk måler: at IP-en flagger.
+         */
+        epost: "kari@reflektor.no",
         telefon: "+47 911 22 334",
         bedrift: "Nordvik AS",
         melding: "Vi trenger video til nettsiden og sosiale medier",
@@ -205,7 +213,8 @@ test("et rent lead får ingen advarsel", async () => {
       {
         side: "/kontaktoss",
         navn: "Iver Kappelslåen",
-        epost: "iver@lokk.no",
+        /* Vårt eget domene, av samme grunn som over. */
+        epost: "iver@reflektor.no",
         telefon: "+47 411 72 729",
         bedrift: "Lokk as",
         melding: "Some innhold. Mest mot custom hodeplagg og produkter",
