@@ -183,7 +183,31 @@ async function metavarselForBooket(
  * filteret kjøres på nytt med fullt grunnlag. Det er samme funksjon begge
  * ganger, så de to kan ikke svare forskjellig på det samme.
  */
-async function filtrerLead(k: Leadkontakt): Promise<{
+/**
+ * De tre oppslagene filteret gjør utenfor huset.
+ *
+ * SAMLET I ET OBJEKT SÅ DE KAN BYTTES UT I TEST. Testene kan stubbe
+ * `fetch`, men ikke DNS — og `harMx` spør DNS direkte. Resultatet var at
+ * suiten avhang av om fremmede domener fortsatt tok imot e-post: CI feilet
+ * 12.10.2026 fordi `bakstogro.no` i en fikstur ikke finnes lenger, mens
+ * utviklingsmiljøet uten DNS ikke så det. Nå er det ingen test som
+ * avhenger av noen andres DNS-oppføring.
+ *
+ * STANDARDEN ER DE EKTE. Produksjonsveien er uendret, og ingen som kaller
+ * trenger å vite at parameteren finnes.
+ */
+export type Filteroppslag = {
+  harMx: (domene: string) => Promise<boolean>;
+  brregTreff: (firma: string, domene: string) => Promise<boolean | null>;
+  domeneSvarer: (domene: string) => Promise<boolean | null>;
+};
+
+const EKTE_OPPSLAG: Filteroppslag = { harMx, brregTreff, domeneSvarer };
+
+async function filtrerLead(
+  k: Leadkontakt,
+  oppslag: Filteroppslag = EKTE_OPPSLAG,
+): Promise<{
   utfall: Filterutfall;
   grunn: string;
 }> {
@@ -210,14 +234,14 @@ async function filtrerLead(k: Leadkontakt): Promise<{
   const uten = filtrer(grunnlag);
   if (uten.utfall === "avvist") return uten;
 
-  const mx = await harMx(domene);
+  const mx = await oppslag.harMx(domene);
   const medMx = filtrer({ ...grunnlag, harMx: mx });
   if (medMx.utfall === "avvist") return medMx;
 
   /* Runde to: de to som kan godkjenne. Begge kan feile uten å avvise. */
   const [brreg, svarer] = await Promise.all([
-    brregTreff(k.bedrift, domene),
-    domeneSvarer(domene),
+    oppslag.brregTreff(k.bedrift, domene),
+    oppslag.domeneSvarer(domene),
   ]);
 
   return filtrer({
@@ -327,6 +351,7 @@ export async function sendEpost1(
   k: Leadkontakt,
   na = new Date(),
   booket: Leadkontakt[] = [],
+  oppslag: Filteroppslag = EKTE_OPPSLAG,
 ): Promise<Utfall> {
   const dublett = booketAnnetSted(k, booket);
   const kilde = leadkilde(k.hendelse);
@@ -360,7 +385,7 @@ export async function sendEpost1(
     siste sikkerhetsnett. Rekkefølgen er bestillingens.
   */
   if (kilde === "meta") {
-    const dom = await filtrerLead(k);
+    const dom = await filtrerLead(k, oppslag);
     if (dom.utfall !== "godkjent") {
       console.warn(
         `META-LEAD ${dom.utfall.toUpperCase()}: ${k.navn} ${k.epost} ${k.bedrift || "uten firma"} – ${dom.grunn}`,
@@ -488,6 +513,7 @@ export async function sendEpost2(
   k: Leadkontakt,
   na: Date,
   booket: Leadkontakt[] = [],
+  oppslag: Filteroppslag = EKTE_OPPSLAG,
 ): Promise<Utfall> {
   /*
     DUBLETTSJEKKEN FØRST, FØR VI BRUKER KALL PÅ AVTALER OG GMAIL. Har samme
@@ -507,7 +533,7 @@ export async function sendEpost2(
     før filteret fantes, skal ikke få påminnelsen i morgen.
   */
   if (leadkilde(k.hendelse) === "meta") {
-    const dom = await filtrerLead(k);
+    const dom = await filtrerLead(k, oppslag);
     if (dom.utfall !== "godkjent") {
       console.warn(
         `META-LEAD ${dom.utfall.toUpperCase()}: ${k.navn} ${k.epost} ${k.bedrift || "uten firma"} – ${dom.grunn}`,

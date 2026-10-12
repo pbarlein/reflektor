@@ -323,7 +323,22 @@ test("et rent nettsidelead får ingen treff", () => {
  * går i stykker så snart koden bytter om på to oppslag, og da feiler
  * testen for noe annet enn det den handler om.
  */
-type Stubb = { brreg?: boolean; svarer?: boolean };
+type Stubb = { brreg?: boolean; svarer?: boolean; mx?: boolean };
+
+/**
+ * OPPSLAGENE SENDES INN, DE SLÅS IKKE OPP. `harMx` spør DNS direkte, og
+ * DNS kan ikke stubbes med `fetch`. Resultatet var at testene avhang av om
+ * fremmede domener fortsatt tok imot e-post — CI feilet 12.10.2026 fordi
+ * et domene i en fikstur ikke finnes lenger. `undefined` betyr «oppslaget
+ * kom ikke fram», som er det som skal gi usikker og aldri avvist.
+ */
+function oppslagene(stubb: Stubb) {
+  return {
+    harMx: async () => stubb.mx ?? true,
+    brregTreff: async () => stubb.brreg ?? null,
+    domeneSvarer: async () => stubb.svarer ?? null,
+  };
+}
 
 type Telt = {
   google: number;
@@ -337,7 +352,14 @@ const AVTALENAVN = "Ingrid Lie – Nordlysbakeriet (Meta)";
 async function gjennomJobben(
   kontakt: Record<string, unknown>,
   stubb: Stubb,
-  kjor: (sendEpost1: (k: never, na: Date) => Promise<string>) => Promise<void>,
+  kjor: (
+    sendEpost1: (
+      k: never,
+      na: Date,
+      booket: never[],
+      oppslag: ReturnType<typeof oppslagene>,
+    ) => Promise<string>,
+  ) => Promise<void>,
 ): Promise<Telt> {
   const forFetch = globalThis.fetch;
   const forMiljo = { ...process.env };
@@ -377,17 +399,6 @@ async function gjennomJobben(
       t.varsler.push({ emne: k.subject, tekst: k.text });
       return Response.json({ id: "1" });
     }
-    if (url.includes("data.brreg.no")) {
-      if (stubb.brreg === undefined) return new Response("", { status: 503 });
-      return Response.json({
-        _embedded: {
-          enheter: stubb.brreg
-            ? [{ navn: "NORDLYSBAKERIET AS" }]
-            : [{ navn: "Et helt annet firma" }],
-        },
-      });
-    }
-
     if (url.includes("api.hubapi.com")) {
       if (/\/objects\/contacts\/\d+\?/.test(url)) {
         return Response.json({ id: "1", properties: { email: "a@b.no" } });
@@ -431,8 +442,11 @@ async function gjennomJobben(
       return Response.json({ results: [] });
     }
 
-    /* Nettsjekken av e-postdomenet. */
-    return stubb.svarer ? new Response("", { status: 200 }) : Promise.reject(new Error("nede"));
+    /*
+      INGENTING ANNET SKAL RINGES OPP. Brønnøysund og nettsjekken sendes
+      inn som stubb, ikke over nettet — se `oppslagene`.
+    */
+    throw new Error(`uventet kall: ${url}`);
   }) as typeof globalThis.fetch;
 
   try {
@@ -481,7 +495,12 @@ test("gmail-lead: AVVIST, ingen e-post, ingen varsel, avtalen merkes", async () 
     { brreg: true },
     async (sendEpost1) => {
       assert.equal(
-        await sendEpost1({ ...METALEAD, epost: "glfjel@gmail.com" } as never, ETTERPA),
+        await sendEpost1(
+          { ...METALEAD, epost: "glfjel@gmail.com" } as never,
+          ETTERPA,
+          [],
+          oppslagene({ brreg: true }),
+        ),
         "hoppet-over",
       );
     },
@@ -495,7 +514,10 @@ test("gmail-lead: AVVIST, ingen e-post, ingen varsel, avtalen merkes", async () 
 
 test("jobb-e-post med treff i Brønnøysund: GODKJENT, e-posten går", async () => {
   const t = await gjennomJobben(METALEAD, { brreg: true }, async (sendEpost1) => {
-    assert.equal(await sendEpost1(METALEAD as never, ETTERPA), "sendt");
+    assert.equal(
+      await sendEpost1(METALEAD as never, ETTERPA, [], oppslagene({ brreg: true })),
+      "sendt",
+    );
   });
 
   assert.equal(t.google, 1, "e-post 1 skulle gått ut");
@@ -512,7 +534,15 @@ test("uten brreg-treff, men domenet svarer: GODKJENT", async () => {
     METALEAD,
     { brreg: false, svarer: true },
     async (sendEpost1) => {
-      assert.equal(await sendEpost1(METALEAD as never, ETTERPA), "sendt");
+      assert.equal(
+        await sendEpost1(
+          METALEAD as never,
+          ETTERPA,
+          [],
+          oppslagene({ brreg: false, svarer: true }),
+        ),
+        "sendt",
+      );
     },
   );
   assert.equal(t.google, 1);
@@ -523,7 +553,15 @@ test("uten treff og uten svar: USIKKER, varsel uten e-post", async () => {
     METALEAD,
     { brreg: false, svarer: false },
     async (sendEpost1) => {
-      assert.equal(await sendEpost1(METALEAD as never, ETTERPA), "hoppet-over");
+      assert.equal(
+        await sendEpost1(
+          METALEAD as never,
+          ETTERPA,
+          [],
+          oppslagene({ brreg: false, svarer: false }),
+        ),
+        "hoppet-over",
+      );
     },
   );
 
@@ -539,7 +577,10 @@ test("uten treff og uten svar: USIKKER, varsel uten e-post", async () => {
 /** Vår egen nedetid skal gi usikker, ikke avvist. */
 test("Brønnøysund nede: USIKKER, og leadet varsles", async () => {
   const t = await gjennomJobben(METALEAD, {}, async (sendEpost1) => {
-    assert.equal(await sendEpost1(METALEAD as never, ETTERPA), "hoppet-over");
+    assert.equal(
+      await sendEpost1(METALEAD as never, ETTERPA, [], oppslagene({})),
+      "hoppet-over",
+    );
   });
 
   assert.equal(t.google, 0);
@@ -550,7 +591,10 @@ test("Brønnøysund nede: USIKKER, og leadet varsles", async () => {
 test("behov «ja»: AVVIST, ingenting sendes", async () => {
   const lead = { ...METALEAD, behov: "ja" };
   const t = await gjennomJobben(lead, { brreg: true }, async (sendEpost1) => {
-    assert.equal(await sendEpost1(lead as never, ETTERPA), "hoppet-over");
+    assert.equal(
+      await sendEpost1(lead as never, ETTERPA, [], oppslagene({ brreg: true })),
+      "hoppet-over",
+    );
   });
   assert.equal(t.google, 0);
   assert.deepEqual(t.varsler, []);
@@ -559,7 +603,10 @@ test("behov «ja»: AVVIST, ingenting sendes", async () => {
 test("firma «Daglig leder»: AVVIST", async () => {
   const lead = { ...METALEAD, bedrift: "Daglig leder" };
   const t = await gjennomJobben(lead, { brreg: true }, async (sendEpost1) => {
-    assert.equal(await sendEpost1(lead as never, ETTERPA), "hoppet-over");
+    assert.equal(
+      await sendEpost1(lead as never, ETTERPA, [], oppslagene({ brreg: true })),
+      "hoppet-over",
+    );
   });
   assert.equal(t.google, 0);
   assert.deepEqual(t.varsler, []);
@@ -581,7 +628,15 @@ test("v2-lead uten behov: ikke avvist, men usikker", async () => {
     lead,
     { brreg: false, svarer: false },
     async (sendEpost1) => {
-      assert.equal(await sendEpost1(lead as never, ETTERPA), "hoppet-over");
+      assert.equal(
+        await sendEpost1(
+          lead as never,
+          ETTERPA,
+          [],
+          oppslagene({ brreg: false, svarer: false }),
+        ),
+        "hoppet-over",
+      );
     },
   );
 
@@ -598,7 +653,10 @@ test("et nettsidelead med gmail avvises ikke av jobben", async () => {
     hendelse: "/kontaktoss: reflektor.no – kontaktskjema",
   };
   const t = await gjennomJobben(lead, { brreg: true }, async (sendEpost1) => {
-    assert.equal(await sendEpost1(lead as never, ETTERPA), "sendt");
+    assert.equal(
+      await sendEpost1(lead as never, ETTERPA, [], oppslagene({ brreg: true })),
+      "sendt",
+    );
   });
   assert.equal(t.google, 1, "nettsideleads flagges i skjemaruta, ikke her");
   assert.deepEqual(t.avtalenavn, []);

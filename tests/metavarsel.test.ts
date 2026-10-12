@@ -177,12 +177,15 @@ test("nettsidevarselet har fortsatt nettside og behov", () => {
  */
 
 /*
- * ADRESSEN ER BYTTET TIL ET JOBBDOMENE, 12.10.2026. Det ekte leadet fra
- * 04.10 brukte `lolademunirat@yahoo.com`, og fra i dag avviser
- * leadfilteret yahoo — se lib/leadfilter.ts. Fiksturen ville dermed blitt
- * stoppet før testen rakk å måle det den handler om, nemlig varselet og
- * bookingen. At den ekte adressen nå ville blitt avvist, er testet for
- * seg i tests/leadfilter.test.ts.
+ * ADRESSEN ER ET JOBBDOMENE, byttet 12.10.2026. Det ekte leadet fra 04.10
+ * brukte `lolademunirat@yahoo.com`, og fra i dag avviser leadfilteret
+ * yahoo — se lib/leadfilter.ts. Fiksturen ville blitt stoppet før testen
+ * rakk å måle det den handler om, nemlig varselet og bookingen. At den
+ * ekte adressen nå avvises, er testet for seg i tests/leadfilter.test.ts.
+ *
+ * DOMENET SLÅS IKKE OPP. Oppslagene sendes inn som stubb nedenfor, så
+ * testen ikke avhenger av om noen andres domene tar imot e-post. Her sto
+ * `bakstogro.no`, som ikke finnes lenger — og CI feilet på det samme dag.
  */
 const METAKONTAKT = {
   id: "883323161813",
@@ -224,12 +227,20 @@ const BOOKINGKONTAKT = {
  * Kjører med alle nøkler satt, og teller hvem som ble ringt opp: Gmail,
  * Resend eller HubSpot.
  */
+/** Oppslagene filteret ellers gjør over nettet. Her: alt i orden. */
+const OPPSLAG = {
+  harMx: async () => true,
+  brregTreff: async () => true,
+  domeneSvarer: async () => true,
+};
+
 async function medAlt(
   kjor: (
     sendEpost1: (
       k: typeof METAKONTAKT,
       na?: Date,
       booket?: (typeof METAKONTAKT)[],
+      oppslag?: typeof OPPSLAG,
     ) => Promise<string>,
   ) => Promise<void>,
 ): Promise<{ gmail: number; resend: Record<string, unknown>[]; hubspot: string[] }> {
@@ -322,7 +333,12 @@ test("Meta-lead som booket ett minutt senere: ingen e-post til noen av dem", asy
 test("Meta-lead uten booking får e-posten og varselet", async () => {
   const t = await medAlt(async (sendEpost1) => {
     assert.equal(
-      await sendEpost1(METAKONTAKT, new Date("2026-10-04T06:42:00Z"), []),
+      await sendEpost1(
+        METAKONTAKT,
+        new Date("2026-10-04T06:42:00Z"),
+        [],
+        OPPSLAG,
+      ),
       "sendt",
     );
   });

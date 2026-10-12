@@ -780,3 +780,26 @@ Nederst på `/paaminnelse`, i «Avvist av leadfilteret»: navn og firma fra
 avtalenavnet, grunn og e-post fra beskrivelsen. Listen leses fra avtalene i
 HubSpot og trenger ingen egen lagring — og uten den er filteret umulig å
 etterprøve. Ser noe der ekte ut, er filteret for strengt.
+
+### CI feilet først, og hvorfor
+
+Første push 12.10 ble rød på testene, mens alt var grønt i
+utviklingsmiljøet. Årsaken er verdt å huske:
+
+**`harMx` spør DNS direkte, og DNS kan ikke stubbes med `fetch`.** Testene
+avhang derfor av om fremmede domener fortsatt tok imot e-post.
+Utviklingsmiljøet her har ingen fungerende resolver — alt svarer ENODATA, og
+regelen svarer da «har MX» med vilje — så feilen var usynlig lokalt. CI har
+ekte DNS, slo opp `bakstogro.no` i en fikstur, fikk NXDOMAIN, og avviste
+leadet på manglende MX. Fiksturen var et ekte lead fra 04.10 hvis domene
+ikke finnes lenger.
+
+Rettet ved å sende de tre oppslagene inn i `sendEpost1`/`sendEpost2` som en
+parameter med de ekte som standard. Produksjonsveien er uendret, og ingen
+test avhenger lenger av noen andres DNS-oppføring.
+
+**Én slik avhengighet står igjen:** `tests/leadspam.test.ts` går gjennom
+`vurderSpam`, som kaller `manglerMx` uten en slik parameter. Den er grønn i
+begge miljøer i dag — domenet i fiksturen har MX — men mister det domenet
+MX-posten sin, blir testen rød uten at noe i koden er galt. Samme grep
+løser den den dagen det skjer.
