@@ -9,7 +9,10 @@ import {
   hentStadiekart,
   knyttKontaktTilAvtale,
   erOutboundBooking,
+  FILTERPREFIKS,
   kontaktFinnes,
+  merkAvtale,
+  oppdaterAvtale,
   moteEmne,
   motekanal,
   opprettAvtale,
@@ -29,12 +32,15 @@ import {
   type Stadiekart,
 } from "./hubspotcrm";
 import { sendMetaVarsel, sendMoteVarsel } from "./lead";
+import { filtrer, type Utfall as Filterutfall } from "./leadfilter";
+import { brregTreff, domeneSvarer, harMx } from "./leadfilteroppslag";
 import {
   erEngangsdomene,
   spamgrunn,
   spamtekst,
   type Spamgrunn,
 } from "./leadspam";
+import { epostdomene } from "./spam";
 import {
   epost1,
   epost2,
@@ -150,6 +156,8 @@ async function metavarselForBooket(
       bedrift: k.bedrift,
       telefon: k.telefon,
       metasvar: k.metasvar,
+      behov: k.behov,
+      nettside: k.nettside,
       moteBooket: mote,
     });
   } catch {
@@ -158,6 +166,91 @@ async function metavarselForBooket(
   }
   await merkSendt(k.id, { [AVBRUTT_FELT]: "true" });
   return "hoppet-over";
+}
+
+/* ─────────── DET HARDE FILTERET PÅ META-LEADS (12.10.2026) ──────────── */
+
+/**
+ * Kjører leadfilteret på en kontakt, med alle oppslagene live.
+ *
+ * TRE OPPSLAG, OG DE TO DYRE GJØRES BARE NÅR DE TRENGS. Slår en
+ * avvisningsregel til, er Brønnøysund og nettsiden uten betydning — og
+ * det er den vanligste utgangen: syv av de åtte spam-leadene 11.–12.10
+ * ryker på e-postadressen alene, som koster ingenting.
+ *
+ * DERFOR KJØRES FILTERET TO GANGER. Først uten de dyre oppslagene, for å
+ * se om noe avviser; bare hvis ingenting gjør det, hentes de to andre og
+ * filteret kjøres på nytt med fullt grunnlag. Det er samme funksjon begge
+ * ganger, så de to kan ikke svare forskjellig på det samme.
+ */
+async function filtrerLead(k: Leadkontakt): Promise<{
+  utfall: Filterutfall;
+  grunn: string;
+}> {
+  const domene = epostdomene(k.epost);
+
+  const grunnlag = {
+    epost: k.epost,
+    telefon: k.telefon,
+    firma: k.bedrift,
+    navn: k.navn,
+    behov: k.behov,
+    /*
+      SPØR SKJEMAET OM BEHOVET? Et tomt felt kan ikke skilles fra et felt
+      skjemaet ikke har. Kontrollert i HubSpot 12.10.2026: tomt på alle
+      seks leadene fra v2-skjemaet. Se `behovFinnes` i lib/leadfilter.ts.
+    */
+    behovFinnes: Boolean(k.behov.trim()),
+    harMx: true,
+    brregTreff: null,
+    domeneSvarer: null,
+  };
+
+  /* Runde én: bare det som ikke koster noe utenfor huset. */
+  const uten = filtrer(grunnlag);
+  if (uten.utfall === "avvist") return uten;
+
+  const mx = await harMx(domene);
+  const medMx = filtrer({ ...grunnlag, harMx: mx });
+  if (medMx.utfall === "avvist") return medMx;
+
+  /* Runde to: de to som kan godkjenne. Begge kan feile uten å avvise. */
+  const [brreg, svarer] = await Promise.all([
+    brregTreff(k.bedrift, domene),
+    domeneSvarer(domene),
+  ]);
+
+  return filtrer({
+    ...grunnlag,
+    harMx: mx,
+    brregTreff: brreg,
+    domeneSvarer: svarer,
+  });
+}
+
+/**
+ * Merker avtalen til et lead filteret stoppet, og slår av oppfølgingen.
+ *
+ * AVTALEN ER LAGET AV HUBSPOT, IKKE AV OSS. Meta-leads kommer inn gjennom
+ * HubSpots egen Meta-kobling, og arbeidsflyten «Nytt lead – inbound» lager
+ * kontakten og avtalen før jobben vår i det hele tatt ser leadet.
+ * Bestillingen ba om at ingenting skulle opprettes for et avvist lead; det
+ * er ikke vårt å bestemme. Det vi kan, er å merke det som er laget, og å
+ * la være å sende noe — og merkingen gjør samtidig at leadet kan listes opp.
+ */
+async function merkFiltrert(
+  k: Leadkontakt,
+  utfall: "avvist" | "usikker",
+  grunn: string,
+): Promise<void> {
+  if (k.avbrutt !== "true") {
+    await merkSendt(k.id, { [AVBRUTT_FELT]: "true" });
+  }
+
+  const beskrivelse = `${utfall === "avvist" ? "Avvist" : "Usikker"} av leadfilteret ${new Date().toISOString()}: ${grunn}. ${k.epost}`;
+  for (const a of await avtalerFor(k.id)) {
+    await merkAvtale(a, FILTERPREFIKS[utfall], beskrivelse);
+  }
 }
 
 /* ──────────── SPAM-SJEKKEN RETT FØR SENDING (12.10.2026) ───────────── */
@@ -259,6 +352,45 @@ export async function sendEpost1(
   }
 
   /*
+    LEADFILTERET FØR ALT ANNET SOM KOSTER. Bestilt 12.10.2026, og det
+    gjelder BARE META-LEADS: nettsideleads er filtrert i skjemaruta, der
+    utfallet er en advarsel og ikke en avvisning — se /api/skjema.
+
+    FØR SPAM-SJEKKEN, fordi dette er den harde porten og den andre er
+    siste sikkerhetsnett. Rekkefølgen er bestillingens.
+  */
+  if (kilde === "meta") {
+    const dom = await filtrerLead(k);
+    if (dom.utfall !== "godkjent") {
+      console.warn(
+        `META-LEAD ${dom.utfall.toUpperCase()}: ${k.navn} ${k.epost} ${k.bedrift || "uten firma"} – ${dom.grunn}`,
+      );
+      await merkFiltrert(k, dom.utfall, dom.grunn);
+
+      /*
+        ET USIKKERT LEAD VARSLES, ET AVVIST GJØR DET IKKE. Det er hele
+        forskjellen mellom de to: usikker betyr «vi tør ikke sende noe,
+        men se på den»; avvist betyr «dette er ikke et lead».
+      */
+      if (dom.utfall === "usikker") {
+        await sendMetaVarsel({
+          navn: k.navn,
+          epost: k.epost,
+          bedrift: k.bedrift,
+          telefon: k.telefon,
+          metasvar: k.metasvar,
+          behov: k.behov,
+          nettside: k.nettside,
+          usikker: dom.grunn,
+        }).catch(() => {
+          /* Logget i lead.ts. Kontakten er merket uansett. */
+        });
+      }
+      return "hoppet-over";
+    }
+  }
+
+  /*
     SPAM-SJEKKEN LIGGER HER, ETTER DE GRATIS REGLENE OG FØR SENDINGEN.
     Etter, fordi de aller fleste kontaktene jobben går gjennom faller på
     noe billigere enn to HubSpot-kall. Før, fordi dette er det siste
@@ -308,6 +440,24 @@ export async function sendEpost1(
   await loggEpost(k.id, brev.emne, brev.tekst);
 
   /*
+    BEHOVET INN I AVTALEN, bestilt 12.10.2026. Det er der salgsassistenten
+    og Pål jobber, og en avtale uten ett ord om hva kunden spurte om er en
+    avtale ingen kan prioritere.
+
+    SKRIVES BARE NÅR DET FINNES NOE Å SKRIVE, og bare for Meta — et
+    nettsidelead har behovet i varselet og i `nettside_kilde` fra før.
+  */
+  if (kilde === "meta" && (k.behov || k.nettside)) {
+    const linjer = [
+      k.behov ? `Behov: ${k.behov}` : "",
+      k.nettside ? `Nettside: ${k.nettside}` : "",
+    ].filter(Boolean);
+    for (const a of await avtalerFor(k.id)) {
+      await oppdaterAvtale(a.id, { description: linjer.join("\n") });
+    }
+  }
+
+  /*
     VARSELET TIL PÅL FOR META-LEADS, i samme kjøring som e-posten.
     Nettsideleads varsles fra skjemaruta med én gang; Meta-leads hadde bare
     HubSpots eget varsel, i et annet format. Nå er de like.
@@ -324,6 +474,8 @@ export async function sendEpost1(
       bedrift: k.bedrift,
       telefon: k.telefon,
       metasvar: k.metasvar,
+      behov: k.behov,
+      nettside: k.nettside,
     }).catch(() => {
       /* Logget i lead.ts. E-posten til kunden er sendt uansett. */
     });
@@ -348,6 +500,21 @@ export async function sendEpost2(
     );
     await merkSendt(k.id, { [AVBRUTT_FELT]: "true" });
     return "hoppet-over";
+  }
+
+  /*
+    LEADFILTERET GJELDER OGSÅ PÅMINNELSEN. Et Meta-lead som slapp gjennom
+    før filteret fantes, skal ikke få påminnelsen i morgen.
+  */
+  if (leadkilde(k.hendelse) === "meta") {
+    const dom = await filtrerLead(k);
+    if (dom.utfall !== "godkjent") {
+      console.warn(
+        `META-LEAD ${dom.utfall.toUpperCase()}: ${k.navn} ${k.epost} ${k.bedrift || "uten firma"} – ${dom.grunn}`,
+      );
+      await merkFiltrert(k, dom.utfall, dom.grunn);
+      return "hoppet-over";
+    }
   }
 
   /*

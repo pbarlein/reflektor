@@ -60,6 +60,8 @@ const kontakt = (endringer: Record<string, unknown> = {}) => ({
   avbrutt: "",
   moteBooket: "2026-10-16T09:00:00Z",
   metasvar: [],
+  behov: "",
+  nettside: "",
   ...endringer,
 });
 

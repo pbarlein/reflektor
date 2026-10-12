@@ -610,6 +610,8 @@ const kontakt = {
   meldingsId: "",
   avbrutt: "",
   moteBooket: "",
+  behov: "",
+  nettside: "",
 };
 
 async function medMiljo(

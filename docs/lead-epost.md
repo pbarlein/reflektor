@@ -657,3 +657,126 @@ blitt hentet to ganger i samme kjøring.
 Fiksturen `henrik@example.no` i `tests/leadepost.test.ts` er byttet til
 `@nordvik.no`. `example.no` står nå på sperrelisten, og en fikstur på det
 domenet ble stoppet som spam før testen rakk å måle det den handler om.
+
+---
+
+## Hardt filter på Meta-leads (bestilt 12.10.2026)
+
+### Hvorfor
+
+Meta-skjemaet ble bygget om 11.10 med SMS-verifisering og «Higher intent».
+Det hjalp ikke. Alle åtte leadene som kom inn 11.–12.10 er spam, alle med
+ekte +47-nummer:
+
+| Lead | Adresse | Firmafelt |
+|---|---|---|
+| Golnaz Tandorost | gmail | Natulahland |
+| David Møller | gmail | La pantera records |
+| Morten Gullik Hansen | gmail | Morten g Hansen maskin |
+| Grethe Laila Fjelberg | gmail | Stand in arrangementy |
+| Aluel | gmail | Aluel *(= fornavnet)* |
+| Faim G-m | hotmail | Founder, Director, CEO |
+| Taras Strutinskyi | mail.ru | Coop |
+| Svein Arne Nilsen | vkbb.no | Freelance |
+
+E-post 1 går tre minutter etter at leadet hentes. Salgsassistenten rydder
+først neste time. Avgjørelsen må altså tas før noe sendes.
+
+### Tre utfall
+
+`src/lib/leadfilter.ts` holder reglene, `src/lib/leadfilteroppslag.ts`
+oppslagene, og `filtrerLead` i `src/lib/leadutsending.ts` binder dem sammen.
+Filteret kjøres på hvert Meta-lead før e-post 1, før påminnelsen og før
+varselet.
+
+**AVVIST** — privat/gratis/engangsdomene, domenet tar ikke imot e-post, et
+behov som ikke sier noe, firmafeltet er tomt eller bare en tittel eller
+personens eget navn, eller verken norsk nummer eller norsk domene. Ingen
+e-post, ingen påminnelse, ingen varsel. Avtalen får «AVVIST – » foran
+navnet og grunnen i beskrivelsen.
+
+**USIKKER** — ingen avvisningsregel slo til, men ingen godkjenning heller.
+Avtalen får «USIKKER – », og Pål får et varsel med emnet «USIKKERT LEAD fra
+Meta» og grunnen på én linje. Ingen e-post.
+
+**GODKJENT** — krever et positivt tegn, ikke bare fravær av et negativt: et
+treff i Brønnøysund, eller et e-postdomene som faktisk svarer på https. En
+jobbadresse med MX er ikke nok alene; det har botten også. Da går alt som før,
+og behovet og nettsiden står i varselet og i avtalens beskrivelse.
+
+**Alle åtte spam-leadene over blir AVVIST,** syv av dem på e-postadressen
+alene og Svein på firmafeltet. Ingen av dem trenger et eneste oppslag.
+
+### Fem ting bestillingen ba om som ikke kunne gjøres, og hva som ble gjort i stedet
+
+**1. «Kjøres før kontakt/deal opprettes i HubSpot.»** Det er ikke vårt å
+bestemme. Meta-leads kommer inn gjennom HubSpots egen Meta-kobling, og
+arbeidsflyten «Nytt lead – inbound» lager kontakten og avtalen før jobben
+vår i det hele tatt ser leadet — vi har ingen Meta-integrasjon i koden, og
+ingen Meta-nøkkel i Vercel. Det vi kan, er å merke det som er laget og la
+være å sende noe. Merkingen er samtidig det som gjør at avviste leads kan
+listes opp.
+
+**2. «Finn skjema-ID-en via Graph API.»** Kan ikke gjøres herfra: det
+krever et sidetilgangstoken vi ikke har. **Den trengs heller ikke.** Jobben
+plukker ikke leads per skjema — den henter alle kontakter med en fersk
+konvertering og avgjør kilden på teksten HubSpot skriver i
+`recent_conversion_event_name`. Den begynner med «Facebook Lead Ads:» for
+hvert Meta-skjema, og det er den strengen koden ser etter. v2, v3 og
+skjemaet fra 28.09 fanges derfor alle tre, uten at noen ID er hardkodet
+noe sted — og uten at noe må endres neste gang skjemaet bygges om.
+
+**3. «Bruk `jobb_epost`, og det gamle e-postfeltet for gamle leads.»**
+Ingen kode trengs. v3 bruker Metas Work Email-felt med nøkkelen `email`,
+samme som før, så HubSpot skriver den til `email` i begge tilfellene.
+
+**4. «Opprett kontakt-egenskapen `behov_beskrivelse`.»** Ikke gjort, med
+vilje. Behovsteksten kommer alt inn i HubSpot som en Lead Ad Property fra
+Meta-koblingen; en egen kopi ville bare drifte fra originalen. Behovet
+skrives i stedet inn i **avtalens beskrivelse**, som bestillingen også ba
+om — det er der salgsassistenten og Pål faktisk jobber.
+
+Egenskapsnavnet kunne ikke slås fast: v3 har feltnøkkelen `behov`, mens
+egenskapen som alt finnes heter `hva_trenger_dere_mest_hjelp_med`. Hvilken
+av dem HubSpot-koblingen fyller, avhenger av oppsettet i HubSpot og kan
+ikke leses herfra. Koden leser derfor **begge, og tar den første med
+innhold**. Å gjette ett navn ville vært å gamble: tar vi feil, ser hvert
+lead ut som «behovet mangler».
+
+**5. «Behov mangler → AVVIST.»** Gjelder bare når skjemaet faktisk spurte.
+Kontrollert i HubSpot 12.10: behovsfeltet er **tomt på alle seks leadene
+fra v2-skjemaet** — v2 stilte ikke spørsmålet. Hadde regelen stått som
+bestilt, ville hvert eneste v2-lead blitt avvist, også et ekte. Et tomt
+felt gir derfor «usikker», mens et felt som ER besvart og sier «ja» gir
+avvist. Når v3 har feltet obligatorisk, kan det ikke være tomt, og regelen
+gjelder fullt ut.
+
+### Nettsideleads: flagget, ikke avvist
+
+Bestillingen ba om samme domeneliste på reflektor.no-skjemaet. Målt i
+HubSpot 12.10 har siden hatt **to ekte skjemahenvendelser — Fling AS og La
+Mexicana AS — og begge bruker gmail.** Regel 1 ville kastet dem uten at Pål
+fikk vite det, og for nettsideleads finnes ikke sikkerhetsventilen: vi
+oppretter ingenting, og da finnes leadet ingen steder etterpå.
+
+Lagt fram for Pål 12.10, som valgte **flagging**: leadet kommer fram med
+⚠-linja og havner i HubSpot som før, men uten automatisk presentasjon og
+påminnelse. Det gjenbruker mekanikken fra spam-sperra 11.10, så det er
+ingen ny tilstand å holde rede på.
+
+`ingen-mx` er ikke en egen merkelapp der — scoren gir alt to poeng for
+«engangsadresse eller ingen MX», og to lapper for samme funn hjelper ingen.
+
+### Vår egen nedetid koster aldri et lead
+
+MX-oppslaget svarer «har MX» når det feiler. Brønnøysund og nettsjekken
+svarer `null`, som ikke kan godkjenne — men heller ikke avvise. Da blir
+utfallet «usikker», og Pål får varselet. Det er testet for seg i
+`tests/leadfilter.test.ts`.
+
+### Hvor de avviste kan ses
+
+Nederst på `/paaminnelse`, i «Avvist av leadfilteret»: navn og firma fra
+avtalenavnet, grunn og e-post fra beskrivelsen. Listen leses fra avtalene i
+HubSpot og trenger ingen egen lagring — og uten den er filteret umulig å
+etterprøve. Ser noe der ekte ut, er filteret for strengt.

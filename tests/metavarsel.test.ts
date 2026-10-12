@@ -176,9 +176,17 @@ test("nettsidevarselet har fortsatt nettside og behov", () => {
  * personen har booket.
  */
 
+/*
+ * ADRESSEN ER BYTTET TIL ET JOBBDOMENE, 12.10.2026. Det ekte leadet fra
+ * 04.10 brukte `lolademunirat@yahoo.com`, og fra i dag avviser
+ * leadfilteret yahoo — se lib/leadfilter.ts. Fiksturen ville dermed blitt
+ * stoppet før testen rakk å måle det den handler om, nemlig varselet og
+ * bookingen. At den ekte adressen nå ville blitt avvist, er testet for
+ * seg i tests/leadfilter.test.ts.
+ */
 const METAKONTAKT = {
   id: "883323161813",
-  epost: "lolademunirat@yahoo.com",
+  epost: "post@bakstogro.no",
   navn: "Bakst & Ro | Hjemmebakt i Asker",
   bedrift: "BAKST & RO",
   telefon: "+4797744426",
@@ -191,6 +199,8 @@ const METAKONTAKT = {
   meldingsId: "",
   avbrutt: "",
   moteBooket: "",
+  behov: "",
+  nettside: "",
   metasvar: [
     { etikett: "Antall ansatte", verdi: "1–4" },
     { etikett: "Passer 30 000 kr/mnd", verdi: "kanskje, vi vil vite mer" },

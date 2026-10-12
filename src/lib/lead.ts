@@ -69,6 +69,8 @@ export const VARSEL_EMNE = "NYTT LEAD fra reflektor.no";
  * og vaner knyttet til den.
  */
 export const META_VARSEL_EMNE = "NYTT LEAD fra Meta";
+/** Emnet når leadfilteret ikke kunne avgjøre. Bestilt av Pål 12.10.2026. */
+export const META_USIKKER_EMNE = "USIKKERT LEAD fra Meta";
 
 /**
  * Det som kan skille Meta-varselet fra nettsidevarselet.
@@ -109,6 +111,18 @@ export type Varselvalg = {
    * slo ut — se lib/spam.ts.
    */
   spamTreff?: string[];
+  /**
+   * En advarsel i klartekst, på samme plass som spam-linja.
+   *
+   * LAGT TIL 12.10.2026 FOR DE USIKRE META-LEADENE. Et usikkert lead er
+   * ikke spam og skal ikke merkes som det, men grunnen må stå øverst: Pål
+   * skal se på én linje hvorfor maskinen ikke turte å sende noe.
+   *
+   * SLÅR AV OPPFØLGINGSBLOKKEN, akkurat som spam-treffene. Et varsel som
+   * lover presentasjon og påminnelse for et lead som ikke får noen av dem,
+   * er verre enn ingen linje.
+   */
+  advarsel?: string;
 };
 
 /**
@@ -302,7 +316,10 @@ export function varsel(
         ring: null,
         lenke: null,
       }
-    : !hubspotFeilet && !valg.spamTreff?.length && faarPaaminnelse(lead.epost)
+    : !hubspotFeilet &&
+        !valg.spamTreff?.length &&
+        !valg.advarsel &&
+        faarPaaminnelse(lead.epost)
       ? {
           /*
             INGEN KONTAKT, INGEN OPPFØLGING. `!hubspotFeilet` kom til
@@ -348,6 +365,8 @@ export function varsel(
     ...(valg.spamTreff?.length
       ? [`⚠ Mulig spam (${valg.spamTreff.join(", ")}) – sjekk før oppfølging`]
       : []),
+    /* Fritekst-advarselen, lagt til 12.10.2026. Se `advarsel` i Varselvalg. */
+    ...(valg.advarsel ? [valg.advarsel] : []),
     ...(hubspotFeilet
       ? ["⚠ Leadet ble IKKE lagret i HubSpot. Legg det inn manuelt."]
       : []),
@@ -603,32 +622,59 @@ export async function sendMetaVarsel(opp: {
   telefon: string;
   /** Svarene fra Meta-skjemaet, allerede vasket for understreker. */
   metasvar: { etikett: string; verdi: string }[];
+  /**
+   * Behovsteksten og nettsiden fra v3-skjemaet (publisert 12.10.2026).
+   *
+   * DE GÅR INN DER DE HØRER: behovet som Behov-blokken, nettsiden som
+   * Nettside-raden — samme plass som for et nettsidelead. Her sto det før
+   * at Meta-skjemaet ikke hadde noen av dem, og det var sant til i dag.
+   */
+  behov?: string;
+  nettside?: string;
   /** Satt hvis personen allerede har booket møte. */
   moteBooket?: Date | null;
   sendt?: Date;
+  /**
+   * Grunnen leadfilteret ikke kunne avgjøre, når utfallet ble «usikker».
+   *
+   * SATT GIR ET ANNET EMNE OG EN ADVARSEL ØVERST, og ingen lovnad om
+   * presentasjon eller påminnelse — for den går ikke. Se lib/leadfilter.ts.
+   */
+  usikker?: string;
 }): Promise<void> {
   const lead: Lead = {
     navn: opp.navn,
     epost: opp.epost,
     bedrift: opp.bedrift,
     telefon: opp.telefon,
-    melding: "",
+    melding: opp.behov?.trim() ?? "",
     side: "Meta",
-    nettside: "",
+    nettside: opp.nettside?.trim() ?? "",
     nettsideUtledet: false,
     kilde: "Meta",
   };
 
   const { tekst, html } = varsel(lead, opp.sendt ?? new Date(), false, {
     ekstraRader: opp.metasvar.map((m) => [m.etikett, m.verdi]),
-    utenNettsideOgBehov: true,
+    /*
+      RADENE SKJULES BARE NÅR DE ER TOMME. v2-skjemaet spurte ikke om
+      behov eller nettside, og da er en rad som alltid står tom en rad Pål
+      må lese forbi. v3 spør om begge, og da skal de stå.
+    */
+    utenNettsideOgBehov: !lead.melding && !lead.nettside,
     moteBooket: opp.moteBooket ?? null,
+    ...(opp.usikker
+      ? { advarsel: `⚠ Usikkert lead – ${opp.usikker}. Ingen e-post sendt.` }
+      : {}),
   });
 
   try {
     await send({
       til: MOTTAKER,
-      emne: varselEmne(META_VARSEL_EMNE, lead),
+      emne: varselEmne(
+        opp.usikker ? META_USIKKER_EMNE : META_VARSEL_EMNE,
+        lead,
+      ),
       tekst,
       html,
       svarTil: opp.epost,

@@ -17,6 +17,7 @@ import {
   rens,
   serUtSomEpost,
 } from "@/lib/skjemavern";
+import { nettsideTreff } from "@/lib/leadfilter";
 import { epostdomene, spamScore } from "@/lib/spam";
 import { erEngangsadresse, manglerMx } from "@/lib/spamoppslag";
 import { TURNSTILE_FELT, verifiserTurnstile } from "@/lib/turnstile";
@@ -268,12 +269,30 @@ export async function POST(req: NextRequest) {
         Er Turnstile ikke satt opp, eller fikk vi ikke svar fra
         Cloudflare, bærer scoren alene. Se lib/turnstile.ts.
       */
+      /*
+        LEADFILTERET PÅ NETTSIDELEADS, bestilt 12.10.2026. Privat
+        e-postadresse, et behov som ikke sier noe, eller verken norsk
+        nummer eller norsk domene.
+
+        DE FLAGGER, DE BLOKKERER IKKE. Avgjort av Pål 12.10, etter at
+        tallene ble lagt fram: begge de to ekte skjemahenvendelsene siden
+        har hatt — Fling AS og La Mexicana AS — bruker gmail, og en
+        avvisning ville kastet dem uten et ord. Se lib/leadfilter.ts.
+      */
+      const filterTreff = nettsideTreff({
+        epost: lead.epost,
+        telefon: lead.telefon,
+        melding: lead.melding,
+      });
+
       const blokkert = turnstile === "avvist" || vurdering.utfall === "blokkert";
-      const flagget = !blokkert && vurdering.utfall === "flagget";
+      const flagget =
+        !blokkert && (vurdering.utfall === "flagget" || filterTreff.length > 0);
 
       const treff = [
         ...vurdering.treff,
         ...(turnstile === "avvist" ? ["turnstile-avvist"] : []),
+        ...filterTreff,
       ];
 
       console.info(

@@ -301,6 +301,8 @@ const LEAD = {
   meldingsId: "",
   avbrutt: "",
   moteBooket: "",
+  behov: "",
+  nettside: "",
 };
 
 /** E-post 1 går i sendevinduet; påminnelsen dagen etter kl. 09:00. */

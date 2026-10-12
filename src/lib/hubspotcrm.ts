@@ -373,6 +373,51 @@ export const EPOST_FELT = {
  * VERDIENE KOMMER MED UNDERSTREK FOR MELLOMROM: «kanskje,_vi_vil_vite_mer».
  * Det er Metas egne nøkler, og de skal vaskes før de vises.
  */
+/*
+ * EGENSKAPSNAVNENE ER LEST UT AV HUBSPOT, IKKE GJETTET. Kontrollert
+ * 12.10.2026: Meta-skjemaets spørsmål havner som «Lead Ad Properties» med
+ * navn HubSpot lager av spørsmålsteksten. «Hva trenger dere mest hjelp
+ * med?» ble `hva_trenger_dere_mest_hjelp_med`, og «Website» ble
+ * `nettsted`. Begge FINNES, men var TOMME på alle seks leadene fra
+ * v2-skjemaet — v2 stilte ikke spørsmålene.
+ *
+ * FLERE NAVN PER FELT, OG DET ER DET VIKTIGE HER. v3-skjemaet ble publisert
+ * 12.10 kl. 20:21 med feltnøklene `behov` og `nettsted`, og om HubSpot
+ * kobler `behov` til egenskapen som alt finnes eller lager en ny med
+ * nøkkelens navn, kan ikke avgjøres herfra — det avhenger av koblingen i
+ * HubSpots Meta-integrasjon. Å gjette ett navn ville vært å gamble: tar vi
+ * feil, ser hvert lead ut som «behovet mangler».
+ *
+ * DERFOR LESES FLERE, OG FØRSTE MED INNHOLD VINNER. Da virker det med
+ * begge koblingene, og uten at noen må huske å rette en konstant.
+ */
+export const BEHOVSFELT = ["behov", "hva_trenger_dere_mest_hjelp_med"];
+/*
+ * BARE DET NAVNET SOM ER LEST UT AV HUBSPOT. Her sto et oppdiktet
+ * `nettside_meta` som andre kandidat. Det finnes ikke, og en konstant med
+ * et navn ingen har sett er verre enn én kandidat: den ser ut som
+ * kunnskap.
+ */
+export const NETTSTEDFELT = ["nettsted"];
+
+/** Første av kandidatene som har en verdi. Tom streng hvis ingen har. */
+function forsteVerdi(
+  p: Record<string, string | null>,
+  kandidater: string[],
+): string {
+  for (const navn of kandidater) {
+    const v = (p[navn] ?? "").trim();
+    if (v) return v;
+  }
+  return "";
+}
+
+/*
+ * BARE FLERVALGSSPØRSMÅLENE STÅR HER. Behov og nettside har egne felt på
+ * `Leadkontakt` og går inn i varselet som Behov-blokken og Nettside-raden
+ * — samme plass som for et nettsidelead. Her sto de en kort stund som
+ * ekstrarader, og da fikk varselet to «Behov»-linjer.
+ */
 export const METAFELT = [
   { navn: "hvor_mange_jobber_i_bedriften", etikett: "Antall ansatte" },
   {
@@ -414,6 +459,8 @@ const LESEFELT = [
   EPOST_FELT.trad,
   EPOST_FELT.meldingsId,
   ...METAFELT.map((f) => f.navn),
+  ...BEHOVSFELT,
+  ...NETTSTEDFELT,
 ];
 
 export type Leadkontakt = {
@@ -442,6 +489,15 @@ export type Leadkontakt = {
   moteBooket: string;
   /** Svarene fra Meta-skjemaet, etikett → verdi. Tom for nettsideleads. */
   metasvar: { etikett: string; verdi: string }[];
+  /**
+   * Behovsteksten fra skjemaet. Tom når spørsmålet ikke er besvart.
+   *
+   * EGET FELT I TILLEGG TIL `metasvar` fordi leadfilteret leser den og
+   * varselet viser den. To lesninger av samme verdi, men bare én kilde.
+   */
+  behov: string;
+  /** Nettsiden fra skjemaet. Tom når feltet ikke er besvart. */
+  nettside: string;
 };
 
 function somLeadkontakt(r: {
@@ -469,6 +525,8 @@ function somLeadkontakt(r: {
     meldingsId: p[EPOST_FELT.meldingsId] ?? "",
     avbrutt: p[AVBRUTT_FELT] ?? "",
     moteBooket: p.engagements_last_meeting_booked ?? "",
+    behov: forsteVerdi(p, BEHOVSFELT),
+    nettside: forsteVerdi(p, NETTSTEDFELT),
     metasvar: METAFELT.flatMap((f) => {
       const verdi = (p[f.navn] ?? "").trim();
       /* Understrek er Metas mellomrom. «innen_3_måneder» → «innen 3 måneder». */
@@ -1174,6 +1232,121 @@ export async function knyttKontaktTilAvtale(
  * `true` BETYR AT FELTET STÅR RIKTIG ETTERPÅ, ikke at vi skrev noe. Står
  * verdien der fra før, er det ingenting å gjøre, og det er ikke en feil.
  */
+/* ──────── LEADFILTERET MERKER AVTALEN (12.10.2026) ──────────────────── */
+
+/**
+ * Prefiksene leadfilteret setter foran avtalenavnet.
+ *
+ * SAMME GREP SOM SALGSASSISTENTEN ALT BRUKER. Hun merker spam med «SPAM – »
+ * foran navnet; dette er den samme mekanikken, og den er valgt nettopp
+ * fordi den er kjent, synlig i HubSpot-listene og ikke krever en ny
+ * egenskap som ingen husker å se på.
+ */
+export const FILTERPREFIKS = {
+  avvist: "AVVIST – ",
+  usikker: "USIKKER – ",
+} as const;
+
+/** Skriver felt på en avtale. Returnerer om det gikk. */
+export async function oppdaterAvtale(
+  avtaleId: string,
+  felt: Record<string, string>,
+): Promise<boolean> {
+  if (!harToken()) return false;
+  try {
+    const svar = await fetch(`${BASIS}/crm/v3/objects/deals/${avtaleId}`, {
+      method: "PATCH",
+      headers: hoder(),
+      body: JSON.stringify({ properties: felt }),
+      signal: AbortSignal.timeout(TIDSTAK_MS),
+    });
+    if (svar.ok) return true;
+    console.error(
+      `[avtale] Klarte ikke oppdatere avtale ${avtaleId} (${svar.status}). ${await svar.text().catch(() => "")}`,
+    );
+    return false;
+  } catch (feil) {
+    console.error("[avtale] Oppdateringen av avtalen feilet.", feil);
+    return false;
+  }
+}
+
+/**
+ * Setter prefikset foran avtalenavnet, og grunnen i beskrivelsen.
+ *
+ * GJØR INGENTING OM PREFIKSET ALT STÅR DER. Jobben kjører hvert femte
+ * minutt, og «AVVIST – AVVIST – AVVIST – David møller» etter en time er
+ * ikke en merking, det er et rot.
+ */
+export async function merkAvtale(
+  avtale: Avtale,
+  prefiks: string,
+  beskrivelse: string,
+): Promise<boolean> {
+  const navn = avtale.navn.trim();
+  if (navn.startsWith(prefiks.trim())) return true;
+  return oppdaterAvtale(avtale.id, {
+    dealname: `${prefiks}${navn}`,
+    description: beskrivelse,
+  });
+}
+
+export type Avvistrad = {
+  navn: string;
+  beskrivelse: string;
+  opprettet: string;
+};
+
+/**
+ * De avviste leadene, nyeste først.
+ *
+ * LESES FRA AVTALENE OG IKKE FRA EN EGEN EGENSKAP. Alt vi trenger å vise
+ * står alt der: navnet og firmaet i avtalenavnet, grunnen og e-posten i
+ * beskrivelsen, og tidspunktet i `createdate`. Ett søk, ingen oppslag per
+ * rad — og ingen ny egenskap som må holdes i live.
+ */
+export async function avvisteLeads(limit = 100): Promise<Avvistrad[] | null> {
+  if (!harToken()) return null;
+  try {
+    const svar = await fetch(`${BASIS}/crm/v3/objects/deals/search`, {
+      method: "POST",
+      headers: hoder(),
+      body: JSON.stringify({
+        filterGroups: [
+          {
+            filters: [
+              {
+                propertyName: "dealname",
+                operator: "CONTAINS_TOKEN",
+                value: "AVVIST*",
+              },
+            ],
+          },
+        ],
+        properties: ["dealname", "description", "createdate"],
+        sorts: [{ propertyName: "createdate", direction: "DESCENDING" }],
+        limit: Math.min(limit, 100),
+      }),
+      signal: AbortSignal.timeout(TIDSTAK_MS),
+    });
+    if (!svar.ok) {
+      console.error(`[leadfilter] Søket etter avviste svarte ${svar.status}.`);
+      return null;
+    }
+    const data = (await svar.json()) as {
+      results?: { properties: Record<string, string | null> }[];
+    };
+    return (data.results ?? []).map((d) => ({
+      navn: d.properties.dealname ?? "",
+      beskrivelse: d.properties.description ?? "",
+      opprettet: d.properties.createdate ?? "",
+    }));
+  } catch (feil) {
+    console.error("[leadfilter] Søket etter avviste feilet.", feil);
+    return null;
+  }
+}
+
 export async function settAvtalekilde(
   avtale: Avtale,
   kilde: string,

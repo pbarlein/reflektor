@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { Container } from "@/components/Container";
 import { Knapp } from "@/components/Knapp";
 import { signer } from "@/lib/avbrytsignatur";
-import { harToken, hentPlanlagte } from "@/lib/hubspotcrm";
+import { avvisteLeads, harToken, hentPlanlagte } from "@/lib/hubspotcrm";
 import { spamtekst } from "@/lib/leadspam";
 import { utenStoppede } from "@/lib/leadutsending";
 import {
@@ -68,6 +68,13 @@ export default async function Paaminnelser({
     «påminnelse på vei» — men de skal heller ikke bare forsvinne: Cowork
     merker spam i HubSpot og må kunne se at jobben fanget det opp.
   */
+  /*
+    DE AVVISTE META-LEADENE, bestilt 12.10.2026. «Så Cowork kan se om
+    filteret bommer» — og det er den eneste grunnen listen finnes. Et
+    filter ingen kan etterprøve, er et filter ingen tør stole på.
+  */
+  const avviste = (await avvisteLeads()) ?? [];
+
   const funnet = await hentPlanlagte();
   const gjennomgatt = funnet === null ? null : await utenStoppede(funnet);
   const venter = gjennomgatt?.venter ?? null;
@@ -168,6 +175,29 @@ export default async function Paaminnelser({
             avbryte, og det er nettopp poenget. Listen svarer på «fanget
             jobben det Cowork merket?».
           */}
+          {avviste.length ? (
+            <div className="mt-14">
+              <h2 className="display text-xl">Avvist av leadfilteret</h2>
+              <p className="mt-2 text-[0.9375rem] text-blekk-dempet">
+                Meta-leads som ikke fikk e-post, varsel eller oppfølging.
+                Står det noe her som ser ekte ut, er filteret for strengt.
+              </p>
+              <ul className="mt-6 grid gap-3">
+                {avviste.map((a) => (
+                  <li
+                    key={`${a.navn}-${a.opprettet}`}
+                    className="rounded-flate border border-kant px-5 py-4"
+                  >
+                    <p>{a.navn}</p>
+                    <p className="mt-1 text-[0.9375rem] text-blekk-dempet">
+                      {a.beskrivelse || "uten grunn"}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
           {spam.length ? (
             <div className="mt-14">
               <h2 className="display text-xl">Stoppet som spam</h2>
