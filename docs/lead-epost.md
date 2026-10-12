@@ -564,3 +564,96 @@ har vært aktiv siden 04.10 og sendte e-post 2 den 05.10. Testleadene 03.10 fikk
 begge deler, som forventet før byttet. Det er ikke et bevis med mange leads bak
 seg, men det peker entydig på at arbeidsflytens e-poster er slått av. Den som
 vil være helt sikker, åpner arbeidsflyten «Nytt lead – inbound» i HubSpot.
+
+---
+
+## Ingen automatisk e-post til spam (bestilt 12.10.2026)
+
+### Hva som gikk galt
+
+Jobben sendte e-post 1 og 2 til alle nye leads, også de falske. Verifisert i
+Gmail «Sendt» 12.10.2026:
+
+| Adresse | Hva som gikk ut | Når |
+|---|---|---|
+| `golnaz.tandorost@gmail.com` | e-post 2 | 12.10 kl. 09:00 |
+| `kari@mailinator.com` | e-post 2 | 12.10 kl. 09:00 |
+| `marisol@example.no` | e-post 2 | 12.10 kl. 09:00 |
+| `noelperez9224@smaqt.com` | e-post 1 | 11.10 kl. 07:00 |
+
+Avtalen til Golnaz ble satt til Tapt og fikk «SPAM – » foran navnet ca. kl.
+09:20 — tjue minutter etter at e-posten var ute.
+
+**Kostnaden er ikke at det er pinlig.** Påls eget domene sender til søppel- og
+engangsadresser, og det er sånn man mister leveringen av de e-postene som
+betyr noe.
+
+### Sjekken
+
+`src/lib/leadspam.ts` holder reglene, `vurderSpam` i
+`src/lib/leadutsending.ts` gjør oppslagene. Den kjører **rett før hver
+sending**, for både e-post 1 og e-post 2, og leser HubSpot live i samme
+kjøring — ikke fra søketreffet jobben startet med. Det er hele poenget:
+salgsassistenten vurderer leads hver time og merker spam underveis, mens
+jobben kan bruke et halvt minutt på å gå gjennom tjue kontakter.
+
+Fire grunner stopper en e-post, i denne rekkefølgen:
+
+1. **Engangs- eller eksempeladresse.** Hele listen står i konstanten
+   `ENGANGSDOMENER`, så den er lett å utvide. Et navn som slutter på `.*`
+   treffer alle toppdomener: `tempmail.*` dekker de tjue variantene den
+   tjenesten bytter mellom.
+2. **Kontakten finnes ikke lenger.** Salgsassistenten sletter noen ganger
+   kontakt og avtale helt.
+3. **En avtale er merket «SPAM».** Prefikset er kontrollert i HubSpot
+   12.10.2026 på avtalene 525998356680 og 526037736636: «SPAM – » med
+   tankestrek. Sjekken ser bare på de fire bokstavene, så en merking med
+   bindestrek eller kolon treffer like godt.
+4. **En avtale står i Tapt** (`closedlost`).
+
+**Adressen først, og det er med vilje.** Den koster ingenting å sjekke, og
+`mailinator.com` er ikke en kunde uansett hva CRM-et måtte mene. Står HubSpot
+nede, er det den eneste sjekken som fortsatt virker.
+
+Når en sending stoppes, settes `paminnelse_avbrutt=true` — det samme feltet
+avbryt-knappen setter — slik at påminnelsen heller ikke går i morgen. **En
+slettet kontakt merkes ikke:** det finnes ingenting å skrive til, og et
+forsøk ville gitt et 404 og en feillinje i loggen for noe som gikk helt etter
+planen.
+
+Logglinja er `LEAD-EPOST HOPPET OVER (spam): <e-post> – <grunn>`, og de
+stoppede vises i en egen liste nederst på `/paaminnelse`.
+
+### «Vi vet ikke» er ikke «spam»
+
+Får vi ikke lest HubSpot — tidsavbrudd, 500, nettverksfeil — stoppes
+sendingen for denne kjøringen, men kontakten merkes **ikke**. Neste kjøring
+prøver på nytt fem minutter senere. Motsatt valg ville gjort at ett sekund
+med nettverkstrøbbel drepte oppfølgingen av et ekte lead for godt.
+
+### To ting å vite
+
+**Rekkefølgen avgjør om Golnaz-tilfellet fanges.** `gmail.com` er en helt
+vanlig adresse; bare merkingen i HubSpot skiller det leadet fra et ekte. Blir
+leadet merket etter at e-posten har gått, hjelper ingen sjekk i koden.
+Salgsassistentens timesjobb starter fra 12.10 kl. 08:20, altså før
+påminnelsene kl. 09:00 — det er den endringen som gjør at sjekken får noe å
+finne. Står de to tidspunktene feil i forhold til hverandre igjen, er
+sperra blind for akkurat denne typen.
+
+**Avtaleoppslaget svarer tomt ved feil.** `avtalerFor` har alltid gitt tom
+liste både når kontakten ikke har avtaler og når kallet feiler, og det er
+uendret. En kontakt som faktisk har en SPAM-merket avtale kan derfor slippe
+gjennom hvis nettopp det oppslaget feiler. Alternativet — å behandle en
+tom liste som usikkerhet — ville stoppet alle leads uten avtale, altså de
+aller ferskeste. Feilen logges, og neste kjøring spør på nytt.
+
+### Rydding på veien
+
+`dealstadier()` er fjernet. Spam-sjekken henter avtalene uansett, og begge
+stedene som trengte stadiene får dem derfra — ellers ville de samme avtalene
+blitt hentet to ganger i samme kjøring.
+
+Fiksturen `henrik@example.no` i `tests/leadepost.test.ts` er byttet til
+`@nordvik.no`. `example.no` står nå på sperrelisten, og en fikstur på det
+domenet ble stoppet som spam før testen rakk å måle det den handler om.

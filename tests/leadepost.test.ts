@@ -582,9 +582,17 @@ test("et Meta-lead uten konverteringsdato sendes ikke", () => {
 
 /* ──────────────────────────── BRYTEREN ──────────────────────────────── */
 
+/*
+ * ADRESSEN ER `@nordvik.no` OG IKKE `@example.no`. Fra 12.10.2026 står
+ * `example.no` på listen over engangs- og eksempeldomener i
+ * lib/leadspam.ts — en ekte `marisol@example.no` fikk e-post 2 den
+ * morgenen — og en fikstur på det domenet ville derfor blitt stoppet som
+ * spam før testen rakk å måle det den handler om. Adressene i de rene
+ * testene lenger opp står som de er; de går aldri gjennom sjekken.
+ */
 const kontakt = {
   id: "123",
-  epost: "henrik@example.no",
+  epost: "henrik@nordvik.no",
   navn: "Henrik Dale",
   bedrift: "Nordvik",
   telefon: "+4791122334",
@@ -637,14 +645,30 @@ async function medMiljo(
 */
 const I_VINDUET = new Date("2026-10-05T10:00:00+02:00");
 
-test("bryteren av: ingenting sendes, ingenting nås på nett", async () => {
+/*
+  TELLINGEN GJELDER GOOGLE, IKKE ALT. Her sto «ingen nettverkskall skal ha
+  skjedd», og det var sant så lenge funksjonen ikke spurte om noe før den
+  sendte. Fra 12.10.2026 spør den HubSpot om leadet er spam FØR den ser på
+  bryteren — to oppslag, begge lesninger, ingen av dem noe som forlater
+  huset. Påstanden testen er skrevet for står uendret: ingen e-post går
+  ut. Derfor telles bare kallene til Google.
+
+  TOKENET MÅ SETTES. Uten det får spam-sjekken ikke svar, og da stopper
+  den sendingen med vilje — se `usikker` i lib/leadutsending.ts. Testen
+  ville da blitt grønn av feil grunn.
+*/
+test("bryteren av: ingen e-post går ut", async () => {
   const opprinnelig = globalThis.fetch;
-  let kall = 0;
+  let tilGoogle = 0;
   await medMiljo(
-    { LEAD_EPOST_AKTIV: undefined, LEAD_EPOST_TEST_ADRESSE: undefined },
+    {
+      LEAD_EPOST_AKTIV: undefined,
+      LEAD_EPOST_TEST_ADRESSE: undefined,
+      HUBSPOT_TOKEN: "test",
+    },
     async () => {
-      globalThis.fetch = async () => {
-        kall += 1;
+      globalThis.fetch = async (inn: string | URL | Request) => {
+        if (String(inn).includes("googleapis.com")) tilGoogle += 1;
         return new Response("{}", { status: 200 });
       };
       const { sendEpost1 } = await import("@/lib/leadutsending.ts");
@@ -652,7 +676,7 @@ test("bryteren av: ingenting sendes, ingenting nås på nett", async () => {
     },
   );
   globalThis.fetch = opprinnelig;
-  assert.equal(kall, 0, "ingen nettverkskall skal ha skjedd");
+  assert.equal(tilGoogle, 0, "ingen e-post skal ha gått ut");
 });
 
 /**
@@ -662,27 +686,43 @@ test("bryteren av: ingenting sendes, ingenting nås på nett", async () => {
 test("bryteren av, men testadressen slipper gjennom", async () => {
   const opprinnelig = globalThis.fetch;
   const opprinneligFeil = console.error;
-  let forsokte = false;
   await medMiljo(
     {
       LEAD_EPOST_AKTIV: undefined,
-      LEAD_EPOST_TEST_ADRESSE: "henrik@example.no",
+      LEAD_EPOST_TEST_ADRESSE: "henrik@nordvik.no",
+      /* Spam-sjekken må få svar, ellers stopper den sendingen. */
+      HUBSPOT_TOKEN: "test",
     },
     async () => {
       console.error = () => {};
-      globalThis.fetch = async () => {
-        forsokte = true;
-        return new Response("nei", { status: 500 });
-      };
+      /*
+        HUBSPOT SVARER OK, ALT ANNET FEILER. Her svarte alt 500, og da fikk
+        spam-sjekken heller ikke svar — den stopper sendingen når den ikke
+        vet, og testen ville målt det i stedet for det den handler om.
+      */
+      globalThis.fetch = async (inn: string | URL | Request) =>
+        String(inn).includes("hubapi.com")
+          ? new Response("{}", { status: 200 })
+          : new Response("nei", { status: 500 });
       const { sendEpost1 } = await import("@/lib/leadutsending.ts");
-      // Uten Google-nøkkel feiler sendingen, men den SKAL ha blitt forsøkt.
+      /*
+        UTFALLET ER DET VI KAN MÅLE HER. «ville-sendt» ville betydd at
+        bryteren stoppet den; «hoppet-over» at en regel gjorde det. At den
+        kommer helt fram til sendingen og FEILER der, er beviset på at
+        testadressen slipper forbi bryteren.
+
+        HER STO EN SJEKK PÅ AT ET KALL FAKTISK BLE GJORT, bak en
+        `|| true` som gjorde den til ingenting. Grunnen er ekte: uten
+        Google-nøkler gir `sendGmail` opp før den rører nettet. Et krav om
+        et kall kan altså ikke stilles her, og en påstand som alltid er
+        sann er verre enn ingen påstand.
+      */
       const utfall = await sendEpost1(kontakt, I_VINDUET);
       assert.ok(["feilet", "sendt"].includes(utfall), utfall);
     },
   );
   globalThis.fetch = opprinnelig;
   console.error = opprinneligFeil;
-  assert.ok(forsokte || true);
 });
 
 test("en kontakt som allerede har fått e-posten, røres ikke av bryteren", async () => {

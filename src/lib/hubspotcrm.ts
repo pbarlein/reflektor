@@ -609,12 +609,39 @@ export async function booketNylig(): Promise<Leadkontakt[] | null> {
 }
 
 /**
- * Stadiene på avtalene som henger på kontakten. Tom liste ved feil.
+ * Finnes kontakten fortsatt i HubSpot?
  *
- * Bygger på `avtalerFor`, så det finnes bare én vei til avtalene.
+ * `null` BETYR AT VI IKKE FIKK SJEKKET, og det er helt annet enn `false`.
+ * Salgsassistenten sletter noen ganger kontakt og avtale helt, og da skal
+ * ingen e-post gå. Men en nettverksfeil eller et 500-svar skal ikke se ut
+ * som en sletting: da ville ett sekund med trøbbel drept oppfølgingen av
+ * et ekte lead for godt. Se lib/leadspam.ts for hva den som kaller gjør
+ * med de tre svarene.
+ *
+ * SLÅR OPP PÅ ID OG IKKE PÅ E-POST. Jobben har id-en fra søket, og et
+ * oppslag på id svarer 404 på en arkivert kontakt — mens et oppslag på
+ * e-post også svarer 404 hvis adressen er endret. Vi spør om det vi
+ * faktisk vil vite.
  */
-export async function dealstadier(kontaktId: string): Promise<string[]> {
-  return (await avtalerFor(kontaktId)).map((a) => a.stadium);
+export async function kontaktFinnes(
+  kontaktId: string,
+): Promise<boolean | null> {
+  if (!harToken()) return null;
+  try {
+    const svar = await fetch(
+      `${BASIS}/crm/v3/objects/contacts/${kontaktId}?properties=email`,
+      { headers: hoder(), signal: AbortSignal.timeout(TIDSTAK_MS) },
+    );
+    if (svar.ok) return true;
+    if (svar.status === 404) return false;
+    console.error(
+      `[leadepost] Fikk ikke sjekket om kontakt ${kontaktId} finnes (${svar.status}).`,
+    );
+    return null;
+  } catch (feil) {
+    console.error("[leadepost] Oppslaget av kontakten feilet.", feil);
+    return null;
+  }
 }
 
 /** Skriver tilbake at e-posten er sendt. Returnerer om det gikk. */
@@ -832,6 +859,14 @@ export async function hentStadiekart(): Promise<Stadiekart | null> {
 export type Avtale = {
   id: string;
   stadium: string;
+  /**
+   * Avtalenavnet. Tom streng hvis det mangler.
+   *
+   * LESES FOR SPAM-SJEKKEN. Salgsassistenten merker spam ved å sette
+   * «SPAM – » foran navnet, og uten navnet her kan ikke jobben se det.
+   * Se lib/leadspam.ts.
+   */
+  navn: string;
   /** Når avtalen ble opprettet. Styrer 24-timersgrensen for arkivering. */
   opprettet: string;
   /**
@@ -866,7 +901,7 @@ export async function avtalerFor(kontaktId: string): Promise<Avtale[]> {
       method: "POST",
       headers: hoder(),
       body: JSON.stringify({
-        properties: ["dealstage", "createdate", KILDE_FELT],
+        properties: ["dealstage", "dealname", "createdate", KILDE_FELT],
         inputs: ider.map((id) => ({ id })),
       }),
       signal: AbortSignal.timeout(TIDSTAK_MS),
@@ -885,6 +920,7 @@ export async function avtalerFor(kontaktId: string): Promise<Avtale[]> {
         .map((d) => ({
           id: d.id,
           stadium: d.properties.dealstage!,
+          navn: d.properties.dealname ?? "",
           opprettet: d.properties.createdate ?? "",
           kilde: d.properties[KILDE_FELT] ?? "",
         })) ?? []

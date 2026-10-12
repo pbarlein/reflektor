@@ -5,6 +5,7 @@ import { Container } from "@/components/Container";
 import { Knapp } from "@/components/Knapp";
 import { signer } from "@/lib/avbrytsignatur";
 import { harToken, hentPlanlagte } from "@/lib/hubspotcrm";
+import { spamtekst } from "@/lib/leadspam";
 import { utenStoppede } from "@/lib/leadutsending";
 import {
   avbrytBeskjed,
@@ -61,9 +62,16 @@ export default async function Paaminnelser({
     `utenStoppede` tar de tre stoppene som krever et oppslag per lead:
     avtalestadiet, møtet på en dublettkontakt, og svaret i tråden. Uten den
     siste viste siden rader for påminnelser som aldri var på vei.
+
+    SPAM-STOPPENE KOMMER TILBAKE FOR SEG, lagt til 12.10.2026, og vises i
+    en egen liste nederst. De hører ikke i køen — en rad der betyr
+    «påminnelse på vei» — men de skal heller ikke bare forsvinne: Cowork
+    merker spam i HubSpot og må kunne se at jobben fanget det opp.
   */
   const funnet = await hentPlanlagte();
-  const venter = funnet === null ? null : await utenStoppede(funnet);
+  const gjennomgatt = funnet === null ? null : await utenStoppede(funnet);
+  const venter = gjennomgatt?.venter ?? null;
+  const spam = gjennomgatt?.spam ?? [];
 
   /*
     UTFALLET AV «AVBRYT», lagt til 06.10.2026.
@@ -154,6 +162,33 @@ export default async function Paaminnelser({
               ))}
             </ul>
           )}
+
+          {/*
+            STOPPET SOM SPAM. Ingen avbryt-knapp: det er ingenting å
+            avbryte, og det er nettopp poenget. Listen svarer på «fanget
+            jobben det Cowork merket?».
+          */}
+          {spam.length ? (
+            <div className="mt-14">
+              <h2 className="display text-xl">Stoppet som spam</h2>
+              <p className="mt-2 text-[0.9375rem] text-blekk-dempet">
+                Disse får ingen e-post fra oss. Ingenting å avbryte.
+              </p>
+              <ul className="mt-6 grid gap-3">
+                {spam.map(({ lead, grunn }) => (
+                  <li
+                    key={lead.epost}
+                    className="rounded-flate border border-kant px-5 py-4"
+                  >
+                    <p>{lead.navn || lead.epost}</p>
+                    <p className="mt-1 text-[0.9375rem] text-blekk-dempet">
+                      {spamtekst(grunn)}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       </Container>
     </section>

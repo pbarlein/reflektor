@@ -4,12 +4,12 @@ import {
   AVBRUTT_FELT,
   avtalerFor,
   booketNylig,
-  dealstadier,
   flyttAvtale,
   harEgenAktivitet,
   hentStadiekart,
   knyttKontaktTilAvtale,
   erOutboundBooking,
+  kontaktFinnes,
   moteEmne,
   motekanal,
   opprettAvtale,
@@ -29,6 +29,12 @@ import {
   type Stadiekart,
 } from "./hubspotcrm";
 import { sendMetaVarsel, sendMoteVarsel } from "./lead";
+import {
+  erEngangsdomene,
+  spamgrunn,
+  spamtekst,
+  type Spamgrunn,
+} from "./leadspam";
 import {
   epost1,
   epost2,
@@ -154,6 +160,76 @@ async function metavarselForBooket(
   return "hoppet-over";
 }
 
+/* ──────────── SPAM-SJEKKEN RETT FØR SENDING (12.10.2026) ───────────── */
+
+/**
+ * Utfallet av spam-sjekken.
+ *
+ * `usikker` ER IKKE `ok`. Da fikk vi ikke lest HubSpot, og vi vet ingenting
+ * — hverken at leadet er spam eller at det ikke er det. Sendingen stoppes,
+ * men kontakten merkes IKKE, så neste kjøring prøver på nytt.
+ *
+ * `avtaler` FØLGER MED PÅ «OK»-SVARET fordi den som spør trenger dem rett
+ * etterpå: e-post 2 skal også vite stadiene. Uten dette ble de samme
+ * avtalene hentet to ganger i samme kjøring.
+ */
+type Spamvurdering =
+  | { utfall: "ok"; avtaler: Avtale[] }
+  | { utfall: "spam"; grunn: Spamgrunn }
+  | { utfall: "usikker" };
+
+/**
+ * Er dette leadet spam? Spurt LIVE, i samme kjøring som sendingen.
+ *
+ * IKKE FRA SØKETREFFET. Jobben henter opptil tjue kontakter, går gjennom
+ * dem én for én og kan bruke et halvt minutt på det. Salgsassistenten
+ * vurderer leads hver time og merker spam underveis. Leser vi vurderingen
+ * fra data vi hentet i starten av kjøringen, sender vi på gammelt
+ * grunnlag.
+ *
+ * ADRESSEN FØRST, FØR VI BRUKER ET ENESTE KALL. Se `spamgrunn` i
+ * lib/leadspam.ts for hvorfor rekkefølgen er den samme der.
+ */
+async function vurderSpam(k: Leadkontakt): Promise<Spamvurdering> {
+  if (erEngangsdomene(k.epost)) {
+    return { utfall: "spam", grunn: "engangsdomene" };
+  }
+
+  const finnes = await kontaktFinnes(k.id);
+  if (finnes === null) return { utfall: "usikker" };
+  if (finnes === false) return { utfall: "spam", grunn: "slettet" };
+
+  const avtaler = await avtalerFor(k.id);
+  const grunn = spamgrunn({ epost: k.epost, finnes, avtaler });
+  return grunn ? { utfall: "spam", grunn } : { utfall: "ok", avtaler };
+}
+
+/**
+ * Stopper sendingen, logger hvorfor, og merker kontakten.
+ *
+ * MERKINGEN ER `paminnelse_avbrutt`, det samme feltet avbryt-knappen
+ * setter. Den betyr «ingen automatisk oppfølging for denne kontakten», og
+ * det er nøyaktig det vi mener: er leadet spam når e-post 1 skulle gått,
+ * skal heller ikke påminnelsen gå i morgen.
+ *
+ * EN SLETTET KONTAKT MERKES IKKE. Det finnes ingenting å skrive til, og et
+ * forsøk ville gitt et 404 og en feillinje i loggen for noe som gikk helt
+ * etter planen. Den er dessuten borte for godt: søket finner den ikke
+ * igjen neste kjøring.
+ */
+async function stoppSomSpam(
+  k: Leadkontakt,
+  grunn: Spamgrunn,
+): Promise<Utfall> {
+  console.warn(
+    `LEAD-EPOST HOPPET OVER (spam): ${k.epost} – ${spamtekst(grunn)}`,
+  );
+  if (grunn !== "slettet" && k.avbrutt !== "true") {
+    await merkSendt(k.id, { [AVBRUTT_FELT]: "true" });
+  }
+  return "hoppet-over";
+}
+
 export async function sendEpost1(
   k: Leadkontakt,
   na = new Date(),
@@ -179,6 +255,21 @@ export async function sendEpost1(
   }
 
   if (!skalHaEpost1(somKandidat(k, { dublett: Boolean(dublett) }), na)) {
+    return "hoppet-over";
+  }
+
+  /*
+    SPAM-SJEKKEN LIGGER HER, ETTER DE GRATIS REGLENE OG FØR SENDINGEN.
+    Etter, fordi de aller fleste kontaktene jobben går gjennom faller på
+    noe billigere enn to HubSpot-kall. Før, fordi dette er det siste
+    stedet e-posten kan stoppes. Bestilt 12.10.2026. Se lib/leadspam.ts.
+  */
+  const vurdering = await vurderSpam(k);
+  if (vurdering.utfall === "spam") return stoppSomSpam(k, vurdering.grunn);
+  if (vurdering.utfall === "usikker") {
+    console.warn(
+      `[leadepost] Fikk ikke spamsjekket ${k.epost}. Ingen e-post 1 nå; nytt forsøk neste kjøring.`,
+    );
     return "hoppet-over";
   }
 
@@ -259,7 +350,21 @@ export async function sendEpost2(
     return "hoppet-over";
   }
 
-  const stadier = await dealstadier(k.id);
+  /*
+    SPAM-SJEKKEN FØRST AV DE DYRE. Den henter avtalene vi trenger uansett,
+    så stadiene nedenfor koster ingenting ekstra — her sto et eget kall til
+    `dealstadier`, og det ville blitt det andre oppslaget av de samme
+    avtalene i samme kjøring.
+  */
+  const vurdering = await vurderSpam(k);
+  if (vurdering.utfall === "spam") return stoppSomSpam(k, vurdering.grunn);
+  if (vurdering.utfall === "usikker") {
+    console.warn(
+      `[leadepost] Fikk ikke spamsjekket ${k.epost}. Ingen påminnelse nå; nytt forsøk neste kjøring.`,
+    );
+    return "hoppet-over";
+  }
+  const stadier = vurdering.avtaler.map((a) => a.stadium);
 
   /*
     SVARSJEKKEN GJØRES FØR ALT ANNET SOM KOSTER, men etter at vi vet at
@@ -749,12 +854,29 @@ const MAKS_I_OVERSIKTEN = 25;
  *
  * BILLIGST FØRST. Dublettsjekken deler ett søk på hele listen, og de
  * dyre oppslagene gjøres bare for rader som ikke alt er luket ut.
+ *
+ * SPAM-STOPPENE KOMMER TILBAKE I EN EGEN LISTE, lagt til 12.10.2026. De
+ * skal ikke bare forsvinne: Cowork må kunne se at jobben stoppet noe, og
+ * hvorfor. Men de hører ikke i køen heller — se `Spamstoppet`.
  */
-export async function utenStoppede(liste: Planlagt[]): Promise<Planlagt[]> {
-  if (!liste.length) return liste;
+/**
+ * Et lead som ble stoppet som spam, med grunnen skrevet ut.
+ *
+ * VISES PÅ SIDEN I STEDET FOR Å FORSVINNE. Bestilt 12.10.2026: Cowork
+ * skal kunne se at jobben faktisk stoppet noe. De står i en egen liste og
+ * IKKE i køen — en rad i køen betyr «påminnelse på vei», og det er
+ * nøyaktig det disse ikke er.
+ */
+export type Spamstoppet = { lead: Planlagt; grunn: Spamgrunn };
+
+export async function utenStoppede(
+  liste: Planlagt[],
+): Promise<{ venter: Planlagt[]; spam: Spamstoppet[] }> {
+  if (!liste.length) return { venter: liste, spam: [] };
 
   const booket = await booketListe();
   const ut: Planlagt[] = [];
+  const spam: Spamstoppet[] = [];
 
   for (const l of liste.slice(0, MAKS_I_OVERSIKTEN)) {
     const k = l.kontakt;
@@ -763,7 +885,28 @@ export async function utenStoppede(liste: Planlagt[]): Promise<Planlagt[]> {
     let grunn = paaminnelseStoppet(somKandidat(k, { dublett }));
 
     if (!grunn) {
-      const stadier = await dealstadier(k.id);
+      /*
+        SPAM-SJEKKEN GJØR AVTALEOPPSLAGET SOM STADIENE TRENGER. Her sto et
+        eget kall til `dealstadier`; nå kommer avtalene tilbake fra
+        vurderingen, og raden koster ikke ett oppslag mer enn før.
+
+        `usikker` BETYR AT VI IKKE FIKK SJEKKET. Da er det riktigere å vise
+        raden enn å skjule den: jobben prøver igjen om fem minutter, og
+        påminnelsen er fortsatt på vei så langt vi vet.
+      */
+      const vurdering = await vurderSpam(k);
+      if (vurdering.utfall === "spam") {
+        console.info(
+          `[paaminnelse] ${k.epost} er stoppet som spam (${spamtekst(vurdering.grunn)}).`,
+        );
+        spam.push({ lead: l, grunn: vurdering.grunn });
+        continue;
+      }
+      const stadier =
+        vurdering.utfall === "ok"
+          ? vurdering.avtaler.map((a) => a.stadium)
+          : [];
+
       /*
         SVARET LESES FRA DA E-POST 1 GIKK UT. Har den ikke gått ennå,
         finnes det ingenting å ha svart på, og sjekken hoppes over.
@@ -786,5 +929,5 @@ export async function utenStoppede(liste: Planlagt[]): Promise<Planlagt[]> {
     ut.push(l);
   }
 
-  return ut;
+  return { venter: ut, spam };
 }
