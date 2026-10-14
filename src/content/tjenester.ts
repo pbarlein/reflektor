@@ -1055,13 +1055,16 @@ export const event: Tjenesteside = {
    * KORTET 01.10.2026 fordi levert copy ble 79 tegn med « | Reflektor» og
    * ble kuttet midt i «firmaarrangement».
    *
-   * «VIDEOGRAF» LAGT TIL 14.10.2026, bestilt av Pål, og tittelen er
-   * dermed lengre igjen — 67 tegn med suffikset. Grunnen er målt: siden
-   * ligger på posisjon 7–14 for «videograf» med null klikk, og ordet sto
-   * ikke i tittel eller meta i det hele tatt. Det som kuttes nå er
-   * « | Reflektor» og kanskje «og bilder», ikke et søkeord midt i et ord.
+   * «VIDEOGRAF» LAGT TIL 14.10.2026, bestilt av Pål. Grunnen er målt:
+   * siden ligger på posisjon 7–14 for «videograf» med null klikk, og
+   * ordet sto ikke i tittel eller meta i det hele tatt.
+   *
+   * «OG BILDER» STO HER EN HALVTIME. Da ble tittelen 68 tegn med
+   * suffikset og ble kuttet — samme feil som ble rettet 01.10, gjort på
+   * nytt. Nå 58 tegn, og alle tre søkeordene står: eventfotograf,
+   * videograf og eventvideo.
    */
-  tittel: "Eventfotograf og videograf i Oslo – eventvideo og bilder",
+  tittel: "Eventfotograf og videograf i Oslo – eventvideo",
   beskrivelse:
     "Eventfotograf og videograf for konferanser, lanseringer og firmaarrangementer. Eventvideo, klipp til sosiale medier og 50+ bilder. Fra 40 000 kr.",
   h1: "Eventfotograf og eventvideo",

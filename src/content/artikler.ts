@@ -595,8 +595,14 @@ export const artikler: Artikkel[] = [
          uendret, og beskjæringen er satt ved å se på bildet. */
       fokus: "center 30%",
     },
+    /*
+     * INGEN `metaTittel`. Her sto «… for bedrifter» i tillegg, som ga 69
+     * tegn med suffikset og ble kuttet av Google. Kortet 14.10.2026 etter
+     * at Cowork målte grunnlinjen: `tittel` alene gir 55 tegn, og hele
+     * tittelen vises. Spørsmålet står først uansett, så det som ble
+     * fjernet er det minst viktige.
+     */
     tittel: "Hva er SoMe? Markedsføring i sosiale medier",
-    metaTittel: "Hva er SoMe? Markedsføring i sosiale medier for bedrifter",
     beskrivelse:
       "SoMe betyr sosiale medier. Slik markedsfører bedrifter seg der: kanaler, innhold, organisk mot betalt, og hvordan dere holder det gående over tid.",
     publisert: "2025-02-12",

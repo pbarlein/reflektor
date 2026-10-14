@@ -137,9 +137,9 @@ rullet dette tilbake.
 H2-en måtte bytte navn fordi «Hva er SoMe?» nå ville gjentatt H1 ordrett.
 URL-en står.
 
-**Tittelen er 69 tegn med suffikset** og blir kuttet av Google. Det er
-bestillingens egen formulering, og kostnaden er liten: det som ryker er
-« | Reflektor», ikke søkeordet, som står helt først.
+**Tittelen var først 69 tegn** med «… for bedrifter» i tillegg, altså for
+lang. Kortet samme dag etter Coworks måling: 55 tegn, og hele tittelen
+vises.
 
 ### 2. «innholdsproduksjon» peker mot siden som eier ordet
 
@@ -172,9 +172,18 @@ er fra omskrivingen 02.10. Verken tittel, H1 eller innledning ble rørt den
 dagen. Fallet i posisjon kan altså ikke forklares med en endring i denne
 artikkelen 04.10.
 
-Verdt å merke seg: den datoen ble flyttet for en endring som ikke var i
-artikkelen, og det er den typen pynt `oppdatert`-feltets egen
-dokumentasjon advarer mot.
+**Og den datoflyttingen ser ut til å ha kostet oss posisjonen.** Cowork
+målte etterpå: posisjonen var 14 og 20 den 2. og 3. oktober, og 31 den
+4. — fallet startet altså 04.10, ikke ved byttet 02.10. Samme dag fikk
+innholdsprodusent-posten tredoblet visninger på de samme søkene, og ingen
+ny ekstern konkurrent er funnet.
+
+Konklusjonen Cowork trekker er at datoflyttingen pluss de nye seksjonene
+på `/innholdsproduksjon` fikk Google til å re-vurdere hvem som eier ordet.
+Det er en hypotese og ikke et bevis, men den peker samme vei som regelen
+`oppdatert`-feltet alt har: **en dato flyttet uten en reell endring er
+ikke bare unøyaktig, den kan koste.** Dette er det første tilfellet vi har
+tall på.
 
 H2-en «Innholdsmarkedsføring, innholdsproduksjon og reklame» i
 `/blogg/hva-er-innholdsmarkedsforing` heter nå «Innholdsmarkedsføring og
@@ -219,8 +228,9 @@ arbeidsmåten vår som et kompromiss. Setningen sier hva dere får, ikke hvor
 mange som kommer.
 
 Tittelen ble kortet 01.10 fordi 79 tegn ble kuttet midt i
-«firmaarrangement». Den er nå 68 tegn, altså lengre igjen, og det er et
-bevisst bytte: det som kuttes er suffikset, ikke et søkeord.
+«firmaarrangement». Første forsøk i dag la på «og bilder» og havnet på 68
+tegn — samme feil på nytt. Rettet samme dag: 58 tegn, og alle tre
+søkeordene står igjen (eventfotograf, videograf, eventvideo).
 
 ### 5. «reklamefilm» tilbake til siden som selger den
 
@@ -235,6 +245,29 @@ søkeordkartet tillater.
 Sitemapets `lastmod` er flyttet til 14.10 for de fem tjenestesidene som ble
 endret, og `oppdatert` til 14.10 for de fem artiklene. Alle endringene er
 synlige for en leser, så datoene er sanne.
+
+### Avklart med Cowork samme dag
+
+- **Behovsfeltet fra v3 heter `behov`.** Ingen v3-leads er kommet inn ennå
+  (skjemaet ble publisert 12.10 kl. 20:21, siste Meta-lead kom kl. 19:14),
+  så navnet bekreftes ved første ekte lead. Koden leser begge kandidatene
+  og tar den første med innhold, så den tåler begge utfall.
+  `hva_trenger_dere_mest_hjelp_med` er et gammelt flervalgsfelt.
+- **`nettsted` er bekreftet** på ti leads fra sommeren.
+- **Timesjobben er IKKE garantert før 09:00.** Den er en planlagt oppgave
+  og kan forsinkes. Avklaringen er at koden ikke skal vente på den: den
+  egne live-sjekken før sending og hardfilteret dekker alt annet enn
+  skjønn. Dagens oppførsel er altså riktig, og det er bra — for det var
+  rekkefølgen som gjorde at Golnaz fikk påminnelsen 12.10.
+- **«SPAM – » fortsetter**, og «AVVIST – » og «USIKKER – » står urørt.
+  Lagt inn som regel i salgsassistentens læringslogg. De tre avviste
+  avtalene er flyttet til Tapt med navnene uendret — det betyr at de nå
+  fanges av både navnet og stadiet.
+- **Grunnlinjen er tatt** før endringene: 226 visninger og 0 klikk på de
+  fire SoMe-søkene, 22 og 0 på «videograf». Måles 21.10, 28.10 og 04.11.
+- **Innholdsprodusent-posten trenger ingen flere endringer.** Ingen
+  overskrift der inneholder «innholdsproduksjon» lenger; kontrollert i
+  live HTML.
 
 Hele sjekkrunden er grønn, inkludert kannibaliseringssjekken fra 04.10: «hva
 koster» bare i bloggposter, byrå-ordene bare på forsiden, og hvert søkeord
