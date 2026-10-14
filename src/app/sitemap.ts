@@ -43,16 +43,22 @@ const utelatt = new Set(["sosiale-medier-byra"]);
  * /videoproduksjon-i-oslo fikk i tillegg tidssone på Soulcake-filmens dato.
  * Markering er innhold for en søkemotor, og uten ny dato her melder
  * IndexNow ikke fra om endringen.
+ *
+ * 14.10.2026: de seks tjenestesidene fikk hovedsøkeordet inn i den første
+ * H2-en, som til nå het «Det dere lurer på» på alle seks.
+ * /eventfotograf-eventvideo fikk i tillegg «videograf» i tittel, meta og
+ * ingress. /kjeder står urørt — den har sin egen seksjonsoverskrift og er
+ * ikke en del av bestillingen.
  */
 const SIST_ENDRET: Record<string, string> = {
   "/": "2026-10-08",
-  "/innholdsproduksjon": "2026-10-04",
-  "/reklamefilm": "2026-10-08",
-  "/videoproduksjon-i-oslo": "2026-10-08",
-  "/employer-branding-video-oslo": "2026-10-08",
-  "/eventfotograf-eventvideo": "2026-10-08",
+  "/innholdsproduksjon": "2026-10-14",
+  "/reklamefilm": "2026-10-14",
+  "/videoproduksjon-i-oslo": "2026-10-14",
+  "/employer-branding-video-oslo": "2026-10-14",
+  "/eventfotograf-eventvideo": "2026-10-14",
   "/kjeder": "2026-10-08",
-  "/reels-produksjon": "2026-10-08",
+  "/reels-produksjon": "2026-10-14",
   "/kontaktoss": "2026-10-02",
   "/vart-arbeid": "2026-09-30",
   "/om-oss": "2026-10-04",

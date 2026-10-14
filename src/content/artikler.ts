@@ -571,13 +571,22 @@ export const artikler: Artikkel[] = [
      * Squarespace og var ordbokstoff: den forklarte begreper uten å svare
      * på det noen faktisk lurer på før de kjøper.
      *
-     * TITTEL, H1 OG URL ER URØRT, og det er ikke en forglemmelse.
-     * Artikkelen rangerer på plass 2 for «hva er some» og plass 1 for
-     * «so me». Å bytte tittelen på en side som allerede står der, er å
-     * kaste en posisjon for å vinne en formulering.
+     * HER STO AT TITTEL OG H1 SKULLE STÅ URØRT, fordi artikkelen rangerte
+     * på plass 2 for «hva er some» og det var «å kaste en posisjon for å
+     * vinne en formulering». Resonnementet var rimelig, men tallene
+     * motsier det, og de er nå målt i to perioder: posisjon 2,5–7 på «hva
+     * er some», «hva betyr some», «hva er some markedsføring» og «hva står
+     * some for», ca. 13 visninger om dagen — og NULL klikk, både før og
+     * etter byttet.
      *
-     * H2-EN «Hva er SoMe?» STÅR TIDLIG OG ORDRETT av samme grunn: det er
-     * den som bærer plasseringen.
+     * EN POSISJON SOM IKKE GIR KLIKK ER INGEN POSISJON Å BERGE. Den som
+     * søker «hva er SoMe» ser en tittel som heter «Markedsføring i sosiale
+     * medier» og får ikke svar på spørsmålet sitt i det hele tatt. Tittel,
+     * H1 og meta svarer derfor på spørsmålet fra 14.10.2026, bestilt av
+     * Pål. URL-en står, og den er fortsatt det eneste som ikke kan røres.
+     *
+     * H2-EN HETER «Hva betyr SoMe?» og ikke lenger «Hva er SoMe?», som nå
+     * ville gjentatt H1 ordrett.
      */
     bilde: {
       fil: "peppes1-1600",
@@ -586,18 +595,19 @@ export const artikler: Artikkel[] = [
          uendret, og beskjæringen er satt ved å se på bildet. */
       fokus: "center 30%",
     },
-    tittel: "Markedsføring i sosiale medier",
+    tittel: "Hva er SoMe? Markedsføring i sosiale medier",
+    metaTittel: "Hva er SoMe? Markedsføring i sosiale medier for bedrifter",
     beskrivelse:
-      "Hva er SoMe, og hvordan markedsfører en bedrift seg i sosiale medier? Kanaler, innhold, organisk mot betalt, og hvordan dere holder det gående over tid.",
+      "SoMe betyr sosiale medier. Slik markedsfører bedrifter seg der: kanaler, innhold, organisk mot betalt, og hvordan dere holder det gående over tid.",
     publisert: "2025-02-12",
-    oppdatert: "2026-10-04",
+    oppdatert: "2026-10-14",
     blokker: [
       {
         type: "avsnitt",
         tekst:
           "SoMe er forkortelsen for sosiale medier. Markedsføring i sosiale medier betyr å bruke kanaler som Instagram, Facebook, LinkedIn og TikTok til å nå kunder, enten med vanlige innlegg (organisk) eller med betalte annonser. Det som avgjør resultatet, er sjelden enkeltinnlegg. Det avgjørende er om bedriften publiserer jevnt over tid.",
       },
-      { type: "overskrift", niva: 2, tekst: "Hva er SoMe?" },
+      { type: "overskrift", niva: 2, tekst: "Hva betyr SoMe?" },
       {
         type: "avsnitt",
         tekst:
@@ -816,13 +826,39 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Innholdsproduksjon er å lage tekst, foto og video som en bedrift bruker i markedsføringen. Hva det omfatter, hvem som gjør det, og hvordan dere kommer i gang.",
     publisert: "2024-08-09",
-    oppdatert: "2026-10-04",
+    oppdatert: "2026-10-14",
     blokker: [
       {
         type: "avsnitt",
         tekst:
-          "Innholdsproduksjon er arbeidet med å lage tekst, foto og video som en bedrift bruker i markedsføringen: på nettsiden, i sosiale medier, i annonser og i rekruttering. Det kan gjøres internt, av frilansere eller av et byrå, som enkeltprosjekter eller som løpende produksjon.",
-        lenker: [{ frase: "løpende produksjon", sti: "/innholdsproduksjon" }],
+          "Innholdsproduksjon er arbeidet med å lage tekst, foto og video som en bedrift bruker i markedsføringen: på nettsiden, i sosiale medier, i annonser og i rekruttering. Det kan gjøres internt, av frilansere eller av et byrå, som enkeltprosjekter eller som løpende produksjon. Hvordan vi jobber med innholdsproduksjon for bedrifter står på en egen side.",
+        /*
+         * LENKETEKSTEN ER SØKEORDET, byttet 14.10.2026.
+         * «innholdsproduksjon» har falt fra posisjon 15,3 til 27,3, søket
+         * går til DENNE artikkelen, og /innholdsproduksjon — som eier
+         * ordet — rangerer ikke på det. Lenken herfra skal derfor bære
+         * ordet, ikke «løpende produksjon».
+         *
+         * DEN GAMLE LENKEN ER FJERNET, OG DET ER ET AVVIK FRA
+         * BESTILLINGEN, som ba om å beholde den. To grunner:
+         *
+         * 1. Testen «ingen side lenkes to ganger fra samme avsnitt» ville
+         *    blitt rød. Regelen er riktig: to lenker til samme side i
+         *    samme avsnitt er støy.
+         * 2. Og viktigere — den ville ikke virket. Google regner
+         *    lenketeksten fra den FØRSTE lenken til en URL. Med «løpende
+         *    produksjon» først ville den nye lenketeksten blitt ignorert,
+         *    altså det motsatte av hensikten.
+         *
+         * Ordene «løpende produksjon» står fortsatt i teksten; det er bare
+         * lenken som er borte. Lenker til ANDRE sider er urørt.
+         */
+        lenker: [
+          {
+            frase: "innholdsproduksjon for bedrifter",
+            sti: "/innholdsproduksjon",
+          },
+        ],
       },
       { type: "overskrift", niva: 2, tekst: "Hva regnes som innhold?" },
       {
@@ -1000,7 +1036,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Innholdsmarkedsføring (content marketing) er å tiltrekke kunder med nyttig innhold i stedet for rene salgsbudskap. Definisjon, eksempler og slik kommer dere i gang.",
     publisert: "2024-08-08",
-    oppdatert: "2026-10-04",
+    oppdatert: "2026-10-14",
     blokker: [
       {
         type: "avsnitt",
@@ -1041,7 +1077,12 @@ export const artikler: Artikkel[] = [
       {
         type: "overskrift",
         niva: 2,
-        tekst: "Innholdsmarkedsføring, innholdsproduksjon og reklame",
+        /*
+         * NAVNET BYTTET 14.10.2026. H2-en inneholdt «innholdsproduksjon»,
+         * som etter søkeordkartet eies av /innholdsproduksjon. Lenken til
+         * «hva er»-artikkelen står i teksten under, urørt.
+         */
+        tekst: "Innholdsmarkedsføring og reklame – hva er forskjellen?",
       },
       {
         type: "tabell",
@@ -1502,12 +1543,24 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "En innholdsprodusent planlegger og lager foto, video og tekst til en bedrifts kanaler. Hva rollen innebærer, og når det lønner seg å leie inn.",
     publisert: "2024-06-28",
-    oppdatert: "2026-10-04",
+    oppdatert: "2026-10-14",
     blokker: [
       {
         type: "avsnitt",
         tekst:
-          "En innholdsprodusent planlegger og lager innhold, oftest foto, video og tekst, til en bedrifts nettside, sosiale medier og annonser. Rollen kan være intern, frilans eller i et byrå. Den spenner fra idé og manus til opptak, redigering og publisering.",
+          "En innholdsprodusent planlegger og lager innhold, oftest foto, video og tekst, til en bedrifts nettside, sosiale medier og annonser. Rollen kan være intern, frilans eller i et byrå. Den spenner fra idé og manus til opptak, redigering og publisering. Se også hva innholdsproduksjon for bedrifter koster og inneholder.",
+        /*
+         * LENKEN HIT ER NY 14.10.2026. Artikkelen rangerer på posisjon 62
+         * for «innholdsproduksjon» og konkurrerer dermed med både
+         * /innholdsproduksjon og «hva er»-artikkelen om samme søk. Lenken
+         * peker verdien videre til siden som eier ordet.
+         */
+        lenker: [
+          {
+            frase: "innholdsproduksjon for bedrifter",
+            sti: "/innholdsproduksjon",
+          },
+        ],
       },
       {
         type: "overskrift",
@@ -3697,7 +3750,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Reklame er betalt kommunikasjon som skal få noen til å kjøpe, velge eller mene noe. Typer, virkemidler, hva loven sier og hva god reklame har til felles.",
     publisert: "2026-10-02",
-    oppdatert: "2026-10-08",
+    oppdatert: "2026-10-14",
     blokker: [
       {
         type: "avsnitt",
@@ -3818,7 +3871,15 @@ export const artikler: Artikkel[] = [
           },
         ],
       },
-      { type: "overskrift", niva: 2, tekst: "Reklamefilm fra Reflektor" },
+      /*
+       * HET «Reklamefilm fra Reflektor» TIL 14.10.2026. Artikkelen
+       * rangerte på posisjon 23,4 for «reklamefilm» mens /reklamefilm lå
+       * på 63 — altså tok bloggposten søket fra siden som skal selge det.
+       * Etter søkeordkartet skal ordet bare stå i title, H1 og H2 på
+       * /reklamefilm og /blogg/hva-koster-reklamefilm. Lenken til
+       * /reklamefilm med lenketeksten «reklamefilm» står i teksten.
+       */
+      { type: "overskrift", niva: 2, tekst: "Slik kan Reflektor hjelpe" },
       {
         type: "avsnitt",
         tekst: `Vi produserer reklamefilm for TV, nett og sosiale medier, og har blant annet laget TV-reklame for Vitusapotek og Peppes Pizza. Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr.`,

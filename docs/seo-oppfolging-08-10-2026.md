@@ -107,3 +107,136 @@ Men kjedesiden selv ble ikke brukt som kilde, og kjedekundene ble ikke nevnt.
 - **Nedskalering av galleriklippene.** Filene deles med `/reels-produksjon`,
   der de vises større, og målebrowseren her mangler H.264 og kan ikke
   kontrollere at klippene ser riktige ut. Se `ytelse-runde-5.md`.
+
+---
+
+## Runde 14.10.2026: fem justeringer etter byttet
+
+Tall fra Search Console og GA4, verifisert live 14.10 kl. 07 UTC.
+
+### 1. SoMe-guiden svarer nå på spørsmålet
+
+`/blogg/markedsforing-i-sosiale-medier-some` lå på posisjon 2,5–7 for «hva er
+some», «hva betyr some», «hva er some markedsføring» og «hva står some for»
+— **ca. 13 visninger om dagen og null klikk**, både før og etter byttet.
+
+| | Før | Etter |
+|---|---|---|
+| title | Markedsføring i sosiale medier \| Reflektor | Hva er SoMe? Markedsføring i sosiale medier for bedrifter \| Reflektor |
+| H1 | Markedsføring i sosiale medier | Hva er SoMe? Markedsføring i sosiale medier |
+| første H2 | Hva er SoMe? | Hva betyr SoMe? |
+
+**Dette overstyrer en beslutning fra 02.10**, som sa at tittelen skulle stå
+fordi artikkelen rangerte på plass 2 og det var «å kaste en posisjon for å
+vinne en formulering». Resonnementet var rimelig, men tallene motsier det:
+en posisjon som gir null klikk i to måleperioder er ingen posisjon å berge.
+Den som søker «hva er SoMe» møtte en tittel som ikke nevnte spørsmålet.
+Begrunnelsen i koden er rettet, ikke slettet — ellers ville neste runde
+rullet dette tilbake.
+
+H2-en måtte bytte navn fordi «Hva er SoMe?» nå ville gjentatt H1 ordrett.
+URL-en står.
+
+**Tittelen er 69 tegn med suffikset** og blir kuttet av Google. Det er
+bestillingens egen formulering, og kostnaden er liten: det som ryker er
+« | Reflektor», ikke søkeordet, som står helt først.
+
+### 2. «innholdsproduksjon» peker mot siden som eier ordet
+
+Ordet falt fra posisjon 15,3 til 27,3 og fra 31 til 14 visninger om dagen.
+Søket går til `/blogg/hva-er-innholdsproduksjon`, mens `/innholdsproduksjon`
+— som eier ordet — ikke rangerer på det. `/blogg/hva-gjr-en-innholdsprodusent`
+kom i tillegg inn på posisjon 62 og konkurrerer om det samme.
+
+Begge bloggpostene har nå lenketeksten «innholdsproduksjon for bedrifter»
+til `/innholdsproduksjon` i ingressen, og i begge er den den **første**
+lenken til den siden — som er det som avgjør.
+
+**Ett avvik fra bestillingen:** den ba om å beholde den gamle lenken
+«løpende produksjon» i samme avsnitt. Den er fjernet som lenke (ordene står
+igjen i teksten). To grunner, og den andre er den viktige:
+
+1. Testen «ingen side lenkes to ganger fra samme avsnitt» ville blitt rød,
+   og regelen er riktig — to lenker til samme side i ett avsnitt er støy.
+2. **Det ville ikke virket.** Google regner lenketeksten fra den første
+   lenken til en URL. Med «løpende produksjon» først ville den nye
+   lenketeksten blitt ignorert — altså det motsatte av hensikten.
+
+Lenker til andre sider er urørt.
+
+**Hva ble endret i `/blogg/hva-er-innholdsproduksjon` 04.10?** Bestillingen
+ba om å finne det ut. Svaret: **bare `oppdatert`-datoen.** Commit 825e108
+satte den til 2026-10-04 uten å endre noe i artikkelen; H1 og beskrivelse er
+fra 21.09, og `metaTittel`, ingressen og lenken til `/innholdsproduksjon`
+er fra omskrivingen 02.10. Verken tittel, H1 eller innledning ble rørt den
+dagen. Fallet i posisjon kan altså ikke forklares med en endring i denne
+artikkelen 04.10.
+
+Verdt å merke seg: den datoen ble flyttet for en endring som ikke var i
+artikkelen, og det er den typen pynt `oppdatert`-feltets egen
+dokumentasjon advarer mot.
+
+H2-en «Innholdsmarkedsføring, innholdsproduksjon og reklame» i
+`/blogg/hva-er-innholdsmarkedsforing` heter nå «Innholdsmarkedsføring og
+reklame – hva er forskjellen?». Lenken i teksten står.
+
+### 3. Søkeordet i en H2 på alle seks tjenestesidene
+
+Alle seks hadde den samme generiske «Det dere lurer på». Feltet
+`seksjonstittel` fantes allerede med den teksten som standard, så det var
+ingen komponent å bygge om — bare en verdi å sette per side.
+
+| Side | Ny H2 |
+|---|---|
+| /innholdsproduksjon | Innholdsproduksjon – slik jobber vi |
+| /reklamefilm | Reklamefilm – slik jobber vi |
+| /videoproduksjon-i-oslo | Videoproduksjon i Oslo – slik jobber vi |
+| /eventfotograf-eventvideo | Eventfoto og eventvideo – slik jobber vi |
+| /employer-branding-video-oslo | Employer branding-video – slik jobber vi |
+| /reels-produksjon | Reels for bedrifter – slik jobber vi |
+
+På `/innholdsproduksjon` er dette andre H2 og ikke første; «Fire typer
+prosjekter» står øverst. Kravet er hovedsøkeordet i minst én H2, og det er
+oppfylt. `/kjeder` er urørt — den har sin egen seksjonsoverskrift.
+
+### 4. «videograf» på eventsiden
+
+Siden lå på posisjon 7–14 for «videograf» med null klikk, og ordet sto
+ikke i tittel eller meta.
+
+- title: «Eventfotograf og eventvideo i Oslo» → «Eventfotograf og videograf
+  i Oslo – eventvideo og bilder»
+- meta: starter nå på «Eventfotograf og videograf for konferanser,
+  lanseringer og firmaarrangementer.» Resten uendret.
+- Ingressen: «Vi dekker arrangementet som fotograf og videograf samtidig,
+  uten at dere må bestille to oppdrag.»
+
+**Formuleringen i ingressen er valgt med omhu.** «Fotograf og videograf»
+alene ville antydet to personer. Pål sender veldig ofte én produsent som
+dekker begge delene, og det er en prisforskjell for kunden, ikke en
+kvalitetsforskjell — jf. regelen i AGENTS.md om aldri å beskrive
+arbeidsmåten vår som et kompromiss. Setningen sier hva dere får, ikke hvor
+mange som kommer.
+
+Tittelen ble kortet 01.10 fordi 79 tegn ble kuttet midt i
+«firmaarrangement». Den er nå 68 tegn, altså lengre igjen, og det er et
+bevisst bytte: det som kuttes er suffikset, ikke et søkeord.
+
+### 5. «reklamefilm» tilbake til siden som selger den
+
+`/blogg/hva-er-reklame` rangerte på posisjon 23,4 for «reklamefilm» mens
+`/reklamefilm` lå på 63 — bloggposten tok søket fra tjenestesiden. H2-en
+«Reklamefilm fra Reflektor» heter nå «Slik kan Reflektor hjelpe». Lenken
+til `/reklamefilm` med lenketeksten «reklamefilm» står i teksten, slik
+søkeordkartet tillater.
+
+### Datoer og kontroll
+
+Sitemapets `lastmod` er flyttet til 14.10 for de fem tjenestesidene som ble
+endret, og `oppdatert` til 14.10 for de fem artiklene. Alle endringene er
+synlige for en leser, så datoene er sanne.
+
+Hele sjekkrunden er grønn, inkludert kannibaliseringssjekken fra 04.10: «hva
+koster» bare i bloggposter, byrå-ordene bare på forsiden, og hvert søkeord
+med én eier blant overskriftene. Titler, H1, H2 og meta er kontrollert i
+ferdig bygget HTML før push.

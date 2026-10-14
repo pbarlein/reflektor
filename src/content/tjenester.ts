@@ -332,6 +332,14 @@ const KONTAKT = { sti: "/#kontakt", tekst: "Få et forslag" };
 export const reklamefilm: Tjenesteside = {
   sti: "/reklamefilm",
   /*
+   * SØKEORDET I SEKSJONSOVERSKRIFTEN, bestilt 14.10.2026. Alle seks
+   * tjenestesidene hadde den samme generiske «Det dere lurer på» som
+   * første H2, og søkeordkartet krever hovedsøkeordet i minst én H2.
+   * Standarden står i Tjenestelayout og gjelder fortsatt for sider som
+   * ikke setter feltet.
+   */
+  seksjonstittel: "Reklamefilm – slik jobber vi",
+  /*
    * SPISSET 04.10.2026. «Reklamefilm» har 200 søk i måneden, «reklamefilm
    * produksjon» 80 og «lage reklamefilm» 150 — alle med vanskelighet under
    * 20. Tittelen sa «for TV, nett og sosiale medier», altså flatene, og
@@ -579,6 +587,7 @@ export const reklamefilm: Tjenesteside = {
 
 export const videoproduksjon: Tjenesteside = {
   sti: "/videoproduksjon-i-oslo",
+  seksjonstittel: "Videoproduksjon i Oslo – slik jobber vi",
   /*
    * UTVIDET TIL HOVEDSIDEN FOR VIDEO 01.10.2026.
    *
@@ -872,6 +881,7 @@ export const employerBranding: Tjenesteside = {
     fokus: "center 30%",
   },
   sti: "/employer-branding-video-oslo",
+  seksjonstittel: "Employer branding-video – slik jobber vi",
   tittel: "Employer branding-video for rekruttering",
   beskrivelse:
     "Employer branding-video: film til stillingsannonser, karriereside og rekrutteringskanaler. Produsert hos dere, med deres egne ansatte.",
@@ -1040,19 +1050,32 @@ export const event: Tjenesteside = {
     fokus: "center 40%",
   },
   sti: "/eventfotograf-eventvideo",
+  seksjonstittel: "Eventfoto og eventvideo – slik jobber vi",
   /*
-   * KORTET 01.10.2026. Levert copy ble 79 tegn med « | Reflektor» og ble
-   * kuttet midt i «firmaarrangement». Begge søkeordene — eventfotograf og
-   * eventvideo — og stedet står igjen; «konferanse og firmaarrangement»
-   * står i meta description i stedet, der det er plass.
+   * KORTET 01.10.2026 fordi levert copy ble 79 tegn med « | Reflektor» og
+   * ble kuttet midt i «firmaarrangement».
+   *
+   * «VIDEOGRAF» LAGT TIL 14.10.2026, bestilt av Pål, og tittelen er
+   * dermed lengre igjen — 67 tegn med suffikset. Grunnen er målt: siden
+   * ligger på posisjon 7–14 for «videograf» med null klikk, og ordet sto
+   * ikke i tittel eller meta i det hele tatt. Det som kuttes nå er
+   * « | Reflektor» og kanskje «og bilder», ikke et søkeord midt i et ord.
    */
-  tittel: "Eventfotograf og eventvideo i Oslo",
+  tittel: "Eventfotograf og videograf i Oslo – eventvideo og bilder",
   beskrivelse:
-    "Eventfotograf og eventvideo for konferanser, lanseringer og firmaarrangementer. Eventvideo, klipp til sosiale medier og 50+ bilder. Fra 40 000 kr.",
+    "Eventfotograf og videograf for konferanser, lanseringer og firmaarrangementer. Eventvideo, klipp til sosiale medier og 50+ bilder. Fra 40 000 kr.",
   h1: "Eventfotograf og eventvideo",
   merkelapp: "Produksjon",
   tjenestetype: "Foto- og videodekning av arrangementer",
-  svar: "Eventdekning er foto og film fra noe som skjer én gang: en konferanse, en lansering, en messe eller et firmaarrangement. Jobben er å komme hjem med materiale dere kan bruke i ettertid: innhold til kanalene, og bilder dere kan invitere med neste gang.",
+  /*
+   * «VIDEOGRAF» STÅR ÉN GANG HER, bestilt 14.10.2026, og formuleringen er
+   * valgt med omhu: «fotograf og videograf» alene ville antydet to
+   * personer. Pål sender veldig ofte én produsent som dekker begge
+   * delene, og det er en prisforskjell for kunden, ikke en
+   * kvalitetsforskjell. Setningen sier derfor hva dere får, ikke hvor
+   * mange som kommer.
+   */
+  svar: "Eventdekning er foto og film fra noe som skjer én gang: en konferanse, en lansering, en messe eller et firmaarrangement. Vi dekker arrangementet som fotograf og videograf samtidig, uten at dere må bestille to oppdrag. Jobben er å komme hjem med materiale dere kan bruke i ettertid: innhold til kanalene, og bilder dere kan invitere med neste gang.",
   avgrensning: [
     "Dette er dekning av noe som faktisk skjer. Skal filmen planlegges fra bunnen i stedet, er det ",
     { sti: "/videoproduksjon-i-oslo", tekst: "planlagt videoproduksjon" },
@@ -1334,6 +1357,7 @@ export const innholdsproduksjon: Tjenesteside = {
    * Kommer det et egnet bilde, settes `bilde` tilbake — feltet er valgfritt.
    */
   sti: "/innholdsproduksjon",
+  seksjonstittel: "Innholdsproduksjon – slik jobber vi",
   /*
    * TITTEL OG INGRESS SPISSET 04.10.2026, bestilt av Pål.
    *
@@ -1675,6 +1699,7 @@ export const innholdsproduksjon: Tjenesteside = {
  */
 export const reelsproduksjon: Tjenesteside = {
   sti: "/reels-produksjon",
+  seksjonstittel: "Reels for bedrifter – slik jobber vi",
   tittel: "Reels-produksjon for bedrifter – fast pris",
   /*
    * KORTET FRA 177 TIL 155 TEGN 01.10.2026. Google kutter rundt 160. «Én
