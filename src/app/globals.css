@@ -94,6 +94,21 @@
  */
 html {
   scroll-padding-top: 5.5rem;
+  /*
+   * MYK RULLING TIL ANKERE, lagt til 23.10.2026 sammen med knappen under
+   * referansene.
+   *
+   * HER OG IKKE I JAVASCRIPT. `scrollIntoView` uten `behavior` leser
+   * nettopp denne verdien, så én linje her gjør både Ankerhopp-lytteren og
+   * en helt vanlig hash-navigasjon myk — også for den som har JavaScript
+   * av. Å sende `behavior: "smooth"` fra koden ville dekket det første og
+   * ikke det andre.
+   *
+   * Unntaket for `prefers-reduced-motion` står nedenfor, sammen med det
+   * andre som beveger seg. En lang, myk rulling er nettopp den typen
+   * bevegelse den innstillingen finnes for.
+   */
+  scroll-behavior: smooth;
 }
 
 /*
@@ -204,6 +219,11 @@ html {
   .vegg-drift-hoyre {
     animation: none;
     transform: none;
+  }
+
+  /* Ankeret skal fortsatt treffe — det skal bare ikke gli dit. */
+  html {
+    scroll-behavior: auto;
   }
 }
 

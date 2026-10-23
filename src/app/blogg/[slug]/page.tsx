@@ -21,6 +21,7 @@ import {
   somFaq,
   type Innlenke,
 } from "@/content/artikler";
+import { tilbud } from "@/content/site";
 import { forfatter } from "@/lib/artikkelmarkering";
 import { basisUrl } from "@/lib/miljo";
 
@@ -634,6 +635,29 @@ export default async function BloggInnlegg({ params }: Props) {
       </section>
 
       {/* ── CTA ───────────────────────────────────────────────────── */}
+      {/*
+        PRISEN OG LENKEN TIL PRISSEKSJONEN, lagt til 23.10.2026.
+
+        BESTILLINGEN BA OM EN NY FELLES BOKS NEDERST I ALLE BLOGGPOSTER.
+        Den finnes allerede, og det er denne: samme panel, samme knapp til
+        skjemaet, på hver eneste post. Observasjonen om at postene «ikke har
+        noen lenke til abonnementet eller forsiden, bare menyen» stemmer
+        altså ikke — knappen har pekt på `/#kontakt` hele tiden.
+
+        EN NY BOKS VILLE GITT TO NESTEN LIKE OPPFORDRINGER på rad nederst i
+        hver post, og en ny overskrift der bestillingen selv krever at
+        antallet overskrifter ikke endres. Det som FAKTISK manglet, er lagt
+        inn her i stedet: prisen, en sekundær lenke til prisseksjonen, og
+        målepunktet.
+
+        PRISEN HENTES FRA `tilbud`, samme kilde som prisseksjonen på
+        forsiden. Fire kopier av en pris er fire steder den kan gli fra
+        hverandre.
+
+        LENKETEKSTENE BÆRER INGEN SØKEORD fra søkeordkartet. «Se pris og hva
+        som er med» sier hva som venter på den andre siden uten å ta et ord
+        en annen side eier.
+      */}
       <section className="pb-24 sm:pb-32">
         <Container>
           <div className="rounded-flate bg-dyp px-6 py-12 text-pa-dyp sm:px-14 sm:py-14">
@@ -644,9 +668,24 @@ export default async function BloggInnlegg({ params }: Props) {
               Fortell oss om bedriften, så får dere et forslag tilbake innen tre
               virkedager. Uforpliktende.
             </p>
-            <Knappelenke href="/#kontakt" className="mt-8">
-              Få et forslag
-            </Knappelenke>
+            <p className="mt-4 max-w-xl leading-relaxed text-pretty text-pa-dyp-dempet">
+              Faste kunder betaler{" "}
+              {tilbud.prisPerManed.toLocaleString("nb-NO")} kr/mnd for én
+              produksjonsdag i måneden, ferdig redigert innhold og publisering{" "}
+              {tilbud.posterPerUke} ganger i uka. Tre måneders oppsigelse, ingen
+              bindingstid.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+              <Knappelenke href="/#kontakt" data-cta="blogg">
+                Få et forslag
+              </Knappelenke>
+              <Link
+                href="/#pris"
+                className="inline-flex min-h-6 items-center text-aksent-pa-dyp underline decoration-from-font underline-offset-4"
+              >
+                Se pris og hva som er med
+              </Link>
+            </div>
           </div>
         </Container>
       </section>

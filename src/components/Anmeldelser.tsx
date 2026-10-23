@@ -1,7 +1,9 @@
 import { Container } from "./Container";
 import { Eyebrow } from "./Eyebrow";
+import { knappeklasser } from "./Knapp";
 import type { Anmeldelse } from "@/content/anmeldelser";
 import { googleProfil } from "@/content/anmeldelser";
+import { tilbud } from "@/content/site";
 
 /**
  * Anmeldelser på én rad.
@@ -300,6 +302,58 @@ export function Anmeldelsesrad({
               Se alle anmeldelsene på Google
             </a>
           </p>
+
+          {/*
+            KNAPPEN TIL SKJEMAET, bestilt 23.10.2026.
+
+            HVORFOR NETTOPP HER. Alle tre nettsideleadene 13.–23.10 kom fra
+            skjemaet nederst på forsiden, men Clarity viser at bare 17–19 %
+            av besøkende på desktop og 5–20 % på mobil ruller så langt. Denne
+            seksjonen er nummer to i siden, og langt flere ser den. Mellom
+            toppen og skjemaet nederst fantes det ingen handlingsknapp i det
+            hele tatt, bortsett fra i menyen.
+
+            RETT UNDER BEVISET, OG DET ER POENGET. Den som nettopp har lest
+            5,0 av 11 anmeldelser og hørt en kunde si det på kamera, er der
+            terskelen er lavest. Knappen står derfor etter lenken til Google
+            og ikke over sitatene.
+
+            EN VANLIG ANKERLENKE, INGEN NY JAVASCRIPT. `Ankerhopp` fanger
+            alle ankerlenker på siden fra før og gjør tre ting en naiv
+            rulling ikke gjør — se den fila. Rullingen er myk fra
+            `scroll-behavior` i globals.css, som også virker uten
+            JavaScript, og som slås av under `prefers-reduced-motion`.
+
+            FOKUS LANDER PÅ SEKSJONEN, IKKE I NAVN-FELTET. Bestillingen ba
+            om det siste. Det er bevisst ikke gjort: en skjermleserbruker
+            som kastes rett inn i et tomt tekstfelt får ikke høre hva
+            skjemaet er til for. `Ankerhopp` flytter fokus til `#kontakt`,
+            så overskriften leses først og neste Tab går inn i feltet.
+
+            `data-cta` OG `id` ER MÅLEPUNKTER FOR CLARITY, satt av Cowork
+            der. Ingen sporing er lagt inn i koden eller i GTM.
+          */}
+          <div className="mt-10">
+            <a
+              href="#kontakt"
+              id="cta-referanser"
+              data-cta="referanser"
+              /* `w-full sm:w-auto` er bredde, ikke farge eller polstring:
+                 full bredde på mobil er bestilt, og størrelsen kommer fra
+                 varianten `stor` i Knapp.tsx. */
+              className={knappeklasser("primar", "stor", "w-full sm:w-auto")}
+            >
+              Få et strategiforslag
+            </a>
+            {/*
+              SETNINGEN STÅR ALLEREDE UNDER SKJEMAET, og tallet hentes fra
+              samme kilde som der. Ingen ny påstand er funnet på.
+            */}
+            <p className="mt-4 max-w-md text-sm text-pa-dyp-dempet">
+              Svar innen {tilbud.strategiforslagVirkedager} virkedager – et
+              konkret forslag, ikke en generisk presentasjon.
+            </p>
+          </div>
         </div>
       </div>
     </Container>

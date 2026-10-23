@@ -324,3 +324,71 @@ designvalg.
 Det er gjort på produktbeskrivelser i eksperimentelle oppsett, ikke på B2B-
 tjenestesider med sekssifret årsverdi. Retningen er godt dokumentert;
 størrelsen på effekten her vet vi ingenting om. Ikke bruk det som et tall.
+
+---
+
+## Knapp under referansene, og pris nederst i bloggen (23.10.2026)
+
+### Knappen under referansene
+
+**Problemet, målt:** alle tre nettsideleadene 13.–23.10 kom fra skjemaet
+nederst på forsiden, men Clarity viser at bare 17–19 % av besøkende på
+desktop og 5–20 % på mobil ruller så langt. Mellom toppen og skjemaet
+fantes ingen handlingsknapp i det hele tatt, bortsett fra i menyen.
+
+Knappen står nå rett under «Se alle anmeldelsene på Google», inne i det
+mørke referansepanelet — seksjon nummer to i siden. Rett under beviset, og
+det er poenget: den som nettopp har lest 5,0 av elleve anmeldelser og hørt
+en kunde si det på kamera, er der terskelen er lavest.
+
+**Ingen ny JavaScript.** `Ankerhopp` fanget ankerlenker fra før. Det som
+manglet var myk rulling, og den er lagt i `scroll-behavior` i globals.css —
+én linje som virker både for lytteren og for en helt vanlig hash-navigasjon
+uten JavaScript, og som slås av under `prefers-reduced-motion`.
+
+**Fokus lander på seksjonen, ikke i Navn-feltet.** Bestillingen ba om det
+siste. Det er bevisst ikke gjort: en skjermleserbruker som kastes rett inn i
+et tomt tekstfelt får ikke høre hva skjemaet er til for. `Ankerhopp` flytter
+fokus til `#kontakt`, så overskriften leses først og neste Tab går inn i
+feltet.
+
+**Størrelsen er en tredje variant i knappekomponenten**, ikke polstring fra
+kallstedet. Filhodet i Knapp.tsx forklarer hvorfor: klasser utenfra var
+nettopp det som ga fire kopier av knappen.
+
+Målt på 390×844 etter bygging:
+
+| | Verdi |
+|---|---|
+| Bredde | 294 px — hele bredden i panelet |
+| Høyde | 73 px |
+| Cookie-banner | ligger under knappen, ingen overlapp |
+| Klikk | lander på `#kontakt`, Navn-feltet i synsfeltet |
+
+**Ett forbehold:** ruller man knappen helt ned i underkant av skjermen mens
+samtykkebanneret fortsatt er åpent, ligger banneret oppå den. Det er ikke
+posisjonen man lander på når man ruller til seksjonen, og banneret kan
+lukkes — men det er verdt å vite. Banneret er ikke rørt.
+
+### Bloggpostene: boksen fantes allerede
+
+Bestillingen ba om en ny felles boks nederst i alle bloggposter.
+**Den finnes, og har gjort det hele tiden:** samme mørke panel, overskriften
+«Skal vi lage innholdet for dere?» og en knapp til `/#kontakt`, på hver
+eneste post. Observasjonen om at postene «ikke har noen lenke til
+abonnementet eller forsiden, bare menyen» stemmer altså ikke.
+
+En ny boks ville gitt to nesten like oppfordringer på rad nederst i hver
+post, og en ny overskrift der bestillingen selv krever at antallet
+overskrifter ikke endres. Det som faktisk manglet, er lagt inn i den
+eksisterende i stedet:
+
+- prisen, hentet fra `tilbud` — samme kilde som prisseksjonen på forsiden
+- en sekundær lenke «Se pris og hva som er med» til `/#pris`
+- `data-cta="blogg"` på knappen
+
+Dermed falt også spørsmålet om et flagg for SoMe-guiden bort: ingenting
+vises i dobbelt, fordi det ikke er lagt til noe nytt panel. Kontrollert på
+tre poster at antall `h2` er uendret mot live.
+
+Lenketekstene bærer ingen søkeord fra søkeordkartet.

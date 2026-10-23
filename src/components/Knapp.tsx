@@ -22,7 +22,7 @@ import Link from "next/link";
  */
 
 type Vekt = "primar" | "sekundar";
-type Storrelse = "vanlig" | "kompakt";
+type Storrelse = "vanlig" | "kompakt" | "stor";
 
 const GRUNN =
   "inline-flex items-center justify-center rounded-interaktiv border font-medium transition-colors motion-reduce:transition-none";
@@ -42,6 +42,16 @@ const VEKT: Record<Vekt, string> = {
 const STORRELSE: Record<Storrelse, string> = {
   vanlig: "px-7 py-3.5",
   kompakt: "px-4 py-2.5 text-[0.9375rem] sm:px-5",
+  /*
+   * STOR, lagt til 23.10.2026 for knappen under referansene.
+   *
+   * SOM EN TREDJE VARIANT OG IKKE SOM KLASSER FRA KALLSTEDET. Filhodet
+   * over sier hvorfor: polstring utenfra var nettopp det som ga fire
+   * kopier av knappen. Behovet er ekte — den knappen står alene midt på
+   * forsiden og skal veie mer enn en knapp i en rad — men det er bare én
+   * variant av det.
+   */
+  stor: "px-9 py-5 text-lg",
 };
 
 /**
