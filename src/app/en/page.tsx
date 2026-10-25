@@ -35,7 +35,12 @@ export const metadata: Metadata = {
    * legger det på selv, og tittelen ble derfor «… | Reflektor | Reflektor»
    * i den bygde siden. Fanget da alle titler ble lest ut av bygget.
    */
-  title: "Social media agency in Oslo – fixed monthly price",
+  /*
+   * KORTET 25.10.2026: 61 tegn med « | Reflektor». «Monthly» gikk ut —
+   * beskrivelsen rett under sier «NOK 30,000 per month», så prisens
+   * intervall er ikke tapt.
+   */
+  title: "Social media agency in Oslo – fixed price",
   description:
     "Reflektor films at your company one day a month and publishes 8–10 videos on Instagram and Facebook. NOK 30,000 per month, no lock-in.",
   alternates: {

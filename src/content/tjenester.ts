@@ -351,7 +351,18 @@ export const reklamefilm: Tjenesteside = {
    * H1 eller en seksjonsoverskrift. Se søkeordkartet i
    * docs/sidearkitektur.md.
    */
-  tittel: "Reklamefilm – produksjon for TV, nett og sosiale medier",
+  /*
+   * KORTET 25.10.2026, i kvartalsgjennomgangen: 67 tegn med « | Reflektor»,
+   * kuttet av Google midt i «sosiale medier».
+   *
+   * «SOSIALE MEDIER» ER DET SOM GIKK UT, og det er det riktige å miste her:
+   * forsiden eier de ordene, og de sto i tittelen på en side som skal eie
+   * «reklamefilm». «Produksjon» står fordi «reklamefilm produksjon» har 80
+   * søk i måneden. «Filmproduksjon» ble vurdert og forkastet — 200 søk, men
+   * ordet tilhører /videoproduksjon-i-oslo, og to av våre egne sider om det
+   * samme ordet taper begge.
+   */
+  tittel: "Reklamefilm – produksjon for TV og nett",
   beskrivelse: `Reklamefilmproduksjon i Oslo for hele Norge. Vi lager reklamefilm for TV, nettannonser og sosiale medier – fra idé til ferdig film. Fra ${kr(tilbud.fraPrisProsjekt)} kr.`,
   h1: "Reklamefilm",
   merkelapp: "Produksjon",
@@ -1374,8 +1385,19 @@ export const innholdsproduksjon: Tjenesteside = {
    * i tittel, H1 eller en seksjonsoverskrift noe annet sted. To sider som
    * kjemper om samme ord taper begge.
    */
-  tittel: "Innholdsproduksjon i Oslo – foto og video for bedrifter",
-  beskrivelse: `Innholdsproduksjon for bedrifter i Oslo og hele Norge. Innholdsbyrå som lager foto og video til nettside, sosiale medier og rekruttering – som prosjekt fra ${kr(tilbud.fraPrisProsjekt)} kr eller fast månedspris.`,
+  /*
+   * TITTEL OG BESKRIVELSE KORTET 25.10.2026, i kvartalsgjennomgangen.
+   * Tittelen ble 67 tegn med « | Reflektor» og beskrivelsen 188 — begge
+   * kuttet av Google. Siden lå samtidig på plass 8,4 for «innholdsproduksjon
+   * oslo» med 20 visninger og null klikk; en kuttet tittel nederst på side 1
+   * er to handikap på det samme klikket.
+   *
+   * «INNHOLDSPRODUKSJON I OSLO» STÅR URØRT OG FØRST. Det er ordet siden
+   * eier, og det er søket den faktisk rangerer på. «For bedrifter» gikk ut
+   * av tittelen og står fortsatt i H1 og i beskrivelsen.
+   */
+  tittel: "Innholdsproduksjon i Oslo – foto og video",
+  beskrivelse: `Innholdsproduksjon for bedrifter i Oslo. Innholdsbyrå som lager foto og video til nettside, sosiale medier og rekruttering. Fra ${kr(tilbud.fraPrisProsjekt)} kr.`,
   h1: "Innholdsproduksjon for bedrifter",
   merkelapp: "Oversikt",
   tjenestetype: "Produksjon av foto og video for bedrifter",

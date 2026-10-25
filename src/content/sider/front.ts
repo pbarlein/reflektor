@@ -42,10 +42,26 @@ export const front: Side = {
          * overskrift — /reels-produksjon lenker hit med ordet som
          * ankertekst i stedet. Se søkeordkartet i docs/sidearkitektur.md.
          */
-        "front.meta.title": tekst(
-          "SoMe-byrå i Oslo – sosiale medier nesten på autopilot",
-          { maksTegn: 60 },
-        ),
+        /*
+         * KORTET 25.10.2026, i kvartalsgjennomgangen. Tittelen var 53 tegn
+         * her og 65 i SERP-en: malen i layout.tsx legger på « | Reflektor»,
+         * og de tolv tegnene har aldri vært med i `maksTegn`. Google kuttet
+         * den etter «nesten».
+         *
+         * GRENSEN ER DERFOR 48, ikke 60. 48 + 12 = 60, som er der Google
+         * som regel kutter. `scripts/metasjekk.ts` måler nå det ferdige
+         * bygget og fanger det samme en gang til, for sider som ikke bruker
+         * slot-systemet.
+         *
+         * «SOSIALE MEDIER» ER DET SOM GIKK UT. «SoMe-byrå i Oslo» er ordet
+         * forsiden eier og står først; «nesten» står fordi kunden setter av
+         * én dag i måneden, og en tittel som lover full autopilot ville
+         * vært et løfte siden ikke holder. H1 sier fortsatt «Sosiale medier
+         * – nesten på autopilot».
+         */
+        "front.meta.title": tekst("SoMe-byrå i Oslo – nesten på autopilot", {
+          maksTegn: 48,
+        }),
         "front.meta.description": tekst(
           "Reflektor filmer hos dere én dag i måneden og publiserer 8–10 videoer på Instagram og Facebook. 30 000 kr/mnd. Tre måneders oppsigelse, ingen binding.",
           {

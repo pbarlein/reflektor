@@ -17,6 +17,7 @@
     "lint": "eslint --max-warnings 0",
     "dev:mobil": "next dev --hostname 0.0.0.0",
     "content:check": "node --experimental-strip-types scripts/content-check.ts",
+    "meta:check": "node --experimental-strip-types scripts/metasjekk.ts",
     "markering:check": "node --experimental-strip-types scripts/markeringssjekk.ts",
     "bekreft:check": "node --experimental-strip-types scripts/bekreft-check.ts",
     "lenkesjekk": "node --experimental-strip-types --import ./tests/alias.mjs scripts/lenkesjekk.ts",

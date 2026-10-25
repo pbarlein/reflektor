@@ -53,5 +53,11 @@ jobs:
       # begge meldt av Search Console 08.10.2026, begge usynlige i kilden.
       - name: Markeringssjekk
         run: npm run markering:check
+      # Leser også det BYGDE HTML-et, og av samme grunn: tittelen settes i
+      # innholdsfilen, men malen i layout.tsx legger på « | Reflektor»
+      # etterpå. De tolv tegnene var aldri med i noen sjekk, og samme feil
+      # ble rettet for hånd fem ganger mellom 01.10 og 25.10.2026.
+      - name: Metasjekk
+        run: npm run meta:check
 # TODO (vedlegg A): Lighthouse mot ytelsesbudsjettet i 8.7. Krever en deployet
 # preview-URL som workflowen kan peke på.

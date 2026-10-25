@@ -40,8 +40,21 @@ import {
  * 2. SAMTYKKET SKAL KUNNE TREKKES TILBAKE. Bunnteksten har en lenke som
  *    åpner banneret igjen. Personvernerklæringens punkt 8 lover nettopp
  *    dette, og løftet sto udekket fram til nå.
- * 3. INGENTING FYRER FØR VALGET ER TATT. Consent Mode står på «denied» fra
- *    <head>, før GTM i det hele tatt lastes. Se samtykke.ts.
+ * 3. GOOGLES TAGGER FYRER IKKE MED COOKIES FØR VALGET ER TATT. Consent
+ *    Mode står på «denied» fra <head>, før GTM i det hele tatt lastes. Se
+ *    samtykke.ts.
+ *
+ *    HER STO «INGENTING FYRER FØR VALGET ER TATT», og det var ikke sant.
+ *    Målt mot live 25.10.2026, i kvartalsgjennomgangen: før banneret er
+ *    besvart lastes Meta-pikselen (844 KB) og setter `_fbp` på
+ *    reflektor.no, og Clarity setter CLID, MUID, SM og ANONCHK. Etter
+ *    «Bare nødvendige» skjer nøyaktig det samme.
+ *
+ *    DET ER IKKE EN FEIL I DENNE KOMPONENTEN. Det følger av Påls valg
+ *    02.10.2026 om at samtykkekravet ikke settes på de tre taggene inne i
+ *    GTM — valget og konsekvensen står i hodet på Sporing.tsx. Men to av
+ *    våre egne filer sa motsatt ting om det samme, og teksten i banneret
+ *    lovet leseren noe som ikke stemte. Begge deler er rettet her.
  *
  * BANNERET BLOKKERER IKKE SIDEN. Det er ikke en modal, det fanger ikke
  * fokus, og det kan ignoreres. Et samtykke som tvinges fram av at man ikke
@@ -303,9 +316,29 @@ export function Samtykkebanner() {
           <h2 id="samtykke-tittel" className="font-sans text-lg font-medium">
             Informasjonskapsler
           </h2>
+          {/*
+            SETNINGEN «INGENTING SETTES FØR DU HAR SAGT JA» ER FJERNET
+            25.10.2026. Den var ikke sann: målt mot live samme dag setter
+            Meta-pikselen og Clarity cookies før banneret er besvart, og
+            også etter «Bare nødvendige». Se hodet på denne fila.
+
+            DET SOM STÅR NÅ, PÅSTÅR INGENTING OM TIDSPUNKT ELLER VIRKNING.
+            Et banner som lover mer enn siden holder er verre enn et banner
+            som bare sier hva som samles inn og peker på erklæringen —
+            juridisk, og for den som leser det. Også «du velger selv» ble
+            forkastet: etter «Bare nødvendige» setter de samme
+            tredjepartene de samme cookiene, så valget virker ikke slik
+            setningen ville fått det til å høres ut.
+
+            KNAPPENE SIER UANSETT HVA MAN KAN GJØRE. «Godta alle», «Bare
+            nødvendige» og «Velg selv» står rett under, og en setning som
+            gjentar dem er ikke det som mangler her.
+
+            SETNINGEN KAN KOMME TILBAKE den dagen samtykkekravet settes på
+            taggene inne i GTM. Framgangsmåten står i docs/gtm-samtykke.md.
+          */}
           <p className="mt-2 text-[0.9375rem] leading-relaxed text-pretty text-pa-dyp-dempet">
-            Vi bruker informasjonskapsler til måling og markedsføring. Ingenting
-            settes før du har sagt ja.{" "}
+            Vi bruker informasjonskapsler til måling og markedsføring.{" "}
             <Link href="/personvern" className="underline hover:text-pa-dyp">
               Les personvernerklæringen
             </Link>

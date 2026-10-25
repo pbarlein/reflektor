@@ -1079,8 +1079,9 @@ export const artikler: Artikkel[] = [
       alt: "Rad med flasker i en butikkhylle",
     },
     tittel: "Hva er innholdsmarkedsføring?",
+    /* Kortet fra 164 til 157 tegn 25.10.2026 — Google kuttet den. */
     beskrivelse:
-      "Innholdsmarkedsføring (content marketing) er å tiltrekke kunder med nyttig innhold i stedet for rene salgsbudskap. Definisjon, eksempler og slik kommer dere i gang.",
+      "Innholdsmarkedsføring (content marketing) er å tiltrekke kunder med nyttig innhold i stedet for salgsbudskap. Definisjon, eksempler og slik kommer dere i gang.",
     publisert: "2024-08-08",
     oppdatert: "2026-10-14",
     blokker: [
