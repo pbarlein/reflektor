@@ -1895,13 +1895,16 @@ export const artikler: Artikkel[] = [
      * leie inn et byrå?», og «for små bedrifter» er den delen av det som
      * manglet i tittelen. H1 står.
      *
-     * DEN ER 69 TEGN MED SUFFIKSET og blir kuttet av Google. Det er
-     * bestillingens egen formulering, og den står — men det er samme
-     * lengdefelle som ble rettet 14.10 på to andre titler. Et kortere
-     * alternativ som beholder begge frasene: «SoMe-ansvarlig eller byrå
-     * for små bedrifter?», 55 tegn med suffikset.
+     * KORTET SAMME DAG. Bestillingens formulering — «SoMe-ansvarlig eller
+     * byrå? Regnestykket for små bedrifter» — ble 69 tegn med suffikset og
+     * kuttet av Google. Det er tredje gang den lengdefellen slår til: to
+     * titler ble rettet 14.10 av samme grunn. Denne er 56 tegn, og begge
+     * frasene som skulle inn står fortsatt.
+     *
+     * TAKET ER CA. 60 TEGN MED « | Reflektor». Legger du på et ord her,
+     * forsvinner et annet — det er ikke en smakssak.
      */
-    metaTittel: "SoMe-ansvarlig eller byrå? Regnestykket for små bedrifter",
+    metaTittel: "SoMe-ansvarlig eller byrå for små bedrifter?",
     beskrivelse:
       "Hva koster en ansatt SoMe-ansvarlig når arbeidsgiveravgift, feriepenger og pensjon er regnet med? Tallene fra Altinn og SSB mot et byråbudsjett.",
     publisert: "2026-09-21",
