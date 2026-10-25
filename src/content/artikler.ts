@@ -2064,12 +2064,20 @@ export const artikler: Artikkel[] = [
        *   stilling, og 20 % av 764 410 er rundt 150 000.
        * - Reflektor: `tilbud`, som resten av filen.
        *
-       * FRILANSERTALLENE ER IKKE BESTILLINGENS. Den oppga 25 000–33 000 kr
-       * i måneden, og det lar seg ikke regne fram fra satsene i den
-       * artikkelen den viser til: tre dager til lengre-oppdragssats er
-       * 23 430, fire dager til dagsats er 36 880. Intervallet her er de to
-       * ytterpunktene, avrundet. Et tall vi ikke kan vise regnestykket for,
-       * er et tall en AI-motor siterer oss feil på.
+       * FRILANSERTALLENE STO FEIL HER FRA 25.10 TIL 25.10. Her sto
+       * 23 000–37 000 kr, med den begrunnelsen at bestillingens
+       * 25 000–33 000 ikke lot seg regne fram. Den begrunnelsen var feil,
+       * og tallet gjorde at to av våre egne sider sa forskjellige ting om
+       * det samme regnestykket.
+       *
+       * REGNESTYKKET SOM FAKTISK LIGGER BAK: opptaksdagen til dagsats
+       * (9 220) pluss to–tre klippedager til lengre-oppdragssats (7 810)
+       * er 24 840 og 32 650 — altså «rundt 25 000–33 000», nøyaktig som
+       * artikkelen om frilanseren har skrevet siden 29.09. 23 000–37 000
+       * blandet de to satsene om hverandre.
+       *
+       * KILDEARTIKKELEN EIER TALLET. Står det to steder, skal det hentes
+       * fra den som viser satsene, ikke regnes på nytt her.
        */
       {
         type: "overskrift",
@@ -2094,8 +2102,8 @@ export const artikler: Artikkel[] = [
           ],
           [
             "Frilanser, én produksjonsdag + klipp",
-            "ca. 280 000–440 000 kr",
-            "ca. 23 000–37 000 kr",
+            "ca. 300 000–396 000 kr",
+            "ca. 25 000–33 000 kr",
             "Planlegge, bestille og publisere",
           ],
           [
@@ -2187,8 +2195,17 @@ export const artikler: Artikkel[] = [
         svar: "Med 600 000 kr i lønn blir den faktiske kostnaden rundt 764 000 kr, ifølge Altinns regneeksempel. Utstyr, programvare og ledelse kommer i tillegg.",
       },
       {
+        /*
+         * OMFORMULERT 25.10 ETTER AT FRILANSER-POSTEN FIKK SITT EGET
+         * spørsmål om det samme. Google sier at samme spørsmål og svar
+         * ikke skal merkes opp på to URL-er, og duplikattesten fanger bare
+         * identiske spørsmål — ikke to svar som sier det samme med litt
+         * ulike ord. Dette svaret holder seg til sidens eget tema:
+         * frilanseren målt mot en ansatt. Det fulle regnestykket står i
+         * artikkelen om byrå, frilanser og ansatt.
+         */
         sporsmal: "Er frilanser billigere enn byrå?",
-        svar: "For én film, ja. For produksjon hver måned blir det omtrent likt: én opptaksdag og to–tre dager klipp koster rundt 23 000–37 000 kr med minstesatsene, før planlegging og publisering.",
+        svar: "For én film, ja. For innhold hver måned havner frilanseren på rundt 25 000–33 000 kr med minstesatsene — omtrent det samme som abonnementet, og godt under en ansatt. Forskjellen er at planlegging og publisering fortsatt er deres jobb.",
       },
       {
         sporsmal: "Kan vi prøve først?",
@@ -2247,7 +2264,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Tre norske prisguider oppgir helt ulike tall. Her er hva de faktisk sier, hva som driver prisen, og hva vi selv tar: fra 40 000 kr per prosjekt.",
     publisert: "2026-09-29",
-    oppdatert: "2026-10-04",
+    oppdatert: "2026-10-25",
     blokker: [
       {
         type: "avsnitt",
@@ -2478,6 +2495,11 @@ export const artikler: Artikkel[] = [
       },
     ],
     tilleggsfaq: [
+      /* FØRST I LISTA, LAGT TIL 25.10.2026. Postens eget hovedspørsmål. */
+      {
+        sporsmal: "Hva koster en bedriftsvideo?",
+        svar: `Et enkelt videoprosjekt for en bedrift koster som regel 25 000–50 000 kr. Med konsept, profesjonelt team og flere formater ligger det oftest på 50 000–200 000 kr. Hos Reflektor starter enkeltprosjekter på ${kr(tilbud.fraPrisProsjekt)} kr. Trenger dere video hver måned, koster løpende produksjon ${kr(tilbud.prisPerManed)} kr i måneden.`,
+      },
       {
         sporsmal: "Hvorfor spriker tilbudene så mye på den samme filmen?",
         svar: "Fordi «en film» ikke er en definert leveranse. Det ene tilbudet kan være én person med kamera i tre timer og en enkel klipp. Det andre kan være et team på fire, to opptaksdager, manus, farge, lyd og fem ferdige formater. Begge er reklamefilm. Be om antall opptaksdager, antall folk på settet og antall ferdige leveranser skriftlig. Da blir prisene sammenlignbare med én gang.",
@@ -2526,10 +2548,11 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Én dag, ett team, en måned med innhold. Hva som skjer før, under og etter, og hva dere sitter igjen med når dagen er over.",
     publisert: "2026-09-29",
+    oppdatert: "2026-10-25",
     blokker: [
       {
         type: "avsnitt",
-        tekst: `En produksjonsdag er én dag der et filmteam kommer til dere og produserer innholdet for en hel måned. Hos oss er produksjonsmålet ${tilbud.videoerPerManed} ferdig redigerte videoer fra den ene dagen, og selve dagen tar som regel noen timer, ikke hele arbeidsdagen.`,
+        tekst: `En produksjonsdag er én dag der et filmteam kommer til dere og produserer innholdet for en hel måned. Hos oss er produksjonsmålet ${tilbud.videoerPerManed} ferdig redigerte videoer fra den ene dagen, og selve dagen tar som regel noen timer, ikke hele arbeidsdagen. Hos oss koster én produksjonsdag ${kr(tilbud.prisPerManed)} kr, og den inngår i abonnementet.`,
       },
       {
         type: "avsnitt",
@@ -2681,6 +2704,19 @@ export const artikler: Artikkel[] = [
       { sti: "/innholdsproduksjon", tekst: "hva Reflektor produserer" },
     ],
     tilleggsfaq: [
+      /*
+       * FØRST I LISTA, LAGT TIL 25.10.2026. Posten forklarte hva en
+       * produksjonsdag er, men svarte ikke på hva den koster.
+       *
+       * «PRODUKSJONSMÅLET ER», IKKE «DA FÅR DERE». Bestillingen skrev det
+       * siste. 8–10 er Påls eget produksjonsmål og uttrykkelig ikke en
+       * garanti — se `stillbilder` i site.ts og regelen i AGENTS.md. Et
+       * FAQ-svar som lover et antall gjør forbeholdet usant.
+       */
+      {
+        sporsmal: "Hva koster en produksjonsdag?",
+        svar: `Hos Reflektor koster én produksjonsdag i måneden ${kr(tilbud.prisPerManed)} kr. Produksjonsmålet er ${tilbud.videoerPerManed} ferdig redigerte videoer, og publisering ${tilbud.posterPerUke} ganger i uka. Trenger dere mer, koster hver ekstra produksjonsdag ${kr(tilbud.ekstraProduksjonsdag)} kr.`,
+      },
       {
         sporsmal: "Blir ikke alt likt når det filmes på samme dag?",
         svar: "Det er den vanligste innvendingen, og den er berettiget hvis dagen ikke er planlagt. Derfor rigger vi om mellom oppsettene: ulike lokasjoner i bygget, ulike personer, ulike motiver og ulike lengder. Kjøreplanen er bygget rundt flere innholdsserier, ikke én. Klær, lys og bakgrunn varierer med oppsettet, og materialet publiseres over fire uker, ikke samme uke.",
@@ -2741,11 +2777,17 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Dagsatser fra Norsk Journalistlag, en avgiftsfelle fra Skatteetaten, og hva som faktisk skiller de tre alternativene.",
     publisert: "2026-09-29",
+    oppdatert: "2026-10-25",
     blokker: [
       {
         type: "avsnitt",
-        tekst:
-          "Frilanser er det billigste alternativet på papiret, og det stemmer så lenge oppgaven er én film. Skal det produseres innhold hver måned, året rundt, blir de tre alternativene overraskende like i pris, og da er det ikke prisen som avgjør, men hvor mye av jobben dere selv må holde i.",
+        /*
+         * TO SETNINGER LAGT TIL 25.10.2026. Ingressen sa «overraskende
+         * like i pris» uten å oppgi prisen. Tallene sto lenger nede i
+         * artikkelen fra før; her gjentas de bare der en leser — og en
+         * AI-motor — faktisk ser etter dem.
+         */
+        tekst: `Frilanser er det billigste alternativet på papiret, og det stemmer så lenge oppgaven er én film. Skal det produseres innhold hver måned, året rundt, blir de tre alternativene overraskende like i pris, og da er det ikke prisen som avgjør, men hvor mye av jobben dere selv må holde i. Med minstesatsene koster én måneds produksjon med frilanser rundt 25 000–33 000 kr, før planlegging og publisering. Hos oss koster det ${kr(tilbud.prisPerManed)} kr i måneden med alt inkludert.`,
       },
       {
         type: "overskrift",
@@ -2937,6 +2979,15 @@ export const artikler: Artikkel[] = [
       },
     ],
     tilleggsfaq: [
+      /*
+       * FØRST I LISTA, LAGT TIL 25.10.2026. Postens eget hovedspørsmål
+       * sto ikke i FAQ-en i det hele tatt, og det er ordlyden en kjøper
+       * bruker når hen spør en AI-assistent.
+       */
+      {
+        sporsmal: "Er frilanser billigere enn et SoMe-byrå?",
+        svar: `For én film, ja. For innhold hver måned blir det omtrent likt: én opptaksdag og to–tre dager klipp koster rundt 25 000–33 000 kr med Norsk Journalistlags minstesatser, før planlegging og publisering. Hos Reflektor koster løpende produksjon ${kr(tilbud.prisPerManed)} kr i måneden, med planlegging, ${tilbud.videoerPerManed} ferdige videoer og publisering inkludert.`,
+      },
       {
         sporsmal: "Kan vi bruke frilanser og byrå om hverandre?",
         svar: "Ja, og mange gjør det. Den vanligste kombinasjonen er en fast avtale for det løpende innholdet og en frilanser inn på enkeltoppdrag som krever noe spesielt: drone, animasjon, en fotograf med en bestemt stil. Det som skaper trøbbel, er ikke kombinasjonen, men at ingen eier helheten: to leverandører som leverer i hver sin stil, i hver sine formater, uten en felles plan, gir et arkiv som ikke henger sammen. Bestem hvem som eier planen før dere bestiller noe.",
@@ -3430,7 +3481,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Fire Oslo-fotografer oppgir åpne priser på eventfoto. Her er tallene, hva som driver prisen, når video er verdt det, og hva vi selv tar.",
     publisert: "2026-09-30",
-    oppdatert: "2026-10-04",
+    oppdatert: "2026-10-25",
     blokker: [
       {
         type: "avsnitt",
@@ -3720,6 +3771,11 @@ export const artikler: Artikkel[] = [
       },
     ],
     tilleggsfaq: [
+      /* FØRST I LISTA, LAGT TIL 25.10.2026. Postens eget hovedspørsmål. */
+      {
+        sporsmal: "Hva koster en eventfotograf i Oslo?",
+        svar: `Som regel 2 500–9 000 kr for én til tre timer, 6 000–16 000 kr for en halv dag og 10 000–35 000 kr for en hel dag. Prisen avhenger mest av tiden på stedet, antall ferdige bilder og leveringstid. Hos Reflektor starter eventdekning med både foto og video på ${kr(tilbud.fraPrisProsjekt)} kr.`,
+      },
       {
         sporsmal: "Hva er vanlig timepris for en eventfotograf i Oslo?",
         svar: "Blant Oslo-fotografer som oppgir åpne priser, koster én time mellom 2 500 og 4 500 kr. Timeprisen synker når oppdraget blir lengre. Tre timer koster for eksempel 6 300 kr hos én av dem.",
@@ -3753,7 +3809,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Produksjonen er bare den første regningen. Her er hva skuespillere, musikk og visning koster i tillegg, med norske eksempler og tall.",
     publisert: "2026-10-02",
-    oppdatert: "2026-10-04",
+    oppdatert: "2026-10-25",
     blokker: [
       {
         type: "avsnitt",
@@ -3915,6 +3971,11 @@ export const artikler: Artikkel[] = [
       },
     ],
     tilleggsfaq: [
+      /* FØRST I LISTA, LAGT TIL 25.10.2026. Postens eget hovedspørsmål. */
+      {
+        sporsmal: "Hva koster en reklamefilm?",
+        svar: `Selve produksjonen koster oftest 50 000–200 000 kr, ifølge norske prisguider. Hos Reflektor starter enkeltprosjekter på ${kr(tilbud.fraPrisProsjekt)} kr. Skuespillere, musikk og visning kommer i tillegg, og visningen går til TV-kanalen eller plattformen, ikke til produsenten.`,
+      },
       {
         sporsmal: "Hva koster det å vise en reklamefilm på TV?",
         svar: "Det finnes ingen fast pris for lineær TV. Sendetiden prises etter hvor mange i målgruppen som ser på, og når. På nett-TV finnes listepriser. TV 2 oppgir 390 kr per tusen visninger for en sekssekunders reklame som ikke kan hoppes over, i sine priser for 2026. Visningen kommer alltid i tillegg til produksjonen.",
