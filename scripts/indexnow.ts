@@ -55,9 +55,25 @@ const MAKS_URLER = 10000;
  * SAMMENLIGNINGEN ER PÅ TIDSPUNKT, ikke på tekst. `lastmod` kan være
  * «2026-10-04» eller «2026-10-04T12:00:00+02:00», og de to skal kunne
  * måles mot hverandre.
+ *
+ * EN DATO UTEN KLOKKESLETT MÅLES PÅ DATO, ikke på midnatt. Rettet
+ * 25.10.2026, etter at fem endrede bloggposter ble hoppet over i loggen:
+ * «Forrige innsending: 2026-10-25T09:41:12Z. Endret siden da: 0.»
+ *
+ * «2026-10-25» ble lest som midnatt, og midnatt er tidligere enn 09:41.
+ * Dermed kunne en side aldri meldes inn to ganger samme dag — og den andre
+ * utrullingen samme dag er nettopp den som bærer rettelsen.
+ *
+ * `lastmod` i vårt sitemap ER en dato uten klokkeslett (se `SIST_ENDRET` i
+ * sitemap.ts). Da er det eneste sanne å lese den som hele dagen: den er
+ * eldre enn sist bare hvis DATOEN er eldre. En side som er endret i dag
+ * meldes derfor inn på nytt ved neste utrulling i dag. Det er bevisst og
+ * bundet av at datoen må være dagens — ikke de 34 URL-ene hver gang, som
+ * er det jobben faktisk skal unngå.
  */
 export function velgUrler(sitemap: string, sist: Date | null): string[] {
   const ut: string[] = [];
+  const sistDato = sist ? sist.toISOString().slice(0, 10) : null;
 
   for (const blokk of sitemap.split(/<url>/).slice(1)) {
     const loc = /<loc>\s*([^<]+?)\s*<\/loc>/.exec(blokk)?.[1];
@@ -65,9 +81,17 @@ export function velgUrler(sitemap: string, sist: Date | null): string[] {
 
     if (sist) {
       const rå = /<lastmod>\s*([^<]+?)\s*<\/lastmod>/.exec(blokk)?.[1];
-      const endret = rå ? new Date(rå) : null;
-      /* Gyldig dato som IKKE er nyere enn sist: hopp over. */
-      if (endret && !Number.isNaN(endret.getTime()) && endret <= sist) continue;
+
+      if (rå && /^\d{4}-\d{2}-\d{2}$/.test(rå)) {
+        /* Dato uten klokkeslett: eldre enn sist bare hvis datoen er eldre. */
+        if (sistDato && rå < sistDato) continue;
+      } else {
+        const endret = rå ? new Date(rå) : null;
+        /* Gyldig tidspunkt som IKKE er nyere enn sist: hopp over. */
+        if (endret && !Number.isNaN(endret.getTime()) && endret <= sist) {
+          continue;
+        }
+      }
     }
 
     ut.push(loc);

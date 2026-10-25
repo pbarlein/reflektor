@@ -88,6 +88,25 @@ test("en utrulling uten innholdsendringer sender ingenting av det daterte", () =
   assert.deepEqual(velgUrler(bare_datert, new Date("2026-10-09T00:00:00Z")), []);
 });
 
+/**
+ * TO UTRULLINGER SAMME DAG. Regresjonstest for 25.10.2026: fem endrede
+ * bloggposter ble hoppet over fordi forrige innsending var samme dag kl.
+ * 09:41, og «2026-10-25» ble lest som midnatt.
+ *
+ * Datoen i sitemapet vårt er en dato uten klokkeslett, og da er den hele
+ * dagen. En side endret i dag skal meldes inn igjen ved neste utrulling i
+ * dag — og en side endret i går skal fortsatt ikke det.
+ */
+test("en dato uten klokkeslett meldes inn igjen samme dag", () => {
+  const idag = `<url><loc>https://www.reflektor.no/a</loc><lastmod>2026-10-25</lastmod></url>
+<url><loc>https://www.reflektor.no/b</loc><lastmod>2026-10-24</lastmod></url>`;
+
+  assert.deepEqual(velgUrler(idag, new Date("2026-10-25T09:41:12Z")), [
+    "https://www.reflektor.no/a",
+  ]);
+  assert.deepEqual(velgUrler(idag, new Date("2026-10-26T00:00:00Z")), []);
+});
+
 /** Datoer og tidspunkter med sone skal kunne måles mot hverandre. */
 test("lastmod med klokkeslett og sone sammenlignes riktig", () => {
   const medSone = `<url><loc>https://www.reflektor.no/a</loc><lastmod>2026-10-08T23:00:00+02:00</lastmod></url>`;
