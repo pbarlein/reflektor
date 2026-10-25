@@ -298,13 +298,40 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Hva koster det å sette bort sosiale medier? Hva prisen består av, sju spørsmål du bør stille før du signerer, og hva vi selv tar: 30 000 kr/mnd.",
     publisert: "2026-08-13",
-    oppdatert: "2026-10-04",
+    oppdatert: "2026-10-25",
     blokker: [
       {
         type: "avsnitt",
+        /*
+         * SISTE SETNING LAGT TIL 25.10.2026. «Sette bort sosiale medier»
+         * er ordlyden folk bruker når de spør en AI-motor, og den sto
+         * ingen steder i teksten — bare i meta description. Ordet «byråer»
+         * i første setning står: det er subjektet i setningen, og å bytte
+         * det ville endret hva setningen sier.
+         */
         tekst:
-          "De fleste byråer oppgir ikke pris før du har vært i et møte. Det gjør det vanskelig å vite om et tilbud er dyrt eller billig. Her er hva prisen består av, hva du bør spørre om før du signerer, og hva vi selv tar som SoMe-byrå.",
+          "De fleste byråer oppgir ikke pris før du har vært i et møte. Det gjør det vanskelig å vite om et tilbud er dyrt eller billig. Her er hva prisen består av, hva du bør spørre om før du signerer, og hva vi selv tar som SoMe-byrå. Vurderer dere å sette bort sosiale medier, er dette tallene å ha med.",
         lenker: [{ frase: "SoMe-byrå", sti: "/" }],
+      },
+      /*
+       * «DET KORTE SVARET» ØVERST, bestilt 25.10.2026.
+       *
+       * HVORFOR. Reflektor nevnes i 23 % av AI-svarene på «Hva koster det å
+       * sette bort sosiale medier til et byrå i Norge?», mens Gemini og
+       * Perplexity nesten alltid siterer elevera.no — som har nettopp en
+       * slik blokk øverst og en synlig FAQ nederst. Artikkelen har hatt
+       * tallene hele tiden, men spredt over en tabell lenger nede.
+       *
+       * TALLENE ER NIVÅ 2 TIL 4 I TABELLEN under, ikke nye. Nivå 1 er
+       * rådgivning og ikke å sette bort driften, og nivå 5 er ekstern
+       * markedsavdeling — derfor 5 000 til 40 000 og ikke 3 000 til «og
+       * mer». Årstallene er de samme ganget med tolv, og Reflektors pris
+       * kommer fra `tilbud` som ellers i fila.
+       */
+      { type: "overskrift", niva: 2, tekst: "Det korte svaret" },
+      {
+        type: "avsnitt",
+        tekst: `Å sette bort sosiale medier til et byrå koster vanligvis 5 000–40 000 kr i måneden i Norge, altså 60 000–480 000 kr i året. Under 20 000 kr i måneden kommer sjelden noen ut og filmer, og dere må skaffe innholdet selv. Fra 20 000 kr og opp er faste opptaksdager og ferdig redigert video vanlig. Hos Reflektor koster det ${kr(tilbud.prisPerManed)} kr/mnd.`,
       },
       {
         type: "overskrift",
@@ -548,6 +575,19 @@ export const artikler: Artikkel[] = [
     ],
     lesVidere: [{ sti: "/", tekst: "Reflektors pris, oppgitt åpent" }],
     tilleggsfaq: [
+      /*
+       * DE TO FØRSTE ER LAGT TIL 25.10.2026, og de står først med vilje:
+       * de er ordlyden AI-motorene faktisk får spørsmålet i. De tre under
+       * er eldre og står urørt.
+       */
+      {
+        sporsmal: "Hva koster det å sette bort sosiale medier til et byrå?",
+        svar: "Vanligvis 5 000–40 000 kr i måneden. Prisen avhenger mest av om byrået filmer hos dere. Med faste opptaksdager og ferdig video ligger det på 20 000–40 000 kr.",
+      },
+      {
+        sporsmal: "Hva koster et SoMe-byrå i året?",
+        svar: `60 000–480 000 kr i året for de vanligste nivåene. Et abonnement med én produksjonsdag i måneden hos Reflektor koster ${kr(tilbud.prisPerManed * 12)} kr i året.`,
+      },
       {
         sporsmal: "Hvorfor finnes det SoMe-pakker under 5 000 kr i måneden?",
         svar: "Fordi de ikke inneholder opptak. Pakker i det prisområdet består som regel av rådgivning, eller av publisering av bilder og materiale bedriften har fra før. Det kan fungere hvis dere allerede har mye godt innhold, men dere må skaffe det selv.",
@@ -1849,14 +1889,52 @@ export const artikler: Artikkel[] = [
       alt: "Restaurantteam som holder fram en Michelin-plakett",
     },
     tittel: "SoMe-ansvarlig eller byrå? Regnestykket med tall",
+    /*
+     * EGEN `metaTittel` FRA 25.10.2026, bestilt av Pål. Spørsmålet HubSpot
+     * måler på er «Bør en liten bedrift ansette en SoMe-ansvarlig eller
+     * leie inn et byrå?», og «for små bedrifter» er den delen av det som
+     * manglet i tittelen. H1 står.
+     *
+     * DEN ER 69 TEGN MED SUFFIKSET og blir kuttet av Google. Det er
+     * bestillingens egen formulering, og den står — men det er samme
+     * lengdefelle som ble rettet 14.10 på to andre titler. Et kortere
+     * alternativ som beholder begge frasene: «SoMe-ansvarlig eller byrå
+     * for små bedrifter?», 55 tegn med suffikset.
+     */
+    metaTittel: "SoMe-ansvarlig eller byrå? Regnestykket for små bedrifter",
     beskrivelse:
       "Hva koster en ansatt SoMe-ansvarlig når arbeidsgiveravgift, feriepenger og pensjon er regnet med? Tallene fra Altinn og SSB mot et byråbudsjett.",
     publisert: "2026-09-21",
+    oppdatert: "2026-10-25",
     blokker: [
       {
         type: "avsnitt",
         tekst:
           "En ansatt koster 20–30 prosent mer enn lønnen. Det er tommelfingerregelen Altinn oppgir, og den er grunnen til at sammenligningen mellom å ansette og å sette bort sjelden går som folk tror. Her er regnestykket med tall fra offentlige kilder, og en ærlig gjennomgang av hva de to alternativene faktisk gir.",
+      },
+      /*
+       * «DET KORTE SVARET» ØVERST, bestilt 25.10.2026.
+       *
+       * HVORFOR. HubSpot AEO viser at Reflektor nevnes i 3 % av svarene på
+       * «Bør en liten bedrift ansette en SoMe-ansvarlig eller leie inn et
+       * byrå?», mens Perplexity heller siterer arbeidstilsynet.no og tre
+       * andre. Konkurrenten som VINNER det beslektede prissøket —
+       * elevera.no — har nettopp en slik blokk øverst. En AI-motor som skal
+       * sitere noen trenger svaret i ett avsnitt, ikke spredt over en
+       * artikkel som bygger opp til det.
+       *
+       * BEGGE TALLENE ER ARTIKKELENS EGNE: 764 410 fra Altinn-tabellen rett
+       * under, og årsprisen regnet fra `tilbud` slik resten av filen gjør.
+       */
+      { type: "overskrift", niva: 2, tekst: "Det korte svaret" },
+      {
+        type: "avsnitt",
+        tekst: `For de fleste små bedrifter lønner det seg å sette bort produksjonen. En heltidsansatt koster rundt 764 000 kr i året når feriepenger, arbeidsgiveravgift og pensjon er med. Et SoMe-abonnement med fast produksjon koster ${kr(tilbud.prisPerManed * 12)} kr i året hos oss.`,
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Ansett hvis dere trenger noen i kanalene hver dag, til dialog, kommentarer og stories. Trenger dere først og fremst jevnt godt innhold, er byrå billigere og dekker flere fagfelt.",
       },
       {
         type: "overskrift",
@@ -1962,6 +2040,86 @@ export const artikler: Artikkel[] = [
         tekst:
           "Men en ansatt SoMe-ansvarlig skal som regel beherske strategi, foto, video, klipping, fargekorrigering, tekst og publisering alene. Det er flere fagfelt, og de færreste er sterke i alle. Resultatet blir ofte mobilinnhold laget mellom andre oppgaver, og da er det ikke 764 410 kroner mot 360 000, men 764 410 kroner mot et bedre produkt til under halve prisen.",
       },
+      /*
+       * ALLE ALTERNATIVENE I ÉN TABELL, bestilt 25.10.2026.
+       *
+       * ARTIKKELEN SAMMENLIGNET BARE TO TING — ansatt mot abonnement —
+       * mens spørsmålet folk stiller en AI-motor rommer fire. Frilanser og
+       * «gjøre det selv» manglet, og det er nettopp de to en leser bruker
+       * til å plassere de to andre.
+       *
+       * HVERT TALL ER REGNET FRA NOE SOM ALT STÅR I TEKSTEN, ikke hentet
+       * utenfra:
+       *
+       * - Heltid: Altinns 764 410, delt på tolv for månedstallet.
+       * - Halv stilling: halvparten av det samme.
+       * - Frilanser: NJs minstesatser for TV og video i artikkelen om
+       *   frilanseren — 7 810 kr for lengre oppdrag og 9 220 kr for en
+       *   enkeltdag — ganget med tre til fire dager, som er én opptaksdag
+       *   pluss de to–tre klippedagene den artikkelen regner med.
+       * - Gjøre det selv: 8 av 37,5 timer er i overkant av 20 % av en
+       *   stilling, og 20 % av 764 410 er rundt 150 000.
+       * - Reflektor: `tilbud`, som resten av filen.
+       *
+       * FRILANSERTALLENE ER IKKE BESTILLINGENS. Den oppga 25 000–33 000 kr
+       * i måneden, og det lar seg ikke regne fram fra satsene i den
+       * artikkelen den viser til: tre dager til lengre-oppdragssats er
+       * 23 430, fire dager til dagsats er 36 880. Intervallet her er de to
+       * ytterpunktene, avrundet. Et tall vi ikke kan vise regnestykket for,
+       * er et tall en AI-motor siterer oss feil på.
+       */
+      {
+        type: "overskrift",
+        niva: 2,
+        tekst: "Alle alternativene i ett regnestykke",
+      },
+      {
+        type: "tabell",
+        kolonner: ["Alternativ", "Per år", "Per måned", "Dette må dere gjøre selv"],
+        rader: [
+          [
+            "Heltidsansatt (600 000 kr i lønn)",
+            "ca. 764 000 kr",
+            "ca. 63 700 kr",
+            "Lede, følge opp og kjøpe utstyr",
+          ],
+          [
+            "Halv stilling",
+            "ca. 382 000 kr",
+            "ca. 31 900 kr",
+            "Det samme, med halv tilstedeværelse",
+          ],
+          [
+            "Frilanser, én produksjonsdag + klipp",
+            "ca. 280 000–440 000 kr",
+            "ca. 23 000–37 000 kr",
+            "Planlegge, bestille og publisere",
+          ],
+          [
+            "Gjøre det selv, 8 timer i uka",
+            "ingen utgift, men ca. 150 000 kr i arbeidstid",
+            "–",
+            "Alt",
+          ],
+          [
+            "SoMe-abonnement hos Reflektor",
+            `${kr(tilbud.prisPerManed * 12)} kr`,
+            `${kr(tilbud.prisPerManed)} kr`,
+            "Godkjenne innhold og svare i kommentarfeltet",
+          ],
+        ],
+      },
+      {
+        type: "avsnitt",
+        tekst:
+          "Halv stilling er halvparten av Altinn-eksempelet. Frilanserprisen er regnet med Norsk Journalistlags minstesatser for TV og video, tre til fire dager i måneden — se regnestykket for frilanseren. «Gjøre det selv» regner 8 timer i uka som 20 % av samme stilling.",
+        lenker: [
+          {
+            frase: "regnestykket for frilanseren",
+            sti: "/blogg/some-byra-frilanser-eller-ansatt",
+          },
+        ],
+      },
       {
         type: "overskrift",
         niva: 2,
@@ -1999,6 +2157,39 @@ export const artikler: Artikkel[] = [
         type: "avsnitt",
         tekst:
           "Den vanligste løsningen er ikke enten–eller. En markedsansvarlig som allerede jobber der, håndterer dialogen, kjenner kundene og legger strategien, og produksjonen settes bort. Da betaler dere for det som faktisk er vanskelig å gjøre selv, og beholder det som krever å være innenfor.",
+      },
+    ],
+    /*
+     * SYNLIG FAQ NEDERST, bestilt 25.10.2026.
+     *
+     * HER STO INGEN. Artikkelen HADDE allerede tre spørsmål i
+     * FAQPage-markeringen, men de er utledet av seksjonsoverskriftene som
+     * slutter på spørsmålstegn — se `somFaq`. De er altså synlige, bare
+     * ikke samlet nederst slik konkurrenten som vinner søket har det.
+     * Markeringen har med andre ord aldri påstått noe som ikke sto på
+     * siden; det som manglet var blokken. De tre blir stående, og disse
+     * fire kommer i tillegg — malen slår dem sammen til én FAQPage-node.
+     *
+     * SPØRSMÅL 1 ER ORDRETT DET HUBSPOT MÅLER PÅ. Det er hele poenget med
+     * runden: et svar en AI-motor kan sitere i sin helhet.
+     */
+    tilleggsfaq: [
+      {
+        sporsmal:
+          "Bør en liten bedrift ansette en SoMe-ansvarlig eller leie inn et byrå?",
+        svar: "Trenger dere først og fremst innhold, er byrå som regel riktig: det koster under halvparten av en ansatt og dekker foto, video og publisering. Trenger dere noen i kanalene hver dag, er ansettelse riktig. Mange gjør begge deler: en ansatt tar dialogen, og produksjonen settes bort.",
+      },
+      {
+        sporsmal: "Hva koster en SoMe-ansvarlig i året?",
+        svar: "Med 600 000 kr i lønn blir den faktiske kostnaden rundt 764 000 kr, ifølge Altinns regneeksempel. Utstyr, programvare og ledelse kommer i tillegg.",
+      },
+      {
+        sporsmal: "Er frilanser billigere enn byrå?",
+        svar: "For én film, ja. For produksjon hver måned blir det omtrent likt: én opptaksdag og to–tre dager klipp koster rundt 23 000–37 000 kr med minstesatsene, før planlegging og publisering.",
+      },
+      {
+        sporsmal: "Kan vi prøve først?",
+        svar: "Det er ingen bindingstid, bare tre måneders oppsigelse. Fungerer det ikke, sier dere opp.",
       },
     ],
     lesVidere: [
