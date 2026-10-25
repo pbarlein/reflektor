@@ -3805,7 +3805,18 @@ export const artikler: Artikkel[] = [
       alt: "En kunde blir filmet bak disken i en popup-butikk",
     },
     tittel: "Hva koster en reklamefilm? Hele regnestykket",
-    metaTittel: "Hva koster en reklamefilm? Hele regnestykket for 2026",
+    /*
+     * `metaTittel` FJERNET 25.10.2026. Den het «… Hele regnestykket for
+     * 2026» og ble 64 tegn med « | Reflektor» — kuttet av Google. Nå
+     * bærer `tittel` <title> alene: 56 tegn, og hele tittelen vises.
+     *
+     * «for 2026» ER DET MINST VIKTIGE. Spørsmålet står først uansett, og
+     * artikkelen har sin egen dato i bylinen og i markeringen.
+     *
+     * SAMME GREP SOM PÅ SOME-GUIDEN OG EVENTSIDEN 14.10, og samme
+     * lengdefelle. Taket er ca. 60 tegn MED suffikset: legger du på et
+     * ord her, forsvinner et annet.
+     */
     beskrivelse:
       "Produksjonen er bare den første regningen. Her er hva skuespillere, musikk og visning koster i tillegg, med norske eksempler og tall.",
     publisert: "2026-10-02",
