@@ -64,15 +64,34 @@ export default function OmOss() {
             {/*
               Klippet fra en produksjonsdag, ikke et kontorbilde. Siden
               handler om folk som produserer; da skal bildet vise
-              produksjon. Det er dessuten det eneste motivet i arkivet som
-              viser Reflektor selv og ikke en kundes produkt.
+              produksjon.
+
+              HER STO OGSÅ at dette er «det eneste motivet i arkivet som
+              viser Reflektor selv og ikke en kundes produkt». Det stemmer
+              ikke: klippet viser kakene til Baker Brun. Det som gjør det
+              riktig her, er at man ser produksjonen pågå — ikke at
+              kunden er borte fra bildet.
             */}
             <figure className="lg:pt-2">
               <div className="relative aspect-[9/16] overflow-hidden rounded-medie bg-flate-dempet">
                 <Klipp sti="/reels/produksjonsdag" ivrig />
               </div>
+              {/*
+                RETTET 26.10.2026, meldt av Pål: her sto «Fra en
+                produksjonsdag hos en kunde», og begge delene var feil.
+                Opptaket er gjort i studio hos oss, ikke hos kunden, og
+                kunden er Baker Brun — kildefila heter `BakerBrun_BTS_V1`
+                (docs/media.md). Samme klipp har bildeteksten «Baker Brun.
+                Bak kulissene fra en produksjonsdag.» på /reels-produksjon,
+                så navnet er ikke nytt her.
+
+                «I STUDIO» ER IKKE ET FORBEHOLD. Abonnementet sier
+                uttrykkelig «hos dere, hos oss eller ute på lokasjon», så
+                studio er ett av tre normale steder en produksjonsdag skjer
+                — ikke et unntak som må forklares.
+              */}
               <figcaption className="mt-3 text-sm text-blekk-dempet">
-                Fra en produksjonsdag hos en kunde.
+                Baker Brun. Fra en produksjonsdag i studio.
               </figcaption>
             </figure>
           </div>
