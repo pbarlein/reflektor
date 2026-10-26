@@ -95,20 +95,34 @@
 html {
   scroll-padding-top: 5.5rem;
   /*
-   * MYK RULLING TIL ANKERE, lagt til 23.10.2026 sammen med knappen under
-   * referansene.
+   * HER STO `scroll-behavior: smooth`, lagt til 23.10.2026. Den er FJERNET
+   * 26.10.2026, og det er en ekte feilretting, ikke en smakssak.
    *
-   * HER OG IKKE I JAVASCRIPT. `scrollIntoView` uten `behavior` leser
-   * nettopp denne verdien, så én linje her gjør både Ankerhopp-lytteren og
-   * en helt vanlig hash-navigasjon myk — også for den som har JavaScript
-   * av. Å sende `behavior: "smooth"` fra koden ville dekket det første og
-   * ikke det andre.
+   * FEILEN PÅL MELDTE: «trykker man på menyvalgene, starter man ikke
+   * øverst på siden man trykker på.» Reprodusert på mobil: fra
+   * /reklamefilm → «Ta kontakt» landet man 2 221 px nede på /kontaktoss,
+   * midt i skjemaet, i stedet for på toppen.
    *
-   * Unntaket for `prefers-reduced-motion` står nedenfor, sammen med det
-   * andre som beveger seg. En lang, myk rulling er nettopp den typen
-   * bevegelse den innstillingen finnes for.
+   * HVORFOR. Next kaller `scrollIntoView` flere ganger etter en
+   * klientnavigasjon — målt i stacktracen: først på logoraden, så på
+   * `#kontakt`, så på to script-noder. Med `auto` er hvert kall
+   * øyeblikkelig, og det siste vinner: man havner på toppen. Med `smooth`
+   * starter hvert kall en ANIMASJON som avbryter den forrige, og sluttsvaret
+   * blir et annet — siden gled ned til logoraden nederst i `main`.
+   *
+   * /kontaktoss ble rammet fordi hele siden ligger i én seksjon på 2 234 px
+   * med logoraden rett under. På sider med flere seksjoner traff Next
+   * toppen likevel, og feilen så derfor ut som om den bare gjaldt én side.
+   * Den gjaldt mekanismen.
+   *
+   * MYK RULLING ER IKKE BORTE — den er flyttet til Ankerhopp.tsx, som
+   * sender `behavior` eksplisitt og leser `prefers-reduced-motion` selv.
+   * Det som er tapt, er myk rulling for den som har JavaScript av: de får
+   * et vanlig hopp. Det er oppførselen hash-lenker har hatt i tretti år,
+   * og den er riktig nok til å ikke være verdt en ødelagt meny.
+   *
+   * IKKE SETT DEN TILBAKE HER uten å teste menyen på mobil først.
    */
-  scroll-behavior: smooth;
 }
 
 /*
@@ -221,10 +235,6 @@ html {
     transform: none;
   }
 
-  /* Ankeret skal fortsatt treffe — det skal bare ikke gli dit. */
-  html {
-    scroll-behavior: auto;
-  }
 }
 
 /*

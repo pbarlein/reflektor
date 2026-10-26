@@ -34,6 +34,23 @@ import { useEffect } from "react";
  *
  * Rullingen respekterer `scroll-padding-top` i globals.css, så målet lander
  * under den klistrede headeren og ikke bak den.
+ *
+ * MYKHETEN BESTEMMES HER FRA 26.10.2026, ikke i CSS.
+ *
+ * Den sto som `scroll-behavior: smooth` på `html` fra 23.10, og den
+ * ødela noe mye viktigere enn den ga: Next kaller `scrollIntoView` flere
+ * ganger etter en klientnavigasjon, og med myk rulling avbrøt kallene
+ * hverandre slik at man landet midt på den nye siden i stedet for på
+ * toppen. Fra /reklamefilm til «Ta kontakt» havnet man 2 221 px nede i
+ * skjemaet. Hele begrunnelsen står i globals.css.
+ *
+ * Å sende `behavior` eksplisitt herfra treffer bare de klikkene denne
+ * lytteren allerede fanger — og det er nøyaktig de stedene mykheten var
+ * ment for. Next sine egne kall er urørt.
+ *
+ * `prefers-reduced-motion` LESES VED HVERT KLIKK, ikke én gang ved
+ * montering. Innstillingen kan endres mens siden står åpen, og et
+ * øyeblikksbilde fra monteringen ville vært feil resten av besøket.
  */
 export function Ankerhopp() {
   useEffect(() => {
@@ -57,7 +74,10 @@ export function Ankerhopp() {
       if (!mal) return;
 
       e.preventDefault();
-      mal.scrollIntoView({ block: "start" });
+      const rolig = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      mal.scrollIntoView({ block: "start", behavior: rolig ? "auto" : "smooth" });
       window.history.replaceState(null, "", href);
 
       if (!mal.hasAttribute("tabindex")) mal.setAttribute("tabindex", "-1");
