@@ -1,5 +1,6 @@
 import { Container } from "@/components/Container";
 import { Eyebrow, Merkelapp } from "@/components/Eyebrow";
+import { knappeklasser } from "@/components/Knapp";
 import { Omtalevideo } from "@/components/Omtalevideo";
 import { TbdMarkor, hentTekst, slotsISeksjon } from "@/components/Slot";
 import { front } from "@/content/sider/front";
@@ -296,6 +297,31 @@ export function DetteInngar() {
                   <TbdMarkor id="front.price.note" />
                 )}
               </p>
+            </div>
+
+            {/*
+              DEN ANDRE AV TO KNAPPER I HULLET, lagt til 28.10.2026. Den
+              første står i prisboksen; denne står her fordi leseren nå har
+              fått hele tilbudet — de seks punktene, hva som ikke er med, og
+              setningen om oppsigelse. Er man ikke overbevist her, hjelper
+              det ikke med en knapp til lenger ned.
+
+              TO, IKKE EN I HVER SEKSJON. Det målte problemet var én lang
+              strekning uten oppfordring, ikke mange korte. To knapper
+              dekker den; flere ville bare slitt ut det samme løftet.
+
+              `data-cta` og `id` er målepunkter for Clarity, som
+              `cta-referanser` og `cta-pris`.
+            */}
+            <div className="mt-9 sm:mt-10">
+              <a
+                href="#kontakt"
+                id="cta-leveranse"
+                data-cta="leveranse"
+                className={knappeklasser("primar", "stor", "w-full sm:w-auto")}
+              >
+                Få et strategiforslag
+              </a>
             </div>
           </div>
         </div>

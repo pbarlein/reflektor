@@ -1,5 +1,6 @@
 import { Enkeltklipp } from "@/components/Arbeidsbilder";
 import { Merkelapp } from "@/components/Eyebrow";
+import { knappeklasser } from "@/components/Knapp";
 import { Container } from "@/components/Container";
 
 import { TbdMarkor, hentTekst } from "@/components/Slot";
@@ -220,6 +221,44 @@ export function Pris() {
               }}
               className="relative order-first mt-8 aspect-[16/9] overflow-hidden rounded-flate bg-[rgba(245,240,232,0.06)] sm:aspect-[21/9] lg:order-none lg:mt-0 lg:aspect-auto lg:h-full"
             />
+          </div>
+
+          {/*
+            HANDLINGEN UNDER PRISEN, lagt til 28.10.2026 etter at hullet ble
+            målt: forsiden er 16,6 skjermer på 390 px, og mellom knappen
+            under referansene og skjemaet nederst gikk det 13,2 skjermer
+            uten én eneste oppfordring. Prisboksen er det første stedet i
+            det hullet, og det sterkeste: leseren har nettopp sett prisen.
+
+            UTENFOR RUTENETTET, ikke inne i venstre spalte. Det er ikke
+            smak. Klippet i høyre spalte har `lg:h-full` og henter høyden
+            sin fra venstre spalte — det står i kommentaren over. En knapp
+            inne i spalten ville strukket klippet forbi 9:16 og gitt
+            tilbake nøyaktig den dødplassen som kostet en runde i forrige
+            versjon av seksjonen. Her legger den seg under begge spaltene
+            og rører ingen høyder.
+
+            `data-cta` OG `id` ER MÅLEPUNKTER FOR CLARITY, satt opp der av
+            Cowork — samme mønster som `cta-referanser`. Ingen sporing er
+            lagt inn i koden eller i GTM.
+          */}
+          <div className="mt-9 border-t border-[color:var(--kant-pa-dyp)] pt-8 sm:mt-10">
+            <a
+              href="#kontakt"
+              id="cta-pris"
+              data-cta="pris"
+              className={knappeklasser("primar", "stor", "w-full sm:w-auto")}
+            >
+              Få et strategiforslag
+            </a>
+            {/*
+              SAMME SETNING SOM UNDER REFERANSEKNAPPEN, og tallet kommer fra
+              samme kilde som der og som under skjemaet. Ingen ny påstand.
+            */}
+            <p className="mt-4 max-w-md text-sm text-pa-dyp-dempet">
+              Svar innen {tilbud.strategiforslagVirkedager} virkedager – et
+              konkret forslag, ikke en generisk presentasjon.
+            </p>
           </div>
         </div>
       </Container>
