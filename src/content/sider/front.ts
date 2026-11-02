@@ -104,22 +104,42 @@ export const front: Side = {
          * og ordet sto nå to ganger i samme avsnitt. Uten det: 178.
          */
         /*
-         * ÉN SETNING LAGT FORAN 04.10.2026, bestilt av Pål og ordrett hans:
-         * «Reflektor er et SoMe-byrå i Oslo som filmer hos dere og
-         * publiserer for dere.»
+         * SKREVET OM AV PÅL 02.11.2026. Teksten over er hans, med to
+         * endringer han godkjente før den gikk inn. Begge står her fordi
+         * begge er feil som er gjort før.
          *
-         * DEN STÅR FØRST, ikke sist. Hovedsøkeordet skal stå i tittelen og
-         * i første setning under H1 — står det til slutt i et avsnitt, er
-         * det ikke lenger første setning, og en språkmodell som siterer de
-         * første linjene får ikke med hva Reflektor er.
+         * 1. «TIL Instagram og Facebook», ikke «PÅ». Hans utkast hadde
+         *    «publisert to ganger i uken på Instagram og Facebook», og det
+         *    er ordrett formuleringen som ble funnet tvetydig 16.09.2026 og
+         *    igjen i site.ts: «to ganger i uken på X og Y» kan leses som to
+         *    ganger på HVER, altså fire poster. Leveransen er 2 poster i
+         *    uka — `posterPerUke` — til Instagram med krysspublisering til
+         *    Facebook. 2 × 52 = 104 i året = 8,7 i måneden, midt i «8–10».
+         *    «Til» gjør plattformene til adressen og ikke til to tellere.
          *
-         * GRENSEN ER HEVET FRA 180 TIL 260 TEGN. Det er to linjer mer på en
-         * telefon, og det er prisen for å ha ordet over folden. Påls egen
-         * setning fra 16.09.2026 står ellers uendret — se begrunnelsen
-         * under for hvorfor rekkefølgen i den er som den er.
+         * 2. «PRODUKSJONSMÅLET ER 8–10», ikke «gir 8–10». Utkastet sa «Én
+         *    produksjonsdag hos dere i måneden gir 8–10 ferdige videoer»,
+         *    altså et løfte. Lenger ned på den samme siden står Påls eget
+         *    forbehold: «Kapasiteten deles med video – derfor er 8–10 et
+         *    produksjonsmål og ikke en garanti.» Toppen kan ikke love det
+         *    finskriften tar tilbake. Samme rettelse ble gjort i et
+         *    FAQ-svar 25.10, og ordlyden her er den samme som der.
+         *
+         * SETNINGEN BLE DELT I TO for å få inn «Produksjonsmålet er» uten
+         * et klossete innskudd. 247 av 260 tegn.
+         *
+         * DET SOM ER VUNNET: «publisering» er tilbake i oppramsingen. Det
+         * ordet ble strøket 16.09.2026 fordi setningen da ble 191 av 180
+         * tegn. Grensen er siden hevet til 260, og kompromisset er dermed
+         * ikke nødvendig lenger.
+         *
+         * HOVEDSØKEORDET STÅR FORTSATT FØRST, nå i en kortere setning.
+         * Grunnen er uendret fra 04.10.2026: står det til slutt i et
+         * avsnitt, er det ikke lenger første setning, og en språkmodell som
+         * siterer de første linjene får ikke med hva Reflektor er.
          */
         "front.hero.sub": tekst(
-          "Reflektor er et SoMe-byrå i Oslo som filmer hos dere og publiserer for dere. Én produksjonsdag hos dere i måneden. Reflektor gjør resten: idé, opptak og klipp. 8–10 videoer. Publisering 2 ganger per uke til Instagram og Facebook. Fast pris, ingen binding.",
+          "Reflektor er et SoMe-byrå i Oslo. Én produksjonsdag hos dere i måneden. Produksjonsmålet er 8–10 ferdige videoer, publisert to ganger i uken til Instagram og Facebook. Idé, opptak, klipp og publisering – alt er inkludert. Fast pris, ingen binding.",
           {
             maksTegn: 260,
             jobb: "Arbeidsmengden for kunden. Den er innvendingen, ikke prisen.",
