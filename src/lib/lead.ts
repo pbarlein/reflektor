@@ -24,6 +24,7 @@ import { avbrytLenke } from "./avbrytsignatur";
 import { faarPaaminnelse, osloTekst, paaminnelseTekst } from "./paaminnelse";
 import { planlagtSending, venterPaaVinduet } from "./sendevindu";
 import { serUtSomEpost } from "./skjemavern";
+import { hortEtikett } from "@/lib/hortomoss";
 
 export type Lead = {
   navn: string;
@@ -38,6 +39,14 @@ export type Lead = {
   nettsideUtledet: boolean;
   /** Hvor besøkende kom fra. Se lib/kilde.ts. Tom hvis ukjent. */
   kilde: string;
+  /**
+   * Det leadet SELV sier om hvor de hørte om oss, fra nedtrekket i
+   * skjemaet. HubSpot-verdien, ikke etiketten — se lib/hortomoss.ts.
+   *
+   * TOM ER ET GYLDIG SVAR. Feltet er valgfritt, og et Meta-lead har det
+   * ikke i det hele tatt. Ikke det samme som `kilde`, som er målt av oss.
+   */
+  hortOmOss?: string;
 };
 
 const MOTTAKER = process.env.LEAD_MOTTAKER ?? "pal@reflektor.no";
@@ -582,6 +591,16 @@ export async function sendLeadPaEpost(
 ): Promise<void> {
   const { tekst, html } = varsel(lead, new Date(), opp.hubspotFeilet ?? false, {
     spamTreff: opp.spamTreff,
+    /*
+      «HØRTE OM OSS» STÅR ALLTID, OGSÅ NÅR DET ER TOMT — bestilt av Pål
+      06.11.2026, ordrett: «Står det tomt, skriv ikke svart».
+
+      Det bryter med regelen rett over om at en rad som alltid kan stå tom
+      er en rad Pål må lese forbi, og det er med vilje: her ER tomheten
+      opplysningen. «Ikke svart» på et lead fra Google forteller noe annet
+      enn ingen rad i det hele tatt.
+    */
+    ekstraRader: [["Hørte om oss", hortEtikett(lead.hortOmOss ?? "")]],
   });
   try {
     await send({

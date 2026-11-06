@@ -298,7 +298,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Hva koster det å sette bort sosiale medier? Hva prisen består av, sju spørsmål du bør stille før du signerer, og hva vi selv tar: 30 000 kr/mnd.",
     publisert: "2026-08-13",
-    oppdatert: "2026-10-25",
+    oppdatert: "2026-11-06",
     blokker: [
       {
         type: "avsnitt",
@@ -310,8 +310,15 @@ export const artikler: Artikkel[] = [
          * det ville endret hva setningen sier.
          */
         tekst:
-          "De fleste byråer oppgir ikke pris før du har vært i et møte. Det gjør det vanskelig å vite om et tilbud er dyrt eller billig. Her er hva prisen består av, hva du bør spørre om før du signerer, og hva vi selv tar som SoMe-byrå. Vurderer dere å sette bort sosiale medier, er dette tallene å ha med.",
-        lenker: [{ frase: "SoMe-byrå", sti: "/" }],
+          "De fleste byråer oppgir ikke pris før du har vært i et møte. Det gjør det vanskelig å vite om et tilbud er dyrt eller billig. Her er hva prisen består av, hva du bør spørre om før du signerer, og hva vi selv tar som SoMe-byrå i Oslo. Vurderer dere å sette bort sosiale medier, er dette tallene å ha med.",
+        /*
+         * ANKERTEKSTEN UTVIDET FRA «SoMe-byrå» TIL «SoMe-byrå i Oslo»
+         * 06.11.2026. Ikke en ny lenke: Google regner lenketeksten fra den
+         * FØRSTE lenken til en URL, så en ny lenke lenger ned ville blitt
+         * ignorert. Derfor er det denne som er endret, og «i Oslo» er lagt
+         * til i setningen slik at frasen faktisk står i teksten.
+         */
+        lenker: [{ frase: "SoMe-byrå i Oslo", sti: "/" }],
       },
       /*
        * «DET KORTE SVARET» ØVERST, bestilt 25.10.2026.
@@ -646,12 +653,40 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "SoMe betyr sosiale medier. Slik markedsfører bedrifter seg der: kanaler, innhold, organisk mot betalt, og hvordan dere holder det gående over tid.",
     publisert: "2025-02-12",
-    oppdatert: "2026-10-14",
+    oppdatert: "2026-11-06",
     blokker: [
       {
         type: "avsnitt",
         tekst:
           "SoMe er forkortelsen for sosiale medier. Markedsføring i sosiale medier betyr å bruke kanaler som Instagram, Facebook, LinkedIn og TikTok til å nå kunder, enten med vanlige innlegg (organisk) eller med betalte annonser. Det som avgjør resultatet, er sjelden enkeltinnlegg. Det avgjørende er om bedriften publiserer jevnt over tid.",
+      },
+      /*
+       * LENKEN TIL FORSIDEN, lagt til 06.11.2026 og bestilt av Pål.
+       *
+       * HVORFOR. Google viser denne guiden i stedet for forsiden når noen
+       * søker etter et byrå: for «sosiale medier byrå» hadde guiden 48
+       * visninger på plass 27,6, forsiden 6 på 22,3 (Search Console, 14
+       * dager, målt 06.11). Guiden tar visningene forsiden skal ha.
+       *
+       * DEN STÅR ETTER INGRESSEN, IKKE INNE I DEN. Ingressen åpner med
+       * «SoMe er forkortelsen for sosiale medier», og det er den setningen
+       * som holder plass 1 for «hva er some». Å skyve den ned bak en
+       * salgssetning ville løst det ene problemet og laget et større.
+       *
+       * ANKERTEKSTEN ER «SoMe-byrå i Oslo» og står her FØRST i artikkelen.
+       * Google regner lenketeksten fra den første lenken til en URL — se
+       * samme regel lenger oppe i fila. Lenken nederst i «Slik gjør vi det»
+       * har samme ankertekst og står urørt.
+       *
+       * «DERE», IKKE «DU». Bestillingens forslag sto i du-form. Nettstedet
+       * snakker til et selskap gjennomgående, og et personskifte midt i en
+       * artikkel leser som to forfattere.
+       */
+      {
+        type: "avsnitt",
+        tekst:
+          "Trenger dere noen som gjør jobben? Reflektor er et SoMe-byrå i Oslo som produserer og publiserer innholdet for dere til fast pris.",
+        lenker: [{ frase: "SoMe-byrå i Oslo", sti: "/" }],
       },
       { type: "overskrift", niva: 2, tekst: "Hva betyr SoMe?" },
       {
@@ -1909,7 +1944,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Hva koster en ansatt SoMe-ansvarlig når arbeidsgiveravgift, feriepenger og pensjon er regnet med? Tallene fra Altinn og SSB mot et byråbudsjett.",
     publisert: "2026-09-21",
-    oppdatert: "2026-10-25",
+    oppdatert: "2026-11-06",
     blokker: [
       {
         type: "avsnitt",
@@ -1933,7 +1968,13 @@ export const artikler: Artikkel[] = [
       { type: "overskrift", niva: 2, tekst: "Det korte svaret" },
       {
         type: "avsnitt",
-        tekst: `For de fleste små bedrifter lønner det seg å sette bort produksjonen. En heltidsansatt koster rundt 764 000 kr i året når feriepenger, arbeidsgiveravgift og pensjon er med. Et SoMe-abonnement med fast produksjon koster ${kr(tilbud.prisPerManed * 12)} kr i året hos oss.`,
+        tekst: `For de fleste små bedrifter lønner det seg å sette bort produksjonen. En heltidsansatt koster rundt 764 000 kr i året når feriepenger, arbeidsgiveravgift og pensjon er med. Et SoMe-abonnement med fast produksjon koster ${kr(tilbud.prisPerManed * 12)} kr i året hos oss, et SoMe-byrå i Oslo.`,
+        /*
+         * ENESTE LENKE TIL FORSIDEN I BRØDTEKSTEN, lagt til 06.11.2026.
+         * Artikkelen hadde ingen — bare en i «Les videre». Ankerteksten er
+         * den samme som i de tre andre byrå-artiklene.
+         */
+        lenker: [{ frase: "SoMe-byrå i Oslo", sti: "/" }],
       },
       {
         type: "avsnitt",
@@ -2778,7 +2819,7 @@ export const artikler: Artikkel[] = [
     beskrivelse:
       "Dagsatser fra Norsk Journalistlag, en avgiftsfelle fra Skatteetaten, og hva som faktisk skiller de tre alternativene.",
     publisert: "2026-09-29",
-    oppdatert: "2026-10-25",
+    oppdatert: "2026-11-06",
     blokker: [
       {
         type: "avsnitt",
@@ -2788,7 +2829,16 @@ export const artikler: Artikkel[] = [
          * artikkelen fra før; her gjentas de bare der en leser — og en
          * AI-motor — faktisk ser etter dem.
          */
-        tekst: `Frilanser er det billigste alternativet på papiret, og det stemmer så lenge oppgaven er én film. Skal det produseres innhold hver måned, året rundt, blir de tre alternativene overraskende like i pris, og da er det ikke prisen som avgjør, men hvor mye av jobben dere selv må holde i. Med minstesatsene koster én måneds produksjon med frilanser rundt 25 000–33 000 kr, før planlegging og publisering. Hos oss koster det ${kr(tilbud.prisPerManed)} kr i måneden med alt inkludert.`,
+        tekst: `Frilanser er det billigste alternativet på papiret, og det stemmer så lenge oppgaven er én film. Skal det produseres innhold hver måned, året rundt, blir de tre alternativene overraskende like i pris, og da er det ikke prisen som avgjør, men hvor mye av jobben dere selv må holde i. Med minstesatsene koster én måneds produksjon med frilanser rundt 25 000–33 000 kr, før planlegging og publisering. Hos oss, et SoMe-byrå i Oslo, koster det ${kr(tilbud.prisPerManed)} kr i måneden med alt inkludert.`,
+        /*
+         * LENKEN TIL FORSIDEN FLYTTET HIT 06.11.2026, bestilt av Pål.
+         *
+         * Artikkelen lenket til forsiden fra ett avsnitt lenger nede, med
+         * ankerteksten «et løpende samarbeid hos oss». Den lenken står —
+         * men Google regner lenketeksten fra den FØRSTE lenken til en URL,
+         * så ankerteksten som skal telle må stå først. Den gjør den nå.
+         */
+        lenker: [{ frase: "SoMe-byrå i Oslo", sti: "/" }],
       },
       {
         type: "overskrift",

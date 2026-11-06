@@ -18,6 +18,7 @@ import {
   serUtSomEpost,
 } from "@/lib/skjemavern";
 import { nettsideTreff } from "@/lib/leadfilter";
+import { HORT_FELT, lesHortvalg } from "@/lib/hortomoss";
 import { epostdomene, spamScore } from "@/lib/spam";
 import { erEngangsadresse, manglerMx } from "@/lib/spamoppslag";
 import { TURNSTILE_FELT, verifiserTurnstile } from "@/lib/turnstile";
@@ -178,6 +179,15 @@ export async function POST(req: NextRequest) {
       nettside: skrevet.ok ? skrevet.url : (utledet ?? ""),
       nettsideUtledet: !skrevet.ok && utledet !== null,
       kilde: rens(data.get("kilde"), "kilde"),
+      /*
+        «HVOR HØRTE DU OM OSS?», bestilt 06.11.2026. Valgfritt nedtrekk.
+
+        `lesHortvalg` SLIPPER BARE DE SJU VERDIENE GJENNOM, alt annet blir
+        tomt. En POST kan komme fra hva som helst, og en verdi HubSpot ikke
+        kjenner igjen får HELE innsendingen avvist — da ville et valgfritt
+        pyntefelt kostet oss et lead. Tomt er et gyldig svar.
+      */
+      hortOmOss: lesHortvalg(data.get(HORT_FELT)),
     };
 
     /*

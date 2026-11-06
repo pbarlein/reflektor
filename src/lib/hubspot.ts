@@ -136,6 +136,18 @@ export function byggInnsending(
     ["website", lead.nettside],
     ["message", lead.melding],
     ["nettside_kilde", lead.kilde],
+    /*
+      `hort_om_oss` KOM INN 06.11.2026. Egenskapen er opprettet på kontakten
+      i portal 148641188, som nedtrekk med de sju verdiene i
+      lib/hortomoss.ts.
+
+      DEN MÅ OGSÅ STÅ I SKJEMADEFINISJONEN i HubSpot, ikke bare som
+      egenskap — det er to forskjellige ting, og `website` lærte oss det
+      04.10.2026. Gjør den ikke det, avviser HubSpot innsendingen, og
+      `utelat`-reserven under sender den på nytt uten feltet. Leadet går
+      altså aldri tapt; det er bare svaret som ikke lagres.
+    */
+    ["hort_om_oss", lead.hortOmOss ?? ""],
   ];
 
   const sti = lead.side.startsWith("/") ? lead.side : `/${lead.side}`;

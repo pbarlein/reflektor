@@ -51,7 +51,7 @@ const utelatt = new Set(["sosiale-medier-byra"]);
  * ikke en del av bestillingen.
  */
 const SIST_ENDRET: Record<string, string> = {
-  "/": "2026-10-08",
+  "/": "2026-11-06",
   "/innholdsproduksjon": "2026-10-14",
   "/reklamefilm": "2026-10-14",
   "/videoproduksjon-i-oslo": "2026-10-14",
@@ -59,7 +59,7 @@ const SIST_ENDRET: Record<string, string> = {
   "/eventfotograf-eventvideo": "2026-10-14",
   "/kjeder": "2026-10-08",
   "/reels-produksjon": "2026-10-14",
-  "/kontaktoss": "2026-10-02",
+  "/kontaktoss": "2026-11-06",
   "/vart-arbeid": "2026-09-30",
   "/om-oss": "2026-10-04",
   "/faq": "2026-10-04",

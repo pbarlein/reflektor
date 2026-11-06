@@ -7,6 +7,7 @@ import { Knapp } from "./Knapp";
 import { site, tilbud } from "@/content/site";
 import { KILDE_NOKKEL, byggKilde } from "@/lib/kilde";
 import { normaliserMobil, normaliserNettside } from "@/lib/kontaktfelt";
+import { HORTVALG, HORT_FELT } from "@/lib/hortomoss";
 
 /**
  * Kontaktskjema — designet fra evidensen, ikke fra briefens fire felt.
@@ -352,6 +353,40 @@ export function Kontaktskjema({
         <p id="melding-hjelp" className="text-sm text-blekk-dempet">
           Kort om bedriften og hva dere vil oppnå. Det gjør forslaget bedre.
         </p>
+      </div>
+
+      {/*
+        «HVOR HØRTE DU OM OSS?», bestilt av Pål 06.11.2026.
+
+        HVORFOR FELTET FINNES. `nettside_kilde` bærer UTM, gclid, referrer og
+        landingsside — den tekniske kilden. Den kunne ikke skille den som
+        googlet fra den som allerede kjente navnet, og 7 av 9 nettsideleads i
+        oktober landet på forsiden. Dette er det leadet selv sier.
+
+        NEDTREKK OG IKKE FRITEKST, som bestilt. Fritekst gir svar som ikke
+        kan telles, og feltet finnes for å telles.
+
+        VALGFRITT, OG DET ER IKKE PYNT. Ingen `required`, og ruta slipper
+        tomt gjennom uten et ord. Et felt som kan stoppe en innsending er et
+        felt som kan koste et lead, og dette er det minst viktige feltet i
+        skjemaet.
+
+        INGEN TOM `value` PÅ FØRSTE OPTION-VERDI UTOVER "". Står det noe
+        annet der, sender nettleseren det som et svar når ingen har valgt.
+      */}
+      <div className="grid gap-2">
+        <label htmlFor={HORT_FELT} className="text-sm font-medium">
+          Hvor hørte du om oss?{" "}
+          <span className="text-blekk-dempet">(valgfritt)</span>
+        </label>
+        <select id={HORT_FELT} name={HORT_FELT} defaultValue="" className={felt}>
+          <option value="">Velg …</option>
+          {HORTVALG.map((v) => (
+            <option key={v.verdi} value={v.verdi}>
+              {v.etikett}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/*
