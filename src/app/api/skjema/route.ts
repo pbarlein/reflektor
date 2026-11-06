@@ -1,7 +1,7 @@
 import { after, NextResponse, type NextRequest } from "next/server";
 
 import { lesHutk, sendLeadTilHubspot } from "@/lib/hubspot";
-import { avbrytPaaminnelse } from "@/lib/hubspotcrm";
+import { avbrytPaaminnelse, skrivHortOmOss } from "@/lib/hubspotcrm";
 import {
   nettsideFraEpost,
   normaliserMobil,
@@ -325,6 +325,7 @@ export async function POST(req: NextRequest) {
       }
 
       const iHubspot = await sendLeadTilHubspot(lead, hutk, basis, ip);
+
       try {
         await sendLeadPaEpost(lead, {
           hubspotFeilet: !iHubspot,
@@ -332,6 +333,24 @@ export async function POST(req: NextRequest) {
         });
       } catch {
         // sendLeadPaEpost har allerede logget «LEADVARSEL FEILET».
+      }
+
+      /*
+        «HVOR HØRTE DU OM OSS?» SKRIVES SOM ET EGET KALL, ikke som en del
+        av innsendingen. En egenskap og et skjemafelt er to forskjellige
+        ting i HubSpot, og feltet sto bare som egenskap — da ble hele
+        innsendingen avvist og sendt på nytt uten det. Målt på et ekte
+        testlead 06.11.2026. Se skrivHortOmOss i hubspotcrm.ts.
+
+        ETTER VARSELET, IKKE FØR. Kallet kan bruke et par sekunder hvis
+        kontakten ikke har landet ennå, og Pål ringer leads samme dag.
+        Varselet er det som haster; dette er statistikk.
+
+        `await` FORDI VI ER INNE I `after()`. Uten den kan funksjonen
+        avsluttes før PATCH-en er gjort. Den kaster aldri.
+      */
+      if (lead.hortOmOss && iHubspot) {
+        await skrivHortOmOss(lead.epost, lead.hortOmOss);
       }
 
       /*

@@ -137,17 +137,19 @@ export function byggInnsending(
     ["message", lead.melding],
     ["nettside_kilde", lead.kilde],
     /*
-      `hort_om_oss` KOM INN 06.11.2026. Egenskapen er opprettet på kontakten
-      i portal 148641188, som nedtrekk med de sju verdiene i
-      lib/hortomoss.ts.
+      `hort_om_oss` SENDES IKKE HERFRA, og det er målt og ikke antatt.
 
-      DEN MÅ OGSÅ STÅ I SKJEMADEFINISJONEN i HubSpot, ikke bare som
-      egenskap — det er to forskjellige ting, og `website` lærte oss det
-      04.10.2026. Gjør den ikke det, avviser HubSpot innsendingen, og
-      `utelat`-reserven under sender den på nytt uten feltet. Leadet går
-      altså aldri tapt; det er bare svaret som ikke lagres.
+      Feltet lå her først. Et ekte testlead 06.11.2026 viste hva som
+      skjer: egenskapen fantes på kontakten, men IKKE i skjemadefinisjonen
+      — det er to forskjellige ting i HubSpot — og da avviste HubSpot hele
+      innsendingen. Reserven under sendte den på nytt uten feltet, så
+      leadet overlevde med alt annet på plass og dette tomt.
+
+      Å la det stå ville kostet en avvist innsending og et ekstra kall på
+      HVERT eneste lead, for en opplysning som ikke er verdt det. Verdien
+      skrives i stedet rett på egenskapen med CRM-API-et, etter at
+      kontakten finnes. Se skrivHortOmOss i hubspotcrm.ts.
     */
-    ["hort_om_oss", lead.hortOmOss ?? ""],
   ];
 
   const sti = lead.side.startsWith("/") ? lead.side : `/${lead.side}`;

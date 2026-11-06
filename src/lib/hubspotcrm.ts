@@ -197,6 +197,66 @@ function hoder(): Record<string, string> {
 }
 
 /**
+ * Skriver «Hvor hørte du om oss?» på kontakten.
+ *
+ * HVORFOR DETTE GÅR UTENOM SKJEMAET. Feltet ble først sendt som en del av
+ * innsendingen til HubSpots skjema-API, slik `website` og `nettside_kilde`
+ * gjør. Det virket ikke: en egenskap og et skjemafelt er to forskjellige
+ * ting, og `hort_om_oss` sto bare som egenskap. HubSpot avviste hele
+ * innsendingen, reserven i hubspot.ts sendte den på nytt uten feltet, og
+ * kontakten ble opprettet med alt annet på plass og dette tomt. Målt på et
+ * ekte testlead 06.11.2026.
+ *
+ * Alternativet var å be noen legge feltet inn i skjemadefinisjonen i
+ * HubSpot, slik det ble gjort for `website` 04.10. CRM-API-et gjør det
+ * unødvendig: det skriver på egenskapen direkte, og da kan ingen glemme
+ * det neste gang et felt kommer til.
+ *
+ * KJØRES ETTER at kontakten er opprettet, og slår opp på e-post som
+ * avbrytPaaminnelse. 404 betyr at innsendingen ikke har landet ennå —
+ * derfor ETT forsøk til etter to sekunder, og så gir vi oss. Dette er en
+ * opplysning til statistikken, ikke et lead; den er ikke verdt å vente på.
+ *
+ * KASTER ALDRI. Et svar på et valgfritt spørsmål skal ikke kunne forstyrre
+ * noe som helst i leadkjeden.
+ */
+export async function skrivHortOmOss(
+  epost: string,
+  verdi: string,
+): Promise<boolean> {
+  if (!verdi || !harToken() || !epost) return false;
+  const adresse = encodeURIComponent(epost.trim().toLowerCase());
+
+  for (const forsok of [0, 1]) {
+    if (forsok) await new Promise((r) => setTimeout(r, 2000));
+    try {
+      const svar = await fetch(
+        `${BASIS}/crm/v3/objects/contacts/${adresse}?idProperty=email`,
+        {
+          method: "PATCH",
+          headers: hoder(),
+          body: JSON.stringify({ properties: { hort_om_oss: verdi } }),
+          signal: AbortSignal.timeout(TIDSTAK_MS),
+        },
+      );
+      if (svar.ok) return true;
+      if (svar.status === 404) continue;
+      console.error(
+        `[hortomoss] HubSpot svarte ${svar.status}. ${await svar
+          .text()
+          .catch(() => "")}`,
+      );
+      return false;
+    } catch (feil) {
+      console.error("[hortomoss] Kallet til HubSpot feilet.", feil);
+      return false;
+    }
+  }
+  console.warn(`[hortomoss] Fant ikke kontakten for ${adresse} etter to forsøk.`);
+  return false;
+}
+
+/**
  * Slår av påminnelsen for én kontakt.
  *
  * SLÅR OPP PÅ E-POST og ikke på id, med `idProperty=email`. Pål trykker på
