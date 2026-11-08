@@ -231,3 +231,136 @@ test("strengen er aldri over 250 tegn", () => {
   assert.ok(ut.length <= 250, `var ${ut.length} tegn`);
   assert.ok(ut.startsWith("Annet:"), "etiketten skal fortsatt stå først");
 });
+
+/* ───────────────────── AI-ASSISTENTENE, 08.11.2026 ──────────────────── */
+
+/**
+ * ChatGPT Ads startes i november 2026. Fram til nå fikk de klikkene
+ * etiketten «Annet: chatgpt», som ikke skiller annonsen fra et tilfeldig
+ * nettsted — og da kan ingen se om budsjettet ga noe.
+ */
+
+/** Lenken som ligger i annonsens sporingsfelt, ordrett. */
+test("annonselenken fra ChatGPT Ads gir ChatGPT-annonse", () => {
+  assert.equal(
+    byggKilde(
+      "?utm_source=chatgpt&utm_medium=paid&utm_campaign=some-abonnement-2026-11&utm_content=fastpris",
+      "",
+      OSS,
+      "/",
+    ),
+    "ChatGPT-annonse | source=chatgpt | medium=paid | campaign=some-abonnement-2026-11 | content=fastpris | landet på: /",
+  );
+});
+
+/**
+ * UAVHENGIG AV MEDIUM, som bestilt. Plattformen er ny, og vi vet ikke hva
+ * den kommer til å skrive i `utm_medium` neste måned.
+ */
+test("kilden avgjør, uansett hva mediet sier", () => {
+  for (const medium of ["paid", "cpc", "ai", "referral", ""]) {
+    assert.match(
+      byggKilde(`?utm_source=chatgpt&utm_medium=${medium}`, "", OSS, "/"),
+      /^ChatGPT-annonse \|/,
+      `medium=${medium} ga feil etikett`,
+    );
+  }
+});
+
+test("både chatgpt og openai i kilden kjennes igjen, uansett bokstaver", () => {
+  for (const kilde of ["chatgpt", "ChatGPT", "CHATGPT", "chatgpt.com", "openai", "OpenAI", "openai.com"]) {
+    assert.match(
+      byggKilde(`?utm_source=${kilde}&utm_medium=paid`, "", OSS, "/"),
+      /^ChatGPT-annonse \|/,
+      `${kilde} ga feil etikett`,
+    );
+  }
+});
+
+/**
+ * PLATTFORMEN KAN LEGGE PÅ HVA DEN VIL. En ny parameter vi ikke kjenner
+ * skal ikke velte etiketten — den skal bare ikke skrives ut.
+ */
+test("ukjente parametere endrer ikke etiketten", () => {
+  assert.equal(
+    byggKilde(
+      "?utm_source=chatgpt&utm_medium=paid&utm_campaign=some-abonnement-2026-11&utm_content=fastpris&oai_cid=abc123&ref_id=xyz&utm_ai_variant=b",
+      "",
+      OSS,
+      "/",
+    ),
+    "ChatGPT-annonse | source=chatgpt | medium=paid | campaign=some-abonnement-2026-11 | content=fastpris | landet på: /",
+  );
+});
+
+/**
+ * ORGANISK ER NOE ANNET ENN ANNONSE. Et svar i ChatGPT som lenker hit bærer
+ * ingen UTM — bare en referrer.
+ */
+test("organiske klikk fra AI-assistentene får hver sin etikett", () => {
+  const organisk = (ref: string) => byggKilde("", ref, OSS, "/");
+  assert.equal(organisk("https://chatgpt.com/"), "ChatGPT (organisk) | landet på: /");
+  assert.equal(organisk("https://chat.openai.com/c/abc"), "ChatGPT (organisk) | landet på: /");
+  assert.equal(organisk("https://www.perplexity.ai/search?q=x"), "Perplexity (organisk) | landet på: /");
+  assert.equal(organisk("https://copilot.microsoft.com/"), "Copilot (organisk) | landet på: /");
+  assert.equal(organisk("https://gemini.google.com/app"), "Gemini (organisk) | landet på: /");
+});
+
+/**
+ * GEMINI VAR GRUNNEN TIL AT DETTE HASTET. `gemini.google.com` slutter på
+ * `.google.com`, så trafikken ble talt som «Google søk» og lå gjemt i
+ * søketallene. Denne testen er vakten mot at regelen flyttes under
+ * kanaloppslaget igjen.
+ */
+test("Gemini tas ikke lenger for Google søk", () => {
+  assert.equal(
+    byggKilde("", "https://gemini.google.com/app", OSS, "/"),
+    "Gemini (organisk) | landet på: /",
+  );
+  // Og vanlig Google-søk er uendret.
+  assert.equal(
+    byggKilde("", "https://www.google.com/", OSS, "/"),
+    "Google søk | landet på: /",
+  );
+});
+
+/** Verten står allerede i etiketten. «ref: chatgpt.com» er den en gang til. */
+test("referreren gjentas ikke når etiketten alt forklarer den", () => {
+  assert.ok(!byggKilde("", "https://chatgpt.com/", OSS, "/").includes("ref:"));
+  assert.ok(
+    !byggKilde(
+      "?utm_source=chatgpt&utm_medium=paid",
+      "https://chatgpt.com/",
+      OSS,
+      "/",
+    ).includes("ref:"),
+  );
+});
+
+/**
+ * ER KILDEN SATT, HAR NOEN MERKET BESØKET, og da skal merkingen avgjøre —
+ * også når referreren er en AI-assistent.
+ */
+test("en utm_source slår referreren fra AI-assistenten", () => {
+  assert.equal(
+    byggKilde(
+      "?utm_source=ig&utm_medium=social",
+      "https://chatgpt.com/",
+      OSS,
+      "/",
+    ),
+    "Instagram | source=ig | medium=social | ref: chatgpt.com | landet på: /",
+  );
+});
+
+/** Taket på 250 tegn gjelder også her. */
+test("en lang ChatGPT-kampanje kuttes på 250 tegn", () => {
+  const ut = byggKilde(
+    `?utm_source=chatgpt&utm_medium=paid&utm_campaign=${"k".repeat(200)}&utm_content=${"i".repeat(200)}`,
+    "",
+    OSS,
+    "/",
+  );
+  assert.ok(ut.length <= 250, `${ut.length} tegn`);
+  assert.match(ut, /^ChatGPT-annonse \|/);
+});

@@ -187,11 +187,60 @@ const KANALER: { navn: string; kilder: string[]; verter: string[] }[] = [
   },
 ];
 
+/**
+ * AI-ASSISTENTENE, lagt til 08.11.2026 fordi Reflektor starter annonser i
+ * ChatGPT Ads.
+ *
+ * TO HELT FORSKJELLIGE TING, og de må skilles:
+ *
+ * 1. ANNONSEN bærer UTM. `utm_source=chatgpt` er annonsørens egen merking,
+ *    og den avgjøres av `AI_ANNONSEKILDER` under.
+ * 2. DET ORGANISKE KLIKKET bærer ingenting. Et svar i ChatGPT som lenker
+ *    hit gir bare en referrer. Derfor denne lista.
+ *
+ * GEMINI ER GRUNNEN TIL AT DETTE HASTET. `gemini.google.com` slutter på
+ * `.google.com`, så `kanalFor` traff Google-oppføringen og trafikk fra
+ * Gemini ble talt som «Google søk». Målt 08.11.2026 ved å kjøre koden.
+ * Derfor må oppslaget her skje FØR `kanalFor` får bestemme.
+ *
+ * `openai.com` DEKKER OGSÅ `chat.openai.com`, som er den gamle adressen
+ * folk fortsatt har i bokmerker.
+ */
+const AI_KANALER: { navn: string; verter: string[] }[] = [
+  {
+    navn: "ChatGPT",
+    verter: ["chatgpt.com", "chat.openai.com", "openai.com"],
+  },
+  { navn: "Perplexity", verter: ["perplexity.ai"] },
+  { navn: "Copilot", verter: ["copilot.microsoft.com"] },
+  { navn: "Gemini", verter: ["gemini.google.com"] },
+];
+
+/**
+ * `utm_source`-verdier som betyr at klikket kom fra en ChatGPT-annonse.
+ *
+ * DET ER NOK AT KILDEN INNEHOLDER ORDET. Annonseplattformen kan skrive
+ * `chatgpt`, `chatgpt.com`, `openai` eller noe vi ikke har sett — og en
+ * organisk lenke fra ChatGPT bærer ingen UTM i det hele tatt. Derfor er
+ * enhver UTM med chatgpt eller openai som kilde en annonse.
+ */
+const AI_ANNONSEKILDER = ["chatgpt", "openai"];
+
+/** Vertsnavnet, eller et subdomene av det. */
+function treffer(verter: string[], vert: string): boolean {
+  return verter.some((v) => vert === v || vert.endsWith(`.${v}`));
+}
+
+/** Hvilken AI-assistent lenket hit? Tom referrer gir ingenting. */
+function aiKanalFor(vert: string): string | undefined {
+  if (!vert) return undefined;
+  return AI_KANALER.find((a) => treffer(a.verter, vert))?.navn;
+}
+
 function kanalFor(kilde: string, vert: string) {
   return KANALER.find(
     (k) =>
-      (kilde && k.kilder.includes(kilde)) ||
-      (vert && k.verter.some((v) => vert === v || vert.endsWith(`.${v}`))),
+      (kilde && k.kilder.includes(kilde)) || (vert && treffer(k.verter, vert)),
   );
 }
 
@@ -225,6 +274,24 @@ function etikettFor(
   }
 
   /*
+   * CHATGPT-ANNONSE. Står `chatgpt` eller `openai` i kilden, er det en
+   * annonse — organiske lenker fra ChatGPT bærer ingen UTM.
+   *
+   * UAVHENGIG AV MEDIUM, som bestilt. Plattformen er ny, og vi vet ikke
+   * hva den kommer til å skrive i `utm_medium`. Mediet står fortsatt i
+   * strengen etterpå; det er det som skiller annonsevariantene.
+   *
+   * UNDER GOOGLE ADS, OVER RESTEN. Regelen over bygger på en klikk-ID
+   * Google selv setter, og den er sikrere enn noe en annonsør kan skrive i
+   * `utm_source`. Alt under denne bygger på annonsørens egne verdier, og
+   * der er kilden det mest presise vi har. Meta-regelen er uendret for
+   * enhver ekte Meta-lenke: ingen av dem har chatgpt som kilde.
+   */
+  if (kilde && AI_ANNONSEKILDER.some((k) => kilde.includes(k))) {
+    return { etikett: "ChatGPT-annonse", kanal: "ChatGPT" };
+  }
+
+  /*
    * META-ANNONSE. En fbclid alene betyr bare at klikket kom fra Facebook
    * eller Instagram — organiske lenker i en bio har den også. Det er
    * kombinasjonen med et betalt medium som gjør den til en annonse.
@@ -255,6 +322,21 @@ function etikettFor(
     p.get("mc_eid")
   ) {
     return { etikett: "E-post/nyhetsbrev" };
+  }
+
+  /*
+   * ORGANISK FRA EN AI-ASSISTENT. Ingen UTM, bare en referrer.
+   *
+   * DETTE MÅ STÅ FØR `kanal`-blokken under. `gemini.google.com` slutter på
+   * `.google.com` og ville ellers blitt «Google søk» — det var tilfellet
+   * fram til 08.11.2026, og da lå Gemini-trafikken gjemt i søketallene.
+   *
+   * KRAVET OM INGEN `utm_source` ER BESTILLINGENS, og det er riktig: er
+   * kilden satt, er besøket merket av noen, og da skal merkingen avgjøre.
+   */
+  if (!kilde) {
+    const ai = aiKanalFor(vert);
+    if (ai) return { etikett: `${ai} (organisk)`, kanal: ai };
   }
 
   if (kanal) {
@@ -329,8 +411,8 @@ export function byggKilde(
   if (vert) {
     const vist = refForVisning(referrer);
     const forklart = kanal
-      ? KANALER.find((k) => k.navn === kanal)?.verter.some(
-          (v) => vert === v || vert.endsWith(`.${v}`),
+      ? [...KANALER, ...AI_KANALER].some(
+          (k) => k.navn === kanal && treffer(k.verter, vert),
         )
       : /*
          * «Annet: blogg.no» etterfulgt av «ref: blogg.no» er samme ord to
