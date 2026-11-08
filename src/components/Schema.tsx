@@ -1,6 +1,11 @@
 import { site, tilbud } from "@/content/site";
 import { basisUrl } from "@/lib/miljo";
-import { artikkelMarkering, forfatterMarkering, reflektorRef, type Artikkelmarkering } from "@/lib/artikkelmarkering";
+import {
+  artikkelMarkering,
+  forfatterMarkering,
+  reflektorRef,
+  type Artikkelmarkering,
+} from "@/lib/artikkelmarkering";
 import { googleProfil } from "@/content/anmeldelser";
 import { omoss } from "@/content/omoss";
 
@@ -353,14 +358,49 @@ export function TjenesteSchema({
  */
 export function FaqSchema({
   qa,
+  sti,
+  navn,
+  beskrivelse,
 }: {
   qa: { sporsmal: string; svar: string }[];
+  /*
+   * SIDEN SOM ENTITET, lagt til 09.11.2026 for /faq.
+   *
+   * FAQPage ER EN WebPage i schema.org — den arver fra den. Derfor er det
+   * ikke en egen WebPage-node /faq trengte, men de feltene en WebPage
+   * bærer: hvilken URL dette er, hvilket språk den er på, og hvem som har
+   * publisert den. To sidenoder for samme URL ville vært to svar på samme
+   * spørsmål.
+   *
+   * ORGANISASJONEN GJENTAS IKKE. Entiteten eies av forsiden — se hodet på
+   * denne fila. Her står den som en @id-peker med `@type`, som alle andre
+   * sider gjør det, og den formen går fri av markeringssjekken.
+   *
+   * Utelates dette, er markeringen som før. Forsidens FAQPage sender
+   * ingenting av det: forsiden ER organisasjonen, og en peker fra en side
+   * til seg selv sier ingenting.
+   */
+  sti?: string;
+  navn?: string;
+  beskrivelse?: string;
 }) {
   if (qa.length === 0) return null;
 
+  const base = basisUrl();
   const data = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    ...(sti
+      ? {
+          "@id": `${base}${sti}`,
+          url: `${base}${sti}`,
+          inLanguage: "nb-NO",
+          isPartOf: REFLEKTOR,
+          publisher: REFLEKTOR,
+          ...(navn ? { name: navn } : {}),
+          ...(beskrivelse ? { description: beskrivelse } : {}),
+        }
+      : {}),
     mainEntity: qa.map((p) => ({
       "@type": "Question",
       name: p.sporsmal,

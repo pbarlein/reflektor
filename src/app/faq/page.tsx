@@ -6,11 +6,12 @@ import { Container } from "@/components/Container";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Knappelenke } from "@/components/Knapp";
 import { BrodsmuleSchema, FaqSchema } from "@/components/Schema";
-import { faqKategorier, faqSporsmal } from "@/content/faq";
+import { delAvsnitt, faqKategorier, faqSporsmal } from "@/content/faq";
 import { basisUrl } from "@/lib/miljo";
 
 /**
- * /faq — nitten spørsmål, ordrett fra dagens reflektor.no.
+ * /faq — tjue spørsmål. Nitten ordrett fra dagens reflektor.no, og
+ * spørsmålet om enkeltprosjekter, skrevet 09.11.2026.
  *
  * Se A41 i docs/vedlegg-a.md for hvorfor siden måtte bygges, og faq.ts for
  * hvor teksten kommer fra.
@@ -19,8 +20,8 @@ import { basisUrl } from "@/lib/miljo";
  * søkeordene siden allerede rangerer på, og å skrive dem om ville vært å
  * finne på copy for å endre noe som virker.
  *
- * FIRE GRUPPER, IKKE NITTEN PUNKTER. Første versjon var én flat liste.
- * Ingen leser nitten spørsmål — man leter etter sitt eget, og i en flat
+ * FIRE GRUPPER, IKKE TJUE PUNKTER. Første versjon var én flat liste.
+ * Ingen leser tjue spørsmål — man leter etter sitt eget, og i en flat
  * liste må man skanne alle for å finne det. Gruppene gjør at man finner
  * det, og rekkefølgen deres er et argument i seg selv: hva dere får, hva
  * det koster, hva dere får igjen, hvordan det foregår. Ingen tekst er
@@ -29,7 +30,7 @@ import { basisUrl } from "@/lib/miljo";
  * SVARENE LIGGER I DOM-EN OGSÅ NÅR DE ER LUKKET. <details> skjuler dem
  * visuelt, men innholdet står i HTML-en — det er hele grunnen til at
  * trekkspill er trygt her. En løsning som henter svaret først ved klikk
- * ville gjort nitten svar usynlige for alt som ikke kjører JavaScript, og
+ * ville gjort alle svarene usynlige for alt som ikke kjører JavaScript, og
  * det er nettopp språkmodellene.
  *
  * `name` PÅ HVER GRUPPE gir et eksklusivt trekkspill uten en eneste linje
@@ -40,6 +41,23 @@ import { basisUrl } from "@/lib/miljo";
  * ulike ting.
  */
 
+/**
+ * ÉN KILDE TIL TITTEL OG BESKRIVELSE. Begge går nå to steder: til <head>
+ * og til sidenoden i markeringen. Sto de to ganger, ville de glidd fra
+ * hverandre neste gang den ene ble endret — og den usynlige ville blitt
+ * den gale.
+ */
+const TITTEL = "Ofte stilte spørsmål om abonnementet og prisen";
+/*
+ * «de vanligste spørsmålene» → «vanlige spørsmål» 09.11.2026. Påls ordlyd
+ * landet på 166 tegn, og vår egen metasjekk kutter på 160 fordi Google gjør
+ * det. Det som ville blitt kuttet bort, er halen — altså nettopp
+ * «enkeltprosjekter fra 40 000 kr», som er grunnen til at beskrivelsen ble
+ * endret. Tre ord kortere, ingen fakta borte.
+ */
+const BESKRIVELSE =
+  "Svar på vanlige spørsmål om Reflektors SoMe-abonnement: pris (30 000 kr/mnd), hva som er inkludert, bindingstid, oppstart – og enkeltprosjekter fra 40 000 kr.";
+
 export const metadata: Metadata = {
   /*
    * «SoMe-byrå» ER TATT UT AV TITTELEN 04.10.2026. Ordet eies av forsiden
@@ -47,9 +65,14 @@ export const metadata: Metadata = {
    * kjemper om samme ord taper begge, og en FAQ-side skal ikke konkurrere
    * med forsiden om kjøpsordet.
    */
-  title: "Ofte stilte spørsmål om abonnementet og prisen",
-  description:
-    "Svar på de vanligste spørsmålene om Reflektors SoMe-abonnement: pris (30 000 kr/mnd), hva som er inkludert, Instagram og Facebook, bindingstid og oppstart.",
+  title: TITTEL,
+  /*
+   * «Enkeltprosjekter fra 40 000 kr» INN 09.11.2026, da siden fikk
+   * spørsmålet om dem. «Instagram og Facebook» ut: kanalene står i
+   * beskrivelsen på forsiden og på tjenestesidene, og de er ikke det noen
+   * leter etter i en FAQ. Title-taggen er urørt — den rangerer.
+   */
+  description: BESKRIVELSE,
   alternates: { canonical: `${basisUrl()}/faq` },
 };
 
@@ -66,11 +89,16 @@ export default function Faq() {
         2026. Den står fordi JSON-LD er der språkmodeller henter
         entitetsfakta; de kjører ikke JavaScript. Se Schema.tsx og A41.
 
-        Den sendes ALLE nitten i original rekkefølge, ikke gruppert.
+        Den sendes ALLE tjue i original rekkefølge, ikke gruppert.
         Grupperingen er en lesehjelp for mennesker; en maskin skal ha
         spørsmålene slik de er.
       */}
-      <FaqSchema qa={faqSporsmal} />
+      <FaqSchema
+        qa={faqSporsmal}
+        sti="/faq"
+        navn={TITTEL}
+        beskrivelse={BESKRIVELSE}
+      />
       <BrodsmuleSchema
         ledd={[{ navn: "Hjem", sti: "/" }, { navn: "Ofte stilte spørsmål" }]}
       />
@@ -181,7 +209,34 @@ export default function Faq() {
                               key={i}
                               className="mt-3 leading-relaxed text-pretty text-blekk-dempet first:mt-0"
                             >
-                              {avsnitt}
+                              {/*
+                                LENKER I SVARET, lagt til 09.11.2026 for
+                                det nye spørsmålet om enkeltprosjekter.
+                                Før dette var hvert svar ren tekst, og
+                                ingen av de nitten hadde en lenke — altså
+                                fantes det ingen «lenkestil som ellers i
+                                FAQ-svarene» å følge. Stilen er derfor
+                                tatt fra lenken i CTA-en nederst på denne
+                                siden, så siden har én stil, ikke to.
+
+                                Teksten bor fortsatt i `svar` som ren
+                                tekst. Det er med vilje: samme streng går
+                                til FAQPage-markeringen, og den skal ikke
+                                ha klammeparenteser i seg.
+                              */}
+                              {delAvsnitt(avsnitt, p.lenker).map((del) =>
+                                typeof del === "string" ? (
+                                  del
+                                ) : (
+                                  <Link
+                                    key={del.sti}
+                                    href={del.sti}
+                                    className="underline underline-offset-4 hover:text-aksent-tekst"
+                                  >
+                                    {del.tekst}
+                                  </Link>
+                                ),
+                              )}
                             </p>
                           ))}
                         </div>

@@ -75,6 +75,28 @@ for (const fil of finnFiler("src")) {
 }
 
 /*
+ * LENKER SOM BOR I DATA, IKKE I `href="…"`.
+ *
+ * FAQ-svarene lenker ved å navngi stien i et felt (`lenker` i faq.ts), og
+ * regexen over leter etter bokstavelige `href`-er i koden. Uten dette
+ * ville en død sti i et FAQ-svar sluppet rett gjennom — samme hull som
+ * datafilene hadde for mediefiler, i en ny forkledning.
+ */
+const { faqSporsmal } = await import("../src/content/faq.ts");
+for (const punkt of faqSporsmal) {
+  for (const l of punkt.lenker ?? []) {
+    const lenke = l.sti.replace(/\/$/, "") || "/";
+    if (ruter.has(lenke)) continue;
+    if (redirectKilder.has(lenke)) continue;
+    if (dynamiske.some((d) => l.sti.startsWith(d))) continue;
+    doede.push({
+      fil: `src/content/faq.ts (${punkt.sporsmal})`,
+      lenke: l.sti,
+    });
+  }
+}
+
+/*
  * Mediefiler: alt som peker inn i public/ fra kildekoden.
  *
  * Fanger både `src="/arbeid/x.jpg"`, `poster="/reels/y.jpg"` og strengene

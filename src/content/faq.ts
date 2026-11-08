@@ -1,8 +1,10 @@
 import { slotsISeksjon } from "@/content/sider/_slot";
 import { front } from "@/content/sider/front";
+import { kr, tilbud } from "@/content/site";
 
 /**
- * De nitten spørsmålene fra /faq på dagens reflektor.no.
+ * Spørsmålene på /faq. Nitten ble migrert ordrett fra dagens
+ * reflektor.no; ett er skrevet for den nye siden (se 09.11.2026 under).
  *
  * ORDRETT MIGRERT 16.09.2026, hentet fra sidens egen FAQPage-JSON-LD. Ikke
  * omskrevet, ikke forkortet, ikke slått sammen. Dette er Reflektors egen,
@@ -43,8 +45,8 @@ import { front } from "@/content/sider/front";
 /**
  * KATEGORIEN ER LAGT TIL 17.09.2026 og endrer ingen tekst.
  *
- * Nitten spørsmål i én flat liste er ikke en FAQ, det er et arkiv. Ingen
- * leser nitten — man leter etter sitt eget. Gruppene gjør at man finner
+ * Tjue spørsmål i én flat liste er ikke en FAQ, det er et arkiv. Ingen
+ * leser tjue — man leter etter sitt eget. Gruppene gjør at man finner
  * det, og de gjør dessuten rekkefølgen til et argument: hva du får, hva
  * det koster, hva du får igjen, hvordan det foregår.
  *
@@ -53,10 +55,26 @@ import { front } from "@/content/sider/front";
  */
 export type Faqkategori = "tjenesten" | "pris" | "resultater" | "praktisk";
 
+/**
+ * Ord i et svar som skal være en lenke PÅ SIDEN.
+ *
+ * HVORFOR IKKE MARKERING I SELVE SVARET. `svar` leses av to forbrukere:
+ * siden, og `acceptedAnswer.text` i FAQPage-markeringen. Sto lenken som
+ * `[tekst](/sti)` inne i strengen, ville maskinen fått klammeparentesene
+ * med — og markeringen er nettopp det språkmodellene leser. Her er svaret
+ * ren tekst for begge, og lenken et lag over.
+ *
+ * `tekst` må finnes ordrett i `svar`. Første forekomst blir lenken; en test
+ * vokter at den finnes, og lenkesjekken at `sti` peker på en ekte rute.
+ */
+export type Faqlenke = { tekst: string; sti: string };
+
 export type FaqPunkt = {
   sporsmal: string;
   svar: string;
   kategori?: Faqkategori;
+  /** Ord i svaret som skal lenkes. Markeringen får svaret uten lenker. */
+  lenker?: readonly Faqlenke[];
 };
 
 /** Rekkefølgen på siden. Navnene er overskrifter, ikke etiketter. */
@@ -120,13 +138,39 @@ export const faqSporsmal: FaqPunkt[] = [
   },
   {
     sporsmal: "Hva koster det?",
-    svar: "30 000 kroner per måned. Alt er inkludert, og prisen er den samme hver eneste måned. Hver måned får dere: én produksjonsdag hos dere, hos oss eller ute på lokasjon, med produsent og utstyr, 8–10 ferdige filmer klippet og fargekorrigert, teksting og publisering to ganger i uka på Instagram med krysspublisering til Facebook. Skal noe brukes til andre formål, som skjerm i butikk, annonse, nettside eller trykk, tilpasser vi det eller produserer for det. Si fra i planleggingen, så er det med i kjøreplanen. Ingen timepriser, ingen etterfakturering, ingen tillegg for ekstra runder. Dere får aldri en faktura dere ikke visste kom. Vi oppgir prisen åpent fordi de fleste byråer ikke gjør det. Et fast beløp er lettere å budsjettere enn et estimat, og det gjør det mulig å sammenligne oss med alternativene før dere tar kontakt.",
+    svar: `30 000 kroner per måned. Alt er inkludert, og prisen er den samme hver eneste måned. Hver måned får dere: én produksjonsdag hos dere, hos oss eller ute på lokasjon, med produsent og utstyr, 8–10 ferdige filmer klippet og fargekorrigert, teksting og publisering to ganger i uka på Instagram med krysspublisering til Facebook. Skal noe brukes til andre formål, som skjerm i butikk, annonse, nettside eller trykk, tilpasser vi det eller produserer for det. Si fra i planleggingen, så er det med i kjøreplanen. Ingen timepriser, ingen etterfakturering, ingen tillegg for ekstra runder. Dere får aldri en faktura dere ikke visste kom. Vi oppgir prisen åpent fordi de fleste byråer ikke gjør det. Et fast beløp er lettere å budsjettere enn et estimat, og det gjør det mulig å sammenligne oss med alternativene før dere tar kontakt. Enkeltprosjekter utenom abonnementet starter på ${kr(tilbud.fraPrisProsjekt)} kr.`,
     kategori: "pris",
   },
   {
     sporsmal: "Er 30 000 kroner i måneden mye eller lite?",
     svar: "Det avhenger av hva dere sammenligner med. Mot en enkeltproduksjon er det mye: en reklamefilm kan koste det samme én gang. Mot et helt år med innhold er det lite. 360 000 kroner gir rundt hundre ferdige filmer, over hundre publiseringer, løpende strategi og et arkiv dere eier og kan bygge videre på. Den mest relevante sammenligningen er ofte en ansettelse. En fulltids SoMe-ansvarlig koster vesentlig mer enn dette når arbeidsgiveravgift, pensjon og feriepenger er regnet med, og vedkommende må fortsatt leie inn noen til å filme. Vi konkurrerer om det samme budsjettet som andre markedsføringstjenester. Fordelen med denne posten er at dere vet hva dere får igjen: et avtalt antall ferdige filmer i måneden, som dere også kan bruke i annonser, på nettsiden og i presentasjoner.",
     kategori: "pris",
+  },
+  /*
+   * ENKELTPROSJEKTER, LAGT TIL 09.11.2026 på bestilling fra Pål.
+   *
+   * HVORFOR DETTE SPØRSMÅLET MÅTTE KOMME: ChatGPT hentet to motstridende
+   * utsagn fra nettstedet vårt i Påls egen faktakontroll 09.11. Forsiden og
+   * seks tjenestesider sa at vi tar enkeltprosjekter fra 40 000 kr; FAQ-en
+   * sa at vi ikke selger enkeltoppdrag. Begge sto live. Det er den typen
+   * motsetning som gjør at en språkmodell velger selv hva den skal si om
+   * oss, og da er det tilfeldig hvilken av dem kunden får.
+   *
+   * SVARET PÅ BINDINGSTID ER RETTET SAMTIDIG. Avgrensningen vi faktisk
+   * har, står fortsatt: abonnementet selges ikke som prøvepakke eller én
+   * enkelt produksjonsdag. Det er en annen sak enn et enkeltprosjekt.
+   *
+   * STÅR I PRISGRUPPEN, rett etter sammenligningen av 30 000 i måneden.
+   * Den som nettopp har lest at abonnementet er mye mot én produksjon, er
+   * presis den som lurer på om vi tar én produksjon.
+   */
+  {
+    sporsmal: "Tar dere enkeltprosjekter, eller bare abonnement?",
+    svar: `Begge deler. Abonnementet er hovedproduktet vårt, men trenger dere én film, ikke en hel kalender, tar vi det som et enkeltprosjekt: reklamefilm, bedriftsfilm, film til nettsiden, employer branding eller dekning av et arrangement. Samme folk og samme utstyr som i abonnementet. Enkeltprosjekter starter på ${kr(tilbud.fraPrisProsjekt)} kr, og prisen avtales før vi begynner – ingen timepriser. Oversikten over prosjekttypene står på siden om innholdsproduksjon.`,
+    kategori: "pris",
+    lenker: [
+      { tekst: "siden om innholdsproduksjon", sti: "/innholdsproduksjon" },
+    ],
   },
   {
     sporsmal: "Bør vi heller ansette en SoMe-ansvarlig selv?",
@@ -171,7 +215,7 @@ export const faqSporsmal: FaqPunkt[] = [
   },
   {
     sporsmal: "Er det bindingstid, og kan vi prøve først?",
-    svar: "Ingen bindingstid, kun ordinær oppsigelsesfrist på tre måneder. Vi mener dere skal bli fordi arbeidet virker, ikke fordi en kontrakt hindrer dere i å gå. Vi selger derimot ikke prøvepakker eller enkeltoppdrag. Samarbeidet er løpende, fordi det er konsistensen som gir resultater. Ett innhold gir sjelden effekt uansett hvor godt det er. I praksis fungerer de første månedene som en prøveperiode uansett: dere ser hvordan produksjonsdagen går, hvordan innholdet blir og hvordan det presterer, og dere kan si opp med tre måneders frist. Vil dere se hvordan vi tenker før dere bestemmer dere, lager vi et komplett strategiforslag gratis, med research på deres egne kanaler og konkrete innholdsserier, uten forpliktelser.",
+    svar: "Ingen bindingstid, kun ordinær oppsigelsesfrist på tre måneder. Vi mener dere skal bli fordi arbeidet virker, ikke fordi en kontrakt hindrer dere i å gå.\n\nAbonnementet selger vi ikke som prøvepakke eller én enkelt produksjonsdag. Samarbeidet er løpende, fordi det er konsistensen som gir resultater. Ett innhold gir sjelden effekt uansett hvor godt det er. I praksis fungerer de første månedene som en prøveperiode uansett: dere ser hvordan produksjonsdagen går, hvordan innholdet blir og hvordan det presterer, og dere kan si opp med tre måneders frist.\n\nTrenger dere én film og ikke en hel kalender, tar vi det som et enkeltprosjekt. Det står mer om det over.\n\nVil dere se hvordan vi tenker før dere bestemmer dere, lager vi et komplett strategiforslag gratis, med research på deres egne kanaler og konkrete innholdsserier, uten forpliktelser.",
     kategori: "pris",
   },
   {
@@ -246,6 +290,36 @@ export function hentFaq(sporsmal: string): FaqPunkt {
 }
 
 /**
+ * Deler ett avsnitt i tekstbiter og lenker, i riktig rekkefølge.
+ *
+ * KUN FØRSTE FOREKOMST av hver lenketekst blir lenke. Det er ikke en
+ * forenkling: Google regner lenketeksten fra den FØRSTE lenken til en URL,
+ * og to lenker til samme side i samme avsnitt er dessuten støy for leseren.
+ *
+ * Finnes ikke teksten i avsnittet, skjer ingenting her — avsnittet rendres
+ * som vanlig tekst. Testen fanger det i stedet, der feilen hører hjemme:
+ * en lenketekst som ikke finnes er en skrivefeil i innholdet, ikke noe
+ * siden skal krasje på foran en kunde.
+ */
+export function delAvsnitt(
+  avsnitt: string,
+  lenker: readonly Faqlenke[] = [],
+): (string | Faqlenke)[] {
+  let deler: (string | Faqlenke)[] = [avsnitt];
+  for (const l of lenker) {
+    deler = deler.flatMap((d) => {
+      if (typeof d !== "string") return [d];
+      const i = d.indexOf(l.tekst);
+      if (i === -1) return [d];
+      return [d.slice(0, i), l, d.slice(i + l.tekst.length)].filter(
+        (x) => x !== "",
+      );
+    });
+  }
+  return deler;
+}
+
+/**
  * Forsidens ti spørsmål: de seks godkjente slot-svarene fra front.ts, så de
  * fire som hentes herfra.
  *
@@ -279,7 +353,7 @@ export const forsidensSporsmal: FaqPunkt[] = [
  * GOOGLE FORBYR DET EKSPLISITT. Retningslinjene for FAQPage sier at samme
  * spørsmål og svar ikke skal merkes opp på flere sider på samme nettsted.
  * De fire i `forsidensTillegg` er hentet fra /faq, og /faq sender alle
- * nitten. Uten dette filteret sto de fire som FAQPage-entiteter på to
+ * tjue. Uten dette filteret sto de fire som FAQPage-entiteter på to
  * URL-er, og da er det tilfeldig hvilken av dem som blir sitert.
  *
  * DETTE ER IKKE FEILEN SOM BLE RETTET OVER. Den var at seksjonen VISTE ti

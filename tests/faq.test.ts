@@ -2,10 +2,14 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import {
+  delAvsnitt,
+  faqKategorier,
   faqSporsmal,
   forsidensSporsmal,
   forsidensSporsmalForMarkup,
+  hentFaq,
 } from "@/content/faq";
+import { kr, tilbud } from "@/content/site";
 import { seksjonerSomFaq, tjenestesider } from "@/content/tjenester";
 import { artikler, somFaq } from "@/content/artikler";
 
@@ -91,4 +95,102 @@ test("alle forsidens egne spørsmål er med i markeringen", () => {
     forsidensSporsmalForMarkup.map((p) => p.sporsmal),
     egne.map((p) => p.sporsmal),
   );
+});
+
+/**
+ * ── 09.11.2026: ENKELTPROSJEKTER ────────────────────────────────────
+ *
+ * Bakgrunnen er en motsetning som sto live. Forsiden og seks tjenestesider
+ * sa at Reflektor tar enkeltprosjekter fra 40 000 kr; FAQ-en sa at vi ikke
+ * selger enkeltoppdrag. ChatGPT hentet begge i Påls faktakontroll samme
+ * dag. En språkmodell som finner to svar på nettstedet, velger selv.
+ *
+ * Testene under vokter de tre tingene som kan gli tilbake uten at noen ser
+ * det: setningen som var feil, avgrensningen som fortsatt er sann, og at
+ * markeringen sier det samme som siden.
+ */
+
+test("FAQ-en sier ikke lenger at vi ikke selger enkeltoppdrag", () => {
+  const tekst = faqSporsmal.map((p) => `${p.sporsmal} ${p.svar}`).join("\n");
+  assert.doesNotMatch(tekst, /ikke prøvepakker eller enkeltoppdrag/i);
+  assert.doesNotMatch(tekst, /enkeltoppdrag/i);
+});
+
+test("avgrensningen vi faktisk har, står fortsatt", () => {
+  const binding = faqSporsmal.find((p) =>
+    p.sporsmal.startsWith("Er det bindingstid"),
+  );
+  assert.ok(binding, "spørsmålet om bindingstid er borte");
+  // Abonnementet selges ikke som prøvepakke eller én enkelt dag. Det er en
+  // annen sak enn et enkeltprosjekt, og det er distinksjonen svaret bærer.
+  assert.match(
+    binding.svar,
+    /ikke som prøvepakke eller én enkelt produksjonsdag/,
+  );
+  assert.match(binding.svar, /tre måneder/);
+});
+
+test("enkeltprosjekter har sitt eget spørsmål, med fra-prisen", () => {
+  const punkt = faqSporsmal.find((p) =>
+    p.sporsmal.startsWith("Tar dere enkeltprosjekter"),
+  );
+  assert.ok(punkt, "spørsmålet om enkeltprosjekter mangler");
+  assert.equal(punkt.kategori, "pris");
+  assert.match(punkt.svar, new RegExp(`${kr(tilbud.fraPrisProsjekt)} kr`));
+});
+
+test("fra-prisen står i «Hva koster det?» også", () => {
+  const pris = hentFaq("Hva koster det?");
+  assert.match(pris.svar, new RegExp(`${kr(tilbud.fraPrisProsjekt)} kr`));
+});
+
+/**
+ * LENKETEKST SOM IKKE FINNES ER EN STILLE FEIL. `delAvsnitt` lar avsnittet
+ * stå som ren tekst når teksten ikke treffer — det er riktig oppførsel på
+ * en levende side, og nettopp derfor må testen fange skrivefeilen i stedet.
+ */
+test("hver lenketekst finnes ordrett i svaret sitt", () => {
+  for (const p of faqSporsmal) {
+    for (const l of p.lenker ?? []) {
+      assert.ok(
+        p.svar.includes(l.tekst),
+        `«${l.tekst}» finnes ikke i svaret på «${p.sporsmal}»`,
+      );
+      assert.ok(l.sti.startsWith("/"), `${l.sti} er ikke en intern sti`);
+    }
+  }
+});
+
+test("delAvsnitt deler på første forekomst og beholder teksten", () => {
+  const lenke = {
+    tekst: "siden om innholdsproduksjon",
+    sti: "/innholdsproduksjon",
+  };
+  const deler = delAvsnitt(`Les mer på ${lenke.tekst}.`, [lenke]);
+  assert.deepEqual(deler, ["Les mer på ", lenke, "."]);
+
+  // Samme tekst to ganger: bare den første blir lenke.
+  const to = delAvsnitt(`${lenke.tekst} og ${lenke.tekst}`, [lenke]);
+  assert.deepEqual(to, [lenke, ` og ${lenke.tekst}`]);
+
+  // Uten treff, og uten lenker i det hele tatt: avsnittet står urørt.
+  assert.deepEqual(delAvsnitt("Ingen lenke her", [lenke]), ["Ingen lenke her"]);
+  assert.deepEqual(delAvsnitt("Ingen lenke her"), ["Ingen lenke her"]);
+
+  // Hele avsnittet er lenken: ingen tomme biter rundt.
+  assert.deepEqual(delAvsnitt(lenke.tekst, [lenke]), [lenke]);
+});
+
+/**
+ * MARKERINGEN SKAL VÆRE SIDEN. Antallet er det billigste målet på at de to
+ * ikke har glidd fra hverandre: siden rendrer `faqSporsmal` gruppert, og
+ * markeringen sender samme liste flat.
+ */
+test("markeringen sender nøyaktig de spørsmålene siden viser", () => {
+  const kjente = new Set(faqKategorier.map((k) => k.id));
+  for (const p of faqSporsmal) {
+    assert.ok(p.kategori, `«${p.sporsmal}» mangler kategori og vises ikke`);
+    assert.ok(kjente.has(p.kategori), `ukjent kategori på «${p.sporsmal}»`);
+  }
+  assert.equal(faqSporsmal.length, 20);
 });
