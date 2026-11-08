@@ -49,6 +49,13 @@ const utelatt = new Set(["sosiale-medier-byra"]);
  * /eventfotograf-eventvideo fikk i tillegg «videograf» i tittel, meta og
  * ingress. /kjeder står urørt — den har sin egen seksjonsoverskrift og er
  * ikke en del av bestillingen.
+ *
+ * 09.11.2026: /faq. Svaret om bindingstid sa at vi ikke selger
+ * enkeltoppdrag, mens resten av nettstedet sa at enkeltprosjekter starter
+ * på 40 000 kr. Siden har nå et eget spørsmål om enkeltprosjekter, og
+ * FAQPage-markeringen har tjue spørsmål i stedet for nitten. Uten ny dato
+ * her ville IndexNow ikke meldt fra — og det er nettopp språkmodellene som
+ * henter den markeringen.
  */
 const SIST_ENDRET: Record<string, string> = {
   "/": "2026-11-06",
@@ -62,7 +69,7 @@ const SIST_ENDRET: Record<string, string> = {
   "/kontaktoss": "2026-11-06",
   "/vart-arbeid": "2026-09-30",
   "/om-oss": "2026-10-04",
-  "/faq": "2026-10-04",
+  "/faq": "2026-11-09",
   "/personvern": "2026-10-02",
   "/blogg": "2026-10-02",
   "/en": "2026-10-02",
