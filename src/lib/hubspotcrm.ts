@@ -24,7 +24,30 @@ export const AVBRUTT_FELT = "paminnelse_avbrutt";
 export const SKJEMANAVN = {
   nettside: "reflektor.no – kontaktskjema",
   meta: "Reflektor SoMe-abonnement",
+  /*
+    LINKEDIN-SKJEMAET, slik det heter i Campaign Manager (konto 509661654,
+    skjema-ID 1028433440). Oppgitt av Cowork 09.11.2026 — ikke lest ut av
+    HubSpot, for ingen lead har kommet inn ennå. Brukes bare til søket bak
+    oversikten på /paaminnelse; gjenkjenningen som styrer e-postene bruker
+    `KILDEMARKOR.linkedin` og tåler flere skrivemåter.
+  */
+  linkedin: "Forslag SoMe-abonnement",
 } as const;
+
+/** Etiketten oversikten viser for en kontakt. */
+function kildeetikett(k: Leadkontakt): "Nettside" | "Meta" | "LinkedIn" {
+  /* LINKEDIN FØRST, av samme grunn som i `leadkilde`: Meta-markøren er
+     bred nok til å treffe et LinkedIn-skjema med de samme ordene i seg. */
+  if (
+    k.hendelse.toLocaleLowerCase("nb-NO").includes("linkedin") ||
+    k.hendelse.includes(SKJEMANAVN.linkedin) ||
+    k.annonsenettverk.toLocaleLowerCase("nb-NO") === "linkedin"
+  ) {
+    return "LinkedIn";
+  }
+  if (k.hendelse.includes(SKJEMANAVN.meta)) return "Meta";
+  return "Nettside";
+}
 
 /* ─────────── OUTBOUND-BOOKINGER (06.10.2026) ─────────────────────────── */
 
@@ -64,7 +87,10 @@ const MOTELENKE = "meetings link:";
 export function bookingslug(hendelse: string): string {
   const t = hendelse.trim().toLocaleLowerCase("en-US");
   if (!t.startsWith(MOTELENKE)) return "";
-  return t.slice(MOTELENKE.length).trim().replace(/^\/+|\/+$/g, "");
+  return t
+    .slice(MOTELENKE.length)
+    .trim()
+    .replace(/^\/+|\/+$/g, "");
 }
 
 /**
@@ -103,7 +129,14 @@ export type Motekanal = {
  * LinkedIn. Listene er korte med vilje: står det noe annet der, er svaret
  * «outbound» uten kanal, og det er bedre enn en gjetning som ser presis ut.
  */
-const EPOSTVERKTOY = ["instantly", "masterinbox", "email", "epost", "e-post", "mail"];
+const EPOSTVERKTOY = [
+  "instantly",
+  "masterinbox",
+  "email",
+  "epost",
+  "e-post",
+  "mail",
+];
 const LINKEDINVERKTOY = ["heyreach", "linkedin"];
 
 /** Det som betyr at personen kom fra Meta, uansett hvilket felt det står i. */
@@ -116,8 +149,19 @@ const METAMARKOR = [
   "instagram",
 ];
 
+/**
+ * Det som betyr at personen kom fra LinkedIn, uansett hvilket felt det
+ * står i. Holdt smalt med vilje: «linkedin» alene er nok, men ingen av de
+ * generelle annonseordene står her — de eies av `METAMARKOR`, og et ord
+ * som treffer begge ville gjort rekkefølgen til en gjetning.
+ */
+const LINKEDINMARKOR = ["linkedin", "lead gen form", "forslag some-abonnement"];
+
 /** Det som betyr at personen kom fra skjemaet på nettsiden. */
-const NETTSIDEMARKOR = ["reflektor.no – kontaktskjema", "reflektor.no - kontaktskjema"];
+const NETTSIDEMARKOR = [
+  "reflektor.no – kontaktskjema",
+  "reflektor.no - kontaktskjema",
+];
 
 function inneholder(tekst: string, markorer: readonly string[]): boolean {
   const t = tekst.toLocaleLowerCase("nb-NO");
@@ -150,6 +194,8 @@ export function motekanal(k: {
   bookingKilde: string;
   bookingMedium: string;
   analysekilde: string;
+  /** `hs_analytics_source_data_1`. Valgfri: eldre kall har den ikke. */
+  annonsenettverk?: string;
 }): Motekanal {
   const sporing = `${k.bookingKilde} ${k.bookingMedium}`;
 
@@ -163,7 +209,21 @@ export function motekanal(k: {
     return { gruppe: "outbound", kanal: "" };
   }
 
-  const alt = `${sporing} ${k.forsteHendelse} ${k.hendelse} ${k.analysekilde}`;
+  const alt = `${sporing} ${k.forsteHendelse} ${k.hendelse} ${k.analysekilde} ${k.annonsenettverk ?? ""}`;
+
+  /*
+    LINKEDIN FØR META, OG DET ER IKKE KOSMETIKK. `METAMARKOR` inneholder
+    «paid_social», og HubSpot setter PAID_SOCIAL som kanal på ET LINKEDIN-
+    LEAD OGSÅ. Uten denne blokka ville hvert møte booket av et
+    LinkedIn-lead stått som «NYTT MØTE inbound Meta» fra 10.11.2026 — en
+    feil ingen ville sett, siden emnet ser helt normalt ut.
+
+    Markørene er de samme som i `KILDEMARKOR.linkedin`, pluss nettverket
+    slik HubSpot skriver det i Drill-Down 1.
+  */
+  if (inneholder(alt, LINKEDINMARKOR)) {
+    return { gruppe: "inbound", kanal: "LinkedIn" };
+  }
   if (inneholder(alt, METAMARKOR)) return { gruppe: "inbound", kanal: "Meta" };
   if (inneholder(alt, NETTSIDEMARKOR)) {
     return { gruppe: "inbound", kanal: "reflektor.no" };
@@ -252,7 +312,9 @@ export async function skrivHortOmOss(
       return false;
     }
   }
-  console.warn(`[hortomoss] Fant ikke kontakten for ${adresse} etter to forsøk.`);
+  console.warn(
+    `[hortomoss] Fant ikke kontakten for ${adresse} etter to forsøk.`,
+  );
   return false;
 }
 
@@ -300,7 +362,7 @@ export type Planlagt = {
   epost: string;
   navn: string;
   bedrift: string;
-  kilde: "Nettside" | "Meta";
+  kilde: "Nettside" | "Meta" | "LinkedIn";
   /**
    * Hele kontakten.
    *
@@ -342,9 +404,16 @@ export async function hentPlanlagte(): Promise<Planlagt[] | null> {
 
   const fire = Date.now() - 4 * 24 * 60 * 60 * 1000;
   const felles = [
-    { propertyName: "recent_conversion_date", operator: "GTE", value: String(fire) },
+    {
+      propertyName: "recent_conversion_date",
+      operator: "GTE",
+      value: String(fire),
+    },
     { propertyName: AVBRUTT_FELT, operator: "NEQ", value: "true" },
-    { propertyName: "engagements_last_meeting_booked", operator: "NOT_HAS_PROPERTY" },
+    {
+      propertyName: "engagements_last_meeting_booked",
+      operator: "NOT_HAS_PROPERTY",
+    },
     { propertyName: "lifecyclestage", operator: "NEQ", value: "customer" },
   ];
 
@@ -355,8 +424,21 @@ export async function hentPlanlagte(): Promise<Planlagt[] | null> {
     manglet både kontakt-id-en og tråd-id-en. Sorteringen er flyttet hit
     ned; den var det eneste `sok()` ikke gjorde.
   */
+  /*
+    LINKEDIN MED FRA 09.11.2026. Uten denne gruppa ville et LinkedIn-lead
+    hatt en påminnelse på vei uten å stå i oversikten, og da kan Pål ikke
+    avbryte den. Sidens egen dokumentasjon sier hvorfor det er verre enn
+    ingen liste: den får ham til å stole på noe som ikke stemmer.
+
+    SKJEMANAVNET, IKKE «linkedin». Søket er `CONTAINS_TOKEN` på
+    konverteringsnavnet, og skjemanavnet er det eneste vi vet står der.
+    Kaller HubSpot konverteringen noe annet, mangler leadet i oversikten —
+    men e-postene og varselet går likevel, for jobben leser ikke dette
+    søket. Se `nyeLeadsUtenEpost`, som ikke filtrerer på navn i det hele
+    tatt.
+  */
   const treff = await sok(
-    [SKJEMANAVN.nettside, SKJEMANAVN.meta].map((navn) => ({
+    [SKJEMANAVN.nettside, SKJEMANAVN.meta, SKJEMANAVN.linkedin].map((navn) => ({
       filters: [
         ...felles,
         {
@@ -372,16 +454,15 @@ export async function hentPlanlagte(): Promise<Planlagt[] | null> {
 
   const na = new Date();
 
-  return treff
-    .map((k) => ({
-      epost: k.epost,
-      navn: k.navn,
-      bedrift: k.bedrift,
-      kilde: k.hendelse.includes(SKJEMANAVN.meta)
-        ? ("Meta" as const)
-        : ("Nettside" as const),
-      kontakt: k,
-      /*
+  return (
+    treff
+      .map((k) => ({
+        epost: k.epost,
+        navn: k.navn,
+        bedrift: k.bedrift,
+        kilde: kildeetikett(k),
+        kontakt: k,
+        /*
         TIDSPUNKTET REGNES FRA E-POST 1 NÅR DEN ER SENDT, ellers fra
         innsendingen. Fra 04.10.2026 er det e-post 1 som starter klokka:
         påminnelsen er et svar på den, ikke på skjemaet. Mangler den —
@@ -392,28 +473,29 @@ export async function hentPlanlagte(): Promise<Planlagt[] | null> {
         PLANLAGTE sendetiden. Et lead som kom lørdag kl. 23 får e-posten
         søndag kl. 08 og påminnelsen mandag — ikke søndag.
       */
-      planlagtEpost1:
-        !k.epost1Sendt && venterPaaVinduet(na) ? planlagtSending(na) : null,
-      sendtInn: new Date(
-        k.epost1Sendt ||
-          (venterPaaVinduet(na)
-            ? planlagtSending(na).toISOString()
-            : k.konvertert || new Date().toISOString()),
-      ),
-    }))
-    /*
+        planlagtEpost1:
+          !k.epost1Sendt && venterPaaVinduet(na) ? planlagtSending(na) : null,
+        sendtInn: new Date(
+          k.epost1Sendt ||
+            (venterPaaVinduet(na)
+              ? planlagtSending(na).toISOString()
+              : k.konvertert || new Date().toISOString()),
+        ),
+      }))
+      /*
       PÅMINNELSER SOM ALLEREDE HAR GÅTT, ER IKKE NOE Å AVBRYTE. Filteret
       ligger her og ikke i siden: `Date.now()` under rendring er en uren
       verdi, og React-kompilatoren avviser den med rette — to rendringer av
       samme data ville gitt to forskjellige lister.
     */
-    .filter(
-      (l) =>
-        l.epost &&
-        !l.kontakt.epost2Sendt &&
-        paaminnelseTidspunkt(l.sendtInn).getTime() > na.getTime(),
-    )
-    .sort((a, b) => b.sendtInn.getTime() - a.sendtInn.getTime());
+      .filter(
+        (l) =>
+          l.epost &&
+          !l.kontakt.epost2Sendt &&
+          paaminnelseTidspunkt(l.sendtInn).getTime() > na.getTime(),
+      )
+      .sort((a, b) => b.sendtInn.getTime() - a.sendtInn.getTime())
+  );
 }
 
 export const EPOST_FELT = {
@@ -459,6 +541,32 @@ export const BEHOVSFELT = ["behov", "hva_trenger_dere_mest_hjelp_med"];
  * kunnskap.
  */
 export const NETTSTEDFELT = ["nettsted"];
+
+/**
+ * «Hva er mest aktuelt for dere?» — LinkedIn-skjemaets ene flervalg.
+ *
+ * NAVNET ER IKKE LEST UT AV HUBSPOT, og det er en forskjell fra alt annet
+ * i denne fila. Egenskapen finnes ikke ennå: HubSpot lager «Lead Ad
+ * Properties» først når det første leadet synkes, og kampanjen starter
+ * 10.11.2026. Kandidatene er derfor utledet av mønsteret i de syv som ER
+ * lest ut av portalen 09.11 — «Når vil dere starte?» ble
+ * `nr_vil_dere_starte`, «Hva trenger dere mest hjelp med?» ble
+ * `hva_trenger_dere_mest_hjelp_med`: små bokstaver, understrek for
+ * mellomrom, spørsmålstegn og æøå bort.
+ *
+ * FLERE KANDIDATER, FØRSTE MED INNHOLD VINNER — samme grep som
+ * `BEHOVSFELT`, og av samme grunn: å gjette ett navn er å gamble med at
+ * hvert lead ser ut som om svaret mangler.
+ *
+ * STÅR DET TOMT PÅ ET EKTE LEAD, SIER JOBBEN FRA I LOGGEN. Se
+ * `advarOmUkjentFelt` i lib/leadutsending.ts. Da er det bare å føye til
+ * det riktige navnet her.
+ */
+export const AKTUELTFELT = [
+  "hva_er_mest_aktuelt_for_dere",
+  "hva_er_mest_aktuelt_for_dere_",
+  "mest_aktuelt",
+];
 
 /** Første av kandidatene som har en verdi. Tom streng hvis ingen har. */
 function forsteVerdi(
@@ -512,6 +620,15 @@ const LESEFELT = [
   */
   "first_conversion_event_name",
   "hs_analytics_source",
+  /*
+    ANNONSENETTVERKET. «facebook» på alle 45 Meta-leadene, kontrollert
+    09.11.2026; kampanjenavnet står i Drill-Down 2. Lest fordi det er det
+    ene signalet som fortsatt virker hvis HubSpot kaller LinkedIn-
+    konverteringen noe vi ikke har forutsett — se `leadkilde`.
+  */
+  "hs_analytics_source_data_1",
+  /* Stillingstittel. Står i LinkedIn-skjemaet, tom for alt annet. */
+  "jobtitle",
   "recent_conversion_date",
   AVBRUTT_FELT,
   EPOST_FELT.en,
@@ -521,6 +638,7 @@ const LESEFELT = [
   ...METAFELT.map((f) => f.navn),
   ...BEHOVSFELT,
   ...NETTSTEDFELT,
+  ...AKTUELTFELT,
 ];
 
 export type Leadkontakt = {
@@ -539,6 +657,12 @@ export type Leadkontakt = {
   bookingMedium: string;
   /** `hs_analytics_source`: HubSpots egen kanal, f.eks. «PAID_SOCIAL». */
   analysekilde: string;
+  /** `hs_analytics_source_data_1`: «facebook», «linkedin» eller tomt. */
+  annonsenettverk: string;
+  /** Stillingstittel. LinkedIn-skjemaet spør om den; Meta gjør det ikke. */
+  stillingstittel: string;
+  /** Svaret på «Hva er mest aktuelt for dere?» i LinkedIn-skjemaet. */
+  aktuelt: string;
   /** `recent_conversion_date`. */
   konvertert: string;
   epost1Sendt: string;
@@ -578,6 +702,10 @@ function somLeadkontakt(r: {
     bookingKilde: p.engagements_last_meeting_booked_source ?? "",
     bookingMedium: p.engagements_last_meeting_booked_medium ?? "",
     analysekilde: p.hs_analytics_source ?? "",
+    annonsenettverk: p.hs_analytics_source_data_1 ?? "",
+    stillingstittel: p.jobtitle ?? "",
+    /* Understrek er annonsenettverkenes mellomrom, som i `metasvar`. */
+    aktuelt: forsteVerdi(p, AKTUELTFELT).replace(/_/g, " "),
     konvertert: p.recent_conversion_date ?? "",
     epost1Sendt: p[EPOST_FELT.en] ?? "",
     epost2Sendt: p[EPOST_FELT.to] ?? "",
@@ -951,7 +1079,9 @@ export async function hentStadiekart(): Promise<Stadiekart | null> {
       return null;
     }
 
-    const maal = pipeline.stages.find((s) => likNavn(s.label ?? "", MAALSTADIUM));
+    const maal = pipeline.stages.find((s) =>
+      likNavn(s.label ?? "", MAALSTADIUM),
+    );
     if (!maal?.id) {
       console.error(`[avtale] Fant ikke stadiet «${MAALSTADIUM}».`);
       return null;
@@ -967,7 +1097,12 @@ export async function hentStadiekart(): Promise<Stadiekart | null> {
       }
     }
 
-    return { pipeline: pipeline.id ?? "default", maal: maal.id, ordre, hvilende };
+    return {
+      pipeline: pipeline.id ?? "default",
+      maal: maal.id,
+      ordre,
+      hvilende,
+    };
   } catch (feil) {
     console.error("[avtale] Oppslaget av pipelinene feilet.", feil);
     return null;
@@ -1117,9 +1252,13 @@ export async function mulighetsmakker(
   const grupper: { filters: Record<string, string>[] }[] = [];
   const telefon = k.telefon.trim();
   if (telefon) {
-    grupper.push({ filters: [{ propertyName: "phone", operator: "EQ", value: telefon }] });
     grupper.push({
-      filters: [{ propertyName: "mobilephone", operator: "EQ", value: telefon }],
+      filters: [{ propertyName: "phone", operator: "EQ", value: telefon }],
+    });
+    grupper.push({
+      filters: [
+        { propertyName: "mobilephone", operator: "EQ", value: telefon },
+      ],
     });
   }
 
@@ -1127,12 +1266,18 @@ export async function mulighetsmakker(
   if (ord) {
     grupper.push({
       filters: [
-        { propertyName: "company", operator: "CONTAINS_TOKEN", value: `${ord}*` },
+        {
+          propertyName: "company",
+          operator: "CONTAINS_TOKEN",
+          value: `${ord}*`,
+        },
       ],
     });
   } else if (k.bedrift.trim()) {
     grupper.push({
-      filters: [{ propertyName: "company", operator: "EQ", value: k.bedrift.trim() }],
+      filters: [
+        { propertyName: "company", operator: "EQ", value: k.bedrift.trim() },
+      ],
     });
   }
 
@@ -1467,7 +1612,11 @@ export async function knyttSelskapTilAvtale(
   try {
     const svar = await fetch(
       `${BASIS}/crm/v4/objects/deals/${avtaleId}/associations/default/companies/${selskapId}`,
-      { method: "PUT", headers: hoder(), signal: AbortSignal.timeout(TIDSTAK_MS) },
+      {
+        method: "PUT",
+        headers: hoder(),
+        signal: AbortSignal.timeout(TIDSTAK_MS),
+      },
     );
     if (svar.ok) return true;
     console.error(

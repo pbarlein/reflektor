@@ -82,6 +82,15 @@ export const META_VARSEL_EMNE = "NYTT LEAD fra Meta";
 export const META_USIKKER_EMNE = "USIKKERT LEAD fra Meta";
 
 /**
+ * Emnet på LinkedIn-varselet. Bestilt av Pål 09.11.2026.
+ *
+ * TREDJE KANAL, SAMME FORM. «NYTT LEAD fra reflektor.no», «… fra Meta»,
+ * «… fra LinkedIn» — Pål filtrerer på prefikset, og et emne som bryter
+ * mønsteret ville falt utenfor reglene han alt har.
+ */
+export const LINKEDIN_VARSEL_EMNE = "NYTT LEAD fra LinkedIn";
+
+/**
  * Det som kan skille Meta-varselet fra nettsidevarselet.
  *
  * MALEN ER DEN SAMME, OG DET ER HELE POENGET. HubSpot-varselet for Meta
@@ -386,10 +395,7 @@ export function varsel(
     ...rader.map(([navn, verdi]) => `${navn}: ${verdi}`),
     ...(behov === null ? [] : ["Behov:", behov]),
     ...(skriv
-      ? [
-          "",
-          `${skriv.tekst}: ${lead.epost} (emne: ${skriv.emne})`,
-        ]
+      ? ["", `${skriv.tekst}: ${lead.epost} (emne: ${skriv.emne})`]
       : []),
     ...(oppfolging
       ? [
@@ -661,20 +667,92 @@ export async function sendMetaVarsel(opp: {
    */
   usikker?: string;
 }): Promise<void> {
+  await sendKanalvarsel({
+    ...opp,
+    kanal: "Meta",
+    emne: opp.usikker ? META_USIKKER_EMNE : META_VARSEL_EMNE,
+    ekstraRader: opp.metasvar.map((m) => [m.etikett, m.verdi]),
+  });
+}
+
+/**
+ * Varselet til Pål for et LinkedIn-lead. Bestilt 09.11.2026.
+ *
+ * SAMME MAL SOM META, OG DET ER HELE POENGET — samme grunn som sto da
+ * Meta-varselet ble vårt i stedet for HubSpots: Pål skal lese ett format,
+ * ikke tre. Forskjellen er emnet og de to radene skjemaet gir.
+ *
+ * DE TO RADENE STÅR ALLTID, OGSÅ TOMME. Meta-svarene faller ut når de er
+ * tomme, fordi de varierer fra skjema til skjema. Disse to spør LinkedIn-
+ * skjemaet om hver gang, og en tom rad er da en opplysning: feltet ble
+ * ikke besvart. Bestillingen sier det rett ut — «felt uten verdi vises
+ * som «–»».
+ *
+ * «ET ENKELTPROSJEKT» ENDRER INGENTING I E-POSTEN. Leadet får e-post 1
+ * som alle andre, og svaret står i varselet så Pål ser det før han ringer.
+ * Bestilt slik 09.11.2026.
+ */
+export async function sendLinkedinVarsel(opp: {
+  navn: string;
+  epost: string;
+  bedrift: string;
+  telefon: string;
+  /** `jobtitle` fra LinkedIn-profilen. */
+  stillingstittel: string;
+  /** Svaret på «Hva er mest aktuelt for dere?». */
+  aktuelt: string;
+  behov?: string;
+  nettside?: string;
+  moteBooket?: Date | null;
+  sendt?: Date;
+}): Promise<void> {
+  await sendKanalvarsel({
+    ...opp,
+    kanal: "LinkedIn",
+    emne: LINKEDIN_VARSEL_EMNE,
+    ekstraRader: [
+      ["Stillingstittel", opp.stillingstittel],
+      ["Hva er mest aktuelt for dere?", opp.aktuelt],
+    ],
+  });
+}
+
+/**
+ * Det Meta- og LinkedIn-varselet har felles, som er alt annet enn emnet
+ * og radene.
+ *
+ * SKILT UT 09.11.2026 DA LINKEDIN KOM TIL. To kopier av den samme
+ * oppsettsjobben er to steder «har allerede booket»-linja kan bli
+ * forskjellig, og det er nettopp den linja som avgjør om Pål ringer.
+ */
+async function sendKanalvarsel(opp: {
+  navn: string;
+  epost: string;
+  bedrift: string;
+  telefon: string;
+  kanal: string;
+  emne: string;
+  ekstraRader: [string, string][];
+  behov?: string;
+  nettside?: string;
+  moteBooket?: Date | null;
+  sendt?: Date;
+  usikker?: string;
+}): Promise<void> {
   const lead: Lead = {
     navn: opp.navn,
     epost: opp.epost,
     bedrift: opp.bedrift,
     telefon: opp.telefon,
     melding: opp.behov?.trim() ?? "",
-    side: "Meta",
+    side: opp.kanal,
     nettside: opp.nettside?.trim() ?? "",
     nettsideUtledet: false,
-    kilde: "Meta",
+    kilde: opp.kanal,
   };
 
   const { tekst, html } = varsel(lead, opp.sendt ?? new Date(), false, {
-    ekstraRader: opp.metasvar.map((m) => [m.etikett, m.verdi]),
+    ekstraRader: opp.ekstraRader,
     /*
       RADENE SKJULES BARE NÅR DE ER TOMME. v2-skjemaet spurte ikke om
       behov eller nettside, og da er en rad som alltid står tom en rad Pål
@@ -690,16 +768,13 @@ export async function sendMetaVarsel(opp: {
   try {
     await send({
       til: MOTTAKER,
-      emne: varselEmne(
-        opp.usikker ? META_USIKKER_EMNE : META_VARSEL_EMNE,
-        lead,
-      ),
+      emne: varselEmne(opp.emne, lead),
       tekst,
       html,
       svarTil: opp.epost,
     });
   } catch (feil) {
-    console.error("META-LEADVARSEL FEILET", {
+    console.error(`${opp.kanal.toUpperCase()}-LEADVARSEL FEILET`, {
       navn: opp.navn,
       epost: opp.epost,
       feil,

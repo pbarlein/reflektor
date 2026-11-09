@@ -1,5 +1,6 @@
 import { harSvarITrad, sendGmail, harGmail } from "./gmail";
 import {
+  AKTUELTFELT,
   arkiverAvtale,
   AVBRUTT_FELT,
   avtalerFor,
@@ -31,7 +32,7 @@ import {
   type Leadkontakt,
   type Stadiekart,
 } from "./hubspotcrm";
-import { sendMetaVarsel, sendMoteVarsel } from "./lead";
+import { sendLinkedinVarsel, sendMetaVarsel, sendMoteVarsel } from "./lead";
 import { filtrer, type Utfall as Filterutfall } from "./leadfilter";
 import { brregTreff, domeneSvarer, harMx } from "./leadfilteroppslag";
 import {
@@ -44,6 +45,8 @@ import { epostdomene } from "./spam";
 import {
   epost1,
   epost2,
+  erAnnonselead,
+  type Leadkilde,
   leadkilde,
   paaminnelseStoppet,
   sammePerson,
@@ -102,9 +105,7 @@ function booketAnnetSted(
   k: Leadkontakt,
   booket: Leadkontakt[],
 ): Leadkontakt | null {
-  return (
-    booket.find((b) => b.moteBooket && sammePerson(k, b)) ?? null
-  );
+  return booket.find((b) => b.moteBooket && sammePerson(k, b)) ?? null;
 }
 
 function somKandidat(
@@ -115,6 +116,7 @@ function somKandidat(
     epost: k.epost,
     lifecycle: k.lifecycle,
     hendelse: k.hendelse,
+    annonsenettverk: k.annonsenettverk,
     konvertert: k.konvertert,
     booketAnnetSted: opp.dublett ?? false,
     epost1Sendt: k.epost1Sendt,
@@ -124,6 +126,75 @@ function somKandidat(
     dealstadier: opp.dealstadier ?? [],
     harSvart: opp.harSvart ?? null,
   };
+}
+
+/**
+ * Kilden til en kontakt, med nettverket som tiebreaker.
+ *
+ * ÉN FUNKSJON FORDI SPØRSMÅLET STILLES FEM STEDER i denne fila. Her sto
+ * `leadkilde(k.hendelse)` fem ganger, og fra 09.11.2026 har kallet et
+ * argument til — fem steder er fem sjanser til å glemme det, og den som
+ * glemmes behandler et LinkedIn-lead som «annet» uten å si fra.
+ */
+function kildenTil(k: Leadkontakt): Leadkilde {
+  return leadkilde(k.hendelse, { annonsenettverk: k.annonsenettverk });
+}
+
+/**
+ * Varselet til Pål for et annonselead, uansett nettverk.
+ *
+ * SAMME FELTER UT AV KONTAKTEN, to ulike maler inn. Meta-svarene og
+ * LinkedIn-radene er det eneste som skiller dem; alt om booking,
+ * oppfølging og knapper er felles og bor i lib/lead.ts.
+ */
+async function annonsevarsel(
+  k: Leadkontakt,
+  kilde: Leadkilde,
+  ekstra: { moteBooket?: Date | null; usikker?: string } = {},
+): Promise<void> {
+  const felles = {
+    navn: k.navn,
+    epost: k.epost,
+    bedrift: k.bedrift,
+    telefon: k.telefon,
+    behov: k.behov,
+    nettside: k.nettside,
+    moteBooket: ekstra.moteBooket ?? null,
+  };
+
+  if (kilde === "linkedin") {
+    advarOmTomtAktuelt(k);
+    await sendLinkedinVarsel({
+      ...felles,
+      stillingstittel: k.stillingstittel,
+      aktuelt: k.aktuelt,
+    });
+    return;
+  }
+
+  await sendMetaVarsel({
+    ...felles,
+    metasvar: k.metasvar,
+    ...(ekstra.usikker ? { usikker: ekstra.usikker } : {}),
+  });
+}
+
+/**
+ * Sier fra hvis LinkedIn-skjemaets flervalg står tomt.
+ *
+ * FELTNAVNET ER IKKE BEKREFTET. Egenskapen opprettes av HubSpot først når
+ * det første leadet synkes, og kampanjen startet 10.11.2026 — altså er
+ * kandidatene i `AKTUELTFELT` utledet, ikke lest. Står svaret tomt på et
+ * ekte lead, er det nesten alltid fordi navnet er et annet, og da skal det
+ * stå i loggen med én gang i stedet for å se ut som at leadet lot være å
+ * svare.
+ */
+function advarOmTomtAktuelt(k: Leadkontakt): void {
+  if (k.aktuelt.trim()) return;
+  console.warn(
+    `[leadepost] LinkedIn-lead ${k.epost} uten svar på «Hva er mest aktuelt for dere?». ` +
+      `Er feltnavnet et annet enn ${AKTUELTFELT.join(", ")}? Se AKTUELTFELT i lib/hubspotcrm.ts.`,
+  );
 }
 
 /** Datoen på et booket møte, eller null hvis feltet er tomt eller rart. */
@@ -145,26 +216,26 @@ function moteDato(verdi: string): Date | null {
  * for denne kontakten. Det er også feltet Cowork satte for hånd på de to
  * kontaktene 04.10.2026.
  */
-async function metavarselForBooket(
+async function annonsevarselForBooket(
   k: Leadkontakt,
+  kilde: Leadkilde,
   mote: Date,
 ): Promise<Utfall> {
   try {
-    await sendMetaVarsel({
-      navn: k.navn,
-      epost: k.epost,
-      bedrift: k.bedrift,
-      telefon: k.telefon,
-      metasvar: k.metasvar,
-      behov: k.behov,
-      nettside: k.nettside,
-      moteBooket: mote,
-    });
+    await annonsevarsel(k, kilde, { moteBooket: mote });
   } catch {
     /* Logget i lead.ts. Umerket kontakt betyr nytt forsøk om fem minutter. */
     return "feilet";
   }
   await merkSendt(k.id, { [AVBRUTT_FELT]: "true" });
+
+  /*
+    AVTALEN OGSÅ HER, OG DET ER DEN VIKTIGSTE AV DEM. Leadet har et møte i
+    kalenderen; mangler avtalen, står det beste leadet i måneden ingen
+    steder i pipelinen. For Meta lager HubSpots arbeidsflyt den; for
+    LinkedIn er det vår.
+  */
+  if (kilde === "linkedin") await sikreLinkedinAvtale(k);
   return "hoppet-over";
 }
 
@@ -334,10 +405,7 @@ async function vurderSpam(k: Leadkontakt): Promise<Spamvurdering> {
  * etter planen. Den er dessuten borte for godt: søket finner den ikke
  * igjen neste kjøring.
  */
-async function stoppSomSpam(
-  k: Leadkontakt,
-  grunn: Spamgrunn,
-): Promise<Utfall> {
+async function stoppSomSpam(k: Leadkontakt, grunn: Spamgrunn): Promise<Utfall> {
   console.warn(
     `LEAD-EPOST HOPPET OVER (spam): ${k.epost} – ${spamtekst(grunn)}`,
   );
@@ -354,7 +422,7 @@ export async function sendEpost1(
   oppslag: Filteroppslag = EKTE_OPPSLAG,
 ): Promise<Utfall> {
   const dublett = booketAnnetSted(k, booket);
-  const kilde = leadkilde(k.hendelse);
+  const kilde = kildenTil(k);
 
   /*
     HAR PERSONEN BOOKET, SKAL HUN IKKE FÅ «BOOK HER». Det skjedde 04.10.2026:
@@ -362,12 +430,13 @@ export async function sendEpost1(
     begge kontaktene 06:40. Varselet sier det i stedet, og kontakten merkes
     så ingen av de to e-postene går ut senere.
   */
-  const mote = moteDato(k.moteBooket) ?? (dublett ? moteDato(dublett.moteBooket) : null);
+  const mote =
+    moteDato(k.moteBooket) ?? (dublett ? moteDato(dublett.moteBooket) : null);
   if (mote && !k.epost1Sendt && k.avbrutt !== "true") {
     console.info(
       `[leadepost] ${k.epost} har booket møte${dublett ? ` (som ${dublett.epost})` : ""}. Ingen e-post 1.`,
     );
-    if (kilde === "meta") return metavarselForBooket(k, mote);
+    if (erAnnonselead(kilde)) return annonsevarselForBooket(k, kilde, mote);
     await merkSendt(k.id, { [AVBRUTT_FELT]: "true" });
     return "hoppet-over";
   }
@@ -380,6 +449,14 @@ export async function sendEpost1(
     LEADFILTERET FØR ALT ANNET SOM KOSTER. Bestilt 12.10.2026, og det
     gjelder BARE META-LEADS: nettsideleads er filtrert i skjemaruta, der
     utfallet er en advarsel og ikke en avvisning — se /api/skjema.
+
+    LINKEDIN GÅR IKKE GJENNOM DET, og det er et valg, ikke en forglemmelse.
+    Bestillingen 09.11.2026 ba om samme ventetid, dublettsjekk, hilsen og
+    sendetid som Meta — den nevnte ikke filteret. Filteret er bygget mot
+    åtte konkrete spam-leads fra Meta i oktober, der navn og firma var
+    skrevet av hvem som helst. LinkedIn fyller skjemaet fra profilen, og å
+    slippe de reglene løs på en kanal de ikke er målt mot ville avvist ekte
+    leads uten at noen så det. Spam-sjekken under gjelder fortsatt alle.
 
     FØR SPAM-SJEKKEN, fordi dette er den harde porten og den andre er
     siste sikkerhetsnett. Rekkefølgen er bestillingens.
@@ -492,21 +569,90 @@ export async function sendEpost1(
     varselet, skal ikke neste kjøring sende kunden e-posten på nytt for å
     få varselet ut.
   */
-  if (leadkilde(k.hendelse) === "meta") {
-    await sendMetaVarsel({
-      navn: k.navn,
-      epost: k.epost,
-      bedrift: k.bedrift,
-      telefon: k.telefon,
-      metasvar: k.metasvar,
-      behov: k.behov,
-      nettside: k.nettside,
-    }).catch(() => {
+  if (erAnnonselead(kilde)) {
+    await annonsevarsel(k, kilde).catch(() => {
       /* Logget i lead.ts. E-posten til kunden er sendt uansett. */
     });
   }
 
+  /*
+    AVTALEN FOR LINKEDIN-LEADS, bestilt 09.11.2026.
+
+    META FÅR SIN FRA HUBSPOT. Arbeidsflyten «Nytt lead – inbound» lager
+    kontakten og avtalen med Kilde = Meta før jobben vår ser leadet. For
+    LinkedIn finnes ingen slik arbeidsflyt, og bestillingen sa uttrykkelig
+    at arbeidsflytene ikke skal røres — så avtalen lages her.
+
+    BARE NÅR DET IKKE FINNES EN FRA FØR. Skulle noen sette opp en
+    arbeidsflyt for LinkedIn senere, skal den vinne; to avtaler på samme
+    lead er verre enn ingen.
+
+    ETTER E-POSTEN OG ETTER FILTERET. Her er leadet både spamsjekket og
+    bekreftet sendt til; en avtale opprettet før det ville vært en avtale
+    på hvert eneste søppel-lead.
+  */
+  if (kilde === "linkedin") await sikreLinkedinAvtale(k);
+
   return "sendt";
+}
+
+/**
+ * Avtalen et LinkedIn-lead skal ha i «Reflektor – salg».
+ *
+ * NAVNET FØLGER DET HUBSPOT ALT LAGER for Meta, lest ut av portalen
+ * 09.11.2026: «Gro Worren – Klosteret Restaurant (Meta)». Samme form med
+ * LinkedIn i parentesen, så de to kanalene står side om side i pipelinen
+ * og ikke i hver sin form.
+ *
+ * STADIET ER «Interessert» (`appointmentscheduled`), som bestilt. Det er
+ * også stadiet alle nye leads havner i, og det eneste som ikke stopper
+ * påminnelsen — se `STOPPSTADIER`.
+ *
+ * KILDEN KAN FEILE, OG AVTALEN SKAL LIKEVEL BLI TIL. «LinkedIn» er ikke et
+ * av valgene på egenskapen `kilde` i dag (kontrollert 09.11.2026: Outbound
+ * – Impact Motion, Nettside, Meta, Henvisning, Eksisterende kunde, Egen
+ * outreach, Inbound e-post, Ukjent). Valg legges inn i HubSpot av et
+ * menneske, ikke av koden — så inntil noen gjør det, logges feilen og
+ * avtalen opprettes uten kilde. En avtale uten kilde kan rettes på ett
+ * sekund; et lead uten avtale forsvinner.
+ */
+export const LINKEDIN_KILDE = "LinkedIn";
+
+async function sikreLinkedinAvtale(k: Leadkontakt): Promise<void> {
+  const fins = await avtalerFor(k.id);
+  if (fins.length) {
+    console.info(
+      `[avtale] ${k.epost} har alt ${fins.length} avtale(r). Lager ingen ny.`,
+    );
+    return;
+  }
+
+  const navn = [k.navn.trim(), k.bedrift.trim()].filter(Boolean).join(" – ");
+  const id = await opprettAvtale({
+    navn: `${navn || k.epost} (${LINKEDIN_KILDE})`,
+    stadium: "appointmentscheduled",
+    pipeline: "default",
+    kilde: LINKEDIN_KILDE,
+    kontaktId: k.id,
+  });
+
+  if (id) return;
+
+  /*
+    ANDRE FORSØK UTEN KILDE. Den klart mest sannsynlige grunnen til at det
+    første feilet, er at «LinkedIn» ikke finnes som valg ennå.
+  */
+  console.warn(
+    `[avtale] Fikk ikke opprettet LinkedIn-avtale for ${k.epost} med kilde «${LINKEDIN_KILDE}». ` +
+      `Er verdien lagt inn i egenskapen «Kilde» i HubSpot? Prøver uten kilde.`,
+  );
+  await opprettAvtale({
+    navn: `${navn || k.epost} (${LINKEDIN_KILDE})`,
+    stadium: "appointmentscheduled",
+    pipeline: "default",
+    kilde: "",
+    kontaktId: k.id,
+  });
 }
 
 export async function sendEpost2(
@@ -532,7 +678,7 @@ export async function sendEpost2(
     LEADFILTERET GJELDER OGSÅ PÅMINNELSEN. Et Meta-lead som slapp gjennom
     før filteret fantes, skal ikke få påminnelsen i morgen.
   */
-  if (leadkilde(k.hendelse) === "meta") {
+  if (kildenTil(k) === "meta") {
     const dom = await filtrerLead(k, oppslag);
     if (dom.utfall !== "godkjent") {
       console.warn(
@@ -576,9 +722,7 @@ export async function sendEpost2(
     );
   }
 
-  if (
-    !skalHaEpost2(somKandidat(k, { dealstadier: stadier, harSvart }), na)
-  ) {
+  if (!skalHaEpost2(somKandidat(k, { dealstadier: stadier, harSvart }), na)) {
     return "hoppet-over";
   }
 
@@ -684,7 +828,8 @@ async function kanArkiveres(
   if (ordre === undefined || ordre > maalOrdre) return false;
 
   const laget = new Date(a.opprettet).getTime();
-  if (Number.isNaN(laget) || na.getTime() - laget > ARKIVGRENSE_MS) return false;
+  if (Number.isNaN(laget) || na.getTime() - laget > ARKIVGRENSE_MS)
+    return false;
 
   /* `null` betyr at vi ikke fikk sjekket. Da står avtalen. */
   return (await harEgenAktivitet(a.id, a.opprettet)) === false;
@@ -986,7 +1131,9 @@ export async function kjorLeadepostjobb(na = new Date()): Promise<Jobbsvar> {
   };
 
   if (!harToken()) {
-    console.error("[leadepost] Mangler HubSpot-token. Jobben gjorde ingenting.");
+    console.error(
+      "[leadepost] Mangler HubSpot-token. Jobben gjorde ingenting.",
+    );
     return svar;
   }
 

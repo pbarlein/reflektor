@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { META_VARSEL_EMNE, sendMetaVarsel, varsel } from "@/lib/lead.ts";
+import {
+  LINKEDIN_VARSEL_EMNE,
+  META_VARSEL_EMNE,
+  sendLinkedinVarsel,
+  sendMetaVarsel,
+  varsel,
+} from "@/lib/lead.ts";
 
 /**
  * Varselet til Pål for et Meta-lead.
@@ -39,7 +45,10 @@ async function medResend(
   process.env.RESEND_API_KEY = "test";
   /* Uten hemmeligheten lages ingen signert avbryt-lenke. */
   process.env.PAAMINNELSE_HEMMELIGHET = "testhemmelighet-nok-lang";
-  globalThis.fetch = (async (inn: string | URL | Request, init?: RequestInit) => {
+  globalThis.fetch = (async (
+    inn: string | URL | Request,
+    init?: RequestInit,
+  ) => {
     const url = String(inn instanceof Request ? inn.url : inn);
     if (url.includes("api.resend.com")) {
       sendt.push(JSON.parse(String(init?.body)) as Record<string, unknown>);
@@ -98,7 +107,10 @@ test("Meta-varselet har samme felter og knapper som nettsidevarselet", async () 
   assert.ok(!tekst.includes("_vil_vite_"));
 
   /* Eksakt dato, ikke «neste hverdag kl. 09:00». */
-  assert.ok(tekst.includes("Påminnelse sendes mandag 5. oktober kl. 09:00"), tekst);
+  assert.ok(
+    tekst.includes("Påminnelse sendes mandag 5. oktober kl. 09:00"),
+    tekst,
+  );
   assert.ok(tekst.includes("Ring ASAP for å booke møte personlig."));
 
   const html = String(e.html);
@@ -243,7 +255,11 @@ async function medAlt(
       oppslag?: typeof OPPSLAG,
     ) => Promise<string>,
   ) => Promise<void>,
-): Promise<{ gmail: number; resend: Record<string, unknown>[]; hubspot: string[] }> {
+): Promise<{
+  gmail: number;
+  resend: Record<string, unknown>[];
+  hubspot: string[];
+}> {
   const opprinnelig = globalThis.fetch;
   const for_ = { ...process.env };
   const logg = console.info;
@@ -267,7 +283,10 @@ async function medAlt(
   };
 
   console.info = () => {};
-  globalThis.fetch = (async (inn: string | URL | Request, init?: RequestInit) => {
+  globalThis.fetch = (async (
+    inn: string | URL | Request,
+    init?: RequestInit,
+  ) => {
     const url = String(inn instanceof Request ? inn.url : inn);
     if (url.includes("oauth2.googleapis.com")) {
       return Response.json({ access_token: "nøkkel" });
@@ -277,7 +296,9 @@ async function medAlt(
       return Response.json({ threadId: "t1" });
     }
     if (url.includes("api.resend.com")) {
-      telling.resend.push(JSON.parse(String(init?.body)) as Record<string, unknown>);
+      telling.resend.push(
+        JSON.parse(String(init?.body)) as Record<string, unknown>,
+      );
       return Response.json({ id: "1" });
     }
     if (url.includes("api.hubapi.com")) {
@@ -308,7 +329,11 @@ test("Meta-lead som booket ett minutt senere: ingen e-post til noen av dem", asy
     );
     /* Bookingkontakten selv: møtet står på henne. */
     assert.equal(
-      await sendEpost1(BOOKINGKONTAKT, new Date("2026-10-04T06:42:00Z"), booket),
+      await sendEpost1(
+        BOOKINGKONTAKT,
+        new Date("2026-10-04T06:42:00Z"),
+        booket,
+      ),
       "hoppet-over",
     );
   });
@@ -326,7 +351,10 @@ test("Meta-lead som booket ett minutt senere: ingen e-post til noen av dem", asy
   assert.ok(!tekst.includes("Påminnelse sendes"));
 
   /* Begge kontaktene merkes, så neste kjøring ikke gjør det om igjen. */
-  assert.equal(t.hubspot.filter((k) => k.includes("paminnelse_avbrutt")).length, 2);
+  assert.equal(
+    t.hubspot.filter((k) => k.includes("paminnelse_avbrutt")).length,
+    2,
+  );
 });
 
 /** Uten bookingen skal Meta-leadet få presentasjonen som normalt. */
@@ -375,4 +403,296 @@ test("en kontakt opprettet av en booking får ingen e-post", async () => {
     );
   });
   assert.equal(t.gmail, 0);
+});
+
+/* ───────────────── LINKEDIN-VARSELET (09.11.2026) ───────────────────── */
+
+/**
+ * Tredje kanal, samme mal. Bestilt av Pål 09.11.2026 da LinkedIn-kampanjen
+ * med lead gen-skjema startet.
+ *
+ * DET SOM ER NYTT ER TO RADER OG ETT EMNE. Alt annet — knappene,
+ * påminnelseslinja, «har allerede booket», Reply-To — skal være nøyaktig
+ * det Meta-varselet har, og det er det testene her er til for: de spør om
+ * de samme tingene som testen over, og de ville sagt fra hvis de to
+ * malene glir fra hverandre.
+ */
+
+const LINKEDIN = {
+  navn: "Ingrid Solheim",
+  epost: "ingrid@soulcake.no",
+  bedrift: "Soulcake AS",
+  telefon: "+4790000001",
+  stillingstittel: "Markedssjef",
+  aktuelt: "Et abonnement (løpende innhold)",
+};
+
+test("LinkedIn-varselet har sitt eget emne og de to radene fra skjemaet", async () => {
+  const sendt = await medResend(async () => {
+    await sendLinkedinVarsel({
+      ...LINKEDIN,
+      sendt: new Date("2026-11-10T09:00:00Z"),
+    });
+  });
+
+  assert.equal(sendt.length, 1);
+  const e = sendt[0]!;
+  assert.ok(String(e.subject).startsWith(LINKEDIN_VARSEL_EMNE));
+  assert.equal(
+    e.subject,
+    "NYTT LEAD fra LinkedIn – Ingrid Solheim (Soulcake AS)",
+  );
+  assert.equal(e.reply_to, "ingrid@soulcake.no");
+
+  const tekst = String(e.text);
+  for (const felt of [
+    "Avsender:",
+    "Mobilnummer:",
+    "E-post:",
+    "Bedrift:",
+    "Stillingstittel:",
+    "Hva er mest aktuelt for dere?:",
+  ]) {
+    assert.ok(tekst.includes(felt), `mangler ${felt}`);
+  }
+  assert.ok(tekst.includes("Markedssjef"));
+  assert.ok(tekst.includes("Et abonnement (løpende innhold)"));
+
+  /* Samme knapper og samme oppfølgingslinje som Meta. */
+  const html = String(e.html);
+  assert.ok(html.includes("Skriv til Ingrid"), "mangler skriv-knappen");
+  assert.ok(html.includes("Avbryt påminnelse"), "mangler avbryt-knappen");
+  assert.ok(tekst.includes("Påminnelse sendes"), tekst);
+  assert.ok(tekst.includes("Ring ASAP for å booke møte personlig."));
+
+  /* LinkedIn-skjemaet har verken nettside eller fritekst. */
+  assert.ok(!tekst.includes("Nettside:"));
+  assert.ok(!tekst.includes("Behov:"));
+});
+
+/**
+ * FELT UTEN VERDI VISES SOM «–», ordrett fra bestillingen. Meta-svarene
+ * faller ut når de er tomme fordi de varierer fra skjema til skjema; disse
+ * to spør LinkedIn-skjemaet om hver gang, og at de står tomme ER en
+ * opplysning.
+ */
+test("LinkedIn-rader uten verdi står som tankestrek", async () => {
+  const sendt = await medResend(async () => {
+    await sendLinkedinVarsel({ ...LINKEDIN, stillingstittel: "", aktuelt: "" });
+  });
+
+  const tekst = String(sendt[0]!.text);
+  assert.ok(tekst.includes("Stillingstittel: –"), tekst);
+  assert.ok(tekst.includes("Hva er mest aktuelt for dere?: –"), tekst);
+});
+
+/**
+ * «ET ENKELTPROSJEKT» ENDRER INGENTING I E-POSTEN TIL LEADET. Bestilt slik
+ * 09.11.2026: e-post 1 selger abonnementet som før, og svaret står i
+ * varselet så Pål ser det før han ringer.
+ */
+test("svarer leadet enkeltprosjekt, står det i varselet", async () => {
+  const sendt = await medResend(async () => {
+    await sendLinkedinVarsel({
+      ...LINKEDIN,
+      aktuelt: "Et enkeltprosjekt (film eller foto)",
+    });
+  });
+
+  assert.ok(
+    String(sendt[0]!.text).includes("Et enkeltprosjekt (film eller foto)"),
+  );
+  /* Emnet er det samme — dette er ikke et eget varsel. */
+  assert.ok(String(sendt[0]!.subject).startsWith(LINKEDIN_VARSEL_EMNE));
+});
+
+test("har LinkedIn-leadet booket, sier varselet det i stedet", async () => {
+  const sendt = await medResend(async () => {
+    await sendLinkedinVarsel({
+      ...LINKEDIN,
+      moteBooket: new Date("2026-11-20T09:00:00Z"),
+    });
+  });
+
+  const tekst = String(sendt[0]!.text);
+  assert.ok(tekst.includes("Har allerede booket møte"), tekst);
+  assert.ok(!tekst.includes("Påminnelse sendes"));
+  assert.ok(!tekst.includes("Ring ASAP"));
+  assert.ok(!String(sendt[0]!.html).includes("Avbryt påminnelse"));
+});
+
+/** Meta-varselet skal være uendret av at LinkedIn fikk sitt. */
+test("Meta-varselet nevner ikke LinkedIn", async () => {
+  const sendt = await medResend(async () => {
+    await sendMetaVarsel({ ...META, sendt: new Date("2026-10-04T06:41:00Z") });
+  });
+  const e = sendt[0]!;
+  assert.ok(!String(e.subject).includes("LinkedIn"));
+  assert.ok(!String(e.text).includes("Stillingstittel"));
+  assert.ok(!String(e.text).includes("Hva er mest aktuelt"));
+});
+
+/* ─────────── HELE VEIEN FOR ET LINKEDIN-LEAD (09.11.2026) ───────────── */
+
+/**
+ * Kontakten slik den vil se ut når HubSpot har synket den fra LinkedIn.
+ *
+ * FELTENE ER FRA SKJEMAET Cowork satte opp (Campaign Manager 509661654,
+ * skjema 1028433440): navn, e-post, telefon, bedrift, stillingstittel og
+ * ett flervalg. `annonsenettverk` er «linkedin» etter mønsteret fra de 45
+ * Meta-leadene, som alle har «facebook» der.
+ */
+const LINKEDINKONTAKT = {
+  ...METAKONTAKT,
+  id: "900000000001",
+  epost: "ingrid@soulcake.no",
+  navn: "Ingrid Solheim",
+  bedrift: "Soulcake AS",
+  telefon: "+4790000001",
+  hendelse:
+    "LinkedIn Lead Ads: Forslag SoMe-abonnement – Soulcake-omtale – nov 2026",
+  konvertert: "2026-11-10T09:00:00Z",
+  annonsenettverk: "linkedin",
+  stillingstittel: "Markedssjef",
+  aktuelt: "Et abonnement (løpende innhold)",
+  metasvar: [],
+};
+
+const TI_NOV = new Date("2026-11-10T09:05:00Z");
+
+test("LinkedIn-lead får e-post 1, varsel og avtale", async () => {
+  const t = await medAlt(async (sendEpost1) => {
+    assert.equal(
+      await sendEpost1(LINKEDINKONTAKT, TI_NOV, [], OPPSLAG),
+      "sendt",
+    );
+  });
+
+  assert.equal(t.gmail, 1, "leadet skulle fått e-post 1");
+
+  assert.equal(t.resend.length, 1);
+  const varselet = t.resend[0]!;
+  assert.ok(String(varselet.subject).startsWith("NYTT LEAD fra LinkedIn"));
+  assert.ok(String(varselet.text).includes("Stillingstittel: Markedssjef"));
+  assert.ok(
+    String(varselet.text).includes(
+      "Hva er mest aktuelt for dere?: Et abonnement (løpende innhold)",
+    ),
+  );
+
+  /*
+    AVTALEN LAGES AV OSS, ikke av en arbeidsflyt. Meta-leads får sin fra
+    HubSpot; for LinkedIn finnes ingen slik arbeidsflyt, og bestillingen
+    sa at arbeidsflytene ikke skal røres.
+  */
+  const avtale = t.hubspot.find((b) => b.includes('"dealstage"'));
+  assert.ok(avtale, "ingen avtale ble opprettet");
+  assert.ok(avtale.includes('"kilde":"LinkedIn"'), avtale);
+  assert.ok(avtale.includes('"dealstage":"appointmentscheduled"'), avtale);
+  assert.ok(avtale.includes('"pipeline":"default"'), avtale);
+  assert.ok(avtale.includes("Ingrid Solheim – Soulcake AS (LinkedIn)"), avtale);
+});
+
+/**
+ * VENTETIDEN GJELDER OGSÅ HER. Samme tre minutter som Meta, bestilt
+ * 09.11.2026 — og grunnen er den samme: bookingen må rekke å bli synlig.
+ */
+test("LinkedIn-lead under tre minutter gammelt venter", async () => {
+  const t = await medAlt(async (sendEpost1) => {
+    assert.equal(
+      await sendEpost1(
+        LINKEDINKONTAKT,
+        new Date("2026-11-10T09:01:00Z"),
+        [],
+        OPPSLAG,
+      ),
+      "hoppet-over",
+    );
+  });
+  assert.equal(t.gmail, 0);
+  assert.equal(t.resend.length, 0);
+});
+
+/** Har LinkedIn-leadet booket, går varselet og ingen e-post. */
+test("LinkedIn-lead som har booket får varsel, ikke e-post", async () => {
+  const t = await medAlt(async (sendEpost1) => {
+    assert.equal(
+      await sendEpost1(
+        { ...LINKEDINKONTAKT, moteBooket: "2026-11-20T09:00:00Z" },
+        TI_NOV,
+        [],
+        OPPSLAG,
+      ),
+      "hoppet-over",
+    );
+  });
+
+  assert.equal(t.gmail, 0);
+  assert.equal(t.resend.length, 1);
+  assert.ok(String(t.resend[0]!.subject).startsWith("NYTT LEAD fra LinkedIn"));
+  assert.ok(String(t.resend[0]!.text).includes("Har allerede booket møte"));
+  assert.ok(
+    t.hubspot.some((k) => k.includes("paminnelse_avbrutt")),
+    "kontakten skulle vært merket",
+  );
+
+  /*
+    OG AVTALEN. Leadet har et møte i kalenderen; uten avtalen står det
+    beste leadet i måneden ingen steder i pipelinen.
+  */
+  const avtale = t.hubspot.find((b) => b.includes('"dealstage"'));
+  assert.ok(avtale, "den bookede skulle fått avtale");
+  assert.ok(avtale.includes('"kilde":"LinkedIn"'), avtale);
+});
+
+/**
+ * META- OG NETTSIDEFLYTEN SKAL VÆRE UENDRET. Det er den ene tingen denne
+ * bestillingen ikke hadde råd til å ødelegge: Meta er kanalen som faktisk
+ * leverer leads i dag.
+ */
+test("Meta-leadet går som før, og får ingen avtale fra oss", async () => {
+  const t = await medAlt(async (sendEpost1) => {
+    assert.equal(
+      await sendEpost1(
+        METAKONTAKT,
+        new Date("2026-10-04T06:42:00Z"),
+        [],
+        OPPSLAG,
+      ),
+      "sendt",
+    );
+  });
+
+  assert.equal(t.gmail, 1);
+  assert.equal(t.resend.length, 1);
+  assert.ok(String(t.resend[0]!.subject).startsWith("NYTT LEAD fra Meta"));
+  assert.ok(
+    !t.hubspot.some((b) => b.includes('"dealstage"')),
+    "vi skal ikke opprette avtale for Meta — det gjør HubSpot",
+  );
+});
+
+/**
+ * EN BOOKING ER IKKE ET SKJEMALEAD, uansett nettverk. Nettverksfeltet er
+ * siste utvei i gjenkjenningen, og det skal aldri gjøre en møtelenke om
+ * til et lead som får presentasjonen.
+ */
+test("en LinkedIn-kontakt opprettet av en booking får ingen e-post", async () => {
+  const t = await medAlt(async (sendEpost1) => {
+    assert.equal(
+      await sendEpost1(
+        {
+          ...LINKEDINKONTAKT,
+          hendelse: "Meetings Link: paal-barlein/intro",
+          moteBooket: "",
+        },
+        TI_NOV,
+        [],
+        OPPSLAG,
+      ),
+      "hoppet-over",
+    );
+  });
+  assert.equal(t.gmail, 0);
+  assert.equal(t.resend.length, 0);
 });

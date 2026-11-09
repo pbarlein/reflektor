@@ -49,8 +49,14 @@ test("alt annet regnes som inbound", () => {
 
 /** Store og små bokstaver og en ekstra skråstrek skal ikke avgjøre noe. */
 test("sluggen leses tålelig", () => {
-  assert.equal(bookingslug("Meetings Link: reflektor/outbound"), "reflektor/outbound");
-  assert.equal(bookingslug("MEETINGS LINK:  /reflektor/outbound/ "), "reflektor/outbound");
+  assert.equal(
+    bookingslug("Meetings Link: reflektor/outbound"),
+    "reflektor/outbound",
+  );
+  assert.equal(
+    bookingslug("MEETINGS LINK:  /reflektor/outbound/ "),
+    "reflektor/outbound",
+  );
   assert.equal(bookingslug("reflektor.no – kontaktskjema"), "");
 });
 
@@ -93,6 +99,9 @@ const kontakt = (endringer: Record<string, unknown> = {}) => ({
   bookingKilde: "",
   bookingMedium: "",
   analysekilde: "",
+  annonsenettverk: "",
+  stillingstittel: "",
+  aktuelt: "",
   konvertert: "2026-10-06T09:00:00Z",
   epost1Sendt: "",
   epost2Sendt: "",
@@ -141,7 +150,10 @@ async function medHubspot(
   console.info = () => {};
   console.error = () => {};
 
-  globalThis.fetch = (async (inn: string | URL | Request, init?: RequestInit) => {
+  globalThis.fetch = (async (
+    inn: string | URL | Request,
+    init?: RequestInit,
+  ) => {
     const url = String(inn instanceof Request ? inn.url : inn);
     const metode = init?.method ?? "GET";
     const kropp = init?.body ? JSON.parse(String(init.body)) : undefined;
@@ -172,7 +184,9 @@ async function medHubspot(
     }
 
     if (url.includes("/objects/deals/batch/read")) {
-      const bedt = (kropp as { inputs: { id: string }[] }).inputs.map((i) => i.id);
+      const bedt = (kropp as { inputs: { id: string }[] }).inputs.map(
+        (i) => i.id,
+      );
       return Response.json({
         results: Object.values(oppsett.avtaler)
           .flat()
@@ -213,11 +227,13 @@ async function medHubspot(
     const avtale = url.match(/\/objects\/deals\/(\d+)$/);
     if (avtale && metode === "PATCH") {
       const p = (kropp as { properties: Record<string, string> }).properties;
-      if (p.dealstage) flyttet.push({ avtale: avtale[1]!, stadium: p.dealstage });
+      if (p.dealstage)
+        flyttet.push({ avtale: avtale[1]!, stadium: p.dealstage });
       if (p.kilde) kilder.push({ avtale: avtale[1]!, kilde: p.kilde });
       return Response.json({ id: avtale[1] });
     }
-    if (avtale && metode === "DELETE") return new Response(null, { status: 204 });
+    if (avtale && metode === "DELETE")
+      return new Response(null, { status: 204 });
 
     const patchKontakt = url.match(/\/objects\/contacts\/(\d+)$/);
     if (patchKontakt && metode === "PATCH") {
@@ -249,10 +265,7 @@ async function medHubspot(
 
   try {
     const { flyttAvtalerForBookede } = await import("@/lib/leadutsending.ts");
-    const telling = await flyttAvtalerForBookede(
-      booket as never,
-      NA,
-    );
+    const telling = await flyttAvtalerForBookede(booket as never, NA);
     return { telling, flyttet, kilder, opprettet, koblet, kontaktfelt, emner };
   } finally {
     globalThis.fetch = opprinnelig;
@@ -264,7 +277,11 @@ async function medHubspot(
 
 test("outbound-booking med avtale i Interessert: flyttes og får kilde", async () => {
   const { telling, flyttet, kilder } = await medHubspot(
-    { avtaler: { "900100100": [{ id: "9001", stadium: "appointmentscheduled" }] } },
+    {
+      avtaler: {
+        "900100100": [{ id: "9001", stadium: "appointmentscheduled" }],
+      },
+    },
     [kontakt()],
   );
 
@@ -307,7 +324,11 @@ test("outbound-booking uten avtale: ny avtale i Møte booket", async () => {
  */
 test("outbound-booking med avtale i Tilbud sendt: ingenting skjer", async () => {
   const { telling, flyttet, kilder, opprettet } = await medHubspot(
-    { avtaler: { "900100100": [{ id: "9001", stadium: "decisionmakerboughtin" }] } },
+    {
+      avtaler: {
+        "900100100": [{ id: "9001", stadium: "decisionmakerboughtin" }],
+      },
+    },
     [kontakt()],
   );
 
@@ -340,7 +361,11 @@ test("outbound-booking på en sak som hviler eller er tapt: ny avtale", async ()
  */
 test("inbound-booking: flyttes som før, kilden røres ikke", async () => {
   const { telling, flyttet, kilder, opprettet, kontaktfelt } = await medHubspot(
-    { avtaler: { "900100100": [{ id: "9001", stadium: "appointmentscheduled" }] } },
+    {
+      avtaler: {
+        "900100100": [{ id: "9001", stadium: "appointmentscheduled" }],
+      },
+    },
     [kontakt({ hendelse: INBOUND })],
   );
 
@@ -408,7 +433,11 @@ test("samme selskap med en annen e-post gir ingen avtale nummer to", async () =>
     [booker],
   );
 
-  assert.equal(telling.opprettet, 0, "det skulle ikke blitt laget en ny avtale");
+  assert.equal(
+    telling.opprettet,
+    0,
+    "det skulle ikke blitt laget en ny avtale",
+  );
   assert.deepEqual(opprettet, []);
   assert.deepEqual(flyttet, [
     { avtale: "8001", stadium: "presentationscheduled" },
@@ -422,7 +451,11 @@ test("samme selskap med en annen e-post gir ingen avtale nummer to", async () =>
  */
 test("outbound-booking slår av oppfølgings-e-postene", async () => {
   const { kontaktfelt } = await medHubspot(
-    { avtaler: { "900100100": [{ id: "9001", stadium: "appointmentscheduled" }] } },
+    {
+      avtaler: {
+        "900100100": [{ id: "9001", stadium: "appointmentscheduled" }],
+      },
+    },
     [kontakt()],
   );
 
@@ -434,7 +467,11 @@ test("outbound-booking slår av oppfølgings-e-postene", async () => {
 /** Er den alt slått av, skrives den ikke på nytt hvert femte minutt. */
 test("flagget skrives ikke om igjen når det alt står", async () => {
   const { kontaktfelt } = await medHubspot(
-    { avtaler: { "900100100": [{ id: "9001", stadium: "appointmentscheduled" }] } },
+    {
+      avtaler: {
+        "900100100": [{ id: "9001", stadium: "appointmentscheduled" }],
+      },
+    },
     [kontakt({ avbrutt: "true" })],
   );
 
@@ -443,10 +480,9 @@ test("flagget skrives ikke om igjen når det alt står", async () => {
 
 /** Feiler opprettelsen, telles den som en feil og resten går videre. */
 test("en avtale som ikke lot seg opprette telles som feil", async () => {
-  const { telling } = await medHubspot(
-    { avtaler: {}, opprettStatus: 403 },
-    [kontakt()],
-  );
+  const { telling } = await medHubspot({ avtaler: {}, opprettStatus: 403 }, [
+    kontakt(),
+  ]);
 
   assert.equal(telling.opprettet, 0);
   assert.equal(telling.feilet, 1);
@@ -471,6 +507,9 @@ test("emnet sier gruppe og kanal", () => {
     bookingKilde: "",
     bookingMedium: "",
     analysekilde: "",
+    annonsenettverk: "",
+    stillingstittel: "",
+    aktuelt: "",
     ...endringer,
   });
 
@@ -555,7 +594,11 @@ test("Facebook Lead Ads alene er nok til å si Meta", () => {
  */
 test("varselet sendes med kanalen i emnet", async () => {
   const { telling, emner } = await medHubspot(
-    { avtaler: { "900100100": [{ id: "9001", stadium: "appointmentscheduled" }] } },
+    {
+      avtaler: {
+        "900100100": [{ id: "9001", stadium: "appointmentscheduled" }],
+      },
+    },
     [kontakt({ bookingKilde: "heyreach" })],
   );
 
@@ -578,7 +621,11 @@ test("en ny avtale for et outbound-møte varsles også", async () => {
 
 test("inbound-booking gir varsel med inbound i emnet", async () => {
   const { emner } = await medHubspot(
-    { avtaler: { "900100100": [{ id: "9001", stadium: "appointmentscheduled" }] } },
+    {
+      avtaler: {
+        "900100100": [{ id: "9001", stadium: "appointmentscheduled" }],
+      },
+    },
     [
       kontakt({
         hendelse: INBOUND,
@@ -599,7 +646,11 @@ test("inbound-booking gir varsel med inbound i emnet", async () => {
  */
 test("ingen varsel når avtalen alt står i Møte booket", async () => {
   const { telling, emner } = await medHubspot(
-    { avtaler: { "900100100": [{ id: "9001", stadium: "presentationscheduled" }] } },
+    {
+      avtaler: {
+        "900100100": [{ id: "9001", stadium: "presentationscheduled" }],
+      },
+    },
     [kontakt()],
   );
 
@@ -610,10 +661,66 @@ test("ingen varsel når avtalen alt står i Møte booket", async () => {
 /** Et møte på en sak i Tilbud sendt flytter ingenting, og varsler ikke. */
 test("ingen varsel når ingenting ble gjort", async () => {
   const { telling, emner } = await medHubspot(
-    { avtaler: { "900100100": [{ id: "9001", stadium: "decisionmakerboughtin" }] } },
+    {
+      avtaler: {
+        "900100100": [{ id: "9001", stadium: "decisionmakerboughtin" }],
+      },
+    },
     [kontakt()],
   );
 
   assert.equal(telling.varslet, 0);
   assert.deepEqual(emner, []);
+});
+
+/**
+ * LINKEDIN-LEAD SOM BOOKER MØTE (09.11.2026).
+ *
+ * `METAMARKOR` inneholder «paid_social», og HubSpot setter PAID_SOCIAL som
+ * kanal på et LinkedIn-lead ÒGSÅ. Uten en egen LinkedIn-blokk foran ville
+ * hvert møte booket av et LinkedIn-lead stått som «NYTT MØTE inbound Meta»
+ * fra 10.11.2026 — en feil ingen ville sett, siden emnet ser normalt ut.
+ */
+test("inbound møte fra et LinkedIn-lead sier LinkedIn, ikke Meta", () => {
+  const linkedin = motekanal({
+    hendelse: INBOUND,
+    forsteHendelse:
+      "LinkedIn Lead Ads: Forslag SoMe-abonnement – Soulcake-omtale – nov 2026",
+    bookingKilde: "",
+    bookingMedium: "",
+    analysekilde: "PAID_SOCIAL",
+    annonsenettverk: "linkedin",
+  });
+  assert.equal(moteEmne(linkedin), "NYTT MØTE inbound LinkedIn");
+
+  /* Nettverket alene holder, om konverteringen skulle hete noe annet. */
+  assert.equal(
+    moteEmne(
+      motekanal({
+        hendelse: INBOUND,
+        forsteHendelse: "Et navn vi ikke forutså",
+        bookingKilde: "",
+        bookingMedium: "",
+        analysekilde: "PAID_SOCIAL",
+        annonsenettverk: "linkedin",
+      }),
+    ),
+    "NYTT MØTE inbound LinkedIn",
+  );
+});
+
+/** Og Meta skal fortsatt bli Meta, uten nettverksfeltet i det hele tatt. */
+test("Meta-møtet er uendret av at LinkedIn kom til", () => {
+  assert.equal(
+    moteEmne(
+      motekanal({
+        hendelse: INBOUND,
+        forsteHendelse: "Facebook Lead Ads: Reflektor SoMe-abonnement okt 2026",
+        bookingKilde: "meta",
+        bookingMedium: "paid_social",
+        analysekilde: "PAID_SOCIAL",
+      }),
+    ),
+    "NYTT MØTE inbound Meta",
+  );
 });

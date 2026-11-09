@@ -262,7 +262,12 @@ test("et lead fra gammelt skjema avvises ikke for manglende behov", () => {
 
   /* Uten godkjenningstegn blir det usikker, og grunnen sier hvorfor. */
   const u = filtrer(
-    spor({ behov: "", behovFinnes: false, brregTreff: false, domeneSvarer: false }),
+    spor({
+      behov: "",
+      behovFinnes: false,
+      brregTreff: false,
+      domeneSvarer: false,
+    }),
   );
   assert.equal(u.utfall, "usikker");
   assert.match(u.grunn, /spør ikke om behovet/);
@@ -380,7 +385,10 @@ async function gjennomJobben(
   console.info = () => {};
   console.warn = () => {};
 
-  globalThis.fetch = (async (inn: string | URL | Request, init?: RequestInit) => {
+  globalThis.fetch = (async (
+    inn: string | URL | Request,
+    init?: RequestInit,
+  ) => {
     const url = String(inn instanceof Request ? inn.url : inn);
     const metode = init?.method ?? "GET";
 
@@ -474,6 +482,9 @@ const METALEAD = {
   bookingKilde: "",
   bookingMedium: "",
   analysekilde: "",
+  annonsenettverk: "",
+  stillingstittel: "",
+  aktuelt: "",
   konvertert: "2026-10-12T06:00:00Z",
   metasvar: [] as { etikett: string; verdi: string }[],
   epost1Sendt: "",
@@ -513,12 +524,21 @@ test("gmail-lead: AVVIST, ingen e-post, ingen varsel, avtalen merkes", async () 
 });
 
 test("jobb-e-post med treff i Brønnøysund: GODKJENT, e-posten går", async () => {
-  const t = await gjennomJobben(METALEAD, { brreg: true }, async (sendEpost1) => {
-    assert.equal(
-      await sendEpost1(METALEAD as never, ETTERPA, [], oppslagene({ brreg: true })),
-      "sendt",
-    );
-  });
+  const t = await gjennomJobben(
+    METALEAD,
+    { brreg: true },
+    async (sendEpost1) => {
+      assert.equal(
+        await sendEpost1(
+          METALEAD as never,
+          ETTERPA,
+          [],
+          oppslagene({ brreg: true }),
+        ),
+        "sendt",
+      );
+    },
+  );
 
   assert.equal(t.google, 1, "e-post 1 skulle gått ut");
   assert.equal(t.varsler.length, 1);

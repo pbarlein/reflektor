@@ -2,10 +2,12 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  ANNONSE_VENT_MS,
   emne1,
   emne2,
   epost1,
   epost2,
+  erAnnonselead,
   fornavn,
   hilsenNavn,
   leadkilde,
@@ -70,7 +72,13 @@ test("uten navn står det bare «Hei!»", () => {
  */
 test("e-posten har ingen avmelding, knapper eller bilder", () => {
   const { html } = epost1("Henrik", "Nordvik");
-  for (const spor of ["unsubscribe", "<img", "<table", "background", "button"]) {
+  for (const spor of [
+    "unsubscribe",
+    "<img",
+    "<table",
+    "background",
+    "button",
+  ]) {
     assert.ok(!html.toLowerCase().includes(spor), `fant «${spor}» i HTML-en`);
   }
   assert.ok(html.includes('font-family:"Helvetica Neue";font-size:13px'));
@@ -104,7 +112,9 @@ test("svaret peker tilbake på den første e-posten", () => {
   assert.ok(mime.includes("In-Reply-To: <abc@reflektor.no>"));
   assert.ok(mime.includes("References: <abc@reflektor.no>"));
   assert.ok(mime.includes("Message-ID: <def@reflektor.no>"));
-  assert.ok(mime.includes("From: =?UTF-8?B?UMOlbCBCYXJsZWlu?= <pal@reflektor.no>"));
+  assert.ok(
+    mime.includes("From: =?UTF-8?B?UMOlbCBCYXJsZWlu?= <pal@reflektor.no>"),
+  );
 });
 
 test("en første e-post har ingenting å svare på", () => {
@@ -155,7 +165,12 @@ test("avsendernavnet kodes, og dekoder tilbake til Pål Barlein", () => {
 
 test("emnet kodes når det har norske tegn, og ikke når det ikke har", () => {
   const mime = byggMime(
-    { til: "a@b.no", emne: "Nordvik Interiør + Reflektor", tekst: "t", html: "<p>t</p>" },
+    {
+      til: "a@b.no",
+      emne: "Nordvik Interiør + Reflektor",
+      tekst: "t",
+      html: "<p>t</p>",
+    },
     "<x@reflektor.no>",
   );
   assert.ok(hentHode(mime, "Subject").startsWith("=?UTF-8?B?"));
@@ -229,9 +244,10 @@ test("begge meldingsdelene er UTF-8 og base64, og æøå kommer helt fram", () =
   const dekodet = deler
     .filter((d) => d.includes("base64"))
     .map((d) =>
-      Buffer.from(d.split("\r\n\r\n")[1]!.replace(/\r\n/g, ""), "base64").toString(
-        "utf8",
-      ),
+      Buffer.from(
+        d.split("\r\n\r\n")[1]!.replace(/\r\n/g, ""),
+        "base64",
+      ).toString("utf8"),
     );
   assert.equal(dekodet.length, 2);
   assert.ok(dekodet[0]!.includes("Hei Øystein!"));
@@ -249,7 +265,10 @@ test("begge meldingsdelene er UTF-8 og base64, og æøå kommer helt fram", () =
  * /book skal være lenker.
  */
 test("signaturen har ingen mailto-lenke", () => {
-  for (const brev of [epost1("henrik", "Bedrift AS"), epost2("henrik", "Bedrift AS")]) {
+  for (const brev of [
+    epost1("henrik", "Bedrift AS"),
+    epost2("henrik", "Bedrift AS"),
+  ]) {
     assert.ok(!brev.html.includes("mailto:"));
     assert.ok(!brev.html.includes("tel:"));
     assert.ok(brev.html.includes("pal@reflektor.no"));
@@ -266,10 +285,7 @@ test("signaturen har ingen mailto-lenke", () => {
  * Asker». Det er verre enn ingen hilsen.
  */
 test("et bedriftsnavn i navnefeltet gir Hei! og ikke et fornavn", () => {
-  assert.equal(
-    hilsenNavn("Bakst & Ro | Hjemmebakt i Asker", "BAKST & RO"),
-    "",
-  );
+  assert.equal(hilsenNavn("Bakst & Ro | Hjemmebakt i Asker", "BAKST & RO"), "");
   assert.equal(hilsenNavn("Claudia Bergheim", "Bergheim"), "Claudia");
 });
 
@@ -296,7 +312,9 @@ test("e-postene bruker den strenge hilsenen", () => {
   const p2 = epost2("Bakst & Ro | Hjemmebakt i Asker", "BAKST & RO");
   assert.ok(p2.tekst.startsWith("Hei igjen!"), p2.tekst.slice(0, 30));
 
-  assert.ok(epost1("Claudia Bergheim", "Bergheim").tekst.startsWith("Hei Claudia!"));
+  assert.ok(
+    epost1("Claudia Bergheim", "Bergheim").tekst.startsWith("Hei Claudia!"),
+  );
 });
 
 test("bedriftsnavn normaliseres uten selskapsform og tegn", () => {
@@ -309,7 +327,10 @@ test("bedriftsnavn normaliseres uten selskapsform og tegn", () => {
 /* ──────────────────── HVOR LEADET KOM FRA (04.10.2026) ──────────────── */
 
 test("bare de to skjemaene er skjemaleads", () => {
-  assert.equal(leadkilde("/kontaktoss: reflektor.no – kontaktskjema"), "nettside");
+  assert.equal(
+    leadkilde("/kontaktoss: reflektor.no – kontaktskjema"),
+    "nettside",
+  );
   assert.equal(
     leadkilde("Facebook Lead Ads: Reflektor SoMe-abonnement Untitled form"),
     "meta",
@@ -368,7 +389,10 @@ test("tomme felter kobler ikke tilfeldige kontakter sammen", () => {
   );
   /* Et bedriftsnavn på to tegn er for tynt. */
   assert.equal(
-    sammePerson(spor("en@example.no", "", "Ab"), spor("to@example.no", "", "AB")),
+    sammePerson(
+      spor("en@example.no", "", "Ab"),
+      spor("to@example.no", "", "AB"),
+    ),
     false,
   );
 });
@@ -392,7 +416,10 @@ const kandidat = (endringer: Partial<Kandidat> = {}): Kandidat => ({
 
 test("e-post 1: interne adresser og kunder får ingenting", () => {
   assert.equal(skalHaEpost1(kandidat(), NA), true);
-  assert.equal(skalHaEpost1(kandidat({ epost: "pal@reflektor.no" }), NA), false);
+  assert.equal(
+    skalHaEpost1(kandidat({ epost: "pal@reflektor.no" }), NA),
+    false,
+  );
   assert.equal(
     skalHaEpost1(kandidat({ epost: "pal+test@Reflektor.no" }), NA),
     false,
@@ -602,6 +629,9 @@ const kontakt = {
   bookingKilde: "",
   bookingMedium: "",
   analysekilde: "",
+  annonsenettverk: "",
+  stillingstittel: "",
+  aktuelt: "",
   konvertert: "2026-10-05T06:00:00Z",
   metasvar: [],
   epost1Sendt: "",
@@ -738,4 +768,150 @@ test("en kontakt som allerede har fått e-posten, røres ikke av bryteren", asyn
       "hoppet-over",
     );
   });
+});
+
+/* ───────────────── LINKEDIN-LEADS (09.11.2026) ──────────────────────── */
+
+/**
+ * Kampanjen startet 10.11.2026, og INGEN LINKEDIN-LEAD HAR KOMMET INN
+ * ENNÅ. Det er hele grunnen til at gjenkjenningen tåler flere skrivemåter:
+ * ingen kan si hva HubSpot faktisk kommer til å kalle konverteringen.
+ * Testene under låser det vi vet — Meta-navnet, nettsidenavnet og
+ * møtelenken, lest ut av portalen — og krever at alt som ligner LinkedIn
+ * havner riktig uten å flytte noen av dem.
+ */
+
+test("LinkedIn kjennes igjen på flere skrivemåter", () => {
+  for (const navn of [
+    "LinkedIn Lead Ads: Forslag SoMe-abonnement – Soulcake-omtale – nov 2026",
+    "Lead Gen Form: Forslag SoMe-abonnement – Soulcake-omtale – nov 2026",
+    "Forslag SoMe-abonnement – Soulcake-omtale – nov 2026 (EN-innstilling)",
+    "linkedin lead gen form: hva som helst",
+  ]) {
+    assert.equal(leadkilde(navn), "linkedin", navn);
+  }
+});
+
+/**
+ * REKKEFØLGEN ER DET SOM KAN GÅ GALT. «Reflektor SoMe-abonnement» er
+ * Meta-markøren, og den er bred nok til å treffe et LinkedIn-skjema som
+ * bærer de samme ordene. Blir svaret «meta», får leadet Meta-varselet,
+ * Meta-filteret og ingen avtale — og ingenting sier fra.
+ */
+test("LinkedIn vinner over Meta-markøren når begge kunne truffet", () => {
+  assert.equal(
+    leadkilde("LinkedIn Lead Ads: Reflektor SoMe-abonnement nov 2026"),
+    "linkedin",
+  );
+  /* Og motsatt: et ekte Meta-skjema er fortsatt Meta. */
+  assert.equal(
+    leadkilde("Facebook Lead Ads: Reflektor SoMe-abonnement okt 2026 v2"),
+    "meta",
+  );
+});
+
+/**
+ * NETTVERKET ER SISTE UTVEI, IKKE EN SNARVEI. Det redder oss hvis HubSpot
+ * kaller konverteringen noe vi ikke forutså — men det skal aldri gjøre en
+ * booking eller en import om til et skjemalead, for da vet vi ikke hva
+ * personen har bedt om.
+ */
+test("annonsenettverket gjelder bare når hendelsen er en ukjent konvertering", () => {
+  const linkedin = { annonsenettverk: "linkedin" };
+
+  assert.equal(leadkilde("Et navn vi ikke forutså", linkedin), "linkedin");
+  assert.equal(
+    leadkilde("LINKEDIN", { annonsenettverk: "LinkedIn" }),
+    "linkedin",
+  );
+
+  /* En booking er ikke et skjemalead, uansett hvor den kom fra. */
+  assert.equal(
+    leadkilde("Meetings Link: paal-barlein/intro", linkedin),
+    "annet",
+  );
+  /* Og et tomt felt sier ingenting i det hele tatt. */
+  assert.equal(leadkilde("", linkedin), "annet");
+
+  /* Uten nettverket er et ukjent navn fortsatt «annet». */
+  assert.equal(leadkilde("Et navn vi ikke forutså"), "annet");
+  /* Facebook-nettverket gjør ingenting av det samme. */
+  assert.equal(
+    leadkilde("Et navn vi ikke forutså", { annonsenettverk: "facebook" }),
+    "annet",
+  );
+});
+
+test("nettsideskjemaet vinner over alt, også for en LinkedIn-kontakt", () => {
+  assert.equal(
+    leadkilde("/kontaktoss: reflektor.no – kontaktskjema", {
+      annonsenettverk: "linkedin",
+    }),
+    "nettside",
+  );
+});
+
+test("erAnnonselead er sann for begge nettverk og usann for resten", () => {
+  assert.equal(erAnnonselead("meta"), true);
+  assert.equal(erAnnonselead("linkedin"), true);
+  assert.equal(erAnnonselead("nettside"), false);
+  assert.equal(erAnnonselead("annet"), false);
+});
+
+/**
+ * VENTETIDEN GJELDER LINKEDIN OGSÅ, bestilt 09.11.2026. Grunnen er den
+ * samme som for Meta: leadet kan booke møte sekunder senere fra en annen
+ * adresse, og tre minutter er det bookingen trenger for å bli synlig.
+ */
+test("e-post 1: LinkedIn venter de samme tre minuttene", () => {
+  const ferskt = kandidat({
+    hendelse: "LinkedIn Lead Ads: Forslag SoMe-abonnement nov 2026",
+    konvertert: new Date(NA.getTime() - 60 * 1000).toISOString(),
+  });
+  assert.equal(skalHaEpost1(ferskt, NA), false);
+
+  const modent = kandidat({
+    hendelse: "LinkedIn Lead Ads: Forslag SoMe-abonnement nov 2026",
+    konvertert: new Date(NA.getTime() - ANNONSE_VENT_MS - 1000).toISOString(),
+  });
+  assert.equal(skalHaEpost1(modent, NA), true);
+
+  /* Nettsideleads venter fortsatt ikke. */
+  assert.equal(
+    skalHaEpost1(
+      kandidat({ konvertert: new Date(NA.getTime() - 1000).toISOString() }),
+      NA,
+    ),
+    true,
+  );
+});
+
+test("e-post 1: et LinkedIn-lead som har booket får ingenting", () => {
+  const k = kandidat({
+    hendelse: "LinkedIn Lead Ads: Forslag SoMe-abonnement nov 2026",
+    konvertert: new Date(NA.getTime() - ANNONSE_VENT_MS - 1000).toISOString(),
+    moteBooket: "2026-11-20T09:00:00Z",
+  });
+  assert.equal(skalHaEpost1(k, NA), false);
+
+  const dublett = kandidat({
+    hendelse: "LinkedIn Lead Ads: Forslag SoMe-abonnement nov 2026",
+    konvertert: new Date(NA.getTime() - ANNONSE_VENT_MS - 1000).toISOString(),
+    booketAnnetSted: true,
+  });
+  assert.equal(skalHaEpost1(dublett, NA), false);
+});
+
+/** Påminnelsen har ingen egne regler per kanal, og skal ikke få noen. */
+test("e-post 2 virker likt for LinkedIn som for de andre", () => {
+  const k = kandidat({
+    hendelse: "LinkedIn Lead Ads: Forslag SoMe-abonnement nov 2026",
+    epost1Sendt: "2026-10-05T10:00:00Z",
+  });
+  const meta = kandidat({
+    hendelse: "Facebook Lead Ads: Reflektor SoMe-abonnement okt 2026",
+    epost1Sendt: "2026-10-05T10:00:00Z",
+  });
+  const tid = new Date("2026-10-06T09:30:00Z");
+  assert.equal(skalHaEpost2(k, tid), skalHaEpost2(meta, tid));
 });

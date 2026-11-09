@@ -52,6 +52,9 @@ const kontakt = (endringer: Record<string, unknown> = {}) => ({
   bookingKilde: "",
   bookingMedium: "",
   analysekilde: "",
+  annonsenettverk: "",
+  stillingstittel: "",
+  aktuelt: "",
   konvertert: "2026-10-04T06:39:41Z",
   epost1Sendt: "",
   epost2Sendt: "",
@@ -100,7 +103,10 @@ async function medHubspot(
   console.info = () => {};
   console.error = () => {};
 
-  globalThis.fetch = (async (inn: string | URL | Request, init?: RequestInit) => {
+  globalThis.fetch = (async (
+    inn: string | URL | Request,
+    init?: RequestInit,
+  ) => {
     const url = String(inn instanceof Request ? inn.url : inn);
     const metode = init?.method ?? "GET";
 
@@ -121,8 +127,9 @@ async function medHubspot(
     }
 
     if (url.includes("/objects/deals/batch/read")) {
-      const bedt = (JSON.parse(String(init?.body)) as { inputs: { id: string }[] })
-        .inputs.map((i) => i.id);
+      const bedt = (
+        JSON.parse(String(init?.body)) as { inputs: { id: string }[] }
+      ).inputs.map((i) => i.id);
       const alle = Object.values(oppsett.avtaler).flat();
       return Response.json({
         results: alle
@@ -150,8 +157,9 @@ async function medHubspot(
     }
 
     if (url.includes("/objects/notes/batch/read")) {
-      const bedt = (JSON.parse(String(init?.body)) as { inputs: { id: string }[] })
-        .inputs.map((i) => i.id);
+      const bedt = (
+        JSON.parse(String(init?.body)) as { inputs: { id: string }[] }
+      ).inputs.map((i) => i.id);
       const alle = Object.values(oppsett.aktiviteter ?? {}).flat();
       return Response.json({
         results: bedt.map((id) => ({
@@ -232,11 +240,17 @@ async function medHubspot(
 
 test("en avtale i Interessert flyttes til Møte booket", async () => {
   const { telling, flyttet } = await medHubspot(
-    { avtaler: { "882425783540": [{ id: "9001", stadium: "appointmentscheduled" }] } },
+    {
+      avtaler: {
+        "882425783540": [{ id: "9001", stadium: "appointmentscheduled" }],
+      },
+    },
     [kontakt()],
   );
   assert.equal(telling.flyttet, 1);
-  assert.deepEqual(flyttet, [{ avtale: "9001", stadium: "presentationscheduled" }]);
+  assert.deepEqual(flyttet, [
+    { avtale: "9001", stadium: "presentationscheduled" },
+  ]);
 });
 
 /**
@@ -263,7 +277,11 @@ test("avtaler i Tilbud sendt, Vunnet, Hviler og Tapt røres ikke", async () => {
 
 test("en avtale som alt står i Møte booket flyttes ikke på nytt", async () => {
   const { telling, flyttet } = await medHubspot(
-    { avtaler: { "882425783540": [{ id: "9001", stadium: "presentationscheduled" }] } },
+    {
+      avtaler: {
+        "882425783540": [{ id: "9001", stadium: "presentationscheduled" }],
+      },
+    },
     [kontakt()],
   );
   assert.equal(telling.flyttet, 0);
@@ -295,7 +313,9 @@ test("avtalen på en annen kontakt med samme bedrift flyttes", async () => {
     [kontakt()],
   );
   assert.equal(telling.flyttet, 1);
-  assert.deepEqual(flyttet, [{ avtale: "9002", stadium: "presentationscheduled" }]);
+  assert.deepEqual(flyttet, [
+    { avtale: "9002", stadium: "presentationscheduled" },
+  ]);
 });
 
 test("en kontakt uten noe slektskap gir ingen flytting", async () => {
@@ -334,7 +354,9 @@ test("et stadium som ikke finnes i pipelinen røres ikke", async () => {
 test("uten skrivetilgang telles feilen, og ingenting kaster", async () => {
   const { telling } = await medHubspot(
     {
-      avtaler: { "882425783540": [{ id: "9001", stadium: "appointmentscheduled" }] },
+      avtaler: {
+        "882425783540": [{ id: "9001", stadium: "appointmentscheduled" }],
+      },
       patchStatus: 403,
     },
     [kontakt()],
@@ -346,7 +368,9 @@ test("uten skrivetilgang telles feilen, og ingenting kaster", async () => {
 test("uten pipelineoppslag flyttes ingenting, og ingenting kaster", async () => {
   const { telling, flyttet } = await medHubspot(
     {
-      avtaler: { "882425783540": [{ id: "9001", stadium: "appointmentscheduled" }] },
+      avtaler: {
+        "882425783540": [{ id: "9001", stadium: "appointmentscheduled" }],
+      },
       pipelineStatus: 403,
     },
     [kontakt()],
@@ -357,7 +381,11 @@ test("uten pipelineoppslag flyttes ingenting, og ingenting kaster", async () => 
 
 test("en kontakt uten booking røres ikke", async () => {
   const { telling, flyttet } = await medHubspot(
-    { avtaler: { "882425783540": [{ id: "9001", stadium: "appointmentscheduled" }] } },
+    {
+      avtaler: {
+        "882425783540": [{ id: "9001", stadium: "appointmentscheduled" }],
+      },
+    },
     [kontakt({ moteBooket: "" })],
   );
   assert.equal(telling.flyttet, 0);
@@ -596,7 +624,11 @@ test("de to skrivemåtene fra testen møtes i søkeordet", () => {
   );
   assert.equal(
     sammePerson(
-      { epost: "p.barlein@gmeil.com", telefon: "", bedrift: "Haugland interiør" },
+      {
+        epost: "p.barlein@gmeil.com",
+        telefon: "",
+        bedrift: "Haugland interiør",
+      },
       {
         epost: "p.barlein@gmail.com",
         telefon: "+47 912 34 567",
@@ -614,8 +646,13 @@ test("søket spør etter bedrifter som begynner med ordet", async () => {
   process.env.HUBSPOT_TOKEN = "test";
   let kropp = "";
 
-  globalThis.fetch = (async (inn: string | URL | Request, init?: RequestInit) => {
-    if (String(inn instanceof Request ? inn.url : inn).includes("contacts/search")) {
+  globalThis.fetch = (async (
+    inn: string | URL | Request,
+    init?: RequestInit,
+  ) => {
+    if (
+      String(inn instanceof Request ? inn.url : inn).includes("contacts/search")
+    ) {
       kropp = String(init?.body);
     }
     return Response.json({ results: [] });

@@ -33,7 +33,12 @@ const spor = (endringer: Partial<Parameters<typeof spamgrunn>[0]> = {}) => ({
 /* ───────────────────────────── ADRESSEN ─────────────────────────────── */
 
 test("engangs- og eksempeladresser kjennes igjen", () => {
-  for (const d of ["mailinator.com", "example.no", "smaqt.com", "yopmail.com"]) {
+  for (const d of [
+    "mailinator.com",
+    "example.no",
+    "smaqt.com",
+    "yopmail.com",
+  ]) {
     assert.equal(erEngangsdomene(`kari@${d}`), true, d);
   }
 });
@@ -102,7 +107,9 @@ test("vanlige avtalenavn er ikke spam", () => {
 test("avtale merket SPAM stopper e-posten", () => {
   assert.equal(
     spamgrunn(
-      spor({ avtaler: [{ navn: "SPAM – David møller", stadium: "closedlost" }] }),
+      spor({
+        avtaler: [{ navn: "SPAM – David møller", stadium: "closedlost" }],
+      }),
     ),
     "spam-avtale",
   );
@@ -184,7 +191,10 @@ test("hver grunn har en forklaring som kan vises", () => {
  * «første kall, andre kall» går i stykker så snart koden bytter om på to
  * oppslag — og da feiler testen for noe helt annet enn det den handler om.
  */
-type Stubbsvar = { avtaler?: { navn: string; stadium: string }[]; finnes?: boolean };
+type Stubbsvar = {
+  avtaler?: { navn: string; stadium: string }[];
+  finnes?: boolean;
+};
 
 type Telling = {
   tilGoogle: number;
@@ -242,8 +252,11 @@ async function medHubspot(
     /* Merkingen. Den er det vi vil se. */
     if (metode === "PATCH" && url.includes("/objects/contacts/")) {
       t.merket.push(
-        (JSON.parse(String(init?.body)) as { properties: Record<string, string> })
-          .properties,
+        (
+          JSON.parse(String(init?.body)) as {
+            properties: Record<string, string>;
+          }
+        ).properties,
       );
       return Response.json({ id: "123" });
     }
@@ -293,6 +306,9 @@ const LEAD = {
   bookingKilde: "",
   bookingMedium: "",
   analysekilde: "",
+  annonsenettverk: "",
+  stillingstittel: "",
+  aktuelt: "",
   konvertert: "2026-10-05T06:00:00Z",
   metasvar: [] as { etikett: string; verdi: string }[],
   epost1Sendt: "",

@@ -109,10 +109,7 @@ function somHtml(linjer: string[], signaturFra: number): string {
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
-      .replace(
-        /(https?:\/\/[^\s]+)/g,
-        (u) => `<a href="${u}">${u}</a>`,
-      );
+      .replace(/(https?:\/\/[^\s]+)/g, (u) => `<a href="${u}">${u}</a>`);
 
   return linjer
     .map((l, i) => {
@@ -180,17 +177,90 @@ export function epost2(navn: string, bedrift: string): Brev {
 export const KILDEMARKOR = {
   nettside: ["reflektor.no – kontaktskjema"],
   meta: ["Facebook Lead Ads:", "Reflektor SoMe-abonnement"],
+  /**
+   * LINKEDIN, LAGT TIL 09.11.2026. Kampanjen starter 10.11, og ingen lead
+   * har kommet inn ennå — altså kan ingen si HVA HubSpot kommer til å
+   * kalle konverteringen. Det er grunnen til at det står tre markører her
+   * og ikke én, og alle tre er lest, ikke diktet:
+   *
+   * 1. «linkedin» — Metas konverteringer heter «Facebook Lead Ads: …»
+   *    (lest ut av portalen 09.11), og nettverksnavnet står først.
+   * 2. «lead gen form:» — prefikset HubSpot bruker på LinkedIn-skjemaer i
+   *    arbeidsflyter. Det er LinkedIns ord; Meta bruker sitt eget.
+   * 3. Skjemanavnet selv, for det tilfellet at HubSpot bare skriver det.
+   *
+   * MATCHES UTEN HENSYN TIL STORE BOKSTAVER, i motsetning til de to over.
+   * Meta-markørene er kopiert ordrett fra ekte konverteringer; disse er
+   * ikke sett ennå, og da er det eneste ærlige å være romslig.
+   */
+  linkedin: ["linkedin", "lead gen form:", "forslag some-abonnement"],
 } as const;
 
-export type Leadkilde = "nettside" | "meta" | "annet";
+/**
+ * Annonsenettverket slik HubSpot skriver det i «Original Traffic Source
+ * Drill-Down 1».
+ *
+ * LEST UT AV PORTALEN 09.11.2026: alle 45 Meta-leadene har «facebook» der,
+ * med kampanjenavnet i Drill-Down 2. LinkedIn-leadene får etter samme
+ * mønster «linkedin», og det er signalet som fortsatt virker hvis HubSpot
+ * kaller konverteringen noe vi ikke har forutsett.
+ */
+export const LINKEDIN_NETTVERK = "linkedin";
 
-/** Hvilket skjema leadet kom fra. «annet» får ingen automatisk e-post. */
-export function leadkilde(hendelse: string): Leadkilde {
+/** Slik HubSpot innleder konverteringen for en møtelenke. */
+const MOTELENKE = "meetings link:";
+
+export type Leadkilde = "nettside" | "meta" | "linkedin" | "annet";
+
+/** Det gjenkjenningen leser. Alt annet enn hendelsen er valgfritt. */
+export type Kildespor = {
+  /** `hs_analytics_source`, f.eks. «PAID_SOCIAL». */
+  analysekilde?: string;
+  /** `hs_analytics_source_data_1`: annonsenettverket. */
+  annonsenettverk?: string;
+};
+
+/**
+ * Hvilket skjema leadet kom fra. «annet» får ingen automatisk e-post.
+ *
+ * REKKEFØLGEN AVGJØR, OG LINKEDIN STÅR FØR META. Markøren «Reflektor
+ * SoMe-abonnement» er bred nok til å treffe et LinkedIn-skjema som bærer
+ * de samme ordene, og da ville leadet fått Meta-varselet og Meta-filteret.
+ * En egen test vokter rekkefølgen — det er nøyaktig samme fella som
+ * `gemini.google.com` gikk i da den ble talt som Google-søk.
+ *
+ * NETTVERKET ALENE GJØR INGENTING TIL ET SKJEMALEAD. Det er bare en
+ * tiebreaker når hendelsen ER en konvertering vi ikke kjenner igjen: en
+ * booking, en import eller et tomt felt skal fortsatt bli «annet», for da
+ * vet vi ikke hva personen har bedt om. Se `skalHaEpost1`.
+ */
+export function leadkilde(hendelse: string, spor: Kildespor = {}): Leadkilde {
   const h = hendelse.trim();
   if (!h) return "annet";
   if (KILDEMARKOR.nettside.some((m) => h.includes(m))) return "nettside";
+
+  const lav = h.toLocaleLowerCase("nb-NO");
+  if (KILDEMARKOR.linkedin.some((m) => lav.includes(m))) return "linkedin";
   if (KILDEMARKOR.meta.some((m) => h.includes(m))) return "meta";
+
+  /*
+    SISTE UTVEI: nettverket sier LinkedIn, hendelsen er en konvertering vi
+    ikke kjenner igjen, og den er ikke en møtelenke. Da er dette etter all
+    sannsynlighet skjemaet vårt under et navn vi ikke forutså.
+  */
+  const nettverk = (spor.annonsenettverk ?? "")
+    .trim()
+    .toLocaleLowerCase("nb-NO");
+  if (nettverk === LINKEDIN_NETTVERK && !lav.startsWith(MOTELENKE)) {
+    return "linkedin";
+  }
+
   return "annet";
+}
+
+/** Behandles leadet som et annonselead: venting, varsel og avtale? */
+export function erAnnonselead(kilde: Leadkilde): boolean {
+  return kilde === "meta" || kilde === "linkedin";
 }
 
 /**
@@ -206,6 +276,16 @@ export function leadkilde(hendelse: string): Leadkilde {
  * som booker på /takk har allerede fått e-posten — det er meningen.
  */
 export const META_VENT_MS = 3 * 60 * 1000;
+
+/**
+ * Samme ventetid for LinkedIn, bestilt 09.11.2026.
+ *
+ * GRUNNEN ER DEN SAMME, OG DEN HANDLER IKKE OM META: et lead som kommer
+ * rett inn i HubSpot fra et annonseskjema kan booke møte sekunder senere,
+ * fra en annen adresse. Tre minutter er det bookingen trenger for å bli en
+ * kontakt vi kan se.
+ */
+export const ANNONSE_VENT_MS = META_VENT_MS;
 
 /* ──────────── SAMME PERSON, NY E-POSTADRESSE (04.10.2026) ───────────── */
 
@@ -259,6 +339,11 @@ export type Kandidat = {
   lifecycle: string;
   /** `recent_conversion_event_name`. Avgjør om leadet er et skjemalead. */
   hendelse: string;
+  /**
+   * `hs_analytics_source_data_1`: annonsenettverket, «facebook» eller
+   * «linkedin». Tomt for alt som ikke kom fra en annonse.
+   */
+  annonsenettverk?: string;
   /** `recent_conversion_date`. Styrer ventetiden for Meta-leads. */
   konvertert: string;
   /**
@@ -318,16 +403,18 @@ export function skalHaEpost1(k: Kandidat, na: Date): boolean {
   if (k.lifecycle.toLowerCase() === "customer") return false;
   if (k.epost1Sendt) return false;
 
-  const kilde = leadkilde(k.hendelse);
+  const kilde = leadkilde(k.hendelse, {
+    annonsenettverk: k.annonsenettverk,
+  });
   if (kilde === "annet") return false;
 
   if (k.moteBooket) return false;
   if (k.booketAnnetSted) return false;
 
-  if (kilde === "meta") {
+  if (erAnnonselead(kilde)) {
     const inn = new Date(k.konvertert);
     if (Number.isNaN(inn.getTime())) return false;
-    if (na.getTime() - inn.getTime() < META_VENT_MS) return false;
+    if (na.getTime() - inn.getTime() < ANNONSE_VENT_MS) return false;
   }
 
   /*
